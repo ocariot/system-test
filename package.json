@@ -1,0 +1,30 @@
+{
+  "name": "system-test",
+  "version": "1.0.0",
+  "description": "System test",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc --clean --all --reporter=text mocha --opts test/mocha.opts test/**/*.spec.ts",
+    "test:cov": "nyc --clean --all --reporter=html --reporter=text mocha --opts test/mocha.opts test/**/*.spec.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://douglas@200.129.82.7:8000/nutes-ocariot/server/system-test.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^11.13.2",
+    "axios": "^0.18.0",
+    "chai": "^4.2.0",
+    "mocha": "^6.1.2",
+    "nyc": "^13.3.0",
+    "supertest": "^4.0.2",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.4.3"
+  }
+}
