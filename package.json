@@ -4,8 +4,8 @@
   "description": "System test",
   "main": "index.js",
   "scripts": {
-    "test": "nyc --clean --all --reporter=text mocha --opts test/mocha.opts test/**/*.spec.ts",
-    "test:cov": "nyc --clean --all --reporter=html --reporter=text mocha --opts test/mocha.opts test/**/*.spec.ts"
+    "test": "mocha --opts test/config/mocha.opts test/**/*.spec.ts",
+    "test:cov": "nyc --clean --all --reporter=html --reporter=text mocha --opts test/config/mocha.opts test/**/*.spec.ts"
   },
   "repository": {
     "type": "git",
@@ -14,7 +14,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.6",
@@ -23,6 +22,7 @@
     "chai": "^4.2.0",
     "mocha": "^6.1.2",
     "nyc": "^13.3.0",
+    "reflect-metadata": "^0.1.13"
     "supertest": "^4.0.2",
     "ts-node": "^8.0.3",
     "typescript": "^3.4.3"

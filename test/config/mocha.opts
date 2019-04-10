@@ -1,4 +1,4 @@
---require test/helpers.ts
+--require test/config/helpers.ts
 --reporter spec
 --require ts-node/register
 --require reflect-metadata/Reflect

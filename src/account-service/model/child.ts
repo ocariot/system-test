@@ -14,4 +14,24 @@ export class Child extends User {
         super.type = UserType.CHILD
     }
 
+    public fromJSON(json: any): Child {
+        if (!json) return this
+        super.fromJSON(json)
+
+        if (typeof json === 'string') {
+            json = JSON.parse(json)
+        }
+
+        if (json.gender !== undefined) this.gender = json.gender
+        if (json.age !== undefined) this.age = json.age
+
+        return this
+    }
+
+    public toJSON(): any {
+        return {
+            ...super.toJSON(),
+            ...{ gender: this.gender, age: this.age }
+        }
+    }
 }

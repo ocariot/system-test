@@ -33,8 +33,9 @@ export class User extends Entity {
         return {
             id: super.id,
             username: this.username,
+            password: this.password,
             type: this.type,
-            institution: this.institution ? this.institution.toJSON() : this.institution
+            institution_id: this.institution ? this.institution.id : undefined
         }
     }
 }

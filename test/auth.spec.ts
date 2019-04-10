@@ -1,34 +1,29 @@
-import supertest from 'supertest'
-import expect from 'chai'
+import request from 'supertest'
+import { expect } from 'chai'
 
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
+const URI = 'https://localhost'
 
 describe('Routes: Auth', () => {
-    const request = supertest('https://ocariot.nutes.uepb.edu.br')
 
     describe('POST /auth', () => {
         context('when the authentication was successful', () => {
             it('should return the access token', () => {
-                supertest('https://ocariot.nutes.uepb.edu.br')
+                return request(URI)
                     .post('/auth')
-                    .send({ username: 'admin', password: 'mysecretkey15' })
+                    .send({ username: 'admin', password: 'admin123' })
                     .set('Content-Type', 'application/json')
                     .expect(200)
-                    .then(res => {
-                        console.log('res')
+                    .then((res) => {
                         expect(res.body).to.have.property('access_token')
-                    })
-                    .catch(e => {
-                        console.log(e)
                     })
             })
         })
 
         context('when the username or password does not exists', () => {
             it('should return status code 401 and info message about unauthorized', () => {
-                request
+                return request(URI)
                     .post('/auth')
-                    .send({ username: 'any', password: 'any' })
+                    .send({ username: 'admin', password: 'admin' })
                     .set('Content-Type', 'application/json')
                     .expect(401)
                     .then(res => {
@@ -39,7 +34,7 @@ describe('Routes: Auth', () => {
 
         context('when there are validation errors in authentication', () => {
             it('should return status code 400 and info message about validation errors', () => {
-                request
+                return request(URI)
                     .post('/auth')
                     .send({})
                     .set('Content-Type', 'application/json')

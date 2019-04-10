@@ -5,19 +5,16 @@ export class ChildMock extends Child {
 
     constructor() {
         super()
-        super.fromJSON(JSON.stringify(this.generateChild()))
+        this.generateChild()
     }
 
-    private generateChild(): Child {
-        const child: Child = new Child()
-        child.id = this.generateObjectId()
-        child.username = 'child_mock'
-        child.password = 'child_password'
-        child.institution = this.generateInstitution()
-        child.age = Math.floor(Math.random() * 5) + 5
-        child.gender = this.generateGender()
-
-        return child
+    private generateChild(): void {
+        super.id = this.generateObjectId()
+        super.username = 'BR '.concat(this.generateObjectId())
+        super.password = 'child123'
+        super.institution = this.generateInstitution()
+        super.age = Math.floor(Math.random() * 5) + 5
+        super.gender = this.generateGender()
     }
 
     private generateObjectId(): string {
