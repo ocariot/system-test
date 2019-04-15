@@ -5,18 +5,15 @@ export class ApplicationMock extends Application {
 
     constructor() {
         super()
-        super.fromJSON(JSON.stringify(this.generateApplication()))
+        this.generateApplication()
     }
 
-    private generateApplication(): Application {
-        const application: Application = new Application()
-        application.id = this.generateObjectId()
-        application.username = 'application_mock'
-        application.password = 'application_password'
-        application.institution = this.generateInstitution()
-        application.application_name = 'application test'
-
-        return application
+    private generateApplication(): void {
+        super.id = this.generateObjectId()
+        super.username = 'APPBR '.concat(this.generateObjectId())
+        super.password = 'application123'
+        super.institution = this.generateInstitution()
+        super.application_name = 'application test'
     }
 
     private generateObjectId(): string {

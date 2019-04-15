@@ -5,22 +5,21 @@ import { Institution } from '../src/account-service/model/institution'
 import { Child } from '../src/account-service/model/child'
 import { Educator } from '../src/account-service/model/educator'
 import { ChildMock } from './mocks/account-service/child.mock'
+import { SleepMock } from './mocks/tracking-service/sleep.mock';
 import { EducatorMock } from './mocks/account-service/educator.mock'
-import { ActivityTypeMock, PhysicalActivityMock } from './mocks/tracking-service/physical.activity.mock'
-import { PhysicalActivity } from '../src/tracking-service/model/physical.activity';
+import { Sleep } from '../src/tracking-service/model/sleep';
 
 const URI = 'https://localhost'
-
 let child: Child
 let educator: Educator
-let physicalActivity: PhysicalActivity
-let otherActivity: PhysicalActivity
+let sleep: Sleep
+let otherSleep: Sleep
 let institution: Institution
 let accessTokenAdmin: string
 let accessTokenChild: string
 let acessTokenEducator: string
 
-describe('Routes: users.children.physicalactivities', () => {
+describe('Routes: users.children.sleep', () => {
 
     before(async () => {
         try {
@@ -40,67 +39,65 @@ describe('Routes: users.children.physicalactivities', () => {
             educator = new Educator().fromJSON(resultEducator.body)
 
             const resultEducatorAuth: any = await auth(educator.username, 'educator123')
-            acessTokenEducator = resultEducatorAuth.body.access_token   
+            acessTokenEducator = resultEducatorAuth.body.access_token
             
-            physicalActivity = new PhysicalActivityMock(ActivityTypeMock.WALK)
-            physicalActivity.child_id = child.id ? child.id : ''            
+            sleep = new SleepMock()
+            sleep.child_id = child.id ? child.id : '' 
+
+            otherSleep = new SleepMock()
 
         } catch (e) {
             console.log('before error', e.message)
         }
     })
 
-    describe('POST /users/children/:child_id/physicalactivities', () => {
-        context('when posting a new PhysicalActivity with success', () => {
-            it('should return status code 201 and the saved PhysicalActivity', () => {
+    describe('POST /users/children/:child_id/sleep', () => {
+        context('when posting a new Sleep with success', () => {
+            it('should return status code 201 and the saved Sleep', () => {
+
 
                 return request(URI)
-                    .post(`/users/children/${child.id}/physicalactivities`)
+                    .post(`/users/children/${child.id}/sleep`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
-                    .send(physicalActivity.toJSON())
+                    .send(sleep.toJSON())
                     .expect(201)
                     .then(res => {
                         expect(res.body).to.have.property('id')
-                        expect(res.body.name).to.eql(physicalActivity.name)
-                        expect(res.body.start_time).to.eql(physicalActivity.start_time!.toISOString())
-                        expect(res.body.end_time).to.eql(physicalActivity.end_time!.toISOString())
-                        expect(res.body.duration).to.eql(physicalActivity.duration)
-                        expect(res.body.calories).to.eql(physicalActivity.calories)
-                        if (physicalActivity.steps) expect(res.body.steps).to.eql(physicalActivity.steps)
-                        if (physicalActivity.levels) expect(res.body).to.have.property('levels')
-                        expect(res.body.child_id).to.eql(physicalActivity.child_id)
-                        physicalActivity.id = res.body.id
+                        expect(res.body).to.have.property('start_time')
+                        expect(res.body.start_time).to.eql(sleep.start_time!.toISOString())
+                        expect(res.body).to.have.property('end_time')
+                        expect(res.body.end_time).to.eql(sleep.end_time!.toISOString())
+                        expect(res.body).to.have.property('duration')
+                        expect(res.body.duration).to.eql(sleep.duration)
+                        expect(res.body).to.have.property('pattern')
+                        expect(res.body).to.have.property('child_id')
+                        expect(res.body.child_id).to.eql(sleep.child_id)
+                        sleep.id = res.body.id
                     })
             })
         })
 
-        context('when posting a new Physical Activity for a child passing an id non existent', () => {
+        context('when posting a new Sleep for a child passing an id non existent', () => {
             it('should return status code 404 and an info message describing that child was not found', () => {
                 
-                const id = 'aaaaaaaaaaaaaaaaaaaaaaaa'
-                const body = {
-                    name: physicalActivity.name,
-                    start_time: physicalActivity.start_time,
-                    end_time: physicalActivity.end_time,
-                    duration: physicalActivity.duration,
-                    calories: physicalActivity.calories,
-                    steps: physicalActivity.steps ? physicalActivity.steps : undefined,
-                    levels: physicalActivity.levels ? physicalActivity.levels : undefined                    
-                }
+                const id = 'aaaaaaaaaaaaaaaaaaaaaaaa'             
 
                 return request(URI)
-                    .post(`/users/children/${id}/physicalactivities`)
+                    .post(`/users/children/${id}/sleep`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
-                    .send(body)
+                    .send(otherSleep.toJSON())
                     .expect(404)
+                    .then(res => {
+                        console.log(res.body.id)
+                    })
             })
-        })
+        })        
     })
 
-    describe('GET /users/children/:child_id/physicalactivities', () => {
-        context('when get all physical activity of a specific child deleted of the database', () => {
+    describe('GET /users/children/:child_id/sleep', () => {
+        context('when get all sleep of a specific child deleted of the database', () => {
             it('should return status code 404 and an info message describing that child was not found', () => {
                 
                 before(async () => {
@@ -110,16 +107,17 @@ describe('Routes: users.children.physicalactivities', () => {
                         console.log('before error', e.message)
                     }
                 })
+
                 return request(URI)
-                    .get(`/users/children/${child.id}/physicalactivities`)
+                    .get(`/users/children/${child.id}/sleep`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .send(physicalActivity.toJSON())
+                    .send(sleep.toJSON())
                     .expect(404)                    
             })
         })
 
-        context('when to obtain all the physical activity of a child passing a non existent id', () => {
+        context('when to obtain all the Sleep of a child passing a non existent id', () => {
             it('should return status code 404 and an info message describing that child was not found', () => {
                 
                 const id = 'aaaaaaaaaaaaaaaaaaaaaaaa'
@@ -127,38 +125,33 @@ describe('Routes: users.children.physicalactivities', () => {
                     .get(`/users/children/${id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .send(physicalActivity.toJSON())
+                    .send(sleep.toJSON())
                     .expect(404)                    
             })
         })
-    })     
-
+    })
+    
     describe('PATCH /users/children/:child_id/physicalactivities/:physicalactivity_id', () => {
-        context('when this physical activity to belong of a specific child deleted of the database', () => {
+        context('when this sleep to belong of a specific child deleted of the database', () => {
             it('should return status code 404 and an info message describing that child was not found', () => {                  
 
-                otherActivity = new PhysicalActivityMock(ActivityTypeMock.WALK)
-
                 const body = {
-                    name: otherActivity.name,
-                    start_time: otherActivity.start_time,
-                    end_time: otherActivity.end_time,
-                    duration: otherActivity.duration,
-                    calories: otherActivity.calories,
-                    steps: otherActivity.steps ? otherActivity.steps: undefined,
-                    levels: otherActivity.levels ? otherActivity.levels: undefined,
+                    name: otherSleep.start_time,
+                    start_time: otherSleep.end_time,
+                    duration: otherSleep.duration,
+                    pattern: otherSleep.pattern,
                     child_id: child.id
                 }    
 
                 return request(URI)
-                    .patch(`/users/children/${child.id}/physicalactivities/${physicalActivity.id}`)
+                    .patch(`/users/children/${child.id}/sleep/${sleep.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(acessTokenEducator))                
                     .expect(404)
             })
         })
-    })             
+    })    
 })
 
 async function auth(username?: string, password?: string): Promise<any> {
@@ -204,3 +197,5 @@ async function deleteUserChild(childId?: string): Promise<Child> {
         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
         .set('Content-Type', 'application/json')
 }
+
+
