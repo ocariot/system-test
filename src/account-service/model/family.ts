@@ -30,11 +30,7 @@ export class Family extends User {
             ...super.toJSON(),
             ...{
                 children: this.children ?
-                    this.children.map(child => {
-                        child.toJSON()
-                        child.type = undefined
-                        return child
-                    }) :
+                    this.children.map(child => child.id) :
                     this.children
             }
         }
