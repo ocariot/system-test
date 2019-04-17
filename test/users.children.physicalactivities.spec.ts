@@ -101,15 +101,17 @@ describe('Routes: users.children.physicalactivities', () => {
 
     describe('GET /users/children/:child_id/physicalactivities', () => {
         context('when get all physical activity of a specific child deleted of the database', () => {
+            
+            before(async () => {
+                try {
+                    deleteUserChild(child.id)
+                } catch (e) {
+                    console.log('before error', e.message)
+                }
+            })
+                        
             it('should return status code 404 and an info message describing that child was not found', () => {
                 
-                before(async () => {
-                    try {
-                        deleteUserChild(child.id)
-                    } catch (e) {
-                        console.log('before error', e.message)
-                    }
-                })
                 return request(URI)
                     .get(`/users/children/${child.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
