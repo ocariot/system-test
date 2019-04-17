@@ -1,27 +1,13 @@
 import request from 'supertest'
 import { expect } from 'chai'
+import { Child } from '../src/account-service/model/child'
 import { InstitutionMock } from './mocks/account-service/institution.mock'
 import { Institution } from '../src/account-service/model/institution'
-//import { Child } from '../src/account-service/model/child'
-//import { Application } from '../src/account-service/model/application'
-//import { Family } from '../src/account-service/model/family'
-//import { HealthProfessional } from '../src/account-service/model/health.professional'
-//import { Educator } from '../src/account-service/model/educator'
 import { ChildMock } from './mocks/account-service/child.mock'
-//import { ApplicationMock } from './mocks/account-service/application.mock'
-//import { FamilyMock } from './mocks/account-service/family.mock'
-//import { EducatorMock } from './mocks/account-service/educator.mock'
 
 const URI = 'https://localhost'
 
-//let application: Application
-//let child: Child
-//let educator: Educator
-//let family: Family
 let institution: Institution
-//let anotherInstitution: Institution
-//let anotherInstitution: Institution
-//let healthProfessional: HealthProfessional
 let accessTokenAdmin: string
 
 describe('Routes: users.children', () => {
@@ -37,18 +23,6 @@ describe('Routes: users.children', () => {
 
             const resultInstitution: any = await saveInstitution()
             institution = new Institution().fromJSON(resultInstitution.body)
-
-            //const resultApplication: any = await saveApplication(institution.id)
-            //application = new Application().fromJSON(resultApplication.body)
-
-            //const resultEducator: any = await saveEducator(institution.id)
-            //educator = new Educator().fromJSON(resultEducator.body)
-
-            //const resultHealthProfessional: any = await saveHealthProfessional(institution.id)
-            //healthProfessional = new HealthProfessional().fromJSON(resultHealthProfessional.body)
-
-            //const resultFamily: any = await saveFamily(institution.id)
-            //family = new Family().fromJSON(resultFamily.body)
             
         } catch (e) {
             console.log('before error', e.message)
@@ -90,11 +64,162 @@ describe('Routes: users.children', () => {
                         if(res.body.institution.longitude)
                             expect(res.body.institution.longitude).to.eql(institution.longitude)
                         child.id = res.body.id
-
                 })
             })
         })
 
+        context('when the user does not have permission to register an child', () => {
+            it('should return status code 403 and message info about ...', () => {
+                
+                const body = {
+                    username: child.username,
+                    password: child.password,
+                    institution_id: institution.id,
+                    gender: child.gender,
+                    age: child.age
+                }
+
+                return request(URI)
+                    .post('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')                    
+                    .send(body)
+                    .expect(409)
+            })
+        })
+
+        context('when a duplicate error occurs', () => {
+            it('should return status code 409 and message info about duplicate items', () => {
+                
+                const body = {
+                    username: child.username,
+                    password: child.password,
+                    institution_id: institution.id,
+                    gender: child.gender,
+                    age: child.age
+                }
+
+                return request(URI)
+                    .post('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')                    
+                    .send(body)
+                    .expect(409)
+            })
+        })
+        
+        context('when a validation error occurs because the username is not passed', () => {
+            it('should return the status code 400 and the message information about username parameter is missing or invalid', () => {
+                const body = {
+                    password: child.password,
+                    institution_id: institution.id,
+                    gender: child.gender,
+                    age: child.age                    
+                }
+
+                return request(URI)
+                    .post('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')                    
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body.message).to.eql('Required fields were not provided...')
+                        expect(err.body.description).to.eql('Child validation: username is required!')
+                    })
+            })
+        })
+
+        context('when a validation error occurs because the password is not passed', () => {
+            it('should return the status code 400 and the message information about password parameter is missing or invalid', () => {
+                const body = {
+                    username: child.username,
+                    institution_id: institution.id,
+                    gender: child.gender,
+                    age: child.age                    
+                }
+
+                return request(URI)
+                    .post('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')                    
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body.message).to.eql('Required fields were not provided...')
+                        expect(err.body.description).to.eql('Child validation: password is required!')
+                    })
+            })
+        })
+
+        context('when a validation error occurs because the institution is not passed', () => {
+            it('should return the status code 400 and the message information about institution parameter is missing or invalid', () => {
+                const body = {
+                    username: child.username,
+                    password: child.password,
+                    gender: child.gender,
+                    age: child.age                    
+                }
+
+                return request(URI)
+                    .post('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')                    
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body.message).to.eql('Required fields were not provided...')
+                        expect(err.body.description).to.eql('Child validation: institution is required!')
+                    })
+            })
+        })
+        
+        context('when a validation error occurs because the gender is not passed', () => {
+            it('should return the status code 400 and the message information about gender parameter is missing or invalid', () => {
+                const body = {
+                    username: child.username,
+                    password: child.password,
+                    institution_id: institution.id,
+                    age: child.age                    
+                }
+
+                return request(URI)
+                    .post('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')                    
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body.message).to.eql('Required fields were not provided...')
+                        expect(err.body.description).to.eql('Child validation: gender is required!')
+                    })
+            })
+        })        
+
+        context('when a validation error occurs because the age is not passed', () => {
+            it('should return the status code 400 and the message information about age parameter is missing or invalid', () => {
+                const body = {
+                    username: child.username,
+                    password: child.password,
+                    institution_id: institution.id,
+                    gender: child.gender
+                }
+
+                return request(URI)
+                    .post('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')                    
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body.message).to.eql('Required fields were not provided...')
+                        expect(err.body.description).to.eql('Child validation: age is required!')
+                    })
+            })
+        }) 
+
+        //Quando o banco estiver sendo limpo, deve retornar 400, por equanto está retornando 409, pois
+        //uma criança com username ' ' já foi criada antes, no teste de descoberta da falha.
         context('when you pass a space as a username', () => {
             
             let anotherInstitution: Institution
@@ -171,39 +296,7 @@ describe('Routes: users.children', () => {
                     .expect(400)
             })
         })
-/*
-        context('when you pass a space as a username', () => {
 
-            before(async () => {
-                try{
-                    const resultInstitution: any = await saveInstitution()
-                    anotherInstitution = new Institution().fromJSON(resultInstitution.body)
-                } catch(e) {
-                    console.log('before error', e.message)
-                }
-            })   
-
-            it('should return status code 400 and message for the child invalid username', () => {
-                
-                const anotherChild = new ChildMock()
-
-                const body = {
-                    username: ' ',
-                    password: 'mysecret123',
-                    institution_id: anotherInstitution.id,
-                    gender: anotherChild.gender,
-                    age: anotherChild.age                    
-                }
-                
-                return request(URI)
-                    .post('/users/children')
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')                    
-                    .send(body)
-                    .expect(400)
-            })
-        }) 
-*/
         context('when you pass a space as a password', () => {
             it('should return status code 400 and message for the child invalid password', () => {
                 
@@ -224,7 +317,112 @@ describe('Routes: users.children', () => {
                     .send(body)
                     .expect(400)
             })
-        })                 
+        }) 
+        
+        context('when the institution id provided was invalid', () => {
+            it('should return status code 400 and message for invalid institution id', () => {
+
+                const anotherChild = new ChildMock()
+                anotherChild.password = 'mysecret123'
+
+                const body = {
+                    username: anotherChild.username,
+                    password: child.password,
+                    institution_id: '123',
+                    gender: child.gender,
+                    age: child.age,
+                }
+
+                return request(URI)
+                    .post('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')                    
+                    .send(body)
+                    .expect(400)
+            })
+        })
+
+        context('when the institution provided does not exists', () => {
+            it('should return status code 400 and message for institution not found', () => {
+                
+                const anotherChild = new ChildMock()
+                anotherChild.password = 'mysecret123'
+
+                const body = {
+                    username: anotherChild.username,
+                    password: anotherChild.password,
+                    institution_id: '5c86a3a7476af700358fa75b',
+                    gender: anotherChild.gender,
+                    age: anotherChild.age,
+                }
+
+                return request(URI)
+                    .post('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')                    
+                    .send(body)
+                    .expect(400)
+            })
+        })   
+    })
+    
+
+    describe('GET /users/children/:child_id', () => {
+        context('when get a unique child in database', () => {
+            it('should return status code 200 and a child', () => {
+
+                return request(URI)
+                    .get(`/users/children/${child.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')  
+                    .expect(200)
+                    .then(res => {
+                        expect(res.body.id).to.eql(child.id)
+                        expect(res.body.username).to.eql(child.username)
+                        expect(res.body.gender).to.eql(child.gender)
+                        expect(res.body.age).to.eql(child.age)
+                        expect(res.body.institution).to.have.property('id')
+                        if(res.body.institution.type)
+                            expect(res.body.institution.type).to.eql(institution.type)    
+                        if(res.body.institution.name)
+                            expect(res.body.institution.name).to.eql(institution.name)
+                        if(res.body.institution.address)
+                            expect(res.body.institution.address).to.eql(institution.address)
+                        if(res.body.institution.latitude)
+                            expect(res.body.institution.latitude).to.eql(institution.latitude)
+                        if(res.body.institution.longitude)
+                            expect(res.body.institution.longitude).to.eql(institution.longitude)                        
+                    })                
+            })
+        })
+        
+        context('when to get a child deleted from the database', () => {
+            let anotherChild
+
+            before(async () => {
+                try{
+                    const resultChild: any = await saveChild(institution.id)
+                    anotherChild = new Child().fromJSON(resultChild.body)
+
+                    deleteUserChild(anotherChild.id)
+                    
+                } catch(e) {
+                    console.log('before error', e.message)
+                }
+            })
+
+            it('should return status code 404 and info message from child not found', () => {
+
+                return request(URI)
+                    .get(`/users/children/${anotherChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')  
+                    .expect(404)
+                    .then(res => {
+                        expect(res.body.message).to.eql('Child not found!')
+                    })               
+            })
+        })         
     })
 })    
 
@@ -242,51 +440,6 @@ async function saveInstitution(): Promise<Institution> {
         .set('Content-Type', 'application/json')
         .send(new InstitutionMock().toJSON())
 }
-/*
-async function saveApplication(institutionId?: string): Promise<Child> {
-    const applicationSend = new ApplicationMock()
-    if (applicationSend.institution) applicationSend.institution.id = institutionId
-
-    return request(URI)
-        .post('/users/applications')
-        .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-        .set('Content-Type', 'application/json')
-        .send(applicationSend.toJSON())
-}
-
-async function saveFamily(institutionId?: string): Promise<Child> {
-    const familySend = new FamilyMock()
-    if(familySend.institution) familySend.institution.id = institutionId
-    familySend.children = new Array<Child>(child)
-
-    return request(URI)
-        .post('/users/families')
-        .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-        .set('Content-Type', 'application/json')
-        .send(familySend.toJSON())
-}
-
-async function saveHealthProfessional(institutionId?: string): Promise<Child> {
-    const healthProfessionalSend = new ChildMock()
-    if (healthProfessionalSend.institution) healthProfessionalSend.institution.id = institutionId
-
-    return request(URI)
-        .post('/users/healthprofessionals')
-        .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-        .set('Content-Type', 'application/json')
-        .send(healthProfessionalSend.toJSON())
-}
-
-async function saveEducator(institutionId?: string): Promise<Educator> {
-    const educatorSend = new EducatorMock()
-    if(educatorSend.institution) educatorSend.institution.id = institutionId
-
-    return request(URI)
-        .post('/users/educators')
-        .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-        .set('Content-Type', 'application/json')
-        .send(educatorSend.toJSON())
-}
 
 async function saveChild(institutionId?: string): Promise<Child> {
     const childSend = new ChildMock()
@@ -298,6 +451,12 @@ async function saveChild(institutionId?: string): Promise<Child> {
         .set('Content-Type', 'application/json')
         .send(childSend.toJSON())
 }
-*/
 
+async function deleteUserChild(childId?: string): Promise<Child> {
+    return request(URI)
+        .delete(`/users/${childId}`)
+        .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+        .set('Content-Type', 'application/json')
+        .expect(204)
+}
 
