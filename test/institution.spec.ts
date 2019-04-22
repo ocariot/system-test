@@ -37,28 +37,7 @@ describe('Routes: Institution', () => {
                         expect(res.body.longitude).to.eql(institution.longitude)                        
                     })
             })
-        })
-        
-        context('when posting a new institution', () => {
-            it('should return status code 201 and the saved institution', () => {
-                
-                const institution = new InstitutionMock()
-                return request(URI)
-                    .post('/institutions')
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .send(institution.toJSON())
-                    .expect(201)
-                    .then(res =>{
-                        expect(res.body).to.have.property('id')
-                        expect(res.body.type).to.eql(institution.type)
-                        expect(res.body.name).to.eql(institution.name)
-                        expect(res.body.address).to.eql(institution.address)
-                        expect(res.body.latitude).to.eql(institution.latitude)
-                        expect(res.body.longitude).to.eql(institution.longitude)                        
-                    })
-            })
-        })        
+        })                
     })
 })
 

@@ -68,26 +68,6 @@ describe('Routes: users.children', () => {
             })
         })
 
-        context('when the user does not have permission to register an child', () => {
-            it('should return status code 403 and message info about ...', () => {
-                
-                const body = {
-                    username: child.username,
-                    password: child.password,
-                    institution_id: institution.id,
-                    gender: child.gender,
-                    age: child.age
-                }
-
-                return request(URI)
-                    .post('/users/children')
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')                    
-                    .send(body)
-                    .expect(409)
-            })
-        })
-
         context('when a duplicate error occurs', () => {
             it('should return status code 409 and message info about duplicate items', () => {
                 
@@ -237,7 +217,7 @@ describe('Routes: users.children', () => {
 
                 const anotherChild = new ChildMock()
                 const body = {
-                    username: ' ',
+                    username: '',
                     password: 'mysecret123',
                     institution_id: anotherInstitution.id,
                     gender: anotherChild.gender,
@@ -253,6 +233,28 @@ describe('Routes: users.children', () => {
             })
         }) 
 
+        context('when you pass spaces before the username', () => {
+            it('should return status code 400 and message for the child invalid username', () => {
+                
+                const anotherChild = new ChildMock()
+
+                const body = {
+                    username: ' '.concat(anotherChild.username ? anotherChild.username : ''),
+                    password: 'mysecret123',
+                    institution_id: institution.id,
+                    gender: anotherChild.gender,
+                    age: anotherChild.age                    
+                }
+
+                return request(URI)
+                    .post('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')                    
+                    .send(body)
+                    .expect(400)
+            })
+        })
+        
         context('when past a negative age for children', () => {
             it('should return status code 400 and message for the child invalid age', () => {
                 
@@ -422,7 +424,50 @@ describe('Routes: users.children', () => {
                         expect(res.body.message).to.eql('Child not found!')
                     })               
             })
-        })         
+        })
+        
+        context('when the child is not found', () => {
+            it('should return status code 404 and info message from child not found', () => {
+
+                const id = '1a11a11aa111aa1111a1a1a1'
+
+                return request(URI)
+                    .get(`/users/children/${id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')  
+                    .expect(404)
+                    .then(res => {
+                        expect(res.body.message).to.eql('Child not found!')
+                    }) 
+            })
+        })  
+
+        context('when the child_id is invalid', () => {
+            it('should return status code 400 and message info about invalid id', () => {
+
+                const id = '5cb4a12fa8dc060034e939f'
+
+                return request(URI)
+                    .get(`/users/children/${id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')  
+                    .expect(400)
+            })
+        })
+        /*
+        // Deve ser aceito quando o banco estiver sendo limpo!!!
+        context('when the child_id is empty', () => {
+            it('should return status code 400 and message info about invalid id', () => {
+
+                const id = ''
+
+                return request(URI)
+                    .get(`/users/children/${id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')  
+                    .expect(400)
+            })
+        })*/                       
     })
 })    
 
@@ -459,4 +504,6 @@ async function deleteUserChild(childId?: string): Promise<Child> {
         .set('Content-Type', 'application/json')
         .expect(204)
 }
+
+
 

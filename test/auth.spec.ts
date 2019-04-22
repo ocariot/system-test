@@ -19,7 +19,20 @@ describe('Routes: Auth', () => {
             })
         })
 
-        context('when the username or password does not exists', () => {
+        context('when the username does not exists', () => {
+            it('should return status code 401 and info message about unauthorized', () => {
+                return request(URI)
+                    .post('/auth')
+                    .send({ username: 'admi', password: 'admin123' })
+                    .set('Content-Type', 'application/json')
+                    .expect(401)
+                    .then(res => {
+                        expect(res.body.message).to.eql('Invalid username or password!')
+                    })
+            })
+        })
+
+        context('when the password does not exists', () => {
             it('should return status code 401 and info message about unauthorized', () => {
                 return request(URI)
                     .post('/auth')
