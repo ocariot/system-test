@@ -55,7 +55,6 @@ describe('Routes: users.children.sleep', () => {
         context('when posting a new Sleep with success', () => {
             it('should return status code 201 and the saved Sleep', () => {
 
-
                 return request(URI)
                     .post(`/users/children/${child.id}/sleep`)
                     .set('Content-Type', 'application/json')
@@ -89,14 +88,36 @@ describe('Routes: users.children.sleep', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(otherSleep.toJSON())
                     .expect(404)
-                    .then(res => {
-                        console.log(res.body.id)
-                    })
             })
         })        
     })
 
     describe('GET /users/children/:child_id/sleep', () => {
+
+        context('when get all sleep of a specific child of the database successfully', () => {
+            it('should return status code 200 and a list of all sleep of that specific child', () => {
+                
+                return request(URI)
+                    .get(`/users/children/${child.id}/sleep`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .send(sleep.toJSON())
+                    .expect(200)
+                    .then(res => {
+                        sleep.id = res.body[0].id
+                        expect(res.body).is.an.instanceOf(Array)
+                        expect(res.body.length).to.not.eql(0)
+                        expect(res.body[0].id).to.eql(sleep.id)
+                        expect(res.body[0].start_time).to.eql(sleep.start_time!.toISOString())
+                        expect(res.body[0].end_time).to.eql(sleep.end_time!.toISOString())
+                        expect(res.body[0].duration).to.eql(sleep.duration)
+                        expect(res.body[0]).to.have.property('pattern')
+                        expect(res.body[0].child_id).to.eql(sleep.child_id)
+
+                    })                    
+            })
+        })        
+
         context('when get all sleep of a specific child deleted of the database', () => {
             it('should return status code 404 and an info message describing that child was not found', () => {
                 
@@ -130,7 +151,7 @@ describe('Routes: users.children.sleep', () => {
             })
         })
     })
-    
+   // refazer 
     describe('PATCH /users/children/:child_id/physicalactivities/:physicalactivity_id', () => {
         context('when this sleep to belong of a specific child deleted of the database', () => {
             it('should return status code 404 and an info message describing that child was not found', () => {                  
