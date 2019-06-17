@@ -1,9 +1,9 @@
 import request from 'supertest'
 import { expect } from 'chai'
-import { AccountUtil } from '../test/utils/account.utils'
 import { Strings } from './utils/string.error.message'
 import { Institution } from '../src/account-service/model/institution'
 import { AccountDb } from '../src/account-service/database/account.db'
+import { AccountUtil } from './utils/account.utils'
 
 describe('Routes: Institution', () => {
 
@@ -35,7 +35,6 @@ describe('Routes: Institution', () => {
     let institutionId: string
 
     const con = new AccountDb()
-
 
     before(async () => {
         try {
@@ -69,7 +68,8 @@ describe('Routes: Institution', () => {
 
     after(async () => {
         try {
-            await con.dropCollections()
+            // await con.deleteInstitutions()
+            await con.removeCollections()
         } catch (err) {
             console.log('DB ERROR', err)
         }
@@ -663,7 +663,7 @@ describe('Routes: Institution', () => {
         context('when want get all institutions in database after deleting all of them', () => {
             before(async () => {
                 try {
-                    await con.dropInstitutions()
+                    await con.deleteInstitutions()
                 } catch (err) {
                     console.log('DB ERROR', err)
                 }
@@ -969,7 +969,7 @@ describe('Routes: Institution', () => {
                     })
             })
         })
-        
+
         context('when a family delete a institution', () => {
             it('should return status code 403 and info message from insufficient permissions', () => {
 
@@ -1000,7 +1000,7 @@ describe('Routes: Institution', () => {
 
         context('when the deletion was successful', () => {
             it('should return status code 204 and no content', () => {
-                
+
                 return request(URI)
                     .delete(`/institutions/${institutionSend.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))

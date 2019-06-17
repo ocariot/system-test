@@ -1,6 +1,5 @@
-import { Connection } from 'mongoose'
+import mongoose, { Connection, Mongoose } from 'mongoose'
 import { EventEmitter } from 'events'
-import mongoose, { Mongoose } from 'mongoose'
 
 /**
  * Implementation of the interface that provides connection with MongoDB.
@@ -43,7 +42,6 @@ export class AccountDb {
                 this._connection = connection
                 this.connectionStatusListener(this._connection)
                 this._eventConnection.emit('connected')
-                // console.log('Connection established with MongoDB...')
             })
             .catch((err) => {
                 this._connection = undefined
@@ -119,17 +117,21 @@ export class AccountDb {
         this._connection = undefined
     }
 
-    public dropDatabase(): Promise<boolean> {
-        if (this._connection) return this._connection.db.dropDatabase()
-        return Promise.resolve(false)
+    private _deleteCollection(name: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            if (this._connection) {
+                this._connection.db
+                    .collection(name)
+                    .deleteMany({})
+                    .then(() => resolve(true))
+                    .catch(reject)
+            } else {
+                return resolve(false)
+            }
+        })
     }
 
-    private _dropCollection(name: string): Promise<boolean> {
-        if (this._connection) return this._connection.db.dropCollection(name)
-        return Promise.resolve(false)
-    }
-
-    public dropUsers(): Promise<boolean> {
+    public deleteUsers(): Promise<boolean> {
         return new Promise(async (resolve, reject) => {
             if (this._connection) {
                 this._connection.db
@@ -142,32 +144,39 @@ export class AccountDb {
         })
     }
 
-    public dropInstitutions(): Promise<boolean> {
-        return this._dropCollection('institutions')
+    public deleteInstitutions(): Promise<boolean> {
+        return this._deleteCollection('institutions')
     }
 
-    public dropChildrenGroups(): Promise<boolean> {
-        return this._dropCollection('childrengroups')
+    public deleteChildrenGroups(): Promise<boolean> {
+        return this._deleteCollection('childrengroups')
     }
 
-    public dropIntegrationEvents(): Promise<boolean> {
-        return this._dropCollection('integrationevents')
+    public deleteIntegrationEvents(): Promise<boolean> {
+        return this._deleteCollection('integrationevents')
     }
 
-    public async dropCollections(): Promise<boolean> {
+    public async removeCollections(): Promise<boolean> {
         if (this._connection) {
             const result = await this._connection.db
-                .listCollections({ $or: [{ name: 'users' }, { name: 'institutions' }] })
+                .listCollections({
+                    $or: [
+                        { name: 'users' },
+                        { name: 'institutions' },
+                        { name: 'childrengroups' },
+                        { name: 'integrationevents' }
+                    ]
+                })
                 .toArray()
 
             let errors: Array<string> = []
             for (let c of result) {
                 try {
                     if (c.name === 'users') {
-                        await this.dropUsers()
-                        continue
+                        await this.deleteUsers()
+                    } else {
+                        await this._deleteCollection(c.name)
                     }
-                    await this._dropCollection(c.name)
                 } catch (err) {
                     errors.push(`Error in ${c.name}. ${err.message}`)
                 }

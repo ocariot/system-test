@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --opts test/config/mocha.opts test/**/*.spec.ts",
+    "test:institution": "mocha --opts test/config/mocha.opts test/institution.spec.ts",    
     "test:cov": "nyc --clean --all --reporter=html --reporter=text mocha --opts test/config/mocha.opts test/**/*.spec.ts"
   },
   "repository": {
