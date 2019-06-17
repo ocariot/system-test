@@ -1,3 +1,5 @@
+/*
+
 import request from 'supertest'
 import { expect } from 'chai'
 import { Child } from '../src/account-service/model/child'
@@ -453,21 +455,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')  
                     .expect(400)
             })
-        })
-        /*
-        // Deve ser aceito quando o banco estiver sendo limpo!!!
-        context('when the child_id is empty', () => {
-            it('should return status code 400 and message info about invalid id', () => {
-
-                const id = ''
-
-                return request(URI)
-                    .get(`/users/children/${id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')  
-                    .expect(400)
-            })
-        })*/                       
+        })                      
     })
 })    
 
@@ -505,5 +493,4 @@ async function deleteUserChild(childId?: string): Promise<Child> {
         .expect(204)
 }
 
-
-
+*/

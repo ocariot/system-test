@@ -1,3 +1,5 @@
+/*
+
 import request from 'supertest'
 import { expect } from 'chai'
 import { InstitutionMock } from './mocks/account-service/institution.mock'
@@ -219,4 +221,4 @@ async function deleteUserChild(childId?: string): Promise<Child> {
         .set('Content-Type', 'application/json')
 }
 
-
+*/

@@ -1,0 +1,174 @@
+version: "3.7"
+services:
+  # Essential Documentation: https://docs.docker.com/compose/compose-file/
+
+  mongo_acc_service:  # Container for Account Service the MongoDB
+    hostname: mongo_acc_service # Service Host Name
+    restart: always # Restart after some severe failure happens
+    image: mongo:latest # Image to be downloaded from Docker Hub, if not already cached in local repository
+    volumes: # Persistent volume and configurations to mount
+      - mongo-acc-service-data:/data/db
+    ports: 
+      - 27018:27017
+    networks:
+      - ocariot-network
+    logging: # LOG file in JSON format with the max size of 100 MB
+      driver: json-file
+      options:
+        max-size: 100m
+
+  mongo_track_service: # Container for the MongoDB
+    hostname: mongo_track_service
+    restart: always
+    image: mongo:latest
+    volumes:
+      - mongo-track-service-data:/data/db
+    ports: 
+      - 27019:27017      
+    networks:
+      - ocariot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  redis_ag: # Container for the Redis Database
+    hostname: redis_ag
+    image: redis:latest
+    restart: always
+    networks:
+      - ocariot-network
+    volumes:
+      - redis-gtw-data:/redis-master-data
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  api_gateway: # Container for OCARIoT API Gateway
+    hostname: api_gateway
+    restart: always
+    image: ocariot/api-gateway:latest # Get the latest version of the API Gateway in the OCARIoT repos
+    ports:
+      - ${AG_PORT_HTTP}:${AG_PORT_HTTP}  # HTTP port, visible externally to the host
+      - ${AG_PORT_HTTPS}:${AG_PORT_HTTPS}  # HTTPS port, visible externally to the host
+    environment: # Enviroment available for this service
+      - NODE_ENV=${NODE_ENV}
+      - PORT_HTTP=${AG_PORT_HTTP}
+      - PORT_HTTPS=${AG_PORT_HTTPS}
+      - SSL_KEY_PATH=/etc/.certs/server.key
+      - SSL_CERT_PATH=/etc/.certs/server.cert
+      - ISSUER=${ISSUER}
+      - JWT_PUBLIC_KEY_PATH=/etc/.certs/jwt.pub
+      - API_GATEWAY_SERVICE=https://api_gateway:${AG_PORT_HTTPS}
+      - ACCOUNT_SERVICE=https://account_service:3001
+      - ACTIVITY_SERVICE=https://activity_tracking_service:4001
+      - EMULATE_REDIS=false
+      - PORT_REDIS=6379
+      - HOST_REDIS=redis_ag
+    volumes:
+      - ${PWD}${SSL_KEY_PATH}:/etc/.certs/server.key
+      - ${PWD}${SSL_CERT_PATH}:/etc/.certs/server.cert
+      - ${PWD}${JWT_PUBLIC_KEY_PATH}:/etc/.certs/jwt.pub
+    depends_on:
+      - redis_ag
+    networks:
+      - ocariot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  account_service: # Container for OCARIoT Account service
+    hostname: account_service
+    restart: always
+    image: ocariot/account-service:latest # Get the latest version of the account service in the OCARIoT repos
+    environment: # Enviroment available for this service
+      - NODE_ENV=${NODE_ENV}
+      - PORT_HTTP=3000
+      - PORT_HTTPS=3001
+      - HOST_WHITELIST=${HOST_WHITELIST}
+      - SSL_KEY_PATH=/etc/.certs/server.key
+      - SSL_CERT_PATH=/etc/.certs/server.cert
+      - ISSUER=${ISSUER}
+      - JWT_PRIVATE_KEY_PATH=/etc/.certs/jwt.key
+      - JWT_PUBLIC_KEY_PATH=/etc/.certs/jwt.pub
+      - ADMIN_USERNAME=${ADMIN_USERNAME}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - RABBITMQ_HOST=rabbit_mq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=${AS_RABBITMQ_USERNAME}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - MONGODB_URI=mongodb://mongo_acc_service:27017/account-service
+      - MONGODB_URI_TEST=mongodb://mongo_acc_service:27017/account-service-test
+    volumes:
+      - ${PWD}${SSL_KEY_PATH}:/etc/.certs/server.key
+      - ${PWD}${SSL_CERT_PATH}:/etc/.certs/server.cert
+      - ${PWD}${JWT_PRIVATE_KEY_PATH}:/etc/.certs/jwt.key
+      - ${PWD}${JWT_PUBLIC_KEY_PATH}:/etc/.certs/jwt.pub
+    depends_on:
+      - mongo_acc_service
+      - rabbit_mq
+    networks:
+      - ocariot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  activity_tracking_service: # Container for OCARIoT Activity Tracking service
+    hostname: activity_tracking_service
+    restart: always
+    image: ocariot/activity-tracking:latest # Get the latest version of the tracking-service in the OCARIoT repos
+    environment: # Enviroment available for this service
+      - NODE_ENV=${NODE_ENV}
+      - PORT_HTTP=4000
+      - PORT_HTTPS=4001
+      - SSL_KEY_PATH=/etc/.certs/server.key
+      - SSL_CERT_PATH=/etc/.certs/server.cert
+      - HOST_WHITELIST=${HOST_WHITELIST}
+      - MONGODB_URI=mongodb://mongo_track_service:27017/tracking-service
+      - MONGODB_URI_TEST=mongodb://mongo_track_service:27017/tracking-service-test
+      - RABBITMQ_HOST=rabbit_mq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=${ATS_RABBITMQ_USERNAME}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+    volumes:
+      - ${PWD}${SSL_KEY_PATH}:/etc/.certs/server.key
+      - ${PWD}${SSL_CERT_PATH}:/etc/.certs/server.cert
+    depends_on:
+      - mongo_track_service
+      - rabbit_mq
+    networks:
+      - ocariot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  rabbit_mq: # Container for RabbitMQ
+    hostname: rabbit_mq
+    restart: always
+    image: "rabbitmq:3.7.7"
+    ports:
+      - ${RABBITMQ_MGMT_PORT:-15672}:15672  # AMQP Management UI
+    volumes:
+      - ./config/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./config/rabbitmq/rabbit_config.json:/etc/rabbitmq/rabbit_config.json
+    environment:
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbitmq_management load_definitions "/etc/rabbitmq/rabbit_config.json"
+    networks:
+      - ocariot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+volumes:
+  mongo-acc-service-data:
+  mongo-track-service-data:
+  redis-gtw-data:
+
+networks:
+  ocariot-network:
+    driver: bridge

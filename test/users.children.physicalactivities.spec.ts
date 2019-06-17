@@ -1,25 +1,27 @@
+/*
+
 import request from 'supertest'
 import { expect } from 'chai'
 import { InstitutionMock } from './mocks/account-service/institution.mock'
 import { Institution } from '../src/account-service/model/institution'
 import { Child } from '../src/account-service/model/child'
-//import { Educator } from '../src/account-service/model/educator'
+import { Educator } from '../src/account-service/model/educator'
 import { ChildMock } from './mocks/account-service/child.mock'
-//import { EducatorMock } from './mocks/account-service/educator.mock'
+import { EducatorMock } from './mocks/account-service/educator.mock'
 import { ActivityTypeMock, PhysicalActivityMock } from './mocks/tracking-service/physical.activity.mock'
 import { PhysicalActivity } from '../src/tracking-service/model/physical.activity';
-//import { Activity } from '../src/tracking-service/model/activity';
+import { Activity } from '../src/tracking-service/model/activity';
 
 const URI = 'https://localhost'
 
 let child: Child //deletada no teste para listar atividades da criança deletada
-//let educator: Educator
+let educator: Educator
 let physicalActivity: PhysicalActivity
-//let otherActivity: PhysicalActivity
+let otherActivity: PhysicalActivity
 let institution: Institution
 let accessTokenAdmin: string
 let accessTokenChild: string
-//let acessTokenEducator: string
+let acessTokenEducator: string
 
 describe('Routes: users.children.physicalactivities', () => {
 
@@ -37,11 +39,11 @@ describe('Routes: users.children.physicalactivities', () => {
             const resultChildAuth: any = await auth(child.username, 'child123')
             accessTokenChild = resultChildAuth.body.access_token
 
-            //const resultEducator: any = await saveEducator(institution.id)
-            //educator = new Educator().fromJSON(resultEducator.body)
+            const resultEducator: any = await saveEducator(institution.id)
+            educator = new Educator().fromJSON(resultEducator.body)
 
-            //const resultEducatorAuth: any = await auth(educator.username, 'educator123')
-            //acessTokenEducator = resultEducatorAuth.body.access_token   
+            const resultEducatorAuth: any = await auth(educator.username, 'educator123')
+            acessTokenEducator = resultEducatorAuth.body.access_token   
             
             physicalActivity = new PhysicalActivityMock(ActivityTypeMock.WALK)
             physicalActivity.child_id = child.id ? child.id : ''            
@@ -162,8 +164,8 @@ describe('Routes: users.children.physicalactivities', () => {
                     .expect(404)                    
             })
         })
-        
-        /*context('when to obtain all the physical activity of a child who belonged to a deleted institution', () => {
+        // COMENTADO 1
+        context('when to obtain all the physical activity of a child who belonged to a deleted institution', () => {
             let anotherChild:Child
             let anotherInstitution: Institution
             let anotherActivity: PhysicalActivity
@@ -197,12 +199,13 @@ describe('Routes: users.children.physicalactivities', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .expect(200)                    
             })
-        })*/        
+        }) //FIM DO COMENTADO 1        
     })     
 
     describe('PATCH /users/children/:child_id/physicalactivities/:physicalactivity_id', () => {
 
-        /*context('when this physical activity exists in the database and is updated successfully', () => {
+        //COMENTADO 2
+        context('when this physical activity exists in the database and is updated successfully', () => {
             it('should return status code 200 and the updated physical activity', () => {                  
 
                 otherActivity = new PhysicalActivityMock(ActivityTypeMock.WALK)
@@ -224,9 +227,10 @@ describe('Routes: users.children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(acessTokenEducator))                
                     .expect(404)
-        })*/
+            })
+        })
 
-        /*context('when this physical activity to belong of a specific child deleted of the database', () => {
+        context('when this physical activity to belong of a specific child deleted of the database', () => {
             it('should return status code 404 and an info message describing that child was not found', () => {                  
 
                 otherActivity = new PhysicalActivityMock(ActivityTypeMock.WALK)
@@ -249,7 +253,7 @@ describe('Routes: users.children.physicalactivities', () => {
                     .set('Authorization', 'Bearer '.concat(acessTokenEducator))                
                     .expect(404)
             })
-        })*/
+        }) //FIM DO COMENTADO 2
     })             
 })
 
@@ -285,7 +289,7 @@ async function deleteUserChild(childId?: string): Promise<Child> {
         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
         .set('Content-Type', 'application/json')
 }
-/*
+
 async function saveEducator(institutionId?: string): Promise<Educator> {
     const educatorSend = new EducatorMock()
     if(educatorSend.institution) educatorSend.institution.id = institutionId
@@ -297,7 +301,7 @@ async function saveEducator(institutionId?: string): Promise<Educator> {
         .send(educatorSend.toJSON())
 }
 
-async function savePhysicalActivitie(childId?: string){
+async function savePhysicalActivitie(childId?: string): Promise<PhysicalActivity> {
 
     return request(URI)
         .post(`/users/children/${childId}/physicalactivities`)
@@ -305,4 +309,5 @@ async function savePhysicalActivitie(childId?: string){
         .set('Authorization', 'Bearer '.concat(accessTokenChild))
         .send(new PhysicalActivityMock().toJSON())
 }
+
 */
