@@ -23,7 +23,7 @@ describe('Routes: Institution', () => {
     defaultInstitution.address = 'default address'
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
-
+    
     let anotherInstitution: Institution = new Institution()
     anotherInstitution.type = "another type"
     anotherInstitution.name = "another name"
@@ -35,6 +35,7 @@ describe('Routes: Institution', () => {
     let institutionId: string
 
     const con = new AccountDb()
+
 
     before(async () => {
         try {
@@ -68,12 +69,10 @@ describe('Routes: Institution', () => {
 
     after(async () => {
         try {
-            // await con.deleteInstitutions()
             await con.removeCollections()
         } catch (err) {
             console.log('DB ERROR', err)
         }
-
     })
 
     describe('POST /institutions', () => {
@@ -175,7 +174,7 @@ describe('Routes: Institution', () => {
             })
         })
 
-        /* TESTES - RESTRIÇÕES NOS CAMPOS (CRIAR COM ESPAÇO)
+        /* TESTES - RESTRIÇÕES NOS CAMPOS TYPE/NAME ... (CRIAR COM ESPAÇO ?)
         context('when the institution type is equal to blank space', () => {
             it('should return the status ... ?', () => {
 
@@ -237,7 +236,7 @@ describe('Routes: Institution', () => {
             })
         })
 
-        context('when the child try create a institution', () => {
+        context('when the child create a institution', () => {
             it('should return status code 403 and info message from insufficient permissions', async () => {
 
                 return request(URI)
@@ -252,7 +251,7 @@ describe('Routes: Institution', () => {
             })
         })
 
-        context('when the educator try create a institution', () => {
+        context('when the educator create a institution', () => {
             it('should return status code 403 and info message from insufficient permissions', async () => {
 
                 return request(URI)
@@ -267,7 +266,7 @@ describe('Routes: Institution', () => {
             })
         })
 
-        context('when the health professional try create a institution', () => {
+        context('when the health professional create a institution', () => {
             it('should return status code 403 and info message from insufficient permissions', async () => {
 
                 return request(URI)
@@ -282,7 +281,7 @@ describe('Routes: Institution', () => {
             })
         })
 
-        context('when the family try create a institution', () => {
+        context('when the family create a institution', () => {
             it('should return status code 403 and info message from insufficient permissions', async () => {
 
                 return request(URI)
@@ -297,7 +296,7 @@ describe('Routes: Institution', () => {
             })
         })
 
-        context('when the application try create a institution', () => {
+        context('when the application create a institution', () => {
             it('should return status code 403 and info message from insufficient permissions', async () => {
 
                 return request(URI)
@@ -588,7 +587,7 @@ describe('Routes: Institution', () => {
         })
 
         context('when a child  get a all institution in database', () => {
-            it('should return status code 403 and info message from insufficient permissions and info ', () => {
+            it('should return status code 403 and info message from insufficient permissions', () => {
 
                 return request(URI)
                     .get('/institutions')
@@ -602,7 +601,7 @@ describe('Routes: Institution', () => {
         })
 
         context('when a educator  get a all institution in database', () => {
-            it('should return status code 403 and info message from insufficient permissions and info ', () => {
+            it('should return status code 403 and info message from insufficient permissions', () => {
 
                 return request(URI)
                     .get('/institutions')
@@ -617,7 +616,7 @@ describe('Routes: Institution', () => {
         })
 
         context('when a health professional get a all institution in database', () => {
-            it('should return status code 403 and info message from insufficient permissions and info ', () => {
+            it('should return status code 403 and info message from insufficient permissions', () => {
 
                 return request(URI)
                     .get('/institutions')
@@ -632,7 +631,7 @@ describe('Routes: Institution', () => {
         })
 
         context('when a family get a all institution in database', () => {
-            it('should return status code 403 and info message from insufficient permissions and info ', () => {
+            it('should return status code 403 and info message from insufficient permissions', () => {
 
                 return request(URI)
                     .get('/institutions')
@@ -645,8 +644,8 @@ describe('Routes: Institution', () => {
             })
         })
 
-        context('when a application try get a all institution in database', () => {
-            it('should return status code 403 and info message from insufficient permissions and info ', () => {
+        context('when a application get a all institution in database', () => {
+            it('should return status code 403 and info message from insufficient permissions', () => {
 
                 return request(URI)
                     .get('/institutions')
@@ -687,7 +686,7 @@ describe('Routes: Institution', () => {
     describe('PATCH /institutions/:institution_id', () => {
         before(async () => {
             try {
-                await acc.saveTheInstitution(accessTokenAdmin, institutionWillBeUpdated)
+                await acc.saveInstitution(accessTokenAdmin, institutionWillBeUpdated)
             } catch (err) {
                 console.log('Failure on Institution test: ', err)
             }
@@ -749,7 +748,7 @@ describe('Routes: Institution', () => {
                         longitude: 0
                     }
 
-                    await acc.saveTheInstitution(accessTokenAdmin, body)
+                    await acc.saveInstitution(accessTokenAdmin, body)
 
                 } catch (err) {
                     console.log('Failure on Institution test: ', err)
@@ -900,7 +899,7 @@ describe('Routes: Institution', () => {
 
         before(async () => {
             try {
-                await acc.saveTheInstitution(accessTokenAdmin, institutionSend)
+                await acc.saveInstitution(accessTokenAdmin, institutionSend)
             } catch (err) {
                 console.log('Failure on Institution test: ', err)
             }

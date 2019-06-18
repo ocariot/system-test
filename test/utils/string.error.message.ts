@@ -21,7 +21,16 @@ export abstract class Strings {
     }
 
     public static readonly CHILD: any = {
-        ERROR_409: new ApiException(409, 'Parameter {child_id} is not in valid format!')
+        ERROR_400_USERNAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Child validation: username is required!').toJson(),
+        ERROR_400_PASSWORD_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Child validation: password is required!').toJson(),
+        ERROR_400_INSTITUTION_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Child validation: institution is required!').toJson(),
+        ERROR_400_GENDER_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Child validation: gender is required!').toJson(),
+        ERROR_400_AGE_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Child validation: age is required!').toJson(),
+        ERROR_400_NON_EXISTENT_INSTITUTION: new ApiException(400, 'The institution provided does not have a registration.', 'It is necessary that the institution be registered before trying again.').toJson(),
+        ERROR_400_INVALID_FORMAT_ID: new ApiException(400, 'Some ID provided does not have a valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
+        ERROR_403_FORBIDDEN: new ApiException(403, 'FORBIDDEN', 'Authorization failed due to insufficient permissions.').toJson(),
+        ERROR_409: new ApiException(409, 'Parameter {child_id} is not in valid format!').toJson(),
+        ERROR_409_DUPLICATE: new ApiException(409, 'Child is already registered!').toJson()
     }
 
     public static readonly PHYSICAL_ACTIVITY: any = {
