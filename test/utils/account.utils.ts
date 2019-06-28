@@ -1,12 +1,11 @@
 import request from 'supertest'
 import { Institution } from '../../src/account-service/model/institution'
-import { ChildMock } from '../mocks/account-service/child.mock'
-import { EducatorMock } from '../mocks/account-service/educator.mock'
 import { InstitutionMock } from '../mocks/account-service/institution.mock'
-import { HealthProfessionalMock } from '../mocks/account-service/ family.repository.mock'
-import { FamilyMock } from '../mocks/account-service/family.mock'
-import { Child } from 'account-service/model/child'
-import { ApplicationMock } from '../mocks/account-service/application.mock'
+import { Child } from '../../src/account-service/model/child'
+import { Family } from '../../src/account-service/model/family'
+import { Educator } from '../../src/account-service/model/educator';
+import { HealthProfessional } from '../../src/account-service/model/health.professional';
+import { Application } from '../../src/account-service/model/application';
 
 export class AccountUtil {
 
@@ -15,7 +14,7 @@ export class AccountUtil {
     public readonly INVALID_ID: String = '123'
     public readonly INVALID_GENDER: Number = 1234
     public readonly NEGATIVE_AGE: Number = -11
-
+    public readonly NON_EXISTENT_PASSWORD: string = 'non_existent_password'
 
     public async auth(username: string, password: string): Promise<any> {
 
@@ -31,149 +30,70 @@ export class AccountUtil {
             })
     }
 
-    public saveInstitution(accessToken: string, institution?: any): Promise<Institution> {
-
-        const institutionSend: Institution = new InstitutionMock()
+    public saveInstitution(accessToken: string, institution: Institution): Promise<any> {
 
         return request(this.URI)
             .post('/institutions')
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
-            .send(institution ? institution : institutionSend)
-            .then(res => {
-                if (institution) institution.id = res.body.id
-                return Promise.resolve(res.body)
-            })
-            .catch(err => {
-                return Promise.reject(err)
-            })
+            .send(institution.toJSON())
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))
     }
 
-
-    public saveChild(accessToken: string, institutionId: string, getPersonalData: boolean, child?: any): Promise<any> {
-
-        const childSend = new ChildMock()
-
-        if (childSend.institution) childSend.institution.id = institutionId
+    public saveChild(accessToken: string, child: Child): Promise<any> {
 
         return request(this.URI)
             .post('/users/children')
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
-            .send(child ? child.toJSON() : childSend.toJSON())
-            .then(res => {
-                if (getPersonalData) return Promise.resolve(child ? child : childSend)
-                return Promise.resolve(res.body)
-
-            })
-            .catch(err => {
-                return Promise.reject(err)
-            })
+            .send(child.toJSON())
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))
     }
 
-    // public saveChild(accessToken: string, institutionId: string, getPersonalData: boolean): Promise<any> {
-
-    //     const childSend = new ChildMock()
-
-    //     if (childSend.institution) childSend.institution.id = institutionId
-
-    //     return request(this.URI)
-    //         .post('/users/children')
-    //         .set('Authorization', 'Bearer '.concat(accessToken))
-    //         .set('Content-Type', 'application/json')
-    //         .send(childSend.toJSON())
-    //         .then(res => {
-    //             if (getPersonalData) return Promise.resolve(childSend)
-    //             return Promise.resolve(res.body)
-
-    //         })
-    //         .catch(err => {
-    //             return Promise.reject(err)
-    //         })
-    // }
-
-    public saveEducator(accessToken: string, institutionId: string, getPersonalData: boolean): Promise<any> {
-
-        const educatorSend = new EducatorMock()
-
-        if (educatorSend.institution) educatorSend.institution.id = institutionId
+    public saveEducator(accessToken: string, educator: Educator): Promise<any> {
 
         return request(this.URI)
             .post('/users/educators')
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
-            .send(educatorSend.toJSON())
-            .then(res => {
-                if (getPersonalData) return Promise.resolve(educatorSend)
-                return Promise.resolve(res.body)
-            })
-            .catch(err => {
-                return Promise.reject(err)
-            })
+            .send(educator.toJSON())
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))
     }
 
-    public saveHealthProfessional(accessToken: string, institutionId: string, getPersonalData: boolean): Promise<any> {
-
-        const HealthProfessioanSend = new HealthProfessionalMock()
-
-        if (HealthProfessioanSend.institution) HealthProfessioanSend.institution.id = institutionId
-
-        return request(this.URI)
-            .post('/users/healthprofessionals')
-            .set('Authorization', 'Bearer '.concat(accessToken))
-            .set('Content-Type', 'application/json')
-            .send(HealthProfessioanSend.toJSON())
-            .then(res => {
-                if (getPersonalData) return Promise.resolve(HealthProfessioanSend)
-                return Promise.resolve(res.body)
-
-            })
-            .catch(err => {
-                return Promise.reject(err)
-            })
-    }
-
-    public saveFamily(accessToken: string, institutionId: string, child: Child, getPersonalData: boolean): Promise<any> {
-
-        const familySend = new FamilyMock()
-
-        if (familySend.institution) familySend.institution.id = institutionId
-        if (familySend.children) familySend.children.push(child)
+    public saveFamily(accessToken: string, family: Family): Promise<any> {
 
         return request(this.URI)
             .post('/users/families')
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
-            .send(familySend.toJSON())
-            .then(res => {
-                if (getPersonalData) return Promise.resolve(familySend)
-                return Promise.resolve(res.body)
-
-            })
-            .catch(err => {
-                return Promise.reject(err)
-            })
+            .send(family.toJSON())
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))
     }
 
-    public saveApplication(accessToken: string, institutionId: string, getPersonalData: boolean): Promise<any> {
+    public saveHealthProfessional(accessToken: string, healthprofessional: HealthProfessional): Promise<any> {
 
-        const appSend = new ApplicationMock()
+        return request(this.URI)
+            .post('/users/healthprofessionals')
+            .set('Authorization', 'Bearer '.concat(accessToken))
+            .set('Content-Type', 'application/json')
+            .send(healthprofessional.toJSON())
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))
+    }
 
-        if (appSend.institution) appSend.institution.id = institutionId
+    public saveApplication(accessToken: string, application: Application): Promise<any> {
 
         return request(this.URI)
             .post('/users/applications')
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
-            .send(appSend.toJSON())
-            .then(res => {
-                if (getPersonalData) return Promise.resolve(appSend)
-                return Promise.resolve(res.body)
-
-            })
-            .catch(err => {
-                return Promise.reject(err)
-            })
+            .send(application.toJSON())
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))
     }
 
     public deleteUser(userId: string, accessToken: string): Promise<any> {
@@ -188,5 +108,81 @@ export class AccountUtil {
             .patch(`/users/${userId}/password`)
             .set('Authorization', 'Bearer '.concat(accessToken ? accessToken : ""))
             .set('Content-Type', 'application/json')
+    }
+
+    public async getAuths(): Promise<any> {
+        const result: any = {
+            institution: {},
+            admin: {},
+            child: {},
+            family: {},
+            educator: {},
+            health_professional: {},
+            application: {}
+        }
+        try {
+            const token_admin: string = await this.auth(
+                process.env.ADMIN_USERNAME ? process.env.ADMIN_USERNAME : 'admin',
+                process.env.ADMIN_PASSWORD ? process.env.ADMIN_PASSWORD : 'admin123')
+
+            result.admin.access_token = token_admin
+            result.institution = await this.saveInstitution(token_admin, new InstitutionMock())
+            const institution = new Institution().fromJSON(result.institution)
+
+            const child = new Child()
+            child.username = 'Child01'
+            child.age = 9
+            child.institution = institution
+            child.gender = 'male'
+            child.password = 'child123'
+            result.child = await this.saveChild(token_admin, child)
+
+            const educator = new Educator()
+            educator.username = 'Educator01'
+            educator.password = 'educator123'
+            educator.institution = institution
+            result.educator = await this.saveEducator(token_admin, educator)
+
+            const healthprofessional = new HealthProfessional()
+            healthprofessional.username = 'HealthProfessional01'
+            healthprofessional.password = 'healthprofessional123'
+            healthprofessional.institution = institution
+            result.health_professional = await this.saveHealthProfessional(
+                token_admin, healthprofessional)
+
+            const application = new Application()
+            application.username = 'App01'
+            application.password = 'app123'
+            application.application_name = 'ApplicationName'
+            application.institution = institution
+            result.application = await this.saveApplication(token_admin, application)
+
+            const children: Array<Child> = new Array()
+            children.push(result.child)
+
+            const family = new Family()
+            family.username = 'Family01'
+            family.password = 'family123'
+            family.children = children
+            family.institution = institution
+            result.family = await this.saveFamily(token_admin, family)
+
+            result.child.access_token = await this.auth(result.child.username, child.password)
+
+            result.educator.access_token = await this.auth(result.educator.username, educator.password)
+
+            result.health_professional.access_token = await this.auth(
+                result.health_professional.username, healthprofessional.password)
+
+            result.application.access_token = await this.auth(
+                result.application.username, application.password)
+
+            result.family.access_token = await this.auth(result.family.username, family.password)
+
+            return Promise.resolve(result)
+        } catch (err) {
+            console.log('getAuths() - ERROR', err)
+            return Promise.reject(err)
+        }
     }
 }

@@ -14,7 +14,7 @@ export class FamilyMock extends Family {
         super.username = 'family '.concat(this.generateObjectId())
         super.password = 'family123'
         super.institution = this.generateInstitution()
-        // super.children = [new ChildMock(), new ChildMock()]
+        // super.children = []
         super.children = []
 
     }

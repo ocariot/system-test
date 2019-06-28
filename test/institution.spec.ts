@@ -4,6 +4,7 @@ import { Strings } from './utils/string.error.message'
 import { Institution } from '../src/account-service/model/institution'
 import { AccountDb } from '../src/account-service/database/account.db'
 import { AccountUtil } from './utils/account.utils'
+import { Child } from '../src/account-service/model/child'
 
 describe('Routes: Institution', () => {
 
@@ -17,50 +18,44 @@ describe('Routes: Institution', () => {
     let accessTokenFamily: string
     let accessTokenApplication: string
 
-    let defaultInstitution: Institution = new Institution()
-    defaultInstitution.type = 'default type'
-    defaultInstitution.name = 'default name'
-    defaultInstitution.address = 'default address'
+    const defaultInstitution: Institution = new Institution()
+    defaultInstitution.type = 'Default type'
+    defaultInstitution.name = 'Default name'
+    defaultInstitution.address = 'Default address'
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
-    
-    let anotherInstitution: Institution = new Institution()
+
+    const anotherInstitution: Institution = new Institution()
     anotherInstitution.type = "another type"
     anotherInstitution.name = "another name"
 
-    let institutionWillBeUpdated: Institution = new Institution
+    const institutionWillBeUpdated: Institution = new Institution
     institutionWillBeUpdated.type = 'not upated type',
         institutionWillBeUpdated.name = 'not updated name'
 
-    let institutionId: string
+    const defaultChild: Child = new Child()
+    defaultChild.username = 'default username'
+    defaultChild.password = 'default password'
+    defaultChild.institution = new Institution()
+    defaultChild.gender = 'male'
+    defaultChild.age = 10
 
     const con = new AccountDb()
-
 
     before(async () => {
         try {
             await con.connect(0, 1000)
 
-            accessTokenAdmin = await acc.auth('admin', 'admin123')
-            const institutionSend = await acc.saveInstitution(accessTokenAdmin)
-            institutionId = institutionSend.id ? institutionSend.id : ''
+            const tokens = await acc.getAuths()
 
-            const childSend = await acc.saveChild(accessTokenAdmin, institutionId, true)
-            accessTokenChild = await acc.auth(childSend.username, childSend.password)
+            accessTokenAdmin = tokens.admin.access_token
+            accessTokenChild = tokens.child.access_token
+            accessTokenEducator = tokens.educator.access_token
+            accessTokenHealthProfessional = tokens.health_professional.access_token
+            accessTokenFamily = tokens.family.access_token
+            accessTokenApplication = tokens.application.access_token
 
-            const anotherChild = await acc.saveChild(accessTokenAdmin, institutionId, false)
-
-            const educatorSend = await acc.saveEducator(accessTokenAdmin, institutionId, true)
-            accessTokenEducator = await acc.auth(educatorSend.username, educatorSend.password)
-
-            const healthProfessionalSend = await acc.saveHealthProfessional(accessTokenAdmin, institutionId, true)
-            accessTokenHealthProfessional = await acc.auth(healthProfessionalSend.username, healthProfessionalSend.password)
-
-            const familySend = await acc.saveFamily(accessTokenAdmin, institutionId, anotherChild, true)
-            accessTokenFamily = await acc.auth(familySend.username, familySend.password)
-
-            const applicationSend = await acc.saveApplication(accessTokenAdmin, institutionId, true)
-            accessTokenApplication = await acc.auth(applicationSend.username, applicationSend.password)
+            await con.removeCollections()
 
         } catch (e) {
             console.log('Before Error', e.message)
@@ -78,7 +73,6 @@ describe('Routes: Institution', () => {
     describe('POST /institutions', () => {
         context('when posting a new institution', async () => {
             it('should return status code 201 and the saved institution', async () => {
-
                 return request(URI)
                     .post('/institutions')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
@@ -231,7 +225,7 @@ describe('Routes: Institution', () => {
                     .send(defaultInstitution)
                     .expect(401)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_401_UNAUTHORIZED)
+                        expect(err.body).to.eql(Strings.AUTH.ERROR_401_UNAUTHORIZED)
                     })
             })
         })
@@ -366,7 +360,7 @@ describe('Routes: Institution', () => {
         })
 
         context('when the institution is not found', () => {
-            it('should return status code 404 and info message from invalid ID format', () => {
+            it('should return status code 404 and info message from institution not found', () => {
 
                 return request(URI)
                     .get(`/institutions/${acc.NON_EXISTENT_ID}`)
@@ -478,7 +472,7 @@ describe('Routes: Institution', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(3)
+                        expect(res.body.length).is.eql(2)
                     })
             })
         })
@@ -495,7 +489,7 @@ describe('Routes: Institution', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(3)
+                        expect(res.body.length).is.eql(2)
                         expect(res.body[0].name).to.eql(anotherInstitution.name)
                         expect(res.body[1].name).to.eql(defaultInstitution.name)
                     })
@@ -514,9 +508,9 @@ describe('Routes: Institution', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(3)
-                        expect(res.body[1].name).to.eql(defaultInstitution.name)
-                        expect(res.body[2].name).to.eql(anotherInstitution.name)
+                        expect(res.body.length).is.eql(2)
+                        expect(res.body[0].name).to.eql(defaultInstitution.name)
+                        expect(res.body[1].name).to.eql(anotherInstitution.name)
                     })
             })
         })
@@ -533,7 +527,7 @@ describe('Routes: Institution', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(3)
+                        expect(res.body.length).is.eql(2)
                         expect(res.body[0]).to.have.property('id')
                         expect(res.body[0]).to.have.property('name')
                         expect(res.body[0]).to.not.have.property('type')
@@ -557,7 +551,7 @@ describe('Routes: Institution', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(3)
+                        expect(res.body.length).is.eql(2)
                         expect(res.body[0]).to.have.property('id')
                         expect(res.body[0]).to.have.property('name')
                         expect(res.body[0]).to.have.property('type')
@@ -610,7 +604,7 @@ describe('Routes: Institution', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).to.eql(3)
+                        expect(res.body.length).to.eql(2)
                     })
             })
         })
@@ -625,7 +619,7 @@ describe('Routes: Institution', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).to.eql(3)
+                        expect(res.body.length).to.eql(2)
                     })
             })
         })
@@ -654,7 +648,7 @@ describe('Routes: Institution', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).to.eql(3)
+                        expect(res.body.length).to.eql(2)
                     })
             })
         })
@@ -686,7 +680,8 @@ describe('Routes: Institution', () => {
     describe('PATCH /institutions/:institution_id', () => {
         before(async () => {
             try {
-                await acc.saveInstitution(accessTokenAdmin, institutionWillBeUpdated)
+                const result = await acc.saveInstitution(accessTokenAdmin, institutionWillBeUpdated)
+                institutionWillBeUpdated.id = result.id
             } catch (err) {
                 console.log('Failure on Institution test: ', err)
             }
@@ -739,17 +734,15 @@ describe('Routes: Institution', () => {
 
         context('when a duplication error occurs', () => {
             before(async () => {
+                const body: Institution = new Institution()
+                body.type = 'Any type',
+                    body.name = 'Other name',
+                    body.address = 'Any address',
+                    body.latitude = 0,
+                    body.longitude = 0
+
                 try {
-                    const body = {
-                        type: 'Any type',
-                        name: 'Other name',
-                        address: 'Any address',
-                        latitude: 0,
-                        longitude: 0
-                    }
-
                     await acc.saveInstitution(accessTokenAdmin, body)
-
                 } catch (err) {
                     console.log('Failure on Institution test: ', err)
                 }
@@ -899,17 +892,26 @@ describe('Routes: Institution', () => {
 
         before(async () => {
             try {
-                await acc.saveInstitution(accessTokenAdmin, institutionSend)
+                const result = await acc.saveInstitution(accessTokenAdmin, institutionSend)
+                institutionSend.id = result.id
             } catch (err) {
                 console.log('Failure on Institution test: ', err)
             }
         })
 
         context('when the institution was associated with an user', () => {
+
+            const child = new Child()
+            child.username = 'child03'
+            child.password = 'child123'
+            child.institution = institutionWillBeUpdated
+            child.gender = 'male'
+            child.age = 10
+
             before(async () => {
                 try {
                     if (institutionWillBeUpdated.id)
-                        await acc.saveChild(accessTokenAdmin, institutionWillBeUpdated.id, false)
+                        await acc.saveChild(accessTokenAdmin, child)
                 } catch (err) {
                     console.log('Failure on Institution test: ', err)
                 }
