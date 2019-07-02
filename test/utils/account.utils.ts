@@ -15,6 +15,7 @@ export class AccountUtil {
     public readonly INVALID_GENDER: Number = 1234
     public readonly NEGATIVE_AGE: Number = -11
     public readonly NON_EXISTENT_PASSWORD: string = 'non_existent_password'
+    public readonly ADMIN_ID: string = '5d07dc2cdd61ed00356c5c3b'
 
     public async auth(username: string, password: string): Promise<any> {
 
@@ -96,9 +97,28 @@ export class AccountUtil {
             .catch(err => Promise.reject(err))
     }
 
-    public deleteUser(userId: string, accessToken: string): Promise<any> {
+    public saveChildrenGroupsForEducator(accessToken: string, educator: Educator, children_group: any): Promise<any> {
+
         return request(this.URI)
-            .delete(`/users/${userId}`)
+            .post(`/users/educators/${educator.id}/children/groups`)
+            .set('Authorization', 'Bearer '.concat(accessToken))
+            .set('Content-Type', 'application/json')
+            .send(children_group)
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))            
+    }
+
+    public deleteChildrenGroupFromEducator(accessToken, educator: Educator, children_group: any): Promise<any> {
+        
+        return request(this.URI)
+            .delete(`/users/educators/${educator.id}/children/groups/${children_group.id}`)
+            .set('Authorization', 'Bearer '.concat(accessToken))
+            .set('Content-Type', 'application/json')
+    }
+
+    public deleteUser(user: any, accessToken: string): Promise<any> {
+        return request(this.URI)
+            .delete(`/users/${user.id}`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
     }

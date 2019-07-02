@@ -373,7 +373,7 @@ describe('Routes: users.children', () => {
                     .send(body)
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -396,7 +396,7 @@ describe('Routes: users.children', () => {
                     .send(body)
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -419,7 +419,7 @@ describe('Routes: users.children', () => {
                     .send(body)
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -442,7 +442,7 @@ describe('Routes: users.children', () => {
                     .send(body)
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -465,7 +465,7 @@ describe('Routes: users.children', () => {
                     .send(body)
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -553,7 +553,7 @@ describe('Routes: users.children', () => {
             })
         })
 
-        context('when a child gets their personal data from database', () => {
+        context('when the child gets their personal data from database', () => {
 
             let childToken: string
             before(async () => {
@@ -599,7 +599,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -613,7 +613,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -627,7 +627,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -641,7 +641,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -655,7 +655,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -793,8 +793,8 @@ describe('Routes: users.children', () => {
                         expect(res.body[1]).to.have.property('id')
                         expect(res.body[1]).to.have.property('username')
                         expect(res.body[1]).to.have.property('institution')
-                        expect(res.body[1]).to.not.have.property('gender')
-                        expect(res.body[1]).to.not.have.property('age')
+                        expect(res.body[1]).to.have.property('gender')
+                        expect(res.body[1]).to.have.property('age')
                         expect(res.body[1].username).to.eql(defaultChild.username)
                         expect(res.body[1].institution).to.eql(defaultChild.institution)
                         expect(res.body[1].gender).to.eql(defaultChild.gender)
@@ -875,7 +875,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -889,7 +889,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -903,7 +903,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -917,7 +917,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -931,7 +931,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -1139,7 +1139,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -1154,7 +1154,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -1169,7 +1169,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -1184,7 +1184,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -1199,7 +1199,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -1214,7 +1214,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -1312,6 +1312,21 @@ describe('Routes: users.children', () => {
                 })
             })
 
+            context('when the child update the admin password', () => {
+                it('should return status code 403 and info message from insufficient permissions', () => {
+
+                    return request(URI)
+                        .patch(`/users/${acc.ADMIN_ID}/password`)
+                        .send({ old_password: 'admin123', new_password: 'admin123' })
+                        .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                        .set('Content-Type', 'application/json')
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })            
+
             context('when the child update your password', () => {
                 it('should return status code 403 and info message from insufficient permissions', () => {
 
@@ -1322,7 +1337,7 @@ describe('Routes: users.children', () => {
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
-                            expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
                 })
             })
@@ -1337,7 +1352,7 @@ describe('Routes: users.children', () => {
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
-                            expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
                 })
             })
@@ -1352,7 +1367,7 @@ describe('Routes: users.children', () => {
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
-                            expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
                 })
             })
@@ -1367,7 +1382,7 @@ describe('Routes: users.children', () => {
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
-                            expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
                 })
             })
@@ -1382,7 +1397,7 @@ describe('Routes: users.children', () => {
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
-                            expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
                 })
             })
@@ -1397,7 +1412,7 @@ describe('Routes: users.children', () => {
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
-                            expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
                 })
             })
@@ -1472,7 +1487,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -1486,7 +1501,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -1500,7 +1515,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -1514,7 +1529,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -1528,7 +1543,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -1542,7 +1557,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })

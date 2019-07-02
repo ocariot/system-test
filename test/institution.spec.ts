@@ -240,7 +240,7 @@ describe('Routes: Institution', () => {
                     .send(defaultInstitution)
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -255,7 +255,7 @@ describe('Routes: Institution', () => {
                     .send(defaultInstitution)
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -270,7 +270,7 @@ describe('Routes: Institution', () => {
                     .send(defaultInstitution)
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -285,7 +285,7 @@ describe('Routes: Institution', () => {
                     .send(defaultInstitution)
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -300,7 +300,7 @@ describe('Routes: Institution', () => {
                     .send(defaultInstitution)
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -589,7 +589,7 @@ describe('Routes: Institution', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -633,7 +633,7 @@ describe('Routes: Institution', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -802,7 +802,7 @@ describe('Routes: Institution', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -861,7 +861,7 @@ describe('Routes: Institution', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -876,7 +876,7 @@ describe('Routes: Institution', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -938,7 +938,7 @@ describe('Routes: Institution', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -952,7 +952,7 @@ describe('Routes: Institution', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -966,7 +966,7 @@ describe('Routes: Institution', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -980,7 +980,7 @@ describe('Routes: Institution', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -994,7 +994,7 @@ describe('Routes: Institution', () => {
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_403_FORBIDDEN)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
