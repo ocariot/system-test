@@ -51,7 +51,9 @@ export abstract class Strings {
         ERROR_400_NAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Children Group validation: name is required!').toJson(),
         ERROR_400_CHILDREN_IDS_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Children Group validation: Collection with children IDs is required!').toJson(),
         ERROR_400_CHILDREN_NOT_REGISTERED: new ApiException(400, 'It is necessary for children to be registered before proceeding.', 'The following IDs were verified without registration:').toJson(),
-        ERROR_400_INVALID_CHILDREN_IDS: new ApiException(400, 'Required fields were not provided...', 'Children Group validation: Collection with children IDs (ID can not be empty) is required!').toJson()
+        ERROR_400_INVALID_CHILDREN_IDS: new ApiException(400, 'Required fields were not provided...', 'Children Group validation: Collection with children IDs (ID can not be empty) is required!').toJson(),
+        ERROR_404_CHILDREN_GROUP_NOT_FOUND: new ApiException(404, 'Children Group not found!', 'Children Group not found or already removed. A new operation for the same resource is not required.').toJson(),
+        ERROR_409_DUPLICATE_CHILDREN_GROUPS: new ApiException(409, 'A registration with the same unique data already exists!').toJson()
     }
 
     public static readonly PHYSICAL_ACTIVITY: any = {

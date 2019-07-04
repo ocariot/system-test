@@ -53,6 +53,27 @@ export class AccountUtil {
             .catch(err => Promise.reject(err))
     }
 
+    public updateChild(accessToken: string, child: Child, body: any): Promise<any> {
+
+        return request(this.URI)
+            .patch(`/users/children/${child.id}`)
+            .send(body)
+            .set('Authorization', 'Bearer '.concat(accessToken))
+            .set('Content-Type', 'application/json')
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))
+    }
+
+    // public deleteChild(accessToken: string, child: Child): Promise<any> {
+
+    //     return request(this.URI)
+    //         .delete(`/users/${child.id}`)
+    //         .set('Authorization', 'Bearer '.concat(accessToken))
+    //         .set('Content-Type', 'application/json')
+    //         .then(res => Promise.resolve(res.body))
+    //         .catch(err => Promise.reject(err))
+    // }
+
     public saveEducator(accessToken: string, educator: Educator): Promise<any> {
 
         return request(this.URI)
@@ -63,6 +84,17 @@ export class AccountUtil {
             .then(res => Promise.resolve(res.body))
             .catch(err => Promise.reject(err))
     }
+
+    // public deleteEducator(accessToken: string, educator: Educator): Promise<any> {
+
+    //     return request(this.URI)
+    //         .delete(`/users/${educator.id}`)
+    //         .set('Authorization', 'Bearer '.concat(accessToken))
+    //         .set('Content-Type', 'application/json')
+    //         .then(res => Promise.resolve(res.body))
+    //         .catch(err => Promise.reject(err))
+    // }
+
 
     public saveFamily(accessToken: string, family: Family): Promise<any> {
 
@@ -105,29 +137,35 @@ export class AccountUtil {
             .set('Content-Type', 'application/json')
             .send(children_group)
             .then(res => Promise.resolve(res.body))
-            .catch(err => Promise.reject(err))            
+            .catch(err => Promise.reject(err))
     }
 
     public deleteChildrenGroupFromEducator(accessToken, educator: Educator, children_group: any): Promise<any> {
-        
+
         return request(this.URI)
             .delete(`/users/educators/${educator.id}/children/groups/${children_group.id}`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))            
     }
 
-    public deleteUser(user: any, accessToken: string): Promise<any> {
+    public deleteUser(accessToken: string, user: any): Promise<any> {
         return request(this.URI)
             .delete(`/users/${user.id}`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
-    }
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))
+    }    
 
     public changeUserPass(userId: string, accessToken?: string): Promise<any> {
         return request(this.URI)
             .patch(`/users/${userId}/password`)
             .set('Authorization', 'Bearer '.concat(accessToken ? accessToken : ""))
             .set('Content-Type', 'application/json')
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))            
     }
 
     public async getAuths(): Promise<any> {
