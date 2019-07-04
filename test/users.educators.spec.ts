@@ -5,8 +5,8 @@ import { AccountUtil } from './utils/account.utils'
 import { AccountDb } from '../src/account-service/database/account.db'
 import { Educator } from '../src/account-service/model/educator'
 import { Strings } from './utils/string.error.message'
-import { Child } from '../src/account-service/model/child';
-import { ChildrenGroup } from '../src/account-service/model/children.group';
+import { Child } from '../src/account-service/model/child'
+import { ChildrenGroup } from '../src/account-service/model/children.group'
 
 describe('Routes: users.educators', () => {
 
@@ -238,7 +238,7 @@ describe('Routes: users.educators', () => {
                         .send(body)
                         .expect(400)
                         .then(err => {
-                            expect(err.body).to.eql(Strings.EDUCATOR.ERROR_400_INSTITUTION_NOT_REGISTERED)
+                            expect(err.body).to.eql(Strings.INSTITUTION.ERROR_400_INSTITUTION_NOT_REGISTERED)
                         })
                 })
             })
@@ -258,7 +258,7 @@ describe('Routes: users.educators', () => {
                         .send(body)
                         .expect(400)
                         .then(err => {
-                            expect(err.body).to.eql(Strings.EDUCATOR.ERROR_400_INVALID_FORMAT_ID)
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
                         })
                 })
             })

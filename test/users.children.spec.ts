@@ -281,7 +281,7 @@ describe('Routes: users.children', () => {
                     .send(body)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_400_NON_EXISTENT_INSTITUTION)
+                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_400_INSTITUTION_NOT_REGISTERED)
                     })
             })
         })
@@ -304,7 +304,7 @@ describe('Routes: users.children', () => {
                     .send(body)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
         })
@@ -548,7 +548,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
         })
@@ -1084,7 +1084,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_400_INSTITUTION_NOT_REGISTERED)
+                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_400_INSTITUTION_NOT_REGISTERED)
                     })
             })
         })
@@ -1099,7 +1099,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
         })
@@ -1247,7 +1247,7 @@ describe('Routes: users.children', () => {
                         .set('Content-Type', 'application/json')
                         .expect(400)
                         .then(err => {
-                            expect(err.body).to.eql(Strings.CHILD.ERROR_400_PASSWORD_NOT_MATCH)
+                            expect(err.body).to.eql(Strings.USER.ERROR_400_PASSWORD_NOT_MATCH)
                         })
                 })
             })
@@ -1262,7 +1262,7 @@ describe('Routes: users.children', () => {
                         .set('Content-Type', 'application/json')
                         .expect(400)
                         .then(err => {
-                            expect(err.body).to.eql(Strings.CHILD.ERROR_400_OLD_PASSWORD_NOT_PROVIDED)
+                            expect(err.body).to.eql(Strings.USER.ERROR_400_OLD_PASSWORD_NOT_PROVIDED)
                         })
                 })
             })
@@ -1277,7 +1277,7 @@ describe('Routes: users.children', () => {
                         .set('Content-Type', 'application/json')
                         .expect(400)
                         .then(err => {
-                            expect(err.body).to.eql(Strings.CHILD.ERROR_400_NEW_PASSWORD_NOT_PROVIDED)
+                            expect(err.body).to.eql(Strings.USER.ERROR_400_NEW_PASSWORD_NOT_PROVIDED)
                         })
                 })
             })
@@ -1292,7 +1292,7 @@ describe('Routes: users.children', () => {
                         .set('Content-Type', 'application/json')
                         .expect(400)
                         .then(err => {
-                            expect(err.body).to.eql(Strings.CHILD.ERROR_400_INVALID_FORMAT_ID)
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
                         })
                 })
             })
@@ -1473,7 +1473,7 @@ describe('Routes: users.children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.CHILD.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
         })
