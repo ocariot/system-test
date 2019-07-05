@@ -97,7 +97,7 @@ describe('Routes: users.educators', () => {
             console.log('DB ERROR', err)
         }
     })
-    //
+    
     describe('POST /users/educators', () => {
         context('when posting a new educator user', () => {
             it('should return status code 201 and the saved educator', () => {

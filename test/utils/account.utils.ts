@@ -3,9 +3,9 @@ import { Institution } from '../../src/account-service/model/institution'
 import { InstitutionMock } from '../mocks/account-service/institution.mock'
 import { Child } from '../../src/account-service/model/child'
 import { Family } from '../../src/account-service/model/family'
-import { Educator } from '../../src/account-service/model/educator';
-import { HealthProfessional } from '../../src/account-service/model/health.professional';
-import { Application } from '../../src/account-service/model/application';
+import { Educator } from '../../src/account-service/model/educator'
+import { HealthProfessional } from '../../src/account-service/model/health.professional'
+import { Application } from '../../src/account-service/model/application'
 
 export class AccountUtil {
 
@@ -64,16 +64,6 @@ export class AccountUtil {
             .catch(err => Promise.reject(err))
     }
 
-    // public deleteChild(accessToken: string, child: Child): Promise<any> {
-
-    //     return request(this.URI)
-    //         .delete(`/users/${child.id}`)
-    //         .set('Authorization', 'Bearer '.concat(accessToken))
-    //         .set('Content-Type', 'application/json')
-    //         .then(res => Promise.resolve(res.body))
-    //         .catch(err => Promise.reject(err))
-    // }
-
     public saveEducator(accessToken: string, educator: Educator): Promise<any> {
 
         return request(this.URI)
@@ -84,17 +74,6 @@ export class AccountUtil {
             .then(res => Promise.resolve(res.body))
             .catch(err => Promise.reject(err))
     }
-
-    // public deleteEducator(accessToken: string, educator: Educator): Promise<any> {
-
-    //     return request(this.URI)
-    //         .delete(`/users/${educator.id}`)
-    //         .set('Authorization', 'Bearer '.concat(accessToken))
-    //         .set('Content-Type', 'application/json')
-    //         .then(res => Promise.resolve(res.body))
-    //         .catch(err => Promise.reject(err))
-    // }
-
 
     public saveFamily(accessToken: string, family: Family): Promise<any> {
 
@@ -147,7 +126,7 @@ export class AccountUtil {
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .then(res => Promise.resolve(res.body))
-            .catch(err => Promise.reject(err))            
+            .catch(err => Promise.reject(err))
     }
 
     public deleteUser(accessToken: string, user: any): Promise<any> {
@@ -157,7 +136,7 @@ export class AccountUtil {
             .set('Content-Type', 'application/json')
             .then(res => Promise.resolve(res.body))
             .catch(err => Promise.reject(err))
-    }    
+    }
 
     public changeUserPass(userId: string, accessToken?: string): Promise<any> {
         return request(this.URI)
@@ -165,7 +144,7 @@ export class AccountUtil {
             .set('Authorization', 'Bearer '.concat(accessToken ? accessToken : ""))
             .set('Content-Type', 'application/json')
             .then(res => Promise.resolve(res.body))
-            .catch(err => Promise.reject(err))            
+            .catch(err => Promise.reject(err))
     }
 
     public async getAuths(): Promise<any> {
@@ -182,7 +161,7 @@ export class AccountUtil {
             const token_admin: string = await this.auth(
                 process.env.ADMIN_USERNAME ? process.env.ADMIN_USERNAME : 'admin',
                 process.env.ADMIN_PASSWORD ? process.env.ADMIN_PASSWORD : 'admin123')
-
+                
             result.admin.access_token = token_admin
             result.institution = await this.saveInstitution(token_admin, new InstitutionMock())
             const institution = new Institution().fromJSON(result.institution)
@@ -223,6 +202,7 @@ export class AccountUtil {
             family.password = 'family123'
             family.children = children
             family.institution = institution
+
             result.family = await this.saveFamily(token_admin, family)
 
             result.child.access_token = await this.auth(result.child.username, child.password)

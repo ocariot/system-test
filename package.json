@@ -6,6 +6,7 @@
   "scripts": {
     "test": "mocha --opts test/config/mocha.opts test/**/*.spec.ts",
     "test:auth": "mocha --opts test/config/mocha.opts test/auth.spec.ts",
+    "test:users": "mocha --opts test/config/mocha.opts test/users.spec.ts",
     "test:institution": "mocha --opts test/config/mocha.opts test/institution.spec.ts",
     "test:children": "mocha --opts test/config/mocha.opts test/users.children.spec.ts",
     "test:educators": "mocha --opts test/config/mocha.opts test/users.educators.spec.ts",

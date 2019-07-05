@@ -124,49 +124,71 @@ describe('Routes: Institution', () => {
             })
         })
 
-        context('when a validation error occurs, because type was not informed', () => {
-            it('should return status code 400 and info message from invalid or missing parameters', async () => {
+        describe('when a validation error occurs', () => {
 
-                const body = {
-                    name: 'Name Example',
-                    address: '221B Baker Street, St.',
-                    latitude: 0,
-                    longitude: 0
-                }
+            context('type was not informed', () => {
+                it('should return status code 400 and info message from invalid or missing parameters', async () => {
 
-                return request(URI)
-                    .post('/institutions')
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .send(body)
-                    .expect(400)
-                    .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_400_TYPE)
-                    })
+                    const body = {
+                        name: 'Name Example',
+                        address: '221B Baker Street, St.',
+                        latitude: 0,
+                        longitude: 0
+                    }
+
+                    return request(URI)
+                        .post('/institutions')
+                        .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                        .set('Content-Type', 'application/json')
+                        .send(body)
+                        .expect(400)
+                        .then(err => {
+                            expect(err.body).to.eql(Strings.INSTITUTION.ERROR_400_TYPE)
+                        })
+                })
             })
-        })
+            context('name was not informed', () => {
+                it('should return status code 400 and info message from invalid or missing parameters', async () => {
 
-        context('when a validation error occurs, because name was not informed', () => {
-            it('should return status code 400 and info message from invalid or missing parameters', async () => {
+                    const body = {
+                        type: 'Any Type',
+                        address: '221B Baker Street, St.',
+                        latitude: 0,
+                        longitude: 0
+                    }
 
-                const body = {
-                    type: 'Any Type',
-                    address: '221B Baker Street, St.',
-                    latitude: 0,
-                    longitude: 0
-                }
-
-                return request(URI)
-                    .post('/institutions')
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .send(body)
-                    .expect(400)
-                    .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_400_NAME)
-                    })
+                    return request(URI)
+                        .post('/institutions')
+                        .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                        .set('Content-Type', 'application/json')
+                        .send(body)
+                        .expect(400)
+                        .then(err => {
+                            expect(err.body).to.eql(Strings.INSTITUTION.ERROR_400_NAME)
+                        })
+                })
             })
-        })
+            context('institution latitude is a text', () => {
+                it('should return status code 400 and info message from invalid or missing parameters', () => {
+
+                    const body = {
+                        type: defaultInstitution.type,
+                        name: 'Latitude like a text',
+                        latitude: 'TEXT'
+                    }
+
+                    return request(URI)
+                        .post('/institutions')
+                        .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                        .set('Content-Type', 'application/json')
+                        .send(body)
+                        .expect(400)
+                        .then(err => {
+                            expect(err.body).to.eql(Strings.INSTITUTION.ERROR_400_FAILED_CAST_LATITUDE)
+                        })
+                })
+            })
+        }) // validation error occurs
 
         /* TESTES - RESTRIÇÕES NOS CAMPOS TYPE/NAME ... (CRIAR COM ESPAÇO ?)
         context('when the institution type is equal to blank space', () => {
@@ -194,26 +216,83 @@ describe('Routes: Institution', () => {
         })
         */
 
-        context('when a validation error occurs, because the institution latitude is a text', () => {
-            it('should return status code 400 and info message from invalid or missing parameters', () => {
+        describe('when the user does not have permission', () => {
 
-                const body = {
-                    type: defaultInstitution.type,
-                    name: 'Latitude like a text',
-                    latitude: 'TEXT'
-                }
+            context('when the child create a institution', () => {
+                it('should return status code 403 and info message from insufficient permissions', async () => {
 
-                return request(URI)
-                    .post('/institutions')
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .send(body)
-                    .expect(400)
-                    .then(err => {
-                        expect(err.body).to.eql(Strings.INSTITUTION.ERROR_400_FAILED_CAST_LATITUDE)
-                    })
+                    return request(URI)
+                        .post('/institutions')
+                        .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                        .set('Content-Type', 'application/json')
+                        .send(defaultInstitution)
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
             })
-        })
+
+            context('when the educator create a institution', () => {
+                it('should return status code 403 and info message from insufficient permissions', async () => {
+
+                    return request(URI)
+                        .post('/institutions')
+                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                        .set('Content-Type', 'application/json')
+                        .send(defaultInstitution)
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })
+
+            context('when the health professional create a institution', () => {
+                it('should return status code 403 and info message from insufficient permissions', async () => {
+
+                    return request(URI)
+                        .post('/institutions')
+                        .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                        .set('Content-Type', 'application/json')
+                        .send(defaultInstitution)
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })
+
+            context('when the family create a institution', () => {
+                it('should return status code 403 and info message from insufficient permissions', async () => {
+
+                    return request(URI)
+                        .post('/institutions')
+                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                        .set('Content-Type', 'application/json')
+                        .send(defaultInstitution)
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })
+
+            context('when the application create a institution', () => {
+                it('should return status code 403 and info message from insufficient permissions', async () => {
+
+                    return request(URI)
+                        .post('/institutions')
+                        .set('Authorization', 'Bearer '.concat(accessTokenApplication))
+                        .set('Content-Type', 'application/json')
+                        .send(defaultInstitution)
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })
+        }) // user does not have permission
 
         context('when not informed the acess token', () => {
             it('should return the status code 401 and the authentication failure informational message', async () => {
@@ -226,81 +305,6 @@ describe('Routes: Institution', () => {
                     .expect(401)
                     .then(err => {
                         expect(err.body).to.eql(Strings.AUTH.ERROR_401_UNAUTHORIZED)
-                    })
-            })
-        })
-
-        context('when the child create a institution', () => {
-            it('should return status code 403 and info message from insufficient permissions', async () => {
-
-                return request(URI)
-                    .post('/institutions')
-                    .set('Authorization', 'Bearer '.concat(accessTokenChild))
-                    .set('Content-Type', 'application/json')
-                    .send(defaultInstitution)
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
-            })
-        })
-
-        context('when the educator create a institution', () => {
-            it('should return status code 403 and info message from insufficient permissions', async () => {
-
-                return request(URI)
-                    .post('/institutions')
-                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
-                    .set('Content-Type', 'application/json')
-                    .send(defaultInstitution)
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
-            })
-        })
-
-        context('when the health professional create a institution', () => {
-            it('should return status code 403 and info message from insufficient permissions', async () => {
-
-                return request(URI)
-                    .post('/institutions')
-                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
-                    .set('Content-Type', 'application/json')
-                    .send(defaultInstitution)
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
-            })
-        })
-
-        context('when the family create a institution', () => {
-            it('should return status code 403 and info message from insufficient permissions', async () => {
-
-                return request(URI)
-                    .post('/institutions')
-                    .set('Authorization', 'Bearer '.concat(accessTokenFamily))
-                    .set('Content-Type', 'application/json')
-                    .send(defaultInstitution)
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
-            })
-        })
-
-        context('when the application create a institution', () => {
-            it('should return status code 403 and info message from insufficient permissions', async () => {
-
-                return request(URI)
-                    .post('/institutions')
-                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
-                    .set('Content-Type', 'application/json')
-                    .send(defaultInstitution)
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -319,6 +323,7 @@ describe('Routes: Institution', () => {
                     .get(`/institutions/${defaultInstitution.id}?fields=${fieldOne}%2C${fieldTwo}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
+                    .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body).to.have.property('name')
@@ -344,6 +349,7 @@ describe('Routes: Institution', () => {
                     .get(`/institutions/${defaultInstitution.id}?fields=${fieldOne}%2C${fieldTwo}%2C${fieldTree}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
+                    .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body).to.have.property('type')
@@ -387,198 +393,220 @@ describe('Routes: Institution', () => {
             })
         })
 
-        context('when a child get a unique institution in database', () => {
-            it('should return status code 200 and a institution', () => {
+        describe('when the user get a unique institution in database', () => {
 
-                return request(URI)
-                    .get(`/institutions/${defaultInstitution.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenChild))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body.id).to.eql(defaultInstitution.id)
-                        expect(res.body.type).to.eql(defaultInstitution.type)
-                        expect(res.body.name).to.eql(defaultInstitution.name)
-                        expect(res.body.address).to.eql(defaultInstitution.address)
-                        expect(res.body.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body.longitude).to.eql(defaultInstitution.longitude)
-                    })
+            context('child get a unique institution in database', () => {
+                it('should return status code 200 and a institution', () => {
+
+                    return request(URI)
+                        .get(`/institutions/${defaultInstitution.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                        .set('Content-Type', 'application/json')
+                        .expect(200)
+                        .then(res => {
+                            expect(res.body.id).to.eql(defaultInstitution.id)
+                            expect(res.body.type).to.eql(defaultInstitution.type)
+                            expect(res.body.name).to.eql(defaultInstitution.name)
+                            expect(res.body.address).to.eql(defaultInstitution.address)
+                            expect(res.body.latitude).to.eql(defaultInstitution.latitude)
+                            expect(res.body.longitude).to.eql(defaultInstitution.longitude)
+                        })
+                })
             })
-        })
+            context('educator get a unique institution in database', () => {
+                it('should return status code 200 and a institution', () => {
 
-        context('when a educator get a unique institution in database', () => {
-            it('should return status code 200 and a institution', () => {
-
-                return request(URI)
-                    .get(`/institutions/${anotherInstitution.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body.id).to.eql(anotherInstitution.id)
-                        expect(res.body.type).to.eql(anotherInstitution.type)
-                        expect(res.body.name).to.eql(anotherInstitution.name)
-                    })
+                    return request(URI)
+                        .get(`/institutions/${defaultInstitution.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                        .set('Content-Type', 'application/json')
+                        .expect(200)
+                        .then(res => {
+                            expect(res.body.id).to.eql(defaultInstitution.id)
+                            expect(res.body.type).to.eql(defaultInstitution.type)
+                            expect(res.body.name).to.eql(defaultInstitution.name)
+                            expect(res.body.address).to.eql(defaultInstitution.address)
+                            expect(res.body.latitude).to.eql(defaultInstitution.latitude)
+                            expect(res.body.longitude).to.eql(defaultInstitution.longitude)
+                        })
+                })
             })
-        })
+            context('health professional get a unique institution in database', () => {
+                it('should return status code 200 and a institution', () => {
 
-        context('when a health professional get a unique institution in database', () => {
-            it('should return status code 200 and a institution', () => {
-
-                return request(URI)
-                    .get(`/institutions/${defaultInstitution.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body.id).to.eql(defaultInstitution.id)
-                        expect(res.body.type).to.eql(defaultInstitution.type)
-                        expect(res.body.name).to.eql(defaultInstitution.name)
-                        expect(res.body.address).to.eql(defaultInstitution.address)
-                        expect(res.body.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body.longitude).to.eql(defaultInstitution.longitude)
-                    })
+                    return request(URI)
+                        .get(`/institutions/${defaultInstitution.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                        .set('Content-Type', 'application/json')
+                        .expect(200)
+                        .then(res => {
+                            expect(res.body.id).to.eql(defaultInstitution.id)
+                            expect(res.body.type).to.eql(defaultInstitution.type)
+                            expect(res.body.name).to.eql(defaultInstitution.name)
+                            expect(res.body.address).to.eql(defaultInstitution.address)
+                            expect(res.body.latitude).to.eql(defaultInstitution.latitude)
+                            expect(res.body.longitude).to.eql(defaultInstitution.longitude)
+                        })
+                })
             })
-        })
+            context('family get a unique institution in database', () => {
+                it('should return status code 200 and a institution', () => {
 
-        context('when a family  get a unique institution in database', () => {
-            it('should return status code 200 and a institution', () => {
-
-                return request(URI)
-                    .get(`/institutions/${defaultInstitution.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenFamily))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body.id).to.eql(defaultInstitution.id)
-                        expect(res.body.type).to.eql(defaultInstitution.type)
-                        expect(res.body.name).to.eql(defaultInstitution.name)
-                        expect(res.body.address).to.eql(defaultInstitution.address)
-                        expect(res.body.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body.longitude).to.eql(defaultInstitution.longitude)
-                    })
+                    return request(URI)
+                        .get(`/institutions/${defaultInstitution.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                        .set('Content-Type', 'application/json')
+                        .expect(200)
+                        .then(res => {
+                            expect(res.body.id).to.eql(defaultInstitution.id)
+                            expect(res.body.type).to.eql(defaultInstitution.type)
+                            expect(res.body.name).to.eql(defaultInstitution.name)
+                            expect(res.body.address).to.eql(defaultInstitution.address)
+                            expect(res.body.latitude).to.eql(defaultInstitution.latitude)
+                            expect(res.body.longitude).to.eql(defaultInstitution.longitude)
+                        })
+                })
             })
-        })
+            context('application get a unique institution in database', () => {
+                it('should return status code 200 and a institution', () => {
+
+                    return request(URI)
+                        .get(`/institutions/${defaultInstitution.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenApplication))
+                        .set('Content-Type', 'application/json')
+                        .expect(200)
+                        .then(res => {
+                            expect(res.body.id).to.eql(defaultInstitution.id)
+                            expect(res.body.type).to.eql(defaultInstitution.type)
+                            expect(res.body.name).to.eql(defaultInstitution.name)
+                            expect(res.body.address).to.eql(defaultInstitution.address)
+                            expect(res.body.latitude).to.eql(defaultInstitution.latitude)
+                            expect(res.body.longitude).to.eql(defaultInstitution.longitude)
+                        })
+                })
+            })
+        }) // user get unique institution in database
     })
 
+    /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
     describe('GET ALL /institutions/:institution_id', () => {
-        context('when want get all institutions in database', () => {
-            it('should return status code 200 and a list of institutions', () => {
 
-                return request(URI)
-                    .get('/institutions')
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(2)
-                    })
+        describe('when want get all institutions in database', () => {
+
+            context('get all institutions in database successfully', () => {
+                it('should return status code 200 and a list of institutions', () => {
+
+                    return request(URI)
+                        .get('/institutions')
+                        .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                        .set('Content-Type', 'application/json')
+                        .expect(200)
+                        .then(res => {
+                            expect(res.body).is.instanceof(Array)
+                            expect(res.body.length).is.eql(2)
+                        })
+                })
             })
-        })
+            context('get all institutions in database in ascending order by name', () => {
+                it('should return status code 200 and a list of institutions', () => {
 
-        context('when want get all institutions in database in ascending order by name', () => {
-            it('should return status code 200 and a list of institutions', () => {
+                    const sortField = 'name'
 
-                const sortField = 'name'
-
-                return request(URI)
-                    .get(`/institutions?sort=${sortField}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(2)
-                        expect(res.body[0].name).to.eql(anotherInstitution.name)
-                        expect(res.body[1].name).to.eql(defaultInstitution.name)
-                    })
+                    return request(URI)
+                        .get(`/institutions?sort=${sortField}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                        .set('Content-Type', 'application/json')
+                        .expect(200)
+                        .then(res => {
+                            expect(res.body).is.instanceof(Array)
+                            expect(res.body.length).is.eql(2)
+                            expect(res.body[0].name).to.eql(anotherInstitution.name)
+                            expect(res.body[1].name).to.eql(defaultInstitution.name)
+                        })
+                })
             })
-        })
+            context('get all institutions in database in descending order by type', () => {
+                it('should return status code 200 and a list of institutions', () => {
 
-        context('when want get all institutions in database in descending order by type', () => {
-            it('should return status code 200 and a list of institutions', () => {
+                    const sortField = 'type'
 
-                const sortField = 'type'
-
-                return request(URI)
-                    .get(`/institutions?sort=-${sortField}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(2)
-                        expect(res.body[0].name).to.eql(defaultInstitution.name)
-                        expect(res.body[1].name).to.eql(anotherInstitution.name)
-                    })
+                    return request(URI)
+                        .get(`/institutions?sort=-${sortField}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                        .set('Content-Type', 'application/json')
+                        .expect(200)
+                        .then(res => {
+                            expect(res.body).is.instanceof(Array)
+                            expect(res.body.length).is.eql(2)
+                            expect(res.body[0].name).to.eql(defaultInstitution.name)
+                            expect(res.body[1].name).to.eql(anotherInstitution.name)
+                        })
+                })
             })
-        })
+            context('get only the name and ID of all institutions in database', () => {
+                it('should return status code 200 and a list of institutions', () => {
 
-        context('when want get only the name and ID of all institutions in database', () => {
-            it('should return status code 200 and a list of institutions', () => {
+                    const sortField = 'name'
 
-                const sortField = 'name'
-
-                return request(URI)
-                    .get(`/institutions?fields=${sortField}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(2)
-                        expect(res.body[0]).to.have.property('id')
-                        expect(res.body[0]).to.have.property('name')
-                        expect(res.body[0]).to.not.have.property('type')
-                        expect(res.body[0]).to.not.have.property('address')
-                        expect(res.body[0]).to.not.have.property('latitude')
-                        expect(res.body[0]).to.not.have.property('longitude')
-                    })
+                    return request(URI)
+                        .get(`/institutions?fields=${sortField}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                        .set('Content-Type', 'application/json')
+                        .expect(200)
+                        .then(res => {
+                            expect(res.body).is.instanceof(Array)
+                            expect(res.body.length).is.eql(2)
+                            expect(res.body[0]).to.have.property('id')
+                            expect(res.body[0]).to.have.property('name')
+                            expect(res.body[0]).to.not.have.property('type')
+                            expect(res.body[0]).to.not.have.property('address')
+                            expect(res.body[0]).to.not.have.property('latitude')
+                            expect(res.body[0]).to.not.have.property('longitude')
+                        })
+                })
             })
-        })
+            context('get only the name, ID and type of all institutions in database', () => {
+                it('should return status code 200 and a list of institutions', () => {
 
-        context('when want get only the name, ID and type of all institutions in database', () => {
-            it('should return status code 200 and a list of institutions', () => {
+                    const sortFieldOne = 'name'
+                    const sortFieldTwo = 'type'
 
-                const sortFieldOne = 'name'
-                const sortFieldTwo = 'type'
-
-                return request(URI)
-                    .get(`/institutions?fields=${sortFieldOne}%2C${sortFieldTwo}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(2)
-                        expect(res.body[0]).to.have.property('id')
-                        expect(res.body[0]).to.have.property('name')
-                        expect(res.body[0]).to.have.property('type')
-                        expect(res.body[0]).to.not.have.property('address')
-                        expect(res.body[0]).to.not.have.property('latitude')
-                        expect(res.body[0]).to.not.have.property('longitude')
-                    })
+                    return request(URI)
+                        .get(`/institutions?fields=${sortFieldOne}%2C${sortFieldTwo}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                        .set('Content-Type', 'application/json')
+                        .expect(200)
+                        .then(res => {
+                            expect(res.body).is.instanceof(Array)
+                            expect(res.body.length).is.eql(2)
+                            expect(res.body[0]).to.have.property('id')
+                            expect(res.body[0]).to.have.property('name')
+                            expect(res.body[0]).to.have.property('type')
+                            expect(res.body[0]).to.not.have.property('address')
+                            expect(res.body[0]).to.not.have.property('latitude')
+                            expect(res.body[0]).to.not.have.property('longitude')
+                        })
+                })
             })
-        })
+            context('get only the two most recent institutions in database', () => {
+                it('should return status code 200 and a list of institutions', () => {
 
-        context('when want get only the two most recent institutions in database', () => {
-            it('should return status code 200 and a list of institutions', () => {
+                    const page = 1
+                    const limit = 2
 
-                const page = 1
-                const limit = 2
-
-                return request(URI)
-                    .get(`/institutions?page=${page}&limit=${limit}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(2)
-                    })
+                    return request(URI)
+                        .get(`/institutions?page=${page}&limit=${limit}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                        .set('Content-Type', 'application/json')
+                        .expect(200)
+                        .then(res => {
+                            expect(res.body).is.instanceof(Array)
+                            expect(res.body.length).is.eql(2)
+                        })
+                })
             })
-        })
+        }) // get all institutions in database
 
         context('when a child  get a all institution in database', () => {
             it('should return status code 403 and info message from insufficient permissions', () => {
@@ -594,8 +622,8 @@ describe('Routes: Institution', () => {
             })
         })
 
-        context('when a educator  get a all institution in database', () => {
-            it('should return status code 403 and info message from insufficient permissions', () => {
+        context('when a educator get a all institution in database', () => {
+            it('should return status code 200 and a list of institutions', () => {
 
                 return request(URI)
                     .get('/institutions')
@@ -609,8 +637,8 @@ describe('Routes: Institution', () => {
             })
         })
 
-        context('when a health professional get a all institution in database', () => {
-            it('should return status code 403 and info message from insufficient permissions', () => {
+        context('when a health professional get all institution in database', () => {
+            it('should return status code 200 and a list of institutions', () => {
 
                 return request(URI)
                     .get('/institutions')
@@ -624,7 +652,7 @@ describe('Routes: Institution', () => {
             })
         })
 
-        context('when a family get a all institution in database', () => {
+        context('when a family get all institution in database', () => {
             it('should return status code 403 and info message from insufficient permissions', () => {
 
                 return request(URI)
@@ -638,8 +666,8 @@ describe('Routes: Institution', () => {
             })
         })
 
-        context('when a application get a all institution in database', () => {
-            it('should return status code 403 and info message from insufficient permissions', () => {
+        context('when a application get all institution in database', () => {
+            it('should return status code 200 and a list of institutions', () => {
 
                 return request(URI)
                     .get('/institutions')
@@ -707,7 +735,7 @@ describe('Routes: Institution', () => {
             })
         })
 
-        context('When updating address, latitude and longitude into institution successfully', () => {
+        context('When updating address, latitude and longitude of the institution successfully', () => {
             it('should return status code 200 and a updated institution', () => {
 
                 institutionWillBeUpdated.address = 'another address'
@@ -929,75 +957,74 @@ describe('Routes: Institution', () => {
             })
         })
 
-        context('when a child delete a institution', () => {
-            it('should return status code 403 and info message from insufficient permissions', () => {
+        describe('when the user does not have permission', () => {
 
-                return request(URI)
-                    .delete(`/institutions/${institutionSend.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenChild))
-                    .set('Content-Type', 'application/json')
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
+            context('child delete a institution', () => {
+                it('should return status code 403 and info message from insufficient permissions', () => {
+
+                    return request(URI)
+                        .delete(`/institutions/${institutionSend.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                        .set('Content-Type', 'application/json')
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
             })
-        })
+            context('educator delete a institution', () => {
+                it('should return status code 403 and info message from insufficient permissions', () => {
 
-        context('when a educator delete a institution', () => {
-            it('should return status code 403 and info message from insufficient permissions', () => {
-
-                return request(URI)
-                    .delete(`/institutions/${institutionSend.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
-                    .set('Content-Type', 'application/json')
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
+                    return request(URI)
+                        .delete(`/institutions/${institutionSend.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                        .set('Content-Type', 'application/json')
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
             })
-        })
+            context('health professional delete a institution', () => {
+                it('should return status code 403 and info message from insufficient permissions', () => {
 
-        context('when a health professional delete a institution', () => {
-            it('should return status code 403 and info message from insufficient permissions', () => {
-
-                return request(URI)
-                    .delete(`/institutions/${institutionSend.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
-                    .set('Content-Type', 'application/json')
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
+                    return request(URI)
+                        .delete(`/institutions/${institutionSend.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                        .set('Content-Type', 'application/json')
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
             })
-        })
+            context('family delete a institution', () => {
+                it('should return status code 403 and info message from insufficient permissions', () => {
 
-        context('when a family delete a institution', () => {
-            it('should return status code 403 and info message from insufficient permissions', () => {
-
-                return request(URI)
-                    .delete(`/institutions/${institutionSend.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenFamily))
-                    .set('Content-Type', 'application/json')
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
+                    return request(URI)
+                        .delete(`/institutions/${institutionSend.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                        .set('Content-Type', 'application/json')
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
             })
-        })
+            context('application delete a institution', () => {
+                it('should return status code 403 and info message from insufficient permissions', () => {
 
-        context('when a application delete a institution', () => {
-            it('should return status code 403 and info message from insufficient permissions', () => {
-
-                return request(URI)
-                    .delete(`/institutions/${institutionSend.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
-                    .set('Content-Type', 'application/json')
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
+                    return request(URI)
+                        .delete(`/institutions/${institutionSend.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenApplication))
+                        .set('Content-Type', 'application/json')
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
             })
-        })
+        }) // user does not have permission
 
         context('when the deletion was successful', () => {
             it('should return status code 204 and no content', () => {
