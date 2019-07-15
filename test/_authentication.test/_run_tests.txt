@@ -1,0 +1,23 @@
+TODOS OS TESTES DE AUTHENTICATION:
+npm run test:single -- test/_authentication.test/**/*.spec.ts 
+
+TESTES INDIVIDUALMENTE:
+npm run test:single -- test/_authentication.test/admin.auth.successfull.spec.ts
+
+npm run test:single -- test/_authentication.test/application.auth.successfull.spec.ts
+
+npm run test:single -- test/_authentication.test/child.auth.successfull.spec.ts
+
+npm run test:single -- test/_authentication.test/educator.auth.successfull.spec.ts
+
+npm run test:single -- test/_authentication.test/family.auth.successfull.spec.ts
+
+npm run test:single -- test/_authentication.test/healthprofessional.auth.successfull.spec.ts
+
+npm run test:single -- test/_authentication.test/password.not.exist.auth.spec.ts
+
+npm run test:single -- test/_authentication.test/password.not.provided.auth.spec.ts
+
+npm run test:single -- test/_authentication.test/username.not.provided.auth.spec.ts
+
+npm run test:single -- test/_authentication.test/username.not.exist.auth.spec.ts

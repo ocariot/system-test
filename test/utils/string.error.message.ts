@@ -79,6 +79,6 @@ export abstract class Strings {
         ERROR_400_INVALID_FORMAT_ID: new ApiException(400, 'Some ID provided does not have a valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_403_FORBIDDEN: new ApiException(403, 'FORBIDDEN', 'Authorization failed due to insufficient permissions.').toJson(),
         ERROR_404_USER_NOT_FOUND: new ApiException(404, 'User not found!', 'User not found or already removed. A new operation for the same resource is not required.').toJson(), // user
-        ERROR_409_UNIQUE_DATA_ALREADY_EXISTS: new ApiException(409, 'A registration with the same unique data already exists!').toJson()
+        // ERROR_409_UNIQUE_DATA_ALREADY_EXISTS: new ApiException(409, 'A registration with the same unique data already exists!').toJson()
     }
 }

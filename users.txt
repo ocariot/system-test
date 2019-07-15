@@ -1,0 +1,881 @@
+
+> system-test@1.0.0 test:users /home/thairam/OCARIoT/Testes/system-test
+> mocha --opts test/config/mocha.opts test/users.spec.ts
+
+
+
+  Routes: users
+    PATCH /users/:user_id/password
+      when the administrator successfully updates the user password
+        ✓ CHILD - should return status code 204 and no content
+        ✓ EDUCATOR - should return status code 204 and no content
+        ✓ HEALTH PROFESSIONAL - should return status code 204 and no content
+        ✓ FAMILY - should return status code 204 and no content
+        ✓ APPLICATION - should return status code 204 and no content
+      when a validation error occurs
+        the user old password does not match
+          ✓ CHILD - should return status code 400 and info message from old password does not match
+          ✓ EDUCATOR - should return status code 400 and info message from old password does not match
+          ✓ HEALTH PROFESSIONAL - should return status code 400 and info message from old password does not match
+          ✓ FAMILY - should return status code 400 and info message from old password does not match
+          ✓ APPLICATION - should return status code 400 and info message from old password does not match
+        when the old password does not provided
+          ✓ CHILD - should return status code 400 and info message from old password does not provided
+          ✓ EDUCATOR - should return status code 400 and info message from old password does not provided
+          ✓ HEALTH PROFESSIONAL - should return status code 400 and info message from old password does not provided
+          ✓ FAMILY - should return status code 400 and info message from old password does not provided
+          ✓ APPLICATION - should return status code 400 and info message from old password does not provided
+        the new password does not provided
+          ✓ CHILD - should return status code 400 and info message from new password does not provided
+          ✓ EDUCATOR - should return status code 400 and info message from new password does not provided
+          ✓ HEALTH PROFESSIONAL - should return status code 400 and info message from new password does not provided
+          ✓ FAMILY - should return status code 400 and info message from new password does not provided
+          ✓ APPLICATION - should return status code 400 and info message from new password does not provided
+        when the user_id is invalid
+          ✓ should return status code 400 and info message from invalid id
+        when update the user password without authorization
+          1) ADMIN - should return status code 401 and info message about unauthorized
+          2) CHILD - should return status code 401 and info message about unauthorized
+          3) EDUCATOR - should return status code 401 and info message about unauthorized
+          4) HEALTH PROFESSIONAL - should return status code 401 and info message about unauthorized
+          5) FAMILY - should return status code 401 and info message about unauthorized
+          6) APPLICATION - should return status code 401 and info message about unauthorized
+        when the user does not have permission
+          when the child update user password
+            7) HERSELF - should return status code 403 and info message from insufficient permissions
+            8) ADMIN - should return status code 403 and info message from insufficient permissions
+            9) EDUCATOR - should return status code 403 and info message from insufficient permissions
+            10) HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions
+            11) FAMILY - should return status code 403 and info message from insufficient permissions
+            12) APPLICATION - should return status code 403 and info message from insufficient permissions
+            13) ANOTHER CHILD - should return status code 403 and info message from insufficient permissions
+          when the educator update user password
+            14) CHILD - should return status code 403 and info message from insufficient permissions
+            15) ADMIN - should return status code 403 and info message from insufficient permissions
+            16) HIMSELF - should return status code 403 and info message from insufficient permissions
+            17) HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions
+            18) FAMILY - should return status code 403 and info message from insufficient permissions
+            19) APPLICATION - should return status code 403 and info message from insufficient permissions
+            20) ANOTHER EDUCATOR - should return status code 403 and info message from insufficient permissions
+          when the health professional update user password
+            21) CHILD - should return status code 403 and info message from insufficient permissions
+            22) ADMIN - should return status code 403 and info message from insufficient permissions
+            23) EDUCATOR - should return status code 403 and info message from insufficient permissions
+            24) HIMSELF - should return status code 403 and info message from insufficient permissions
+            25) FAMILY - should return status code 403 and info message from insufficient permissions
+            26) APPLICATION - should return status code 403 and info message from insufficient permissions
+            27) ANOTHER HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions
+          when the family update user password
+            28) CHILD - should return status code 403 and info message from insufficient permissions
+            29) ADMIN - should return status code 403 and info message from insufficient permissions
+            30) EDUCATOR - should return status code 403 and info message from insufficient permissions
+            31) HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions
+            32) HERSELF - should return status code 403 and info message from insufficient permissions
+            33) APPLICATION - should return status code 403 and info message from insufficient permissions
+            34) ANOTHER FAMILY - should return status code 403 and info message from insufficient permissions
+          when the application update user password
+            35) CHILD - should return status code 403 and info message from insufficient permissions
+            36) ADMIN - should return status code 403 and info message from insufficient permissions
+            37) EDUCATOR - should return status code 403 and info message from insufficient permissions
+            38) HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions
+            39) FAMILY - should return status code 403 and info message from insufficient permissions
+            40) HERSELF - should return status code 403 and info message from insufficient permissions
+            41) ANOTHER APPLICATION - should return status code 403 and info message from insufficient permissions
+    DELETE /users/:user_id
+      when the user is not found
+        ✓ should return status code 204 and no content, even user does not exists
+      when the user_id is invalid
+        ✓ should return status code 400 and message info about invalid id
+      when the user does not have permission
+        when the child delete the user
+          ✓ HERSELF - should return status code 403 and info message from insufficient permissions
+          ✓ ADMIN - should return status code 403 and info message from insufficient permissions
+          ✓ EDUCATOR - should return status code 403 and info message from insufficient permissions
+          ✓ HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions
+          ✓ FAMILY - should return status code 403 and info message from insufficient permissions
+          ✓ APPLICATION - should return status code 403 and info message from insufficient permissions
+          ✓ ANOTHER CHILD - should return status code 403 and info message from insufficient permissions
+        when the educator delete the user
+          ✓ CHILD - should return status code 403 and info message from insufficient permissions
+          ✓ ADMIN - should return status code 403 and info message from insufficient permissions
+          ✓ HIMSELF - should return status code 403 and info message from insufficient permissions
+          ✓ HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions
+          ✓ FAMILY - should return status code 403 and info message from insufficient permissions
+          ✓ APPLICATION - should return status code 403 and info message from insufficient permissions
+          ✓ ANOTHER EDUCATOR - should return status code 403 and info message from insufficient permissions
+        when the health professional delete the user
+          ✓ CHILD - should return status code 403 and info message from insufficient permissions
+          ✓ ADMIN - should return status code 403 and info message from insufficient permissions
+          ✓ EDUCATOR - should return status code 403 and info message from insufficient permissions
+          ✓ HIMSELF - should return status code 403 and info message from insufficient permissions
+          ✓ FAMILY - should return status code 403 and info message from insufficient permissions
+          ✓ APPLICATION - should return status code 403 and info message from insufficient permissions
+          ✓ ANOTHER HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions
+        when the family delete the user
+          ✓ CHILD - should return status code 403 and info message from insufficient permissions
+          ✓ ADMIN - should return status code 403 and info message from insufficient permissions
+          ✓ EDUCATOR - should return status code 403 and info message from insufficient permissions
+          ✓ HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions
+          ✓ HERSELF - should return status code 403 and info message from insufficient permissions
+          ✓ APPLICATION - should return status code 403 and info message from insufficient permissions
+          ✓ ANOTHER FAMILY - should return status code 403 and info message from insufficient permissions
+        when the application delete the user
+          ✓ CHILD - should return status code 403 and info message from insufficient permissions
+          ✓ ADMIN - should return status code 403 and info message from insufficient permissions
+          ✓ EDUCATOR - should return status code 403 and info message from insufficient permissions
+          ✓ HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions
+          ✓ FAMILY - should return status code 403 and info message from insufficient permissions
+          ✓ HERSELF - should return status code 403 and info message from insufficient permissions
+          ✓ ANOTHER APPLICATION - should return status code 403 and info message from insufficient permissions
+      when delete the user without authorization
+        ✓ ADMIN - should return status code 401 and info message about unauthorized
+        ✓ CHILD - should return status code 401 and info message about unauthorized
+        ✓ EDUCATOR - should return status code 401 and info message about unauthorized
+        ✓ HEALTH PROFESSIONAL - should return status code 401 and info message about unauthorized
+        ✓ FAMILY - should return status code 401 and info message about unauthorized
+        ✓ APPLICATION - should return status code 401 and info message about unauthorized
+      when the user was successful deleted
+        ✓ should return status code 204 and no content for child user
+        ✓ should return status code 204 and no content for educator user
+        ✓ should return status code 204 and no content for health professional user
+        ✓ should return status code 204 and no content for family user
+        ✓ should return status code 204 and no content for application user
+
+
+  69 passing (16s)
+  41 failing
+
+  1) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when update the user password without authorization
+             ADMIN - should return status code 401 and info message about unauthorized:
+     Error: expected 401 "Unauthorized", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  2) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when update the user password without authorization
+             CHILD - should return status code 401 and info message about unauthorized:
+     Error: expected 401 "Unauthorized", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  3) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when update the user password without authorization
+             EDUCATOR - should return status code 401 and info message about unauthorized:
+     Error: expected 401 "Unauthorized", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  4) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when update the user password without authorization
+             HEALTH PROFESSIONAL - should return status code 401 and info message about unauthorized:
+     Error: expected 401 "Unauthorized", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  5) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when update the user password without authorization
+             FAMILY - should return status code 401 and info message about unauthorized:
+     Error: expected 401 "Unauthorized", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  6) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when update the user password without authorization
+             APPLICATION - should return status code 401 and info message about unauthorized:
+     Error: expected 401 "Unauthorized", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  7) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the child update user password
+               HERSELF - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  8) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the child update user password
+               ADMIN - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  9) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the child update user password
+               EDUCATOR - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  10) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the child update user password
+               HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  11) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the child update user password
+               FAMILY - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  12) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the child update user password
+               APPLICATION - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  13) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the child update user password
+               ANOTHER CHILD - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  14) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the educator update user password
+               CHILD - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  15) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the educator update user password
+               ADMIN - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  16) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the educator update user password
+               HIMSELF - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  17) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the educator update user password
+               HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  18) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the educator update user password
+               FAMILY - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  19) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the educator update user password
+               APPLICATION - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  20) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the educator update user password
+               ANOTHER EDUCATOR - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  21) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the health professional update user password
+               CHILD - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  22) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the health professional update user password
+               ADMIN - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  23) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the health professional update user password
+               EDUCATOR - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  24) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the health professional update user password
+               HIMSELF - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  25) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the health professional update user password
+               FAMILY - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  26) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the health professional update user password
+               APPLICATION - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  27) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the health professional update user password
+               ANOTHER HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  28) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the family update user password
+               CHILD - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  29) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the family update user password
+               ADMIN - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  30) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the family update user password
+               EDUCATOR - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  31) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the family update user password
+               HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  32) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the family update user password
+               HERSELF - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  33) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the family update user password
+               APPLICATION - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  34) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the family update user password
+               ANOTHER FAMILY - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  35) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the application update user password
+               CHILD - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  36) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the application update user password
+               ADMIN - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  37) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the application update user password
+               EDUCATOR - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  38) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the application update user password
+               HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  39) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the application update user password
+               FAMILY - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  40) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the application update user password
+               HERSELF - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+  41) Routes: users
+       PATCH /users/:user_id/password
+         when a validation error occurs
+           when the user does not have permission
+             when the application update user password
+               ANOTHER APPLICATION - should return status code 403 and info message from insufficient permissions:
+     Error: expected 403 "Forbidden", got 204 "No Content"
+      at Test._assertStatus (node_modules/supertest/lib/test.js:268:12)
+      at Test._assertFunction (node_modules/supertest/lib/test.js:283:11)
+      at Test.assert (node_modules/supertest/lib/test.js:173:18)
+      at localAssert (node_modules/supertest/lib/test.js:131:12)
+      at /home/thairam/OCARIoT/Testes/system-test/node_modules/supertest/lib/test.js:128:5
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:716:12)
+      at IncomingMessage.parser (node_modules/superagent/lib/node/index.js:916:18)
+      at endReadableNT (_stream_readable.js:974:12)
+      at _combinedTickCallback (internal/process/next_tick.js:74:11)
+      at process._tickCallback (internal/process/next_tick.js:98:9)
+
+
+

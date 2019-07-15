@@ -1,15 +1,14 @@
 import request from 'supertest'
 import { expect } from 'chai'
-import { Institution } from '../src/account-service/model/institution'
-import { AccountUtil } from './utils/account.utils'
-import { AccountDb } from '../src/account-service/database/account.db'
-import { Child } from '../src/account-service/model/child'
-import { Strings } from './utils/string.error.message'
+import { Institution } from '../../src/account-service/model/institution'
+import { acc } from '../utils/account.utils'
+import { AccountDb } from '../../src/account-service/database/account.db'
+import { Child } from '../../src/account-service/model/child'
+import { Strings } from '../utils/string.error.message'
 
 describe('Routes: users.children', () => {
 
     const URI: string = 'https://localhost'
-    const acc = new AccountUtil()
 
     let accessTokenAdmin: string
     let accessTokenChild: string
@@ -175,6 +174,7 @@ describe('Routes: users.children', () => {
                         })
                 })
             })
+
             context('the child password was not provided', () => {
                 it('should return status code 400 and message info about missing or invalid parameters', () => {
 
@@ -196,6 +196,7 @@ describe('Routes: users.children', () => {
                         })
                 })
             })
+
             context('the institution of the child was not provided', () => {
                 it('should return status code 400 and message info about missing or invalid parameters', () => {
 
@@ -217,6 +218,7 @@ describe('Routes: users.children', () => {
                         })
                 })
             })
+
             context('the child gender was not provided', () => {
                 it('should return status code 400 and message info about missing or invalid parameters', () => {
 
@@ -238,6 +240,7 @@ describe('Routes: users.children', () => {
                         })
                 })
             })
+
             context('the child age was not provided', () => {
                 it('should return status code 400 and message info about missing or invalid parameters', () => {
 
@@ -259,6 +262,7 @@ describe('Routes: users.children', () => {
                         })
                 })
             })
+
             context('the institution provided does not exists', () => {
                 it('should return status code 400 and message for institution not found', () => {
 
@@ -281,6 +285,7 @@ describe('Routes: users.children', () => {
                         })
                 })
             })
+
             context('the institution id provided was invalid', () => {
                 it('should return status code 400 and message for invalid institution id', () => {
 
@@ -303,6 +308,7 @@ describe('Routes: users.children', () => {
                         })
                 })
             })
+
             context('the child gender provided was invalid', () => {
                 it('should return status code 400 and message about invalid gender', () => {
 
@@ -325,6 +331,7 @@ describe('Routes: users.children', () => {
                     // })
                 })
             })
+
             context('the child age provided was negative', () => {
                 it('should return status code 400 and message about negative age', () => {
 
@@ -349,119 +356,136 @@ describe('Routes: users.children', () => {
             })
         }) // validation error occurs
 
-        describe('when the user does not have permission', () => {
+        context('when the user does not have permission to register the child', () => {
 
-            context('child posting a new child user', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
+            it('CHILD - should return status code 403 and info message from insufficient permissions', () => {
 
-                    const body = {
-                        username: 'another child',
-                        password: defaultChild.password,
-                        institution_id: defaultInstitution.id,
-                        gender: defaultChild.gender,
-                        age: defaultChild.age
-                    }
+                const body = {
+                    username: 'another child',
+                    password: defaultChild.password,
+                    institution_id: defaultInstitution.id,
+                    gender: defaultChild.gender,
+                    age: defaultChild.age
+                }
 
-                    return request(URI)
-                        .post('/users/children')
-                        .set('Authorization', 'Bearer '.concat(accessTokenChild))
-                        .set('Content-Type', 'application/json')
-                        .send(body)
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+                return request(URI)
+                    .post('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
-            context('educator posting a new child user', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
 
-                    const body = {
-                        username: 'another child',
-                        password: defaultChild.password,
-                        institution_id: defaultInstitution.id,
-                        gender: defaultChild.gender,
-                        age: defaultChild.age
-                    }
+            it('EDUCATOR - should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .post('/users/children')
-                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
-                        .set('Content-Type', 'application/json')
-                        .send(body)
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+                const body = {
+                    username: 'another child',
+                    password: defaultChild.password,
+                    institution_id: defaultInstitution.id,
+                    gender: defaultChild.gender,
+                    age: defaultChild.age
+                }
+
+                return request(URI)
+                    .post('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
-            context('health professional posting a new child user', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
 
-                    const body = {
-                        username: 'another child',
-                        password: defaultChild.password,
-                        institution_id: defaultInstitution.id,
-                        gender: defaultChild.gender,
-                        age: defaultChild.age
-                    }
+            it('HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .post('/users/children')
-                        .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
-                        .set('Content-Type', 'application/json')
-                        .send(body)
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+                const body = {
+                    username: 'another child',
+                    password: defaultChild.password,
+                    institution_id: defaultInstitution.id,
+                    gender: defaultChild.gender,
+                    age: defaultChild.age
+                }
+
+                return request(URI)
+                    .post('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
-            context('family posting a new child user', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
 
-                    const body = {
-                        username: 'another child',
-                        password: defaultChild.password,
-                        institution_id: defaultInstitution.id,
-                        gender: defaultChild.gender,
-                        age: defaultChild.age
-                    }
+            it('FAMILY - should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .post('/users/children')
-                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
-                        .set('Content-Type', 'application/json')
-                        .send(body)
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+                const body = {
+                    username: 'another child',
+                    password: defaultChild.password,
+                    institution_id: defaultInstitution.id,
+                    gender: defaultChild.gender,
+                    age: defaultChild.age
+                }
+
+                return request(URI)
+                    .post('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
-            context('application posting a new child user', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
 
-                    const body = {
-                        username: 'another child',
-                        password: defaultChild.password,
-                        institution_id: defaultInstitution.id,
-                        gender: defaultChild.gender,
-                        age: defaultChild.age
-                    }
+            it('APPLICATION - should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .post('/users/children')
-                        .set('Authorization', 'Bearer '.concat(accessTokenApplication))
-                        .set('Content-Type', 'application/json')
-                        .send(body)
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+                const body = {
+                    username: 'another child',
+                    password: defaultChild.password,
+                    institution_id: defaultInstitution.id,
+                    gender: defaultChild.gender,
+                    age: defaultChild.age
+                }
+
+                return request(URI)
+                    .post('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
         }) // user does not have permission
+
+        context('when not informed the acess token', () => {
+            it('should return the status code 401 and the authentication failure informational message', async () => {
+
+                const body = {
+                    username: 'another child',
+                    password: defaultChild.password,
+                    institution_id: defaultInstitution.id,
+                    gender: defaultChild.gender,
+                    age: defaultChild.age
+                }
+
+                return request(URI)
+                    .post('/users/children')
+                    .set('Authorization', 'Bearer ')
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(401)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.AUTH.ERROR_401_UNAUTHORIZED)
+                    })
+            })
+        })
     })
 
     /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -583,78 +607,82 @@ describe('Routes: users.children', () => {
             })
         })
 
-        describe('when the user does not have permission', () => {
+        context('when the user does not have permission to get a unique child in database', () => {
 
-            context('educator get a unique child in database', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
+            it('EDUCATOR - should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .get(`/users/children/${defaultChild.id}`)
-                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
-                        .set('Content-Type', 'application/json')
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+                return request(URI)
+                    .get(`/users/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
 
-            context('health professional get a unique child in database', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
+            it('HEALTH PROFESSIONAL -should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .get(`/users/children/${defaultChild.id}`)
-                        .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
-                        .set('Content-Type', 'application/json')
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+                return request(URI)
+                    .get(`/users/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
 
-            context('family get a unique child in database', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
+            it('FAMILY - should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .get(`/users/children/${defaultChild.id}`)
-                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
-                        .set('Content-Type', 'application/json')
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+                return request(URI)
+                    .get(`/users/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
 
-            context('application get a unique child in database', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
+            it('APPLICATION - should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .get(`/users/children/${defaultChild.id}`)
-                        .set('Authorization', 'Bearer '.concat(accessTokenApplication))
-                        .set('Content-Type', 'application/json')
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+                return request(URI)
+                    .get(`/users/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
 
-            context('child get the personal data of another child from the database', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
+            it('ANOTHER CHILD - should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .get(`/users/children/${defaultChild.id}`)
-                        .set('Authorization', 'Bearer '.concat(accessTokenChild))
-                        .set('Content-Type', 'application/json')
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+                return request(URI)
+                    .get(`/users/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
         }) // user does not have permission
+
+        context('when not informed the acess token', () => {
+            it('should return the status code 401 and the authentication failure informational message', async () => {
+
+                return request(URI)
+                    .get(`/users/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer ')
+                    .set('Content-Type', 'application/json')
+                    .expect(401)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.AUTH.ERROR_401_UNAUTHORIZED)
+                    })
+            })
+        })
     })
 
     /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -861,74 +889,82 @@ describe('Routes: users.children', () => {
             })
         })
 
-        describe('when the user does not have permission', () => {
+        describe('when the user does not have permission to get all children in database', () => {
 
-            context('child get all children in database', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
+            it('CHILD - should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .get('/users/children')
-                        .set('Authorization', 'Bearer '.concat(accessTokenChild))
-                        .set('Content-Type', 'application/json')
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+                return request(URI)
+                    .get('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
-            context('educator get all children in database', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .get('/users/children')
-                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
-                        .set('Content-Type', 'application/json')
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+            it('EDUCATOR - should return status code 403 and info message from insufficient permissions', () => {
+
+                return request(URI)
+                    .get('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
-            context('health professional get all children in database', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .get('/users/children')
-                        .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
-                        .set('Content-Type', 'application/json')
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+            it('HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions', () => {
+
+                return request(URI)
+                    .get('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
-            context('family get all children in database', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .get('/users/children')
-                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
-                        .set('Content-Type', 'application/json')
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+            it('FAMILY - should return status code 403 and info message from insufficient permissions', () => {
+
+                return request(URI)
+                    .get('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
-            context('application get all children in database', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .get('/users/children')
-                        .set('Authorization', 'Bearer '.concat(accessTokenApplication))
-                        .set('Content-Type', 'application/json')
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+            it('APPLICATION - should return status code 403 and info message from insufficient permissions', () => {
+
+                return request(URI)
+                    .get('/users/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
         }) // user does not have permission
+
+        context('when not informed the acess token', () => {
+            it('should return the status code 401 and the authentication failure informational message', async () => {
+
+                return request(URI)
+                    .get('/users/children')
+                    .set('Authorization', 'Bearer ')
+                    .set('Content-Type', 'application/json')
+                    .expect(401)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.AUTH.ERROR_401_UNAUTHORIZED)
+                    })
+            })
+        })
 
         context('when get all children in database after deleting all of them', () => {
             before(async () => {
@@ -968,6 +1004,7 @@ describe('Routes: users.children', () => {
                 console.log('Failure on Children test: ', err)
             }
         })
+
         context('when the update was successful', () => {
             it('should return status code 200 and updated child', () => {
                 defaultChild.username = 'Default username updated'
@@ -1050,6 +1087,7 @@ describe('Routes: users.children', () => {
                     // })
                 })
             })
+
             context('update the child age to negative value', () => {
                 it('should return status code 400 and message about negative age', () => {
 
@@ -1064,6 +1102,7 @@ describe('Routes: users.children', () => {
                     // })
                 })
             })
+
             context('the institution provided does not exists', () => {
                 it('should return status code 400 and message for institution not found', () => {
 
@@ -1078,6 +1117,7 @@ describe('Routes: users.children', () => {
                         })
                 })
             })
+
             context('the child_id is invalid', () => {
                 it('should return status code 400 and info message from invalid id', () => {
 
@@ -1109,102 +1149,111 @@ describe('Routes: users.children', () => {
             })
         })
 
-        describe('when the user does not have permission', () => {
+        context('when the user does not have permission to update the child', () => {
 
-            context('the child update yourself', () => {
-                let tokenDefaultChild: string
-                before(async () => {
-                    try {
-                        if (defaultChild.username && defaultChild.password)
-                            tokenDefaultChild = await acc
-                                .auth(defaultChild.username, defaultChild.password)
-                    } catch (err) {
-                        console.log('Failure on Children test: ', err)
-                    }
-                })
-                it('should return status code 403 and info message from insufficient permissions', () => {
-
-                    return request(URI)
-                        .patch(`/users/children/${defaultChild.id}`)
-                        .send({ age: 1 })
-                        .set('Authorization', 'Bearer '.concat(tokenDefaultChild))
-                        .set('Content-Type', 'application/json')
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+            let tokenDefaultChild: string
+            before(async () => {
+                try {
+                    if (defaultChild.username && defaultChild.password)
+                        tokenDefaultChild = await acc
+                            .auth(defaultChild.username, defaultChild.password)
+                } catch (err) {
+                    console.log('Failure on Children test: ', err)
+                }
             })
-            context('child update another child', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .patch(`/users/children/${defaultChild.id}`)
-                        .send({ age: 1 })
-                        .set('Authorization', 'Bearer '.concat(accessTokenChild))
-                        .set('Content-Type', 'application/json')
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+            it('HERSELF - should return status code 403 and info message from insufficient permissions', () => {
+
+                return request(URI)
+                    .patch(`/users/children/${defaultChild.id}`)
+                    .send({ age: 1 })
+                    .set('Authorization', 'Bearer '.concat(tokenDefaultChild))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
-            context('educator update a child', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .patch(`/users/children/${defaultChild.id}`)
-                        .send({ age: 1 })
-                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
-                        .set('Content-Type', 'application/json')
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+            it('ANOTHER CHILD - should return status code 403 and info message from insufficient permissions', () => {
+
+                return request(URI)
+                    .patch(`/users/children/${defaultChild.id}`)
+                    .send({ age: 1 })
+                    .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
-            context('health professional update a child', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .patch(`/users/children/${defaultChild.id}`)
-                        .send({ age: 1 })
-                        .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
-                        .set('Content-Type', 'application/json')
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+            it('EDUCATOR - should return status code 403 and info message from insufficient permissions', () => {
+
+                return request(URI)
+                    .patch(`/users/children/${defaultChild.id}`)
+                    .send({ age: 1 })
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
-            context('family update a child', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .patch(`/users/children/${defaultChild.id}`)
-                        .send({ age: 1 })
-                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
-                        .set('Content-Type', 'application/json')
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+            it('HEALTH PROFESSIONAL - should return status code 403 and info message from insufficient permissions', () => {
+
+                return request(URI)
+                    .patch(`/users/children/${defaultChild.id}`)
+                    .send({ age: 1 })
+                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
-            context('application update a child', () => {
-                it('should return status code 403 and info message from insufficient permissions', () => {
 
-                    return request(URI)
-                        .patch(`/users/children/${defaultChild.id}`)
-                        .send({ age: 1 })
-                        .set('Authorization', 'Bearer '.concat(accessTokenApplication))
-                        .set('Content-Type', 'application/json')
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+            it('FAMILY - should return status code 403 and info message from insufficient permissions', () => {
+
+                return request(URI)
+                    .patch(`/users/children/${defaultChild.id}`)
+                    .send({ age: 1 })
+                    .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
+            })
+
+            it('APPLICATION - should return status code 403 and info message from insufficient permissions', () => {
+
+                return request(URI)
+                    .patch(`/users/children/${defaultChild.id}`)
+                    .send({ age: 1 })
+                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
         }) // user does not have permission
+
+        context('when not informed the acess token', () => {
+            it('should return the status code 401 and the authentication failure informational message', async () => {
+
+                return request(URI)
+                    .patch(`/users/children/${defaultChild.id}`)
+                    .send({ age: 1 })
+                    .set('Authorization', 'Bearer ')
+                    .set('Content-Type', 'application/json')
+                    .expect(401)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.AUTH.ERROR_401_UNAUTHORIZED)
+                    })
+            })
+        })
     })
 })

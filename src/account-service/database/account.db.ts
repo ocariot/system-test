@@ -35,9 +35,9 @@ export class AccountDb {
      * @param interval Interval in milliseconds between each attempt
      * @return {Promise<void>}
      */
-    public async connect(retries: number, interval: number): Promise<void> {
+    public async connect(retries?: number, interval?: number): Promise<void> {
         const _this = this
-        await this.createConnection(retries, interval)
+        await this.createConnection(retries ? retries : 0, interval ? interval : 1000)
             .then((connection: Connection) => {
                 this._connection = connection
                 this.connectionStatusListener(this._connection)
@@ -96,7 +96,7 @@ export class AccountDb {
         }
 
         connection.on('connected', () => {
-            console.log('Reconnection established with MongoDB...')
+            // console.log('Reconnection established with MongoDB...')
             this._eventConnection.emit('connected')
         })
 
@@ -144,31 +144,31 @@ export class AccountDb {
         })
     }
 
-    public deleteAllChildren(): Promise<boolean>{
+    public deleteAllChildren(): Promise<boolean> {
         return new Promise(async (resolve, reject) => {
             if (this._connection) {
                 this._connection.db
                     .collection('users')
-                    .deleteMany({ 'type': 'child'})
+                    .deleteMany({ 'type': 'child' })
                     .then(() => resolve(true))
                     .catch(reject)
             }
             return resolve(false)
-        })        
+        })
     }
 
-    public deleteAllEducators(): Promise<boolean>{
+    public deleteAllEducators(): Promise<boolean> {
         return new Promise(async (resolve, reject) => {
             if (this._connection) {
                 this._connection.db
                     .collection('users')
-                    .deleteMany({ 'type': 'educator'})
+                    .deleteMany({ 'type': 'educator' })
                     .then(() => resolve(true))
                     .catch(reject)
             }
             return resolve(false)
-        })        
-    }    
+        })
+    }
 
     public deleteInstitutions(): Promise<boolean> {
         return this._deleteCollection('institutions')

@@ -6,8 +6,9 @@ import { Family } from '../../src/account-service/model/family'
 import { Educator } from '../../src/account-service/model/educator'
 import { HealthProfessional } from '../../src/account-service/model/health.professional'
 import { Application } from '../../src/account-service/model/application'
+import jwtDecode from 'jwt-decode'
 
-export class AccountUtil {
+class AccountUtil {
 
     private URI: String = 'https://localhost'
     public readonly NON_EXISTENT_ID: String = '111111111111111111111111'
@@ -29,6 +30,17 @@ export class AccountUtil {
             .catch(err => {
                 return Promise.reject(err)
             })
+    }
+
+    public getAdminToken() {
+        return this.auth(
+            process.env.ADMIN_USERNAME ? process.env.ADMIN_USERNAME : 'admin',
+            process.env.ADMIN_PASSWORD ? process.env.ADMIN_PASSWORD : 'admin123')
+    }
+
+    public async getAdminID() {
+        const token = await this.getAdminToken()
+        return jwtDecode(token).sub
     }
 
     public saveInstitution(accessToken: string, institution: Institution): Promise<any> {
@@ -161,7 +173,7 @@ export class AccountUtil {
             const token_admin: string = await this.auth(
                 process.env.ADMIN_USERNAME ? process.env.ADMIN_USERNAME : 'admin',
                 process.env.ADMIN_PASSWORD ? process.env.ADMIN_PASSWORD : 'admin123')
-                
+
             result.admin.access_token = token_admin
             result.institution = await this.saveInstitution(token_admin, new InstitutionMock())
             const institution = new Institution().fromJSON(result.institution)
@@ -224,3 +236,5 @@ export class AccountUtil {
         }
     }
 }
+
+export const acc = new AccountUtil()
