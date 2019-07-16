@@ -8,7 +8,7 @@ import { Child } from '../../src/account-service/model/child'
 
 describe('Routes: Auth', () => {
 
-    const URI = 'https://localhost'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081'
     const con = new AccountDb()
 
     const defaultFamily: Family = new Family()

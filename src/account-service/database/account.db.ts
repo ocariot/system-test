@@ -103,7 +103,7 @@ export class AccountDb {
         connection.on('disconnected', () => {
             this._connection = undefined
             this._eventConnection.emit('disconnected')
-            console.log('Connection to MongoDB was lost...')
+            // console.log('Connection to MongoDB was lost...')
         })
     }
 

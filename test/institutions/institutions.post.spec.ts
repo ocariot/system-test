@@ -8,7 +8,7 @@ import { Child } from '../../src/account-service/model/child'
 
 describe('Routes: Institution', () => {
 
-    const URI: string = 'https://localhost'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
     let accessTokenAdmin: string
     let accessTokenChild: string
@@ -64,6 +64,7 @@ describe('Routes: Institution', () => {
     afterEach(async () => {
         try {
             await con.removeCollections()
+            await con.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
         }

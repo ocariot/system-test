@@ -11,7 +11,7 @@ import { SleepMock } from './mocks/tracking-service/sleep.mock';
 import { EducatorMock } from './mocks/account-service/educator.mock'
 import { Sleep } from '../src/tracking-service/model/sleep';
 
-const URI = 'https://localhost'
+const URI: string = process.env.AG_URL || 'https://localhost:8081'
 let child: Child
 let educator: Educator
 let sleep: Sleep

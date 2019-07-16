@@ -10,7 +10,7 @@ import { ChildrenGroup } from '../../src/account-service/model/children.group'
 
 describe('Routes: users.educators.children_groups', () => {
 
-    const URI: string = 'https://localhost'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081'
     const con = new AccountDb()
 
     let defaultEducatorToken: string
@@ -92,6 +92,7 @@ describe('Routes: users.educators.children_groups', () => {
     after(async () => {
         try {
             await con.removeCollections()
+            await con.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
         }

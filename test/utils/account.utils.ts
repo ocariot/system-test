@@ -10,7 +10,7 @@ import jwtDecode from 'jwt-decode'
 
 class AccountUtil {
 
-    private URI: String = 'https://localhost'
+    public readonly URI: string = process.env.AG_URL || 'https://localhost:8081'
     public readonly NON_EXISTENT_ID: String = '111111111111111111111111'
     public readonly INVALID_ID: String = '123'
     public readonly INVALID_GENDER: Number = 1234

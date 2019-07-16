@@ -12,7 +12,7 @@ import { ActivityTypeMock, PhysicalActivityMock } from './mocks/tracking-service
 import { PhysicalActivity } from '../src/tracking-service/model/physical.activity';
 import { Activity } from '../src/tracking-service/model/activity';
 
-const URI = 'https://localhost'
+const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
 let child: Child //deletada no teste para listar atividades da criança deletada
 let educator: Educator
@@ -43,10 +43,10 @@ describe('Routes: users.children.physicalactivities', () => {
             educator = new Educator().fromJSON(resultEducator.body)
 
             const resultEducatorAuth: any = await auth(educator.username, 'educator123')
-            acessTokenEducator = resultEducatorAuth.body.access_token   
-            
+            acessTokenEducator = resultEducatorAuth.body.access_token
+
             physicalActivity = new PhysicalActivityMock(ActivityTypeMock.WALK)
-            physicalActivity.child_id = child.id ? child.id : ''            
+            physicalActivity.child_id = child.id ? child.id : ''
 
         } catch (e) {
             console.log('before error', e.message)
@@ -80,7 +80,7 @@ describe('Routes: users.children.physicalactivities', () => {
 
         context('when posting a new Physical Activity for a child passing an id non existent', () => {
             it('should return status code 404 and an info message describing that child was not found', () => {
-                
+
                 const id = 'aaaaaaaaaaaaaaaaaaaaaaaa'
                 const body = {
                     name: physicalActivity.name,
@@ -89,7 +89,7 @@ describe('Routes: users.children.physicalactivities', () => {
                     duration: physicalActivity.duration,
                     calories: physicalActivity.calories,
                     steps: physicalActivity.steps ? physicalActivity.steps : undefined,
-                    levels: physicalActivity.levels ? physicalActivity.levels : undefined                    
+                    levels: physicalActivity.levels ? physicalActivity.levels : undefined
                 }
 
                 return request(URI)
@@ -103,9 +103,9 @@ describe('Routes: users.children.physicalactivities', () => {
     })
 
     describe('GET /users/children/:child_id/physicalactivities', () => {
-        context('when get all physical activity of a specific child of the database successfully', () => {                        
+        context('when get all physical activity of a specific child of the database successfully', () => {
             it('should return status code 200 and a list of all physical activity of that specific child', () => {
-                
+
                 return request(URI)
                     .get(`/users/children/${child.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
@@ -127,13 +127,13 @@ describe('Routes: users.children.physicalactivities', () => {
                             expect(res.body[0]).to.have.property('levels')
                         }
                         expect(res.body[0].child_id).to.eql(physicalActivity.child_id)
-                        
-                    })                 
+
+                    })
             })
         })
 
         context('when get all physical activity of a specific child deleted of the database', () => {
-            
+
             before(async () => {
                 try {
                     deleteUserChild(child.id)
@@ -141,27 +141,27 @@ describe('Routes: users.children.physicalactivities', () => {
                     console.log('before error', e.message)
                 }
             })
-                        
+
             it('should return status code 404 and an info message describing that child was not found', () => {
-                
+
                 return request(URI)
                     .get(`/users/children/${child.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .expect(404)                    
+                    .expect(404)
             })
         })
 
         context('when to obtain all the physical activity of a child passing a non existent id', () => {
             it('should return status code 404 and an info message describing that child was not found', () => {
-                
+
                 const id = 'aaaaaaaaaaaaaaaaaaaaaaaa'
-                
+
                 return request(URI)
                     .get(`/users/children/${id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .expect(404)                    
+                    .expect(404)
             })
         })
         // COMENTADO 1
@@ -173,40 +173,40 @@ describe('Routes: users.children.physicalactivities', () => {
                 try{
                     const resultInstitution: any = await saveInstitution()
                     anotherInstitution = new Institution().fromJSON(resultInstitution.body)
-        
+
                     const resultChild: any = await saveChild(anotherInstitution.id)
                     anotherChild = new Child().fromJSON(resultChild.body)
-        
+
                     const resultChildAuth: any = await auth(anotherChild.username, 'child123')
                     accessTokenChild = resultChildAuth.body.access_token
-                    
+
                     const resultPhysicalActivite: any = await savePhysicalActivitie()
                     anotherActivity = new PhysicalActivity().fromJSON(resultPhysicalActivite)
                     anotherActivity.child_id = anotherChild.id ? anotherChild.id : ''
 
                 } catch(e){
-                    
+
                 }
             })
 
             it('should return status code 404 and an info message describing that child was not found', () => {
-                
-                console.log('AF = ', anotherActivity) 
+
+                console.log('AF = ', anotherActivity)
 
                 return request(URI)
                     .get(`/users/children/${anotherChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .expect(200)                    
+                    .expect(200)
             })
-        }) //FIM DO COMENTADO 1        
-    })     
+        }) //FIM DO COMENTADO 1
+    })
 
     describe('PATCH /users/children/:child_id/physicalactivities/:physicalactivity_id', () => {
 
         //COMENTADO 2
         context('when this physical activity exists in the database and is updated successfully', () => {
-            it('should return status code 200 and the updated physical activity', () => {                  
+            it('should return status code 200 and the updated physical activity', () => {
 
                 otherActivity = new PhysicalActivityMock(ActivityTypeMock.WALK)
 
@@ -219,19 +219,19 @@ describe('Routes: users.children.physicalactivities', () => {
                     steps: otherActivity.steps ? otherActivity.steps: undefined,
                     levels: otherActivity.levels ? otherActivity.levels: undefined,
                     child_id: child.id
-                }    
+                }
 
                 return request(URI)
                     .patch(`/users/children/${child.id}/physicalactivities/${physicalActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(acessTokenEducator))                
+                    .set('Authorization', 'Bearer '.concat(acessTokenEducator))
                     .expect(404)
             })
         })
 
         context('when this physical activity to belong of a specific child deleted of the database', () => {
-            it('should return status code 404 and an info message describing that child was not found', () => {                  
+            it('should return status code 404 and an info message describing that child was not found', () => {
 
                 otherActivity = new PhysicalActivityMock(ActivityTypeMock.WALK)
 
@@ -244,17 +244,17 @@ describe('Routes: users.children.physicalactivities', () => {
                     steps: otherActivity.steps ? otherActivity.steps: undefined,
                     levels: otherActivity.levels ? otherActivity.levels: undefined,
                     child_id: child.id
-                }    
+                }
 
                 return request(URI)
                     .patch(`/users/children/${child.id}/physicalactivities/${physicalActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(acessTokenEducator))                
+                    .set('Authorization', 'Bearer '.concat(acessTokenEducator))
                     .expect(404)
             })
         }) //FIM DO COMENTADO 2
-    })             
+    })
 })
 
 async function auth(username?: string, password?: string): Promise<any> {

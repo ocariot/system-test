@@ -12,7 +12,7 @@ import { Application } from '../../src/account-service/model/application'
 
 describe('Routes: users', () => {
 
-    const URI: string = 'https://localhost'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
     let accessTokenAdmin: string
     let accessTokenChild: string
@@ -114,6 +114,7 @@ describe('Routes: users', () => {
     after(async () => {
         try {
             await con.removeCollections()
+            await con.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
         }

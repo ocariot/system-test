@@ -12,7 +12,7 @@ import { AccountDb } from '../../src/account-service/database/account.db'
 
 describe('Routes: Auth', () => {
 
-    const URI = 'https://localhost'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081'
     const con = new AccountDb()
 
     let accessTokenAdmin: string
@@ -88,6 +88,7 @@ describe('Routes: Auth', () => {
     after(async () => {
         try {
             await con.removeCollections()
+            await con.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
         }

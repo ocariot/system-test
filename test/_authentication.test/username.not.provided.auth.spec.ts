@@ -4,7 +4,7 @@ import { Strings } from '../utils/string.error.message'
 
 describe('Routes: Auth', () => {
 
-    const URI = 'https://localhost'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
     describe('POST /auth', () => {
 

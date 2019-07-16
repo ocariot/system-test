@@ -8,7 +8,7 @@ import { Strings } from '../utils/string.error.message'
 
 describe('Routes: users.children', () => {
 
-    const URI: string = 'https://localhost'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
     let accessTokenAdmin: string
     let accessTokenChild: string
@@ -70,6 +70,7 @@ describe('Routes: users.children', () => {
     after(async () => {
         try {
             await con.removeCollections()
+            await con.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
         }

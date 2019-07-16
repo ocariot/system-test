@@ -7,7 +7,7 @@ import { HealthProfessional } from '../../src/account-service/model/health.profe
 
 describe('Routes: Auth', () => {
 
-    const URI = 'https://localhost'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081'
     const con = new AccountDb()
 
     const defaultHealthProfessional: HealthProfessional = new HealthProfessional()

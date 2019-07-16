@@ -6,7 +6,7 @@ import { Application } from '../../src/account-service/model/application'
 
 describe('Routes: Auth', () => {
 
-    const URI = 'https://localhost'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081'
     const con = new AccountDb()
 
     const defaultApplication: Application = new Application()
