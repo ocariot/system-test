@@ -91,7 +91,7 @@ describe('Routes: users.educators.children_groups', () => {
 
     after(async () => {
         try {
-            await con.removeCollections()
+            // await con.removeCollections()
             await con.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
@@ -151,7 +151,7 @@ describe('Routes: users.educators.children_groups', () => {
                     .set('Content-Type', 'application/json')
                     .expect(409)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_409_UNIQUE_DATA_ALREADY_EXISTS)
+                        expect(err.body).to.eql(Strings.CHILDREN_GROUPS.ERROR_409_DUPLICATE_CHILDREN_GROUPS)
                     })
             })
         })
@@ -232,7 +232,7 @@ describe('Routes: users.educators.children_groups', () => {
                         .set('Content-Type', 'application/json')
                         .expect(400)
                         .then(err => {
-                            expect(err.body).to.eql(Strings.CHILDREN_GROUPS.ERROR_400_INVALID_FORMAT_ID)
+                            expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
                             // caso o ID contenha caracteres não numéricos (ex: 5a) o erro retornado é correto
                         })
                 })

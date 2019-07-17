@@ -61,7 +61,7 @@ describe('Routes: Institution', () => {
         }
     })
 
-    afterEach(async () => {
+    after(async () => {
         try {
             await con.removeCollections()
             await con.dispose()
@@ -71,6 +71,13 @@ describe('Routes: Institution', () => {
     })
 
     describe('POST /institutions', () => {
+        afterEach(async () => {
+            try {
+                await con.deleteInstitutions()
+            } catch (err) {
+                console.log('DB ERROR', err)
+            }
+        })
 
         context('when posting a new institution successfull', async () => {
 
