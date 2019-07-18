@@ -7,6 +7,7 @@ import { Educator } from '../../src/account-service/model/educator'
 import { HealthProfessional } from '../../src/account-service/model/health.professional'
 import { Application } from '../../src/account-service/model/application'
 import jwtDecode from 'jwt-decode'
+import { ChildrenGroup } from 'account-service/model/children.group';
 
 class AccountUtil {
 
@@ -120,7 +121,7 @@ class AccountUtil {
             .catch(err => Promise.reject(err))
     }
 
-    public saveChildrenGroupsForEducator(accessToken: string, educator: Educator, children_group: any): Promise<any> {
+    public saveChildrenGroupsForEducator(accessToken: string, educator: Educator, children_group: ChildrenGroup): Promise<any> {
 
         return request(this.URI)
             .post(`/users/educators/${educator.id}/children/groups`)
