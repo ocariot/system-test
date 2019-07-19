@@ -170,6 +170,19 @@ export class AccountDb {
         })
     }
 
+    public deleteAllHealthProfessionals(): Promise<boolean> {
+        return new Promise(async (resolve, reject) => {
+            if (this._connection) {
+                this._connection.db
+                    .collection('users')
+                    .deleteMany({ 'type': 'healthprofessional' })
+                    .then(() => resolve(true))
+                    .catch(reject)
+            }
+            return resolve(false)
+        })
+    }
+
     public deleteInstitutions(): Promise<boolean> {
         return this._deleteCollection('institutions')
     }

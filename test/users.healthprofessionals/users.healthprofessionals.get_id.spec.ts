@@ -3,12 +3,12 @@ import { expect } from 'chai'
 import { Institution } from '../../src/account-service/model/institution'
 import { acc } from '../utils/account.utils'
 import { AccountDb } from '../../src/account-service/database/account.db'
-import { Educator } from '../../src/account-service/model/educator'
 import { Strings } from '../utils/string.error.message'
 import { Child } from '../../src/account-service/model/child'
 import { ChildrenGroup } from '../../src/account-service/model/children.group'
+import { HealthProfessional } from '../../src/account-service/model/health.professional'
 
-describe('Routes: users.educators', () => {
+describe('Routes: users.healthprofessionals', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -26,11 +26,11 @@ describe('Routes: users.educators', () => {
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
 
-    const defaultEducator: Educator = new Educator()
-    defaultEducator.username = 'Default educator'
-    defaultEducator.password = 'Default pass'
+    const defaultHealthProfessional: HealthProfessional = new HealthProfessional()
+    defaultHealthProfessional.username = 'Default healthprofessional'
+    defaultHealthProfessional.password = 'Default pass'
 
-    let defaultEducatorToken: string
+    let defaultHealthProfessionalToken: string
 
     const defaultChild: Child = new Child()
     defaultChild.username = 'Default child'
@@ -62,18 +62,18 @@ describe('Routes: users.educators', () => {
             defaultInstitution.id = result.id
 
             defaultChild.institution = defaultInstitution
-            defaultEducator.institution = defaultInstitution
+            defaultHealthProfessional.institution = defaultInstitution
 
             const resultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
             defaultChild.id = resultChild.id
 
             defaultChildrenGroup.children = new Array<Child>(resultChild)
 
-            const resultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
-            defaultEducator.id = resultEducator.id
+            const resultHealthProfessional = await acc.saveHealthProfessional(accessTokenAdmin, defaultHealthProfessional)
+            defaultHealthProfessional.id = resultHealthProfessional.id
 
-            if (defaultEducator.username && defaultEducator.password)
-                defaultEducatorToken = await acc.auth(defaultEducator.username, defaultEducator.password)
+            if (defaultHealthProfessional.username && defaultHealthProfessional.password)
+                defaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
 
         } catch (e) {
             console.log('Before Error', e)
@@ -82,26 +82,26 @@ describe('Routes: users.educators', () => {
 
     after(async () => {
         try {
-            // await con.removeCollections()
+            await con.removeCollections()
             await con.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
         }
     })
 
-    describe('GET /users/educators/:educator_id', () => {
-        context('when get a unique educator in database successfully', () => {
+    describe('GET /users/healthprofessionals/:healthprofessional_id', () => {
+        context('when get a unique health professional in database successfully', () => {
 
-            it('educators.get_id001: should return status code 200 and a educator obtained by admin user', () => {
+            it('healthprofessionals.get_id001: should return status code 200 and a health professional obtained by admin user', () => {
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}`)
+                    .get(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body.id).to.eql(defaultEducator.id)
-                        expect(res.body.username).to.eql(defaultEducator.username)
+                        expect(res.body.id).to.eql(defaultHealthProfessional.id)
+                        expect(res.body.username).to.eql(defaultHealthProfessional.username)
                         expect(res.body.institution).to.have.property('id')
                         expect(res.body.institution.type).to.eql(defaultInstitution.type)
                         expect(res.body.institution.name).to.eql(defaultInstitution.name)
@@ -111,10 +111,10 @@ describe('Routes: users.educators', () => {
                     })
             })
 
-            it('educators.get_id002: should return status code 200 and only the ID, username and institution of the educator', () => {
+            it('healthprofessionals.get_id002: should return status code 200 and only the ID, username and institution of the health professional', () => {
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}`)
+                    .get(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -123,7 +123,7 @@ describe('Routes: users.educators', () => {
                         expect(res.body).to.have.property('username')
                         expect(res.body).to.have.property('institution')
                         expect(res.body).to.have.property('children_groups')
-                        expect(res.body.username).to.eql(defaultEducator.username)
+                        expect(res.body.username).to.eql(defaultHealthProfessional.username)
                         expect(res.body.institution.id).to.eql(defaultInstitution.id)
                         expect(res.body.institution.type).to.eql(defaultInstitution.type)
                         expect(res.body.institution.name).to.eql(defaultInstitution.name)
@@ -133,20 +133,20 @@ describe('Routes: users.educators', () => {
                     })
             })
 
-            describe('when gets a unique educator who has a children group associated with him', () => {
+            context('when the health professional who has a children group associated with him', () => {
                 before(async () => {
                     try {
-                        await acc.saveChildrenGroupsForEducator(defaultEducatorToken, defaultEducator, defaultChildrenGroup)
+                        await acc.saveChildrenGroupsForHealthProfessional(defaultHealthProfessionalToken, defaultHealthProfessional, defaultChildrenGroup)
                     } catch (err) {
-                        console.log('Failure in users.educators.get_id test: ', err)
+                        console.log('Failure in users.healthprofessionals.get_id test: ', err)
                     }
                 })
 
-                it('educators.get_id003: should return status code 200 and the educator data obtained by himself, without child personal data', () => {
+                it('healthprofessionals.get_id003: should return status code 200 and the health professional data obtained by himself, without child personal data', () => {
 
                     return request(URI)
-                        .get(`/users/educators/${defaultEducator.id}`)
-                        .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
+                        .get(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
+                        .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                         .set('Content-Type', 'application/json')
                         .expect(200)
                         .then(res => {
@@ -163,7 +163,7 @@ describe('Routes: users.educators', () => {
                             expect(res.body.children_groups[0].children[0]).to.not.have.property('username')
                             expect(res.body.children_groups[0].children[0]).to.not.have.property('age')
                             expect(res.body.children_groups[0].children[0]).to.not.have.property('gender')
-                            expect(res.body.username).to.eql(defaultEducator.username)
+                            expect(res.body.username).to.eql(defaultHealthProfessional.username)
                             expect(res.body.institution.id).to.eql(defaultInstitution.id)
                             expect(res.body.institution.type).to.eql(defaultInstitution.type)
                             expect(res.body.institution.name).to.eql(defaultInstitution.name)
@@ -173,10 +173,10 @@ describe('Routes: users.educators', () => {
                         })
                 })
 
-                it('educators.get_id004: should return status code 200 and a educator obtained by admin user, without the children group data', () => {
+                it('healthprofessionals.get_id004: should return status code 200 and a health professional obtained by admin user, without the children group data', () => {
 
                     return request(URI)
-                        .get(`/users/educators/${defaultEducator.id}`)
+                        .get(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
                         .expect(200)
@@ -185,8 +185,8 @@ describe('Routes: users.educators', () => {
                             expect(res.body).to.have.property('username')
                             expect(res.body).to.not.have.property('children_groups')
                             expect(res.body).to.have.property('institution')
-                            expect(res.body.id).to.eql(defaultEducator.id)
-                            expect(res.body.username).to.eql(defaultEducator.username)
+                            expect(res.body.id).to.eql(defaultHealthProfessional.id)
+                            expect(res.body.username).to.eql(defaultHealthProfessional.username)
                             expect(res.body.institution).to.have.property('id')
                             expect(res.body.institution.type).to.eql(defaultInstitution.type)
                             expect(res.body.institution.name).to.eql(defaultInstitution.name)
@@ -197,29 +197,29 @@ describe('Routes: users.educators', () => {
                         })
                 })
 
-            }) // educator who has a children group associated with him
+            }) // health professional who has a children group associated with him
 
-        }) // get a unique educator in database successfully
+        }) // get a unique health professional in database successfully
 
-        describe('when the educator is not found', () => {
-            it('educators.get_id005: should return status code 404 and info message from educator not found', () => {
+        describe('when the health professional is not found', () => {
+            it('healthprofessionals.get_id005: should return status code 404 and info message from health professional not found', () => {
 
                 return request(URI)
-                    .get(`/users/educators/${acc.NON_EXISTENT_ID}`)
+                    .get(`/users/healthprofessionals/${acc.NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(404)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.EDUCATOR.ERROR_404_EDUCATOR_NOT_FOUND)
+                        expect(err.body).to.eql(Strings.HEALTH_PROFESSIONAL.ERROR_404_HEALTHPROFESSIONAL_NOT_FOUND)
                     })
             })
         })
 
-        describe('when the educator_id is invalid', () => {
-            it('educators.get_id006: should return status code 400 and message info about invalid id', () => {
+        describe('when the healthprofessional_id is invalid', () => {
+            it('healthprofessionals.get_id006: should return status code 400 and message info about invalid id', () => {
 
                 return request(URI)
-                    .get(`/users/educators/${acc.INVALID_ID}`)
+                    .get(`/users/healthprofessionals/${acc.INVALID_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -229,12 +229,12 @@ describe('Routes: users.educators', () => {
             })
         })
 
-        context('when the user does not have permission to get a unique educator in database', () => {
+        context('when the user does not have permission to get a unique health professional in database', () => {
 
-            it('educators.get_id007: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('healthprofessionals.get_id007: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}`)
+                    .get(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -243,11 +243,11 @@ describe('Routes: users.educators', () => {
                     })
             })
 
-            it('educators.get_id008: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('healthprofessionals.get_id008: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                    .get(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
@@ -255,10 +255,10 @@ describe('Routes: users.educators', () => {
                     })
             })
 
-            it('educators.get_id009: should return status code 403 and info message from insufficient permissions family user', () => {
+            it('healthprofessionals.get_id009: should return status code 403 and info message from insufficient permissions family user', () => {
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}`)
+                    .get(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -267,10 +267,10 @@ describe('Routes: users.educators', () => {
                     })
             })
 
-            it('educators.get_id010: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('healthprofessionals.get_id010: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}`)
+                    .get(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -279,11 +279,11 @@ describe('Routes: users.educators', () => {
                     })
             })
 
-            it('educators.get_id011: should return status code 403 and info message from insufficient permissions for another educator user', () => {
+            it('healthprofessionals.get_id011: should return status code 403 and info message from insufficient permissions for another health professional user', () => {
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .get(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
@@ -294,10 +294,10 @@ describe('Routes: users.educators', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('educators.get_id012: should return the status code 401 and the authentication failure informational message', async () => {
+            it('healthprofessionals.get_id012: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}`)
+                    .get(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
                     .expect(401)

@@ -132,6 +132,17 @@ class AccountUtil {
             .catch(err => Promise.reject(err))
     }
 
+    public saveChildrenGroupsForHealthProfessional(accessToken: string, healthprofessional: HealthProfessional, children_group: ChildrenGroup): Promise<any> {
+
+        return request(this.URI)
+            .post(`/users/healthprofessionals/${healthprofessional.id}/children/groups`)
+            .set('Authorization', 'Bearer '.concat(accessToken))
+            .set('Content-Type', 'application/json')
+            .send(children_group)
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))
+    }
+
     public deleteChildrenGroupFromEducator(accessToken, educator: Educator, children_group: any): Promise<any> {
 
         return request(this.URI)
