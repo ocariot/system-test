@@ -562,7 +562,7 @@ describe('Routes: users', () => {
                 }
             })
 
-            it('users.patch026: should return status code 401 and info message about unauthorized for admin user', () => {
+            it('users.patch026: should return status code 401 and info message about unauthorized for update admin user', () => {
 
                 return request(URI)
                     .patch(`/users/${admin_ID}/password`)
@@ -574,7 +574,7 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.patch027: should return status code 401 and info message about unauthorized for child user', () => {
+            it('users.patch027: should return status code 401 and info message about unauthorized for update child user', () => {
 
                 return request(URI)
                     .patch(`/users/${defaultChild.id}/password`)
@@ -586,7 +586,7 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.patch028: should return status code 401 and info message about unauthorized for educator user', () => {
+            it('users.patch028: should return status code 401 and info message about unauthorized for update educator user', () => {
 
                 return request(URI)
                     .patch(`/users/${defaultEducator.id}/password`)
@@ -598,7 +598,7 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.patch029: should return status code 401 and info message about unauthorized for health professional user', () => {
+            it('users.patch029: should return status code 401 and info message about unauthorized for update health professional user', () => {
 
                 return request(URI)
                     .patch(`/users/${defaultHealthProfessional.id}/password`)
@@ -610,7 +610,7 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.patch030: should return status code 401 and info message about unauthorized for family user', () => {
+            it('users.patch030: should return status code 401 and info message about unauthorized for update family user', () => {
 
                 return request(URI)
                     .patch(`/users/${defaultFamily.id}/password`)
@@ -622,7 +622,7 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.patch031: should return status code 401 and info message about unauthorized for application user', () => {
+            it('users.patch031: should return status code 401 and info message about unauthorized for update application user', () => {
 
                 return request(URI)
                     .patch(`/users/${defaultApplication.id}/password`)
