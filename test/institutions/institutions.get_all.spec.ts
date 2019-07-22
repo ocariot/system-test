@@ -77,6 +77,16 @@ describe('Routes: Institution', () => {
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
                         expect(res.body.length).is.eql(2)
+                        expect(res.body[0]).to.have.property('name', anotherInstitution.name)
+                        expect(res.body[0]).to.have.property('type', anotherInstitution.type)
+                        expect(res.body[0]).to.not.have.property('address')
+                        expect(res.body[0]).to.not.have.property('latitude')
+                        expect(res.body[0]).to.not.have.property('longitude')
+                        expect(res.body[1]).to.have.property('name', defaultInstitution.name)
+                        expect(res.body[1]).to.have.property('type', defaultInstitution.type)
+                        expect(res.body[1]).to.have.property('address', defaultInstitution.address)
+                        expect(res.body[1]).to.have.property('latitude', defaultInstitution.latitude)
+                        expect(res.body[1]).to.have.property('longitude', defaultInstitution.longitude)
                     })
             })
 
@@ -92,8 +102,16 @@ describe('Routes: Institution', () => {
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
                         expect(res.body.length).is.eql(2)
-                        expect(res.body[0].name).to.eql(anotherInstitution.name)
-                        expect(res.body[1].name).to.eql(defaultInstitution.name)
+                        expect(res.body[0]).to.have.property('name', anotherInstitution.name)
+                        expect(res.body[0]).to.have.property('type', anotherInstitution.type)
+                        expect(res.body[0]).to.not.have.property('address')
+                        expect(res.body[0]).to.not.have.property('latitude')
+                        expect(res.body[0]).to.not.have.property('longitude')
+                        expect(res.body[1]).to.have.property('name', defaultInstitution.name)
+                        expect(res.body[1]).to.have.property('type', defaultInstitution.type)
+                        expect(res.body[1]).to.have.property('address', defaultInstitution.address)
+                        expect(res.body[1]).to.have.property('latitude', defaultInstitution.latitude)
+                        expect(res.body[1]).to.have.property('longitude', defaultInstitution.longitude)
                     })
             })
 
@@ -109,17 +127,25 @@ describe('Routes: Institution', () => {
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
                         expect(res.body.length).is.eql(2)
-                        expect(res.body[0].name).to.eql(defaultInstitution.name)
-                        expect(res.body[1].name).to.eql(anotherInstitution.name)
+                        expect(res.body[0]).to.have.property('name', defaultInstitution.name)
+                        expect(res.body[0]).to.have.property('type', defaultInstitution.type)
+                        expect(res.body[0]).to.have.property('address', defaultInstitution.address)
+                        expect(res.body[0]).to.have.property('latitude', defaultInstitution.latitude)
+                        expect(res.body[0]).to.have.property('longitude', defaultInstitution.longitude)
+                        expect(res.body[1]).to.have.property('name', anotherInstitution.name)
+                        expect(res.body[1]).to.have.property('type', anotherInstitution.type)
+                        expect(res.body[1]).to.not.have.property('address')
+                        expect(res.body[1]).to.not.have.property('latitude')
+                        expect(res.body[1]).to.not.have.property('longitude')
                     })
             })
 
             it('institutions.get_all004: should return status code 200 and a list with only name and ID of two institutions', () => {
 
-                const sortField = 'name'
+                const field = 'name'
 
                 return request(URI)
-                    .get(`/institutions?fields=${sortField}`)
+                    .get(`/institutions?fields=${field}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -127,21 +153,27 @@ describe('Routes: Institution', () => {
                         expect(res.body).is.instanceof(Array)
                         expect(res.body.length).is.eql(2)
                         expect(res.body[0]).to.have.property('id')
-                        expect(res.body[0]).to.have.property('name')
+                        expect(res.body[0]).to.have.property('name', anotherInstitution.name)
                         expect(res.body[0]).to.not.have.property('type')
                         expect(res.body[0]).to.not.have.property('address')
                         expect(res.body[0]).to.not.have.property('latitude')
                         expect(res.body[0]).to.not.have.property('longitude')
+                        expect(res.body[1]).to.have.property('id')
+                        expect(res.body[1]).to.have.property('name', defaultInstitution.name)
+                        expect(res.body[1]).to.not.have.property('type')
+                        expect(res.body[1]).to.not.have.property('address')
+                        expect(res.body[1]).to.not.have.property('latitude')
+                        expect(res.body[1]).to.not.have.property('longitude')
                     })
             })
 
             it('institutions.get_all005: should return status code 200 and a list of institutions with only name, ID and type of two institutions', () => {
 
-                const sortFieldOne = 'name'
-                const sortFieldTwo = 'type'
+                const fieldOne = 'name'
+                const fieldTwo = 'type'
 
                 return request(URI)
-                    .get(`/institutions?fields=${sortFieldOne}%2C${sortFieldTwo}`)
+                    .get(`/institutions?fields=${fieldOne}%2C${fieldTwo}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -149,16 +181,22 @@ describe('Routes: Institution', () => {
                         expect(res.body).is.instanceof(Array)
                         expect(res.body.length).is.eql(2)
                         expect(res.body[0]).to.have.property('id')
-                        expect(res.body[0]).to.have.property('name')
-                        expect(res.body[0]).to.have.property('type')
+                        expect(res.body[0]).to.have.property('name', anotherInstitution.name)
+                        expect(res.body[0]).to.have.property('type', anotherInstitution.type)
                         expect(res.body[0]).to.not.have.property('address')
                         expect(res.body[0]).to.not.have.property('latitude')
                         expect(res.body[0]).to.not.have.property('longitude')
+
+                        expect(res.body[1]).to.have.property('id')
+                        expect(res.body[1]).to.have.property('name', defaultInstitution.name)
+                        expect(res.body[1]).to.have.property('type', defaultInstitution.type)
+                        expect(res.body[1]).to.not.have.property('address')
+                        expect(res.body[1]).to.not.have.property('latitude')
+                        expect(res.body[1]).to.not.have.property('longitude')
                     })
             })
 
             it('institutions.get_all006: should return status code 200 and a list of two most recent institutions in database', () => {
-
                 const page = 1
                 const limit = 2
 
@@ -187,6 +225,16 @@ describe('Routes: Institution', () => {
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
                         expect(res.body.length).to.eql(2)
+                        expect(res.body[0]).to.have.property('name', anotherInstitution.name)
+                        expect(res.body[0]).to.have.property('type', anotherInstitution.type)
+                        expect(res.body[0]).to.not.have.property('address')
+                        expect(res.body[0]).to.not.have.property('latitude')
+                        expect(res.body[0]).to.not.have.property('longitude')
+                        expect(res.body[1]).to.have.property('name', defaultInstitution.name)
+                        expect(res.body[1]).to.have.property('type', defaultInstitution.type)
+                        expect(res.body[1]).to.have.property('address', defaultInstitution.address)
+                        expect(res.body[1]).to.have.property('latitude', defaultInstitution.latitude)
+                        expect(res.body[1]).to.have.property('longitude', defaultInstitution.longitude)
                     })
             })
 
@@ -212,6 +260,16 @@ describe('Routes: Institution', () => {
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
                         expect(res.body.length).to.eql(2)
+                        expect(res.body[0]).to.have.property('name', anotherInstitution.name)
+                        expect(res.body[0]).to.have.property('type', anotherInstitution.type)
+                        expect(res.body[0]).to.not.have.property('address')
+                        expect(res.body[0]).to.not.have.property('latitude')
+                        expect(res.body[0]).to.not.have.property('longitude')
+                        expect(res.body[1]).to.have.property('name', defaultInstitution.name)
+                        expect(res.body[1]).to.have.property('type', defaultInstitution.type)
+                        expect(res.body[1]).to.have.property('address', defaultInstitution.address)
+                        expect(res.body[1]).to.have.property('latitude', defaultInstitution.latitude)
+                        expect(res.body[1]).to.have.property('longitude', defaultInstitution.longitude)
                     })
             })
 
@@ -225,6 +283,16 @@ describe('Routes: Institution', () => {
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
                         expect(res.body.length).to.eql(2)
+                        expect(res.body[0]).to.have.property('name', anotherInstitution.name)
+                        expect(res.body[0]).to.have.property('type', anotherInstitution.type)
+                        expect(res.body[0]).to.not.have.property('address')
+                        expect(res.body[0]).to.not.have.property('latitude')
+                        expect(res.body[0]).to.not.have.property('longitude')
+                        expect(res.body[1]).to.have.property('name', defaultInstitution.name)
+                        expect(res.body[1]).to.have.property('type', defaultInstitution.type)
+                        expect(res.body[1]).to.have.property('address', defaultInstitution.address)
+                        expect(res.body[1]).to.have.property('latitude', defaultInstitution.latitude)
+                        expect(res.body[1]).to.have.property('longitude', defaultInstitution.longitude)
                     })
             })
 
@@ -250,6 +318,16 @@ describe('Routes: Institution', () => {
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
                         expect(res.body.length).to.eql(2)
+                        expect(res.body[0]).to.have.property('name', anotherInstitution.name)
+                        expect(res.body[0]).to.have.property('type', anotherInstitution.type)
+                        expect(res.body[0]).to.not.have.property('address')
+                        expect(res.body[0]).to.not.have.property('latitude')
+                        expect(res.body[0]).to.not.have.property('longitude')
+                        expect(res.body[1]).to.have.property('name', defaultInstitution.name)
+                        expect(res.body[1]).to.have.property('type', defaultInstitution.type)
+                        expect(res.body[1]).to.have.property('address', defaultInstitution.address)
+                        expect(res.body[1]).to.have.property('latitude', defaultInstitution.latitude)
+                        expect(res.body[1]).to.have.property('longitude', defaultInstitution.longitude)
                     })
             })
 
@@ -290,5 +368,43 @@ describe('Routes: Institution', () => {
                     })
             })
         })
+
+        // describe('when get the one hundred most recently registered institutions in database', () => {
+            
+        //     const institution101 = new InstitutionMock()
+        //     before(async () => {
+        //         try {
+        //             await con.deleteInstitutions()
+        //             await acc.saveInstitution(accessTokenAdmin, new InstitutionMock())
+        //             for (let i = 1; i < 100; i++) {
+        //                 await acc.saveInstitution(accessTokenAdmin, new InstitutionMock())
+        //             }
+        //         } catch (err) {
+        //             console.log('Failure in institutions.get_all.spec test: ', err)
+        //         }
+        //     })
+        //     after(async () => {
+        //         try {
+        //             await con.deleteInstitutions()
+        //         } catch (err) {
+        //             console.log('Failure in institutions.get_all.spec test: ', err)
+        //         }
+        //     })
+        //     it('institutions.get_all00?: should return status code 200 and a list with only one hundred institutions', () => {
+        //         const page = 1
+        //         const limit = 100
+
+        //         return request(URI)
+        //             .get(`/institutions?page=${page}&limit=${limit}`)
+        //             .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+        //             .set('Content-Type', 'application/json')
+        //             .expect(200)
+        //             .then(res => {
+        //                 expect(res.body).is.instanceof(Array)
+        //                 expect(res.body.length).is.eql(100)
+        //                 expect(res.body[99]).to.not.eql(institution101)
+        //             })
+        //     })
+        // })        
     })
 })

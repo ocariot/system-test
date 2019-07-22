@@ -226,3 +226,4 @@ export class AccountDb {
         return Promise.reject(false)
     }
 }
+// export const accountDB =  new newAccountDb()
