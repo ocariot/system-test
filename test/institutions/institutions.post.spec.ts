@@ -95,7 +95,6 @@ describe('Routes: Institution', () => {
                         expect(res.body.address).to.eql(defaultInstitution.address)
                         expect(res.body.latitude).to.eql(defaultInstitution.latitude)
                         expect(res.body.longitude).to.eql(defaultInstitution.longitude)
-                        defaultInstitution.id = res.body.id
                     })
             })
 
@@ -111,7 +110,6 @@ describe('Routes: Institution', () => {
                         expect(res.body).to.have.property('id')
                         expect(res.body.type).to.eql(anotherInstitution.type)
                         expect(res.body.name).to.eql(anotherInstitution.name)
-                        anotherInstitution.id = res.body.id
                     })
             })
 
@@ -121,6 +119,11 @@ describe('Routes: Institution', () => {
 
             before(async () => {
                 try {
+                    // The failure occurrs when trying to save a duplicate of an institution that has already been deleted,
+                    // it is important to popular the ID in the request
+                    const result = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
+                    defaultInstitution.id = result.id
+                    await con.deleteInstitutions()
                     await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
                 } catch (err) {
                     console.log('Failure in Institution.post test', err)
