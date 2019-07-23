@@ -51,8 +51,8 @@ describe('Routes: users.children', () => {
 
             defaultChild.institution = defaultInstitution
 
-        } catch (e) {
-            console.log('Before Error', e)
+        } catch (err) {
+            console.log('Failure on Before from users.children.post test: ', err)
         }
     })
     after(async () => {
@@ -74,7 +74,7 @@ describe('Routes: users.children', () => {
             }
         })
 
-        context('when the admin posting a new child user', () => {
+        describe('when the admin posting a new child user successfully', () => {
             it('children.post001: should return status code 201 and the saved child', () => {
 
                 return request(URI)
@@ -124,7 +124,7 @@ describe('Routes: users.children', () => {
                     console.log('Failure in users.children.post test: ', err)
                 }
             })
-            it('children.post002: should return status code 409 and message info about duplicate items', () => {
+            it('children.post002: should return status code 409 and message info about child is already registered', () => {
 
                 return request(URI)
                     .post('/users/children')

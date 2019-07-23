@@ -70,8 +70,8 @@ describe('Routes: users.healthprofessionals', () => {
             if (defaultHealthProfessional.username && defaultHealthProfessional.password)
                 defaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
 
-        } catch (e) {
-            console.log('Before Error', e)
+        } catch (err) {
+            console.log('Failure on Before from users.healthprofessionals.patch test: ', err)
         }
     })
 
@@ -115,13 +115,12 @@ describe('Routes: users.healthprofessionals', () => {
             before(async () => {
                 try {
                     anotherHealthProfessional.institution = anotherInstitution
-                    const result = await acc.saveHealthProfessional(accessTokenAdmin, anotherHealthProfessional)
-                    anotherHealthProfessional.id = result.id
+                    await acc.saveHealthProfessional(accessTokenAdmin, anotherHealthProfessional)
                 } catch (err) {
                     console.log('Failure on users.healthprofessionals.patch test: ', err)
                 }
             })
-            it('healthprofessionals.patch002: should return status code 409 and info message about user is already registered', () => {
+            it('healthprofessionals.patch002: should return status code 409 and info message about health professional is already registered', () => {
 
                 return request(URI)
                     .patch(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
@@ -180,9 +179,24 @@ describe('Routes: users.healthprofessionals', () => {
             })
         })
 
+        describe('when the healthprofessional_id was invalid', () => {
+            it('healthprofessionals.patch006: should return status code 400 and message for invalid id', () => {
+
+                return request(URI)
+                    .patch(`/users/healthprofessionals/${acc.INVALID_ID}`)
+                    .send({})
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                    })
+            })
+        })
+
         context('when the user does not have permission', () => {
 
-            it('healthprofessionals.patch006: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('healthprofessionals.patch007: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .patch(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
@@ -196,7 +210,7 @@ describe('Routes: users.healthprofessionals', () => {
             })
 
 
-            it('healthprofessionals.patch007: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('healthprofessionals.patch008: should return status code 403 and info message from insufficient permissions for educator user', () => {
                 return request(URI)
                     .patch(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
                     .send({ username: 'anothercoolusername' })
@@ -208,7 +222,7 @@ describe('Routes: users.healthprofessionals', () => {
                     })
             })
 
-            it('healthprofessionals.patch008: should return status code 403 and info message from insufficient permissions for own health professional user', () => {
+            it('healthprofessionals.patch009: should return status code 403 and info message from insufficient permissions for own health professional user', () => {
 
                 return request(URI)
                     .patch(`/users/healthprofessionals/${anotherHealthProfessional.id}`)
@@ -221,7 +235,7 @@ describe('Routes: users.healthprofessionals', () => {
                     })
             })
 
-            it('healthprofessionals.patch009: should return status code 403 and info message from insufficient permissions for another health professional user', () => {
+            it('healthprofessionals.patch010: should return status code 403 and info message from insufficient permissions for another health professional user', () => {
 
                 return request(URI)
                     .patch(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
@@ -234,7 +248,7 @@ describe('Routes: users.healthprofessionals', () => {
                     })
             })
 
-            it('healthprofessionals.patch010: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('healthprofessionals.patch011: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .patch(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
@@ -247,7 +261,7 @@ describe('Routes: users.healthprofessionals', () => {
                     })
             })
 
-            it('healthprofessionals.patch011: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('healthprofessionals.patch012: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .patch(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
@@ -260,19 +274,20 @@ describe('Routes: users.healthprofessionals', () => {
                     })
             })
 
-            describe('when not informed the acess token', () => {
-                it('healthprofessionals.patch012: should return the status code 401 and the authentication failure informational message', () => {
+        }) // user does not have permission
 
-                    return request(URI)
-                        .patch(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
-                        .send({ username: 'anothercoolusername' })
-                        .set('Authorization', 'Bearer ')
-                        .set('Content-Type', 'application/json')
-                        .expect(401)
-                        .then(err => {
-                            expect(err.body).to.eql(Strings.AUTH.ERROR_401_UNAUTHORIZED)
-                        })
-                })
+        describe('when not informed the acess token', () => {
+            it('healthprofessionals.patch013: should return the status code 401 and the authentication failure informational message', () => {
+
+                return request(URI)
+                    .patch(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
+                    .send({ username: 'anothercoolusername' })
+                    .set('Authorization', 'Bearer ')
+                    .set('Content-Type', 'application/json')
+                    .expect(401)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.AUTH.ERROR_401_UNAUTHORIZED)
+                    })
             })
         })
     })

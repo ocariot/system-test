@@ -56,8 +56,8 @@ describe('Routes: Institution', () => {
 
             await con.removeCollections()
 
-        } catch (e) {
-            console.log('Before Error', e.message)
+        } catch (err) {
+            console.log('Failure on Before from institutions.post test: ', err)
         }
     })
 
@@ -130,7 +130,7 @@ describe('Routes: Institution', () => {
                 }
             })
 
-            it('institutions.post003: should return status code 409 and info message about duplicate items', () => {
+            it('institutions.post003: should return status code 409 and info message ', () => {
 
                 return request(URI)
                     .post('/institutions')

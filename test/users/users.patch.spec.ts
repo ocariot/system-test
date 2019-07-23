@@ -111,7 +111,7 @@ describe('Routes: users', () => {
             anotherApplicationToken = tokens.application.access_token
 
         } catch (err) {
-            console.log('Before Error', err)
+            console.log('Failure on Before from users.patch test: ', err)
         }
     })
 
@@ -420,7 +420,6 @@ describe('Routes: users', () => {
                 })
 
             }) // old password does not provided
-
 
             context('the new password does not provided', () => {
 

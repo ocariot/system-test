@@ -63,7 +63,7 @@ describe('Routes: users', () => {
         try {
             await con.connect(0, 1000)
             await con.removeCollections()
-            
+
             accessTokenAdmin = await acc.getAdminToken()
 
             const resultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
@@ -106,8 +106,8 @@ describe('Routes: users', () => {
             anotherFamilyToken = tokens.family.access_token
             anotherApplicationToken = tokens.application.access_token
 
-        } catch (e) {
-            console.log('Before Error', e)
+        } catch (err) {
+            console.log('Failure on Before from users.delete test: ', err)
         }
     })
 

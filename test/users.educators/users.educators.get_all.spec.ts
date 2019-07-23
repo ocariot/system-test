@@ -76,8 +76,8 @@ describe('Routes: users.educators', () => {
             const resultAnotherEducator = await acc.saveEducator(accessTokenAdmin, anotherEducator)
             anotherEducator.id = resultAnotherEducator.id
 
-        } catch (e) {
-            console.log('Before Error', e)
+        } catch (err) {
+            console.log('Failure on Before from users.educators.get_all test: ', err)
         }
     })
 

@@ -82,7 +82,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
             }
 
         } catch (err) {
-            console.log('Failure on Before in healthprofessionals.children.groups.delete test: ', err)
+            console.log('Failure on Before from healthprofessionals.children.groups.delete test: ', err)
         }
     })
 

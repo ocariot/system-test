@@ -42,8 +42,8 @@ describe('Routes: Institution', () => {
             const result = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = result.id
 
-        } catch (e) {
-            console.log('Before Error', e.message)
+        } catch (err) {
+            console.log('Failure on Before from institutions.patch test', err)
         }
     })
 
@@ -191,7 +191,7 @@ describe('Routes: Institution', () => {
                 }
             })
 
-            it('institutions.patch007: should return status code 409 and info message from duplicate institutions', () => {
+            it('institutions.patch007: should return status code 409 and info message about institution is already exist', () => {
 
                 return request(URI)
                     .patch(`/institutions/${defaultInstitution.id}`)

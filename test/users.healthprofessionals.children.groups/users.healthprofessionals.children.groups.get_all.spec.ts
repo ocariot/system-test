@@ -6,7 +6,7 @@ import { AccountDb } from '../../src/account-service/database/account.db'
 import { Strings } from '../utils/string.error.message'
 import { Child } from '../../src/account-service/model/child'
 import { ChildrenGroup } from '../../src/account-service/model/children.group'
-import { HealthProfessional } from '../../src/account-service/model/health.professional';
+import { HealthProfessional } from '../../src/account-service/model/health.professional'
 
 describe('Routes: users.healthprofessionals.children.groups', () => {
 
@@ -98,7 +98,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
             anotherChildrenGroup.id = resultAnotherChildrenGroup.id
 
         } catch (err) {
-            console.log('Failure on Before in healthprofessionals.children.groups.get_all test: ' + err.message)
+            console.log('Failure on Before from healthprofessionals.children.groups.get_all test: ' + err)
         }
     })
 

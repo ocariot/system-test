@@ -75,8 +75,8 @@ describe('Routes: users.healthprofessionals', () => {
             if (defaultHealthProfessional.username && defaultHealthProfessional.password)
                 defaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
 
-        } catch (e) {
-            console.log('Before Error', e)
+        } catch (err) {
+            console.log('Failure on Before from users.healthprofessionals.get_id test: ', err)
         }
     })
 

@@ -17,6 +17,8 @@ describe('Routes: users.children', () => {
     let accessTokenFamily: string
     let accessTokenApplication: string
 
+    let defaultChildToken: string
+
     const defaultInstitution: Institution = new Institution()
     defaultInstitution.type = 'default type'
     defaultInstitution.name = 'default name'
@@ -59,15 +61,22 @@ describe('Routes: users.children', () => {
 
             await con.removeCollections()
 
-            const resultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
-            defaultInstitution.id = resultInstitution.id
+            const resultDefaultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
+            defaultInstitution.id = resultDefaultInstitution.id
 
             defaultChild.institution = defaultInstitution
             const resultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
             defaultChild.id = resultChild.id
 
-        } catch (e) {
-            console.log('Before Error', e)
+            const resultAnotherInstitution = await acc.saveInstitution(accessTokenAdmin, anotherInstitution)
+            anotherInstitution.id = resultAnotherInstitution.id
+
+            if (defaultChild.username && defaultChild.password) {
+                defaultChildToken = await acc.auth(defaultChild.username, defaultChild.password)
+            }
+
+        } catch (err) {
+            console.log('Failure on Before from users.children.patch test: ', err)
         }
     })
 
@@ -83,21 +92,13 @@ describe('Routes: users.children', () => {
     describe('PATCH /users/children/:child_id', () => {
 
         context('when the update was successful by admin user', () => {
-            before(async () => {
-                try {
-                    const resultInstitution = await acc.saveInstitution(accessTokenAdmin, anotherInstitution)
-                    anotherInstitution.id = resultInstitution.id
 
-                    defaultChild.username = 'Default username updated'
-                    defaultChild.age = 13
-                    defaultChild.institution = anotherInstitution
-                    defaultChild.gender = 'female'
-
-                } catch (err) {
-                    console.log('Failure on Children test: ', err)
-                }
-            })
             it('children.patch001: should return status code 200 and updated username, institution, age and gender of the child', () => {
+
+                defaultChild.username = 'Default username updated'
+                defaultChild.age = 13
+                defaultChild.institution = anotherInstitution
+                defaultChild.gender = 'female'
 
                 return request(URI)
                     .patch(`/users/children/${defaultChild.id}`)
@@ -131,13 +132,12 @@ describe('Routes: users.children', () => {
             before(async () => {
                 try {
                     anotherChild.institution = defaultInstitution
-                    const resultChild = await acc.saveChild(accessTokenAdmin, anotherChild)
-                    anotherChild.id = resultChild.id
+                    await acc.saveChild(accessTokenAdmin, anotherChild)
                 } catch (err) {
-                    console.log('Failure on Children test: ', err)
+                    console.log('Failure on users.children.patch test: ', err)
                 }
             })
-            it('children.patch002: should return status code 409 and info message from duplicate value', () => {
+            it('children.patch002: should return status code 409 and info message about child is already registered', () => {
 
                 return request(URI)
                     .patch(`/users/children/${defaultChild.id}`)
@@ -231,23 +231,12 @@ describe('Routes: users.children', () => {
 
         context('when the user does not have permission to update the child', () => {
 
-            let tokenDefaultChild: string
-            before(async () => {
-                try {
-                    if (defaultChild.username && defaultChild.password)
-                        tokenDefaultChild = await acc
-                            .auth(defaultChild.username, defaultChild.password)
-                } catch (err) {
-                    console.log('Failure on Children test: ', err)
-                }
-            })
-
             it('children.patch008: should return status code 403 and info message from insufficient permissions for own child user', () => {
 
                 return request(URI)
                     .patch(`/users/children/${defaultChild.id}`)
                     .send({ age: 1 })
-                    .set('Authorization', 'Bearer '.concat(tokenDefaultChild))
+                    .set('Authorization', 'Bearer '.concat(defaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {

@@ -76,8 +76,8 @@ describe('Routes: users.healthprofessionals', () => {
             const resultAnotherHealthProfessional = await acc.saveHealthProfessional(accessTokenAdmin, anotherHealthProfessional)
             anotherHealthProfessional.id = resultAnotherHealthProfessional.id
 
-        } catch (e) {
-            console.log('Before Error', e)
+        } catch (err) {
+            console.log('Failure on Before from users.healthprofessionals.get_all test: ', err)
         }
     })
 

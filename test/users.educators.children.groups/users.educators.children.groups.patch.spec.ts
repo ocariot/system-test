@@ -8,7 +8,7 @@ import { Strings } from '../utils/string.error.message'
 import { Child } from '../../src/account-service/model/child'
 import { ChildrenGroup } from '../../src/account-service/model/children.group'
 
-describe('Routes: users.educators.children_groups', () => {
+describe('Routes: users.educators.children.groups', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
     const con = new AccountDb()
@@ -109,7 +109,7 @@ describe('Routes: users.educators.children_groups', () => {
             anotherChildGroup.id = resultAnotherChildGroup.id
 
         } catch (err) {
-            console.log('Failure on Before in educators.children.groups.patch test: ', err)
+            console.log('Failure on Before from educators.children.groups.patch test: ', err)
         }
     })
 
@@ -273,7 +273,7 @@ describe('Routes: users.educators.children_groups', () => {
         }) // update successfull
 
         describe('when a duplicate error occurs, when updating the name of children group to the same name of another group, both belonging to the same educator', () => {
-            it('educators.children.groups.patch005: should return status code 409 and info message about duplicate items', () => {
+            it('educators.children.groups.patch005: should return status code 409 and info message about children group is already registered', () => {
 
                 return request(URI)
                     .patch(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -293,7 +293,7 @@ describe('Routes: users.educators.children_groups', () => {
 
                 return request(URI)
                     .patch(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
-                    .send({ children: [acc.NON_EXISTENT_ID] })
+                    .send({ children: [defaultChild.id, acc.NON_EXISTENT_ID] })
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)

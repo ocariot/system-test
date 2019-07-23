@@ -89,7 +89,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
             defaultChildrenGroup.id = resultChildrenGroup.id
 
         } catch (err) {
-            console.log('Failure on Before in healthprofessionals.children.groups.get_id test: ', err)
+            console.log('Failure on Before from healthprofessionals.children.groups.get_id test: ', err)
         }
     })
 

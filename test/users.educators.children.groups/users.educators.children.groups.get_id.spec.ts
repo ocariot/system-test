@@ -8,7 +8,7 @@ import { Strings } from '../utils/string.error.message'
 import { Child } from '../../src/account-service/model/child'
 import { ChildrenGroup } from '../../src/account-service/model/children.group'
 
-describe('Routes: users.educators.children_groups', () => {
+describe('Routes: users.educators.children.groups', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
     const con = new AccountDb()
@@ -90,7 +90,7 @@ describe('Routes: users.educators.children_groups', () => {
             defaultChildrenGroup.id = resultChildrenGroup.id
 
         } catch (err) {
-            console.log('Failure on Educators test: ' + err.message)
+            console.log('Failure on Before from users.educators.children.groups.get_id test: ' + err)
         }
     })
 

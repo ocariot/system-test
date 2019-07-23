@@ -8,7 +8,7 @@ import { Strings } from '../utils/string.error.message'
 import { Child } from '../../src/account-service/model/child'
 import { ChildrenGroup } from '../../src/account-service/model/children.group';
 
-describe('Routes: users.educators.children_groups', () => {
+describe('Routes: users.educators.children.groups', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
     const con = new AccountDb()
@@ -97,7 +97,7 @@ describe('Routes: users.educators.children_groups', () => {
             }
 
         } catch (err) {
-            console.log('Failure on Educators test: ' + err.message)
+            console.log('Failure on Before from users.educator.children.groups.post test: : ', err)
         }
     })
 
@@ -198,7 +198,7 @@ describe('Routes: users.educators.children_groups', () => {
                     console.log('Failure in educators.children.groups.post test:', err)
                 }
             })
-            it('educators.children.group.post003: should return status code 409 and message info about duplicate items', () => {
+            it('educators.children.group.post003: should return status code 409 and message info about children group is already registered', () => {
 
                 return request(URI)
                     .post(`/users/educators/${defaultEducator.id}/children/groups`)

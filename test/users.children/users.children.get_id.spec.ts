@@ -58,8 +58,8 @@ describe('Routes: users.children', () => {
             if (defaultChild.username && defaultChild.password)
                 defaultChildToken = await acc.auth(defaultChild.username, defaultChild.password)
 
-        } catch (e) {
-            console.log('Before Error', e)
+        } catch (err) {
+            console.log('Failure on Before from users.children.get_id test: ', err)
         }
     })
 
@@ -149,8 +149,6 @@ describe('Routes: users.children', () => {
             })
 
         }) // get a unique child successfully
-
-
 
         describe('when the child is not found', () => {
             it('children.get_id004: should return status code 404 and info message from child not found', () => {

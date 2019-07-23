@@ -75,14 +75,14 @@ describe('Routes: users.educators', () => {
             if (defaultEducator.username && defaultEducator.password)
                 defaultEducatorToken = await acc.auth(defaultEducator.username, defaultEducator.password)
 
-        } catch (e) {
-            console.log('Before Error', e)
+        } catch (err) {
+            console.log('Failure on Before from users.educators.get_id test: ', err)
         }
     })
 
     after(async () => {
         try {
-            // await con.removeCollections()
+            await con.removeCollections()
             await con.dispose()
         } catch (err) {
             console.log('DB ERROR', err)

@@ -61,8 +61,8 @@ describe('Routes: users.children', () => {
             await acc.saveChild(accessTokenAdmin, anotherChild)
             await acc.saveChild(accessTokenAdmin, defaultChild)
 
-        } catch (e) {
-            console.log('Before Error', e)
+        } catch (err) {
+            console.log('Failure on Before from users.children.get_all test: ', err)
         }
     })
 

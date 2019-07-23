@@ -97,7 +97,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
             }
 
         } catch (err) {
-            console.log('Failure on healthprofessionals.children.groups.post test: ', err)
+            console.log('Failure on Before from healthprofessionals.children.groups.post test: ', err)
         }
     })
 

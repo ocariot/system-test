@@ -50,7 +50,7 @@ describe('Routes: users.educators', () => {
             defaultEducator.institution = defaultInstitution
 
         } catch (e) {
-            console.log('Before Error', e)
+            console.log('Failure on Before from users.educators.post test: ', e)
         }
     })
 
@@ -115,17 +115,11 @@ describe('Routes: users.educators', () => {
                     console.log('Failure in users.educator.post test: ', err)
                 }
             })
-            it('educators.post002: should return status code 409 and message info about duplicate items', () => {
-
-                const body = {
-                    username: defaultEducator.username,
-                    password: defaultEducator.password,
-                    institution_id: defaultInstitution.id
-                }
+            it('educators.post002: should return status code 409 and message info about educator is already registered', () => {
 
                 return request(URI)
                     .post('/users/educators')
-                    .send(body)
+                    .send(defaultEducator.toJSON())
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(409)

@@ -49,8 +49,8 @@ describe('Routes: users.healthprofessionals', () => {
 
             defaultHealthProfessional.institution = defaultInstitution
 
-        } catch (e) {
-            console.log('Before Error', e)
+        } catch (err) {
+            console.log('Failure on Before from users.healthprofessionals.post test: ', err)
         }
     })
 
@@ -114,7 +114,7 @@ describe('Routes: users.healthprofessionals', () => {
                     console.log('Failure in users.healthprofessionals.post test: ', err)
                 }
             })
-            it('healthprofessionals.post002: should return status code 409 and message info about user is already registered', () => {
+            it('healthprofessionals.post002: should return status code 409 and message info about health professional is already registered', () => {
 
                 return request(URI)
                     .post('/users/healthprofessionals')

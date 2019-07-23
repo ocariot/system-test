@@ -41,8 +41,8 @@ describe('Routes: Institution', () => {
             const result = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = result.id
 
-        } catch (e) {
-            console.log('Before Error', e.message)
+        } catch (err) {
+            console.log('Failure on Before from institutions.get_id test', err)
         }
     })
 
