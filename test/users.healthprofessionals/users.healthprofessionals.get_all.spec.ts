@@ -102,7 +102,6 @@ describe('Routes: users.healthprofessionals', () => {
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        console.log(res.body)
                         expect(res.body).is.an.instanceOf(Array)
                         expect(res.body.length).to.eql(2)
                         expect(res.body[0]).to.have.property('id')

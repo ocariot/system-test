@@ -114,17 +114,11 @@ describe('Routes: users.healthprofessionals', () => {
                     console.log('Failure in users.healthprofessionals.post test: ', err)
                 }
             })
-            it('healthprofessionals.post002: should return status code 409 and message info about duplicate items', () => {
-
-                const body = {
-                    username: defaultHealthProfessional.username,
-                    password: defaultHealthProfessional.password,
-                    institution_id: defaultInstitution.id
-                }
+            it('healthprofessionals.post002: should return status code 409 and message info about user is already registered', () => {
 
                 return request(URI)
                     .post('/users/healthprofessionals')
-                    .send(body)
+                    .send(defaultHealthProfessional.toJSON())
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(409)

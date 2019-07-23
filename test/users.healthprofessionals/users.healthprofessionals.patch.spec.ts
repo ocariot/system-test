@@ -121,7 +121,7 @@ describe('Routes: users.healthprofessionals', () => {
                     console.log('Failure on users.healthprofessionals.patch test: ', err)
                 }
             })
-            it('healthprofessionals.patch002: should return status code 409 and info message from duplicate value', () => {
+            it('healthprofessionals.patch002: should return status code 409 and info message about user is already registered', () => {
 
                 return request(URI)
                     .patch(`/users/healthprofessionals/${defaultHealthProfessional.id}`)
