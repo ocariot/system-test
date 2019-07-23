@@ -143,10 +143,20 @@ class AccountUtil {
             .catch(err => Promise.reject(err))
     }
 
-    public deleteChildrenGroupFromEducator(accessToken, educator: Educator, children_group: any): Promise<any> {
+    public deleteChildrenGroupFromEducator(accessToken: string, educator: Educator, children_group: ChildrenGroup): Promise<any> {
 
         return request(this.URI)
             .delete(`/users/educators/${educator.id}/children/groups/${children_group.id}`)
+            .set('Authorization', 'Bearer '.concat(accessToken))
+            .set('Content-Type', 'application/json')
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))
+    }
+
+    public deleteChildrenGroupFromHealthProfessional(accessToken: string, healthprofessional: HealthProfessional, children_group: ChildrenGroup): Promise<any> {
+
+        return request(this.URI)
+            .delete(`/users/healthprofessionals/${healthprofessional.id}/children/groups/${children_group.id}`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .then(res => Promise.resolve(res.body))
