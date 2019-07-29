@@ -5,7 +5,7 @@ export abstract class Strings {
     public static readonly AUTH: any = {
         ERROR_400_USERNAME: new ApiException(400, 'Required fields were not provided...', 'Authentication validation: username is required!').toJson(),
         ERROR_400_PASSWORD: new ApiException(400, 'Required fields were not provided...', 'Authentication validation: password is required!').toJson(),
-        ERROR_401: new ApiException(401, 'Invalid username or password!').toJson(),
+        ERROR_401_INVALID_VALUE: new ApiException(401, 'Invalid username or password!').toJson(),
         ERROR_401_UNAUTHORIZED: new ApiException(401, 'UNAUTHORIZED', 'Authentication failed for lack of authentication credentials.', '/auth').toJson(),
     }
 
@@ -46,11 +46,20 @@ export abstract class Strings {
         ERROR_409_DUPLICATE: new ApiException(409, 'Health Professional is already registered!').toJson()
     }
 
+    public static readonly FAMILY: any = {
+        ERROR_400_USERNAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Family validation: username is required!').toJson(),
+        ERROR_400_PASSWORD_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Family validation: password is required!').toJson(),
+        ERROR_400_INSTITUTION_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Family validation: institution is required!').toJson(),
+        ERROR_400_CHILDREN_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Family validation: Collection with children IDs is required!').toJson(),
+        ERROR_400_CHILDREN_NOT_REGISTERED: new ApiException(400, 'It is necessary for children to be registered before proceeding.', 'The following IDs were verified without registration:').toJson(),
+        ERROR_404_FAMILY_NOT_FOUND: new ApiException(404, 'Family not found!', 'Family not found or already removed. A new operation for the same resource is not required.').toJson(),
+        ERROR_409_DUPLICATE: new ApiException(409, 'Family is already registered!').toJson()
+    }    
+
     public static readonly CHILDREN_GROUPS: any= {
         ERROR_400_NAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Children Group validation: name is required!').toJson(),
         ERROR_400_CHILDREN_IDS_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Children Group validation: Collection with children IDs is required!').toJson(),
         ERROR_400_CHILDREN_NOT_REGISTERED: new ApiException(400, 'It is necessary for children to be registered before proceeding.', 'The following IDs were verified without registration:').toJson(),
-        ERROR_400_INVALID_CHILDREN_IDS: new ApiException(400, 'Required fields were not provided...', 'Children Group validation: Collection with children IDs (ID can not be empty) is required!').toJson(),
         ERROR_404_CHILDREN_GROUP_NOT_FOUND: new ApiException(404, 'Children Group not found!', 'Children Group not found or already removed. A new operation for the same resource is not required.').toJson(),
         ERROR_409_DUPLICATE_CHILDREN_GROUPS: new ApiException(409, 'Children Group is already registered!').toJson()
     }

@@ -182,7 +182,7 @@ describe('Routes: Auth', () => {
                     .send({ 'username': 'non-exist username', 'password': 'admin123' })
                     .expect(401)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.AUTH.ERROR_401)
+                        expect(err.body).to.eql(Strings.AUTH.ERROR_401_INVALID_VALUE)
                     })
             })
 
@@ -194,7 +194,7 @@ describe('Routes: Auth', () => {
                     .send({ 'username': 'admin', 'password': 'non-existent password' })
                     .expect(401)
                     .then(err => {
-                        expect(err.body).to.eql(Strings.AUTH.ERROR_401)
+                        expect(err.body).to.eql(Strings.AUTH.ERROR_401_INVALID_VALUE)
                     })
             })
         })

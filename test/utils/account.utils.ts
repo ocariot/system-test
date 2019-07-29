@@ -12,8 +12,8 @@ import { ChildrenGroup } from 'account-service/model/children.group';
 class AccountUtil {
 
     public readonly URI: string = process.env.AG_URL || 'https://localhost:8081'
-    public readonly NON_EXISTENT_ID: String = '111111111111111111111111'
-    public readonly INVALID_ID: String = '123'
+    public readonly NON_EXISTENT_ID: string = '111111111111111111111111'
+    public readonly INVALID_ID: string = '123'
     public readonly INVALID_GENDER: Number = 1234
     public readonly NEGATIVE_AGE: Number = -11
     public readonly NON_EXISTENT_PASSWORD: string = 'non_existent_password'
@@ -163,19 +163,19 @@ class AccountUtil {
             .catch(err => Promise.reject(err))
     }
 
-    public deleteUser(accessToken: string, user: any): Promise<any> {
+    public deleteUser(accessToken: string, userID?: string): Promise<any> {
         return request(this.URI)
-            .delete(`/users/${user.id}`)
+            .delete(`/users/${userID}`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .then(res => Promise.resolve(res.body))
             .catch(err => Promise.reject(err))
     }
 
-    public changeUserPass(userId: string, accessToken?: string): Promise<any> {
+    public changeUserPass(accessToken: string, userID?: string): Promise<any> {
         return request(this.URI)
-            .patch(`/users/${userId}/password`)
-            .set('Authorization', 'Bearer '.concat(accessToken ? accessToken : ""))
+            .patch(`/users/${userID}/password`)
+            .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .then(res => Promise.resolve(res.body))
             .catch(err => Promise.reject(err))

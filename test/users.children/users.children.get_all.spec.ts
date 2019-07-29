@@ -76,14 +76,6 @@ describe('Routes: users.children', () => {
     })
 
     describe('GET All /users/children', () => {
-        // before(async () => {
-        //     try {
-        //         await acc.saveChild(accessTokenAdmin, anotherChild)
-        //         await acc.saveChild(accessTokenAdmin, defaultChild)
-        //     } catch (err) {
-        //         console.log('Failure on children.get_all test: ', err)
-        //     }
-        // })
 
         context('when get all children in database successfully', () => {
 

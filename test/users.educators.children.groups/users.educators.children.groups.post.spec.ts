@@ -267,8 +267,9 @@ describe('Routes: users.educators.children.groups', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        Strings.CHILDREN_GROUPS.ERROR_400_CHILDREN_NOT_REGISTERED.description += ' '.concat(NON_EXISTENT_CHILD_ID)
-                        expect(err.body).to.eql(Strings.CHILDREN_GROUPS.ERROR_400_CHILDREN_NOT_REGISTERED)
+                        const EXPECTED_RESPONSE = Strings.CHILDREN_GROUPS.ERROR_400_CHILDREN_NOT_REGISTERED
+                        EXPECTED_RESPONSE.description += ' '.concat(NON_EXISTENT_CHILD_ID)
+                        expect(err.body).to.eql(EXPECTED_RESPONSE)
                     })
             })
 
@@ -276,7 +277,7 @@ describe('Routes: users.educators.children.groups', () => {
 
                 const body = {
                     name: 'Another Children Group',
-                    children: new Array<string | undefined>('123'),
+                    children: new Array<string | undefined>(acc.INVALID_ID),
                     school_class: '4th Grade'
                 }
 
@@ -288,7 +289,7 @@ describe('Routes: users.educators.children.groups', () => {
                     .expect(400)
                     .then(err => {
                         expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
-                        // caso o ID contenha caracteres não numéricos (ex: 5a) o erro retornado é correto
+                        // caso o ID contenha caracteres numéricos e alfabéticos (ex: 5a) o erro retornado é correto
                     })
             })
 

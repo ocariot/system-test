@@ -222,7 +222,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
             describe('after deleting one of the children', () => {
                 before(async () => {
                     try {
-                        await acc.deleteUser(accessTokenAdmin, anotherChild)
+                        await acc.deleteUser(accessTokenAdmin, anotherChild.id)
                     } catch (err) {
                         console.log('Failure in healrhprofessionals.children.groups.get_id test: ', err)
                     }
