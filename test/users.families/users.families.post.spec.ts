@@ -80,7 +80,7 @@ describe('Routes: users.families', () => {
             try {
                 await con.deleteAllFamilies()
             } catch (err) {
-                console.log('Failure in users.educator.post test: ', err)
+                console.log('Failure in users.families.patch test: ', err)
             }
         })
         context('when the admin posting a new family user', () => {

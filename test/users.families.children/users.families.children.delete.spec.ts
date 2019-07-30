@@ -1,0 +1,220 @@
+import request from 'supertest'
+import { expect } from 'chai'
+import { Institution } from '../../src/account-service/model/institution'
+import { acc } from '../utils/account.utils'
+import { AccountDb } from '../../src/account-service/database/account.db'
+import { Strings } from '../utils/string.error.message'
+import { Child } from '../../src/account-service/model/child'
+import { Family } from '../../src/account-service/model/family'
+
+describe('Routes: users.families.children', () => {
+
+    const URI: string = process.env.AG_URL || 'https://localhost:8081'
+
+    let accessTokenAdmin: string
+    let accessTokenChild: string
+    let accessTokenEducator: string
+    let accessTokenHealthProfessional: string
+    let accessTokenFamily: string
+    let accessTokenApplication: string
+
+    const defaultInstitution: Institution = new Institution()
+    defaultInstitution.type = 'default type'
+    defaultInstitution.name = 'default name'
+    defaultInstitution.address = 'default address'
+    defaultInstitution.latitude = 0
+    defaultInstitution.longitude = 0
+
+    const defaultChild: Child = new Child
+    defaultChild.username = 'Default child'
+    defaultChild.password = 'default pass'
+    defaultChild.gender = 'male'
+    defaultChild.age = 11
+
+    const defaultFamily: Family = new Family()
+    defaultFamily.username = 'default family'
+    defaultFamily.password = 'default pass'
+
+    const con = new AccountDb()
+
+    before(async () => {
+        try {
+            await con.connect(0, 1000)
+
+            const tokens = await acc.getAuths()
+            accessTokenAdmin = tokens.admin.access_token
+            accessTokenChild = tokens.child.access_token
+            accessTokenEducator = tokens.educator.access_token
+            accessTokenHealthProfessional = tokens.health_professional.access_token
+            accessTokenFamily = tokens.family.access_token
+            accessTokenApplication = tokens.application.access_token
+
+            await con.removeCollections()
+
+            const resultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
+            defaultInstitution.id = resultInstitution.id
+
+            defaultChild.institution = defaultInstitution
+            defaultFamily.institution = defaultInstitution
+
+            const resultDefaultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
+            defaultChild.id = resultDefaultChild.id
+
+            defaultFamily.children = new Array<Child>(defaultChild)
+            const resultFamily = await acc.saveFamily(accessTokenAdmin, defaultFamily)
+            defaultFamily.id = resultFamily.id
+
+        } catch (err) {
+            console.log('Failure on Before from users.families.children.delete test: ', err)
+        }
+    })
+
+    after(async () => {
+        try {
+            await con.removeCollections()
+            await con.dispose()
+        } catch (err) {
+            console.log('DB ERROR', err)
+        }
+    })
+
+    describe('DELETE /users/families/:family_id/children/:child_id', () => {
+
+        context('when the admin dissociate a child from the family successfully', () => {
+            it('families.children.delete001: should return status code 204 and no content', () => {
+                return request(URI)
+                    .delete(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(204)
+                    .then(res => {
+                        expect(res.body).to.eql({})
+                    })
+            })
+        })
+
+        describe('when the child is nout found', () => {
+            it('families.children.delete002: should return status code 204 and no content', () => {
+                return request(URI)
+                    .delete(`/users/families/${defaultFamily.id}/children/${acc.NON_EXISTENT_ID}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(204)
+                    .then(res => {
+                        expect(res.body).to.eql({})
+                    })
+            })
+        })
+
+        describe('when the family is nout found', () => {
+            it('families.children.delete003: should return status code 204 and no content', () => {
+                return request(URI)
+                    .delete(`/users/families/${acc.NON_EXISTENT_ID}/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(204)
+                    .then(res => {
+                        expect(res.body).to.eql({})
+                    })
+            })
+        })
+
+        context('when a validation error occurs', () => {
+
+            it('families.children.delete004: should return status code 400 and info message from invalid child_id', () => {
+                return request(URI)
+                    .delete(`/users/families/${defaultFamily.id}/children/${acc.INVALID_ID}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                    })
+            })
+
+            it('families.children.delete005: should return status code 400 and info message from invalid family_id', () => {
+                return request(URI)
+                    .delete(`/users/families/${acc.INVALID_ID}/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                    })
+            })
+
+        }) // validation error occurs
+
+        context('when the user does not have permission to dissociate a child from the family', () => {
+
+            it('families.children.post006: should return status code 403 and info message from insufficient permissions for child user', () => {
+                return request(URI)
+                    .delete(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
+            })
+
+            it('families.children.post007: should return status code 403 and info message from insufficient permissions for educator user', () => {
+                return request(URI)
+                    .delete(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
+            })
+
+            it('families.children.post008: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+                return request(URI)
+                    .delete(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
+            })
+
+            it('families.children.post009: should return status code 403 and info message from insufficient permissions for family user', () => {
+                return request(URI)
+                    .delete(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
+            })
+
+            it('families.children.post010: should return status code 403 and info message from insufficient permissions for application user', () => {
+                return request(URI)
+                    .delete(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
+            })
+
+        }) // user does not have permission 
+
+        describe('when not informed the acess token', () => {
+            it('families.children.post011: should return the status code 401 and the authentication failure informational message', () => {
+                return request(URI)
+                    .delete(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer ')
+                    .set('Content-Type', 'application/json')
+                    .expect(401)
+                    .then(err => {
+                        expect(err.body).to.eql(Strings.AUTH.ERROR_401_UNAUTHORIZED)
+                    })
+            })
+        })
+    })
+})

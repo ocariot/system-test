@@ -99,6 +99,26 @@ class AccountUtil {
             .catch(err => Promise.reject(err))
     }
 
+    public associateChildWithFamily(accessToken: string, family_ID?: string, child_ID?: string): Promise<any> {
+
+        return request(this.URI)
+            .post(`/users/families/${family_ID}/children/${child_ID}`)
+            .set('Authorization', 'Bearer '.concat(accessToken))
+            .set('Content-Type', 'application/json')
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))
+    }
+
+    public dissociateChildWithFamily(accessToken: string, family_ID?: string, child_ID?: string): Promise<any> {
+
+        return request(this.URI)
+            .delete(`/users/families/${family_ID}/children/${child_ID}`)
+            .set('Authorization', 'Bearer '.concat(accessToken))
+            .set('Content-Type', 'application/json')
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))
+    }    
+
     public saveHealthProfessional(accessToken: string, healthprofessional: HealthProfessional): Promise<any> {
 
         return request(this.URI)
