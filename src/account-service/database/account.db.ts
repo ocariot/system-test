@@ -194,8 +194,20 @@ export class AccountDb {
             }
             return resolve(false)
         })
-
     }
+
+    public deleteAllApplications(): Promise<boolean> {
+        return new Promise(async (resolve, reject) => {
+            if (this._connection) {
+                this._connection.db
+                    .collection('users')
+                    .deleteMany({ 'type': 'application' })
+                    .then(() => resolve(true))
+                    .catch(reject)
+            }
+            return resolve(false)
+        })
+    }    
 
     public deleteInstitutions(): Promise<boolean> {
         return this._deleteCollection('institutions')
