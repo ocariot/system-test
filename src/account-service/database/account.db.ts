@@ -8,7 +8,7 @@ import { EventEmitter } from 'events'
  * @see {@link https://mongoosejs.com/} for more details.
  * @implements {IConnectionDB}
  */
-export class AccountDb {
+class AccountDb {
     // private readonly COLLECTIONS_NAMES: Array<string> = ['users', 'institutions', 'childrengroups', 'integrationevents']
 
     private _connection?: Connection
@@ -96,14 +96,12 @@ export class AccountDb {
         }
 
         connection.on('connected', () => {
-            // console.log('Reconnection established with MongoDB...')
             this._eventConnection.emit('connected')
         })
 
         connection.on('disconnected', () => {
             this._connection = undefined
             this._eventConnection.emit('disconnected')
-            // console.log('Connection to MongoDB was lost...')
         })
     }
 
@@ -113,6 +111,7 @@ export class AccountDb {
      * @return {Promise<void>}
      */
     public async dispose(): Promise<void> {
+        if (this._connection) await this._connection.removeAllListeners()
         if (this._connection) await this._connection.close()
         this._connection = undefined
     }
@@ -252,4 +251,4 @@ export class AccountDb {
         return Promise.reject(false)
     }
 }
-// export const accountDB =  new newAccountDb()
+export const accountDB =  new AccountDb()

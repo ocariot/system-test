@@ -2,7 +2,7 @@ import request from 'supertest'
 import { expect } from 'chai'
 import { Institution } from '../../src/account-service/model/institution'
 import { acc } from '../utils/account.utils'
-import { AccountDb } from '../../src/account-service/database/account.db'
+import { accountDB } from '../../src/account-service/database/account.db'
 import { Child } from '../../src/account-service/model/child'
 import { Strings } from '../utils/string.error.message'
 
@@ -36,11 +36,9 @@ describe('Routes: users.children', () => {
     anotherChild.gender = 'female'
     anotherChild.age = 8
 
-    const con = new AccountDb()
-
     before(async () => {
         try {
-            await con.connect(0, 1000)
+            await accountDB.connect()
 
             const tokens = await acc.getAuths()
             accessTokenAdmin = tokens.admin.access_token
@@ -50,7 +48,7 @@ describe('Routes: users.children', () => {
             accessTokenFamily = tokens.family.access_token
             accessTokenApplication = tokens.application.access_token
 
-            await con.removeCollections()
+            await accountDB.removeCollections()
 
             const result = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = result.id
@@ -68,8 +66,8 @@ describe('Routes: users.children', () => {
 
     after(async () => {
         try {
-            await con.removeCollections()
-            await con.dispose()
+            await accountDB.removeCollections()
+            await accountDB.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
         }
@@ -339,7 +337,7 @@ describe('Routes: users.children', () => {
         describe('when get all children in database after deleting all of them', () => {
             before(async () => {
                 try {
-                    await con.deleteAllChildren()
+                    await accountDB.deleteAllChildren()
                 } catch (err) {
                     console.log('DB ERROR', err)
                 }

@@ -2,7 +2,7 @@ import request from 'supertest'
 import { expect } from 'chai'
 import { Institution } from '../../src/account-service/model/institution'
 import { acc } from '../utils/account.utils'
-import { AccountDb } from '../../src/account-service/database/account.db'
+import { accountDB } from '../../src/account-service/database/account.db'
 import { Strings } from '../utils/string.error.message'
 import { Application } from '../../src/account-service/model/application';
 
@@ -43,11 +43,9 @@ describe('Routes: users.applications', () => {
     anotherApplication.password = 'Another pass'
     anotherApplication.application_name = 'APP02'
 
-    const con = new AccountDb()
-
     before(async () => {
         try {
-            await con.connect(0, 1000)
+            await accountDB.connect()
 
             const tokens = await acc.getAuths()
             accessTokenAdmin = tokens.admin.access_token
@@ -57,7 +55,7 @@ describe('Routes: users.applications', () => {
             accessTokenFamily = tokens.family.access_token
             accessTokenApplication = tokens.application.access_token
 
-            await con.removeCollections()
+            await accountDB.removeCollections()
 
             const resultDefaultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = resultDefaultInstitution.id
@@ -81,8 +79,8 @@ describe('Routes: users.applications', () => {
 
     after(async () => {
         try {
-            await con.removeCollections()
-            await con.dispose()
+            await accountDB.removeCollections()
+            await accountDB.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
         }
@@ -149,13 +147,6 @@ describe('Routes: users.applications', () => {
 
             })
         })
-
-        /* TESTES - RESTRIÇÕES NOS CAMPOS USERNAME ... (CRIAR COM ESPAÇO ?)
-        context('when update the child username with spaces before and after the username', () => {
-            it('should return status code ?', () => {
-
-            })
-        })*/
 
         context('when a validation error occurs', () => {
 

@@ -2,7 +2,7 @@ import request from 'supertest'
 import { expect } from 'chai'
 import { Institution } from '../../src/account-service/model/institution'
 import { acc } from '../utils/account.utils'
-import { AccountDb } from '../../src/account-service/database/account.db'
+import { accountDB } from '../../src/account-service/database/account.db'
 import { Educator } from '../../src/account-service/model/educator'
 import { Strings } from '../utils/string.error.message'
 
@@ -28,11 +28,9 @@ describe('Routes: users.educators', () => {
     defaultEducator.username = 'Default educator'
     defaultEducator.password = 'Default pass'
 
-    const con = new AccountDb()
-
     before(async () => {
         try {
-            await con.connect(0, 1000)
+            await accountDB.connect(0, 1000)
 
             const tokens = await acc.getAuths()
             accessTokenAdmin = tokens.admin.access_token
@@ -42,7 +40,7 @@ describe('Routes: users.educators', () => {
             accessTokenFamily = tokens.family.access_token
             accessTokenApplication = tokens.application.access_token
 
-            await con.removeCollections()
+            await accountDB.removeCollections()
 
             const result = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = result.id
@@ -56,8 +54,8 @@ describe('Routes: users.educators', () => {
 
     after(async () => {
         try {
-            await con.removeCollections()
-            await con.dispose()
+            await accountDB.removeCollections()
+            await accountDB.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
         }
@@ -66,7 +64,7 @@ describe('Routes: users.educators', () => {
     describe('POST /users/educators', () => {
         afterEach(async () => {
             try {
-                await con.deleteAllEducators()
+                await accountDB.deleteAllEducators()
             } catch (err) {
                 console.log('Failure in users.educator.post test: ', err)
             }

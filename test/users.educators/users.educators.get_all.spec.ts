@@ -2,7 +2,7 @@ import request from 'supertest'
 import { expect } from 'chai'
 import { Institution } from '../../src/account-service/model/institution'
 import { acc } from '../utils/account.utils'
-import { AccountDb } from '../../src/account-service/database/account.db'
+import { accountDB } from '../../src/account-service/database/account.db'
 import { Educator } from '../../src/account-service/model/educator'
 import { Strings } from '../utils/string.error.message'
 import { Child } from '../../src/account-service/model/child'
@@ -44,11 +44,9 @@ describe('Routes: users.educators', () => {
     defaultChildrenGroup.name = 'Default children group'
     defaultChildrenGroup.school_class = '4th grade'
 
-    const con = new AccountDb()
-
     before(async () => {
         try {
-            await con.connect(0, 1000)
+            await accountDB.connect(0, 1000)
 
             const tokens = await acc.getAuths()
             accessTokenAdmin = tokens.admin.access_token
@@ -58,7 +56,7 @@ describe('Routes: users.educators', () => {
             accessTokenFamily = tokens.family.access_token
             accessTokenApplication = tokens.application.access_token
 
-            await con.removeCollections()
+            await accountDB.removeCollections()
 
             const result = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = result.id
@@ -83,8 +81,8 @@ describe('Routes: users.educators', () => {
 
     after(async () => {
         try {
-            await con.removeCollections()
-            await con.dispose()
+            await accountDB.removeCollections()
+            await accountDB.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
         }
@@ -185,7 +183,7 @@ describe('Routes: users.educators', () => {
             describe('when get all educators in database after deleting all of them', () => {
                 before(async () => {
                     try {
-                        await con.deleteAllEducators()
+                        await accountDB.deleteAllEducators()
                     } catch (err) {
                         console.log('DB ERROR', err)
                     }

@@ -2,7 +2,7 @@ import request from 'supertest'
 import { expect } from 'chai'
 import { Institution } from '../../src/account-service/model/institution'
 import { acc } from '../utils/account.utils'
-import { AccountDb } from '../../src/account-service/database/account.db'
+import { accountDB } from '../../src/account-service/database/account.db'
 import { Strings } from '../utils/string.error.message'
 import { Child } from '../../src/account-service/model/child'
 import { ChildrenGroup } from '../../src/account-service/model/children.group'
@@ -11,7 +11,6 @@ import { HealthProfessional } from '../../src/account-service/model/health.profe
 describe('Routes: users.healthprofessionals.children.groups', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
-    const con = new AccountDb()
 
     let defaultHealthProfessionalToken: string
 
@@ -55,7 +54,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
 
     before(async () => {
         try {
-            await con.connect(0, 1000)
+            await accountDB.connect(0, 1000)
 
             const tokens = await acc.getAuths()
             accessTokenAdmin = tokens.admin.access_token
@@ -65,7 +64,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
             accessTokenFamily = tokens.family.access_token
             accessTokenApplication = tokens.application.access_token
 
-            await con.removeCollections()
+            await accountDB.removeCollections()
 
             const resultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = resultInstitution.id
@@ -104,8 +103,8 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
 
     after(async () => {
         try {
-            await con.removeCollections()
-            await con.dispose()
+            await accountDB.removeCollections()
+            await accountDB.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
         }

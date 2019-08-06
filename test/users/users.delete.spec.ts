@@ -2,7 +2,7 @@ import request from 'supertest'
 import { expect } from 'chai'
 import { Institution } from '../../src/account-service/model/institution'
 import { acc } from '../utils/account.utils'
-import { AccountDb } from '../../src/account-service/database/account.db'
+import { accountDB } from '../../src/account-service/database/account.db'
 import { Child } from '../../src/account-service/model/child'
 import { Strings } from '../utils/string.error.message'
 import { Educator } from '../../src/account-service/model/educator'
@@ -57,12 +57,10 @@ describe('Routes: users', () => {
     defaultApplication.password = 'default pass'
     defaultApplication.application_name = 'default application name'
 
-    const con = new AccountDb()
-
     before(async () => {
         try {
-            await con.connect(0, 1000)
-            await con.removeCollections()
+            await accountDB.connect()
+            await accountDB.removeCollections()
 
             accessTokenAdmin = await acc.getAdminToken()
 
@@ -113,8 +111,8 @@ describe('Routes: users', () => {
 
     after(async () => {
         try {
-            await con.removeCollections()
-            await con.dispose()
+            await accountDB.removeCollections()
+            await accountDB.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
         }

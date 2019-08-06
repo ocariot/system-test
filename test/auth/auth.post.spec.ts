@@ -8,12 +8,11 @@ import { Educator } from '../../src/account-service/model/educator'
 import { HealthProfessional } from '../../src/account-service/model/health.professional'
 import { Family } from '../../src/account-service/model/family'
 import { Application } from '../../src/account-service/model/application'
-import { AccountDb } from '../../src/account-service/database/account.db'
+import { accountDB } from '../../src/account-service/database/account.db'
 
 describe('Routes: Auth', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
-    const con = new AccountDb()
 
     let accessTokenAdmin: string
 
@@ -49,8 +48,8 @@ describe('Routes: Auth', () => {
 
     before(async () => {
         try {
-            await con.connect(0, 1000)
-            await con.removeCollections()
+            await accountDB.connect()
+            await accountDB.removeCollections()
                 
             accessTokenAdmin = await acc.getAdminToken()
 
@@ -87,8 +86,8 @@ describe('Routes: Auth', () => {
 
     after(async () => {
         try {
-            await con.removeCollections()
-            await con.dispose()
+            await accountDB.removeCollections()
+            await accountDB.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
         }

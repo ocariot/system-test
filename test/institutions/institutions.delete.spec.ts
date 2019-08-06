@@ -2,7 +2,7 @@ import request from 'supertest'
 import { expect } from 'chai'
 import { Strings } from '../utils/string.error.message'
 import { Institution } from '../../src/account-service/model/institution'
-import { AccountDb } from '../../src/account-service/database/account.db'
+import { accountDB } from '../../src/account-service/database/account.db'
 import { acc } from '../utils/account.utils'
 import { Child } from '../../src/account-service/model/child'
 
@@ -28,11 +28,9 @@ describe('Routes: Institution', () => {
     anotherInstitution.type = 'another type'
     anotherInstitution.name = 'another name'
 
-    const con = new AccountDb()
-
     before(async () => {
         try {
-            await con.connect(0, 1000)
+            await accountDB.connect()
 
             const tokens = await acc.getAuths()
 
@@ -42,7 +40,8 @@ describe('Routes: Institution', () => {
             accessTokenHealthProfessional = tokens.health_professional.access_token
             accessTokenFamily = tokens.family.access_token
             accessTokenApplication = tokens.application.access_token
-            await con.removeCollections()
+            
+            await accountDB.removeCollections()
 
             const resultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = resultInstitution.id
@@ -57,8 +56,8 @@ describe('Routes: Institution', () => {
 
     after(async () => {
         try {
-            await con.removeCollections()
-            await con.dispose()
+            await accountDB.removeCollections()
+            await accountDB.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
         }
