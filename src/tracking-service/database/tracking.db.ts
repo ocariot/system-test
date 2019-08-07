@@ -8,7 +8,7 @@ import { EventEmitter } from 'events'
  * @see {@link https://mongoosejs.com/} for more details.
  * @implements {IConnectionDB}
  */
-class AccountDb {
+class TrackingDb {
     // private readonly COLLECTIONS_NAMES: Array<string> = ['users', 'institutions', 'childrengroups', 'integrationevents']
 
     private _connection?: Connection
@@ -72,7 +72,7 @@ class AccountDb {
     }
 
     private getURL(): string {
-        return process.env.ACCOUNT_MONGODB_URI_TEST || 'mongodb://localhost:27018/account-service-test'
+        return process.env.TRACKING_MONGODB_URI_TEST || 'mongodb://localhost:27019/tracking-service-test'
     }
 
     constructor() {
@@ -130,94 +130,20 @@ class AccountDb {
         })
     }
 
-    public deleteUsers(): Promise<boolean> {
-        return new Promise(async (resolve, reject) => {
-            if (this._connection) {
-                this._connection.db
-                    .collection('users')
-                    .deleteMany({ 'type': { $ne: 'admin' } })
-                    .then(() => resolve(true))
-                    .catch(reject)
-            }
-            return resolve(false)
-        })
+    public deleteEnviroments(): Promise<boolean> {
+        return this._deleteCollection('environments')
     }
 
-    public deleteAllChildren(): Promise<boolean> {
-        return new Promise(async (resolve, reject) => {
-            if (this._connection) {
-                this._connection.db
-                    .collection('users')
-                    .deleteMany({ 'type': 'child' })
-                    .then(() => resolve(true))
-                    .catch(reject)
-            }
-            return resolve(false)
-        })
+    public deletePhysicalActivities(): Promise<boolean> {
+        return this._deleteCollection('physicalactivities')
     }
 
-    public deleteAllEducators(): Promise<boolean> {
-        return new Promise(async (resolve, reject) => {
-            if (this._connection) {
-                this._connection.db
-                    .collection('users')
-                    .deleteMany({ 'type': 'educator' })
-                    .then(() => resolve(true))
-                    .catch(reject)
-            }
-            return resolve(false)
-        })
+    public deletePhysicalActivitiesLogs(): Promise<boolean> {
+        return this._deleteCollection('physicalactivitieslogs')
     }
 
-    public deleteAllHealthProfessionals(): Promise<boolean> {
-        return new Promise(async (resolve, reject) => {
-            if (this._connection) {
-                this._connection.db
-                    .collection('users')
-                    .deleteMany({ 'type': 'healthprofessional' })
-                    .then(() => resolve(true))
-                    .catch(reject)
-            }
-            return resolve(false)
-        })
-    }
-
-    public deleteAllFamilies(): Promise<boolean> {
-        return new Promise(async (resolve, reject) => {
-            if (this._connection) {
-                this._connection.db
-                    .collection('users')
-                    .deleteMany({ 'type': 'family' })
-                    .then(() => resolve(true))
-                    .catch(reject)
-            }
-            return resolve(false)
-        })
-    }
-
-    public deleteAllApplications(): Promise<boolean> {
-        return new Promise(async (resolve, reject) => {
-            if (this._connection) {
-                this._connection.db
-                    .collection('users')
-                    .deleteMany({ 'type': 'application' })
-                    .then(() => resolve(true))
-                    .catch(reject)
-            }
-            return resolve(false)
-        })
-    }    
-
-    public deleteInstitutions(): Promise<boolean> {
-        return this._deleteCollection('institutions')
-    }
-
-    public deleteChildrenGroups(): Promise<boolean> {
-        return this._deleteCollection('childrengroups')
-    }
-
-    public deleteIntegrationEvents(): Promise<boolean> {
-        return this._deleteCollection('integrationevents')
+    public deleteSleepsRecords(): Promise<boolean> {
+        return this._deleteCollection('sleeps')
     }
 
     public async removeCollections(): Promise<boolean> {
@@ -225,10 +151,10 @@ class AccountDb {
             const result = await this._connection.db
                 .listCollections({
                     $or: [
-                        { name: 'users' },
-                        { name: 'institutions' },
-                        { name: 'childrengroups' },
-                        { name: 'integrationevents' }
+                        { name: 'environments' },
+                        { name: 'physicalactivities' },
+                        { name: 'physicalactivitieslogs' },
+                        { name: 'sleeps' }
                     ]
                 })
                 .toArray()
@@ -236,11 +162,7 @@ class AccountDb {
             let errors: Array<string> = []
             for (let c of result) {
                 try {
-                    if (c.name === 'users') {
-                        await this.deleteUsers()
-                    } else {
-                        await this._deleteCollection(c.name)
-                    }
+                    await this._deleteCollection(c.name)
                 } catch (err) {
                     errors.push(`Error in ${c.name}. ${err.message}`)
                 }
@@ -251,4 +173,4 @@ class AccountDb {
         return Promise.reject(false)
     }
 }
-export const accountDB =  new AccountDb()
+export const trackingDB = new TrackingDb()
