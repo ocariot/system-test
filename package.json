@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --opts test/config/mocha.opts test/**/*.spec.ts",
+    "account_test": "mocha --opts test/config/mocha.opts test/account/**/*.spec.ts",
     "test:single": "mocha --opts test/config/mocha.opts"
   },
   "repository": {
