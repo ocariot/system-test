@@ -82,7 +82,18 @@ export abstract class ApiGatewayException {
     }
 
     public static readonly ENVIRONMENT: any = {
-        PARAM_ID_NOT_VALID_FORMAT: 'Parameter {environment_id} is not in valid format!'
+        PARAM_ID_NOT_VALID_FORMAT: 'Parameter {environment_id} is not in valid format!',
+        ERROR_400_INSTITUTION_ID_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment measurements failed: institution_id required!').toJson(),
+        ERROR_400_LOCATION_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment measurements failed: location required!').toJson(),
+        ERROR_400_MEASUREMENTS_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment measurements failed: measurements required!').toJson(),
+        ERROR_400_TIMESTAMP_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment measurements failed: timestamp required!').toJson(),
+        ERROR_400_INSTITUTION_ID_AND_MEASUREMENTS_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment measurements failed: institution_id, measurements required!').toJson(),
+        ERROR_400_TIMESTAMP_AND_LOCATION_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment measurements failed: timestamp, location required!').toJson(),
+        ERROR_400_ALL_PARAMETERS_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment measurements failed: timestamp, institution_id, location, measurements required!').toJson(),
+        ERROR_400_LOCATION_LOCAL_IS_REQUIRED: new ApiException(400, 'Location are not in a format that is supported...', 'Validation of location failed: location local is required!').toJson(),
+        ERROR_400_LOCATION_ROOM_IS_REQUIRED: new ApiException(400, 'Location are not in a format that is supported...', 'Validation of location failed: location room is required!').toJson(),
+        ERROR_400_INVALID_TIMESTAMP: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
+        ERROR_409_ENVIRONMENT_MEASUREMENT_IS_ALREADY_REGISTERED: new ApiException(409, 'Measurement of environment is already registered...').toJson(),
     }
 
     public static readonly APP: any = {

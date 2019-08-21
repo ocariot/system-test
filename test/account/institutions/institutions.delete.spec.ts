@@ -129,7 +129,7 @@ describe('Routes: Institution', () => {
 
         }) // user does not have permission
 
-        describe('institutions.delete006: when the institution was associated with an user', () => {
+        describe('when the institution was associated with an user', () => {
 
             before(async () => {
                 try {
@@ -147,7 +147,7 @@ describe('Routes: Institution', () => {
                 }
             })
 
-            it('should return status code 400 and info message from existent association', () => {
+            it('institutions.delete006: should return status code 400 and info message from existent association', () => {
 
                 return request(URI)
                     .delete(`/institutions/${anotherInstitution.id}`)
@@ -160,8 +160,8 @@ describe('Routes: Institution', () => {
             })
         })
 
-        describe('institutions.delete007: when not informed the acess token', () => {
-            it('should return the status code 401 and the authentication failure informational message', async () => {
+        describe('when not informed the acess token', () => {
+            it('institutions.delete007: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .delete(`/institutions/${defaultInstitution.id}`)
@@ -175,8 +175,8 @@ describe('Routes: Institution', () => {
             })
         })
 
-        describe('institutions.delete008: when the institution_id is invalid', () => {
-            it('should return status code 400 and info message from invalid id', () => {
+        describe('when the institution_id is invalid', () => {
+            it('institutions.delete008: should return status code 400 and info message from invalid id', () => {
 
                 return request(URI)
                     .delete(`/institutions/${acc.INVALID_ID}`)
@@ -189,8 +189,8 @@ describe('Routes: Institution', () => {
             })
         })
 
-        describe('institutions.delete009: when the institution is not found', () => {
-            it('should return status code 204 and no content, even the institution was not founded', () => {
+        describe('when the institution is not found', () => {
+            it('institutions.delete009: should return status code 204 and no content, even the institution was not founded', () => {
 
                 return request(URI)
                     .delete(`/institutions/${acc.NON_EXISTENT_ID}`)

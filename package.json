@@ -4,8 +4,9 @@
   "description": "OCARIoT platform system test.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --opts test/config/mocha.opts test/**/*.spec.ts",
-    "account_test": "mocha --opts test/config/mocha.opts test/account/**/*.spec.ts",
+    "test": "mocha --opts test/config/mocha.opts test/**/**/*.spec.ts",
+    "account_tests": "mocha --opts test/config/mocha.opts test/account/**/**/*.spec.ts",
+    "tracking_tests": "mocha --opts test/config/mocha.opts test/tracking/**/*.spec.ts",
     "test:single": "mocha --opts test/config/mocha.opts"
   },
   "repository": {
