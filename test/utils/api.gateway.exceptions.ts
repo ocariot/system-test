@@ -93,6 +93,7 @@ export abstract class ApiGatewayException {
         ERROR_400_LOCATION_LOCAL_IS_REQUIRED: new ApiException(400, 'Location are not in a format that is supported...', 'Validation of location failed: location local is required!').toJson(),
         ERROR_400_LOCATION_ROOM_IS_REQUIRED: new ApiException(400, 'Location are not in a format that is supported...', 'Validation of location failed: location room is required!').toJson(),
         ERROR_400_INVALID_TIMESTAMP: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
+        ERROR_400_MEASUREMENT_TYPE_IS_REQUIRED: new ApiException(400, 'Measurement are not in a format that is supported!', 'Validation of measurements failed: measurement type is required!').toJson(),
         ERROR_409_ENVIRONMENT_MEASUREMENT_IS_ALREADY_REGISTERED: new ApiException(409, 'Measurement of environment is already registered...').toJson(),
     }
 

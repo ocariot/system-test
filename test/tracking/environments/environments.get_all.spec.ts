@@ -356,7 +356,7 @@ describe('Routes: environments', () => {
         })
 
         describe('when not informed the acess token', () => {
-            it('environments.get_all12 should return the status code 401 and the authentication failure informational message', () => {
+            it('environments.get_all012: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .get('/environments')

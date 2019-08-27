@@ -1,14 +1,20 @@
 import request from 'supertest'
 import { expect } from 'chai'
-import { Institution } from '../../../src/account-service/model/institution'
+import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { acc } from '../../utils/account.utils'
 import { accountDB } from '../../../src/account-service/database/account.db'
+import { Institution } from '../../../src/account-service/model/institution'
 import { Child } from '../../../src/account-service/model/child'
-import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
+import { ChildMock} from '../../mocks/account-service/child.mock'
 import { Educator } from '../../../src/account-service/model/educator'
+import { EducatorMock } from '../../mocks/account-service/educator.mock'
 import { HealthProfessional } from '../../../src/account-service/model/health.professional'
+import { HealthProfessionalMock } from '../../mocks/account-service/healthprofessional.mock'
 import { Family } from '../../../src/account-service/model/family'
+import { FamilyMock } from '../../mocks/account-service/family.mock'
 import { Application } from '../../../src/account-service/model/application'
+import { ApplicationMock } from '../../mocks/account-service/application.mock'
+
 
 describe('Routes: users', () => {
 
@@ -16,17 +22,11 @@ describe('Routes: users', () => {
     let admin_ID: any
 
     let accessTokenAdmin: string
-    let accessTokenChild: string
-    let accessTokenEducator: string
-    let accessTokenHealthProfessional: string
-    let accessTokenFamily: string
-    let accessTokenApplication: string
-
-    let anotherChildToken: string
-    let anotherEducatorToken: string
-    let anotherHealthProfessionalToken: string
-    let anotherFamilyToken: string
-    let anotherApplicationToken: string
+    let accessTokenDefaultChild: string
+    let accessTokenDefaultEducator: string
+    let accessTokenDefaultHealthProfessional: string
+    let accessTokenDefaultFamily: string
+    let accessTokenDefaultApplication: string
 
     const defaultInstitution: Institution = new Institution()
     defaultInstitution.type = 'default type'
@@ -77,37 +77,6 @@ describe('Routes: users', () => {
             defaultFamily.institution = resultInstitution
             defaultApplication.institution = resultInstitution
 
-            const resultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
-            defaultChild.id = resultChild.id
-
-            const resultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
-            defaultEducator.id = resultEducator.id
-
-            const resultHealthProfessional = await acc.saveHealthProfessional(accessTokenAdmin, defaultHealthProfessional)
-            defaultHealthProfessional.id = resultHealthProfessional.id
-
-            defaultFamily.children = [resultChild]
-            const resultFamily = await acc.saveFamily(accessTokenAdmin, defaultFamily)
-            defaultFamily.id = resultFamily.id
-            defaultFamily.children = resultFamily.children
-
-            const resultApplication = await acc.saveApplication(accessTokenAdmin, defaultApplication)
-            defaultApplication.id = resultApplication.id
-
-            accessTokenChild = await acc.auth('default child', 'default pass')
-            accessTokenEducator = await acc.auth('default educator', 'default pass')
-            accessTokenHealthProfessional = await acc.auth('default health professional', 'default pass')
-            accessTokenApplication = await acc.auth('default application', 'default pass')
-            accessTokenFamily = await acc.auth('default family', 'default pass')
-
-            const tokens = await acc.getAuths()
-
-            anotherChildToken = tokens.child.access_token
-            anotherEducatorToken = tokens.educator.access_token
-            anotherHealthProfessionalToken = tokens.health_professional.access_token
-            anotherFamilyToken = tokens.family.access_token
-            anotherApplicationToken = tokens.application.access_token
-
         } catch (err) {
             console.log('Failure on Before from users.patch test: ', err)
         }
@@ -125,7 +94,37 @@ describe('Routes: users', () => {
     describe('PATCH /users/:user_id/password', () => {
 
         context('when the administrator successfully updates the user password', () => {
+            
+            before(async () => {
+                try {
 
+                    const resultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
+                    defaultChild.id = resultChild.id
+
+                    const resultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
+                    defaultEducator.id = resultEducator.id
+
+                    const resultHealthProfessional = await acc.saveHealthProfessional(accessTokenAdmin, defaultHealthProfessional)
+                    defaultHealthProfessional.id = resultHealthProfessional.id
+
+                    defaultFamily.children = [resultChild]
+                    const resultFamily = await acc.saveFamily(accessTokenAdmin, defaultFamily)
+                    defaultFamily.id = resultFamily.id
+                    defaultFamily.children = resultFamily.children
+
+                    const resultApplication = await acc.saveApplication(accessTokenAdmin, defaultApplication)
+                    defaultApplication.id = resultApplication.id
+
+                    accessTokenDefaultChild = await acc.auth('default child', 'default pass')
+                    accessTokenDefaultEducator = await acc.auth('default educator', 'default pass')
+                    accessTokenDefaultHealthProfessional = await acc.auth('default health professional', 'default pass')
+                    accessTokenDefaultApplication = await acc.auth('default application', 'default pass')
+                    accessTokenDefaultFamily = await acc.auth('default family', 'default pass')
+
+                } catch (err) {
+                    console.log('Failure in users.patch test: ', err)
+                }
+            })
             after(async () => {
                 try {
                     await accountDB.deleteUsers()
@@ -236,11 +235,11 @@ describe('Routes: users', () => {
                     const resultApplication = await acc.saveApplication(accessTokenAdmin, defaultApplication)
                     defaultApplication.id = resultApplication.id
 
-                    accessTokenChild = await acc.auth('default child', 'default pass')
-                    accessTokenEducator = await acc.auth('default educator', 'default pass')
-                    accessTokenHealthProfessional = await acc.auth('default health professional', 'default pass')
-                    accessTokenApplication = await acc.auth('default application', 'default pass')
-                    accessTokenFamily = await acc.auth('default family', 'default pass')
+                    accessTokenDefaultChild = await acc.auth('default child', 'default pass')
+                    accessTokenDefaultEducator = await acc.auth('default educator', 'default pass')
+                    accessTokenDefaultHealthProfessional = await acc.auth('default health professional', 'default pass')
+                    accessTokenDefaultApplication = await acc.auth('default application', 'default pass')
+                    accessTokenDefaultFamily = await acc.auth('default family', 'default pass')
 
                 } catch (err) {
                     console.log('Failure in users.patch test: ', err)
@@ -540,11 +539,11 @@ describe('Routes: users', () => {
                     const resultApplication = await acc.saveApplication(accessTokenAdmin, defaultApplication)
                     defaultApplication.id = resultApplication.id
 
-                    accessTokenChild = await acc.auth('default child', 'default pass')
-                    accessTokenEducator = await acc.auth('default educator', 'default pass')
-                    accessTokenHealthProfessional = await acc.auth('default health professional', 'default pass')
-                    accessTokenApplication = await acc.auth('default application', 'default pass')
-                    accessTokenFamily = await acc.auth('default family', 'default pass')
+                    accessTokenDefaultChild = await acc.auth('default child', 'default pass')
+                    accessTokenDefaultEducator = await acc.auth('default educator', 'default pass')
+                    accessTokenDefaultHealthProfessional = await acc.auth('default health professional', 'default pass')
+                    accessTokenDefaultApplication = await acc.auth('default application', 'default pass')
+                    accessTokenDefaultFamily = await acc.auth('default family', 'default pass')
 
                 } catch (err) {
                     console.log('Failure in users.patch test: ', err)
@@ -634,38 +633,43 @@ describe('Routes: users', () => {
         }) // without authorization        
 
         describe('when the user does not have permission', () => {
-            
+
             context('child update user password', () => {
+                const anotherChild: Child = new ChildMock()
+
                 before(async () => {
                     try {
-    
+                        anotherChild.institution = defaultInstitution
+                        const resultChildMock = await acc.saveChild(accessTokenAdmin, anotherChild)
+                        anotherChild.id = resultChildMock.id
+
                         const resultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
                         defaultChild.id = resultChild.id
-    
+
                         const resultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
                         defaultEducator.id = resultEducator.id
-    
+
                         const resultHealthProfessional = await acc.saveHealthProfessional(accessTokenAdmin, defaultHealthProfessional)
                         defaultHealthProfessional.id = resultHealthProfessional.id
-    
+
                         defaultFamily.children = [resultChild]
                         const resultFamily = await acc.saveFamily(accessTokenAdmin, defaultFamily)
                         defaultFamily.id = resultFamily.id
                         defaultFamily.children = resultFamily.children
-    
+
                         const resultApplication = await acc.saveApplication(accessTokenAdmin, defaultApplication)
                         defaultApplication.id = resultApplication.id
-    
-                        accessTokenChild = await acc.auth('default child', 'default pass')
-                        accessTokenEducator = await acc.auth('default educator', 'default pass')
-                        accessTokenHealthProfessional = await acc.auth('default health professional', 'default pass')
-                        accessTokenApplication = await acc.auth('default application', 'default pass')
-                        accessTokenFamily = await acc.auth('default family', 'default pass')
-    
+
+                        accessTokenDefaultChild = await acc.auth('default child', 'default pass')
+                        accessTokenDefaultEducator = await acc.auth('default educator', 'default pass')
+                        accessTokenDefaultHealthProfessional = await acc.auth('default health professional', 'default pass')
+                        accessTokenDefaultApplication = await acc.auth('default application', 'default pass')
+                        accessTokenDefaultFamily = await acc.auth('default family', 'default pass')
+
                     } catch (err) {
                         console.log('Failure in users.patch test: ', err)
                     }
-                })    
+                })
                 after(async () => {
                     try {
                         await accountDB.deleteUsers()
@@ -675,11 +679,11 @@ describe('Routes: users', () => {
                 })
 
                 it('users.patch032: should return status code 403 and info message from insufficient permissions for update admin password', () => {
-                    
+
                     return request(URI)
                         .patch(`/users/${admin_ID}/password`)
                         .send({ old_password: 'admin123', new_password: 'admin123' })
-                        .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultChild))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -692,7 +696,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultChild.id}/password`)
                         .send({ old_password: defaultChild.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultChild))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -705,7 +709,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultEducator.id}/password`)
                         .send({ old_password: defaultEducator.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultChild))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -718,7 +722,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultHealthProfessional.id}/password`)
                         .send({ old_password: defaultHealthProfessional.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultChild))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -731,7 +735,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultFamily.id}/password`)
                         .send({ old_password: defaultFamily.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultChild))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -744,7 +748,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultApplication.id}/password`)
                         .send({ old_password: defaultApplication.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultChild))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -755,9 +759,9 @@ describe('Routes: users', () => {
                 it('users.patch038: should return status code 403 and info message from insufficient permissions for update another child password', () => {
 
                     return request(URI)
-                        .patch(`/users/${defaultChild.id}/password`)
-                        .send({ old_password: defaultChild.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(anotherChildToken))
+                        .patch(`/users/${anotherChild.id}/password`)
+                        .send({ old_password: anotherChild.password, new_password: newPassword })
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultChild))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -768,36 +772,40 @@ describe('Routes: users', () => {
             }) // child update password
 
             context('educator update user password', () => {
+                const anotherEducator: Educator = new EducatorMock()
                 before(async () => {
                     try {
-    
+                        anotherEducator.institution = defaultInstitution
+                        const resultAnotherEducatorMock = await acc.saveEducator(accessTokenAdmin, anotherEducator)
+                        anotherEducator.id = resultAnotherEducatorMock.id
+
                         const resultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
                         defaultChild.id = resultChild.id
-    
+
                         const resultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
                         defaultEducator.id = resultEducator.id
-    
+
                         const resultHealthProfessional = await acc.saveHealthProfessional(accessTokenAdmin, defaultHealthProfessional)
                         defaultHealthProfessional.id = resultHealthProfessional.id
-    
+
                         defaultFamily.children = [resultChild]
                         const resultFamily = await acc.saveFamily(accessTokenAdmin, defaultFamily)
                         defaultFamily.id = resultFamily.id
                         defaultFamily.children = resultFamily.children
-    
+
                         const resultApplication = await acc.saveApplication(accessTokenAdmin, defaultApplication)
                         defaultApplication.id = resultApplication.id
-    
-                        accessTokenChild = await acc.auth('default child', 'default pass')
-                        accessTokenEducator = await acc.auth('default educator', 'default pass')
-                        accessTokenHealthProfessional = await acc.auth('default health professional', 'default pass')
-                        accessTokenApplication = await acc.auth('default application', 'default pass')
-                        accessTokenFamily = await acc.auth('default family', 'default pass')
-    
+
+                        accessTokenDefaultChild = await acc.auth('default child', 'default pass')
+                        accessTokenDefaultEducator = await acc.auth('default educator', 'default pass')
+                        accessTokenDefaultHealthProfessional = await acc.auth('default health professional', 'default pass')
+                        accessTokenDefaultApplication = await acc.auth('default application', 'default pass')
+                        accessTokenDefaultFamily = await acc.auth('default family', 'default pass')
+
                     } catch (err) {
                         console.log('Failure in users.patch test: ', err)
                     }
-                })    
+                })
                 after(async () => {
                     try {
                         await accountDB.deleteUsers()
@@ -805,13 +813,13 @@ describe('Routes: users', () => {
                         console.log('DB ERROR', err)
                     }
                 })
-            
+
                 it('users.patch039: should return status code 403 and info message from insufficient permissions for update admin password', () => {
 
                     return request(URI)
                         .patch(`/users/${admin_ID}/password`)
                         .send({ old_password: 'admin123', new_password: 'admin123' })
-                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultEducator))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -824,7 +832,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultChild.id}/password`)
                         .send({ old_password: defaultEducator.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultEducator))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -837,7 +845,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultEducator.id}/password`)
                         .send({ old_password: defaultEducator.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultEducator))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -850,7 +858,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultHealthProfessional.id}/password`)
                         .send({ old_password: defaultEducator.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultEducator))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -863,7 +871,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultFamily.id}/password`)
                         .send({ old_password: defaultEducator.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultEducator))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -876,7 +884,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultApplication.id}/password`)
                         .send({ old_password: defaultEducator.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultEducator))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -887,9 +895,9 @@ describe('Routes: users', () => {
                 it('users.patch045: should return status code 403 and info message from insufficient permissions for update another educator password', () => {
 
                     return request(URI)
-                        .patch(`/users/${defaultEducator.id}/password`)
-                        .send({ old_password: defaultEducator.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(anotherEducatorToken))
+                        .patch(`/users/${anotherEducator.id}/password`)
+                        .send({ old_password: anotherEducator.password, new_password: newPassword })
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultEducator))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -900,36 +908,40 @@ describe('Routes: users', () => {
             }) // educator update password          
 
             context('health professional update user password', () => {
+                const anotherHealthProfessional: HealthProfessional = new HealthProfessionalMock()
                 before(async () => {
                     try {
-    
+                        anotherHealthProfessional.institution = defaultInstitution
+                        const resultAnotherHealthProfessionalMock = await acc.saveHealthProfessional(accessTokenAdmin, anotherHealthProfessional)
+                        anotherHealthProfessional.id = resultAnotherHealthProfessionalMock.id
+
                         const resultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
                         defaultChild.id = resultChild.id
-    
+
                         const resultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
                         defaultEducator.id = resultEducator.id
-    
+
                         const resultHealthProfessional = await acc.saveHealthProfessional(accessTokenAdmin, defaultHealthProfessional)
                         defaultHealthProfessional.id = resultHealthProfessional.id
-    
+
                         defaultFamily.children = [resultChild]
                         const resultFamily = await acc.saveFamily(accessTokenAdmin, defaultFamily)
                         defaultFamily.id = resultFamily.id
                         defaultFamily.children = resultFamily.children
-    
+
                         const resultApplication = await acc.saveApplication(accessTokenAdmin, defaultApplication)
                         defaultApplication.id = resultApplication.id
-    
-                        accessTokenChild = await acc.auth('default child', 'default pass')
-                        accessTokenEducator = await acc.auth('default educator', 'default pass')
-                        accessTokenHealthProfessional = await acc.auth('default health professional', 'default pass')
-                        accessTokenApplication = await acc.auth('default application', 'default pass')
-                        accessTokenFamily = await acc.auth('default family', 'default pass')
-    
+
+                        accessTokenDefaultChild = await acc.auth('default child', 'default pass')
+                        accessTokenDefaultEducator = await acc.auth('default educator', 'default pass')
+                        accessTokenDefaultHealthProfessional = await acc.auth('default health professional', 'default pass')
+                        accessTokenDefaultApplication = await acc.auth('default application', 'default pass')
+                        accessTokenDefaultFamily = await acc.auth('default family', 'default pass')
+
                     } catch (err) {
                         console.log('Failure in users.patch test: ', err)
                     }
-                })    
+                })
                 after(async () => {
                     try {
                         await accountDB.deleteUsers()
@@ -943,7 +955,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${admin_ID}/password`)
                         .send({ old_password: 'admin123', new_password: 'admin123' })
-                        .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultHealthProfessional))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -956,7 +968,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultChild.id}/password`)
                         .send({ old_password: defaultHealthProfessional.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultHealthProfessional))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -969,7 +981,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultEducator.id}/password`)
                         .send({ old_password: defaultHealthProfessional.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultHealthProfessional))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -982,7 +994,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultHealthProfessional.id}/password`)
                         .send({ old_password: defaultHealthProfessional.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultHealthProfessional))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -995,7 +1007,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultFamily.id}/password`)
                         .send({ old_password: defaultHealthProfessional.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultHealthProfessional))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -1008,7 +1020,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultApplication.id}/password`)
                         .send({ old_password: defaultHealthProfessional.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultHealthProfessional))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -1019,9 +1031,9 @@ describe('Routes: users', () => {
                 it('users.patch052: should return status code 403 and info message from insufficient permissions for update another health professional password', () => {
 
                     return request(URI)
-                        .patch(`/users/${defaultHealthProfessional.id}/password`)
-                        .send({ old_password: defaultHealthProfessional.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(anotherHealthProfessionalToken))
+                        .patch(`/users/${anotherHealthProfessional.id}/password`)
+                        .send({ old_password: anotherHealthProfessional.password, new_password: newPassword })
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultHealthProfessional))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -1032,36 +1044,43 @@ describe('Routes: users', () => {
             }) // health professional update password                
 
             context('family update user password', () => {
+                const anotherFamily: Family = new FamilyMock()
+
                 before(async () => {
                     try {
-    
                         const resultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
                         defaultChild.id = resultChild.id
-    
+
                         const resultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
                         defaultEducator.id = resultEducator.id
-    
+
                         const resultHealthProfessional = await acc.saveHealthProfessional(accessTokenAdmin, defaultHealthProfessional)
                         defaultHealthProfessional.id = resultHealthProfessional.id
-    
+
                         defaultFamily.children = [resultChild]
                         const resultFamily = await acc.saveFamily(accessTokenAdmin, defaultFamily)
                         defaultFamily.id = resultFamily.id
                         defaultFamily.children = resultFamily.children
-    
+
+                        anotherFamily.institution = defaultInstitution
+                        anotherFamily.children = [resultChild]
+                        const resultAnotherFamilyMock = await acc.saveFamily(accessTokenAdmin, anotherFamily)
+                        anotherFamily.id = resultAnotherFamilyMock.id
+                        anotherFamily.children = resultAnotherFamilyMock.children
+
                         const resultApplication = await acc.saveApplication(accessTokenAdmin, defaultApplication)
                         defaultApplication.id = resultApplication.id
-    
-                        accessTokenChild = await acc.auth('default child', 'default pass')
-                        accessTokenEducator = await acc.auth('default educator', 'default pass')
-                        accessTokenHealthProfessional = await acc.auth('default health professional', 'default pass')
-                        accessTokenApplication = await acc.auth('default application', 'default pass')
-                        accessTokenFamily = await acc.auth('default family', 'default pass')
-    
+
+                        accessTokenDefaultChild = await acc.auth('default child', 'default pass')
+                        accessTokenDefaultEducator = await acc.auth('default educator', 'default pass')
+                        accessTokenDefaultHealthProfessional = await acc.auth('default health professional', 'default pass')
+                        accessTokenDefaultApplication = await acc.auth('default application', 'default pass')
+                        accessTokenDefaultFamily = await acc.auth('default family', 'default pass')
+
                     } catch (err) {
                         console.log('Failure in users.patch test: ', err)
                     }
-                })    
+                })
                 after(async () => {
                     try {
                         await accountDB.deleteUsers()
@@ -1075,7 +1094,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${admin_ID}/password`)
                         .send({ old_password: 'admin123', new_password: 'admin123' })
-                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultFamily))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -1088,7 +1107,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultChild.id}/password`)
                         .send({ old_password: defaultFamily.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultFamily))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -1101,7 +1120,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultEducator.id}/password`)
                         .send({ old_password: defaultFamily.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultFamily))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -1114,7 +1133,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultHealthProfessional.id}/password`)
                         .send({ old_password: defaultFamily.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultFamily))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -1127,7 +1146,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultFamily.id}/password`)
                         .send({ old_password: defaultFamily.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultFamily))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -1140,7 +1159,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultApplication.id}/password`)
                         .send({ old_password: defaultFamily.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultFamily))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -1151,9 +1170,9 @@ describe('Routes: users', () => {
                 it('users.patch059: should return status code 403 and info message from insufficient permissions for update another family password', () => {
 
                     return request(URI)
-                        .patch(`/users/${defaultFamily.id}/password`)
-                        .send({ old_password: defaultFamily.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(anotherFamilyToken))
+                        .patch(`/users/${anotherFamily.id}/password`)
+                        .send({ old_password: anotherFamily.password, new_password: newPassword })
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultFamily))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -1164,32 +1183,36 @@ describe('Routes: users', () => {
             }) // family update password  
 
             context('application update user password', () => {
+                const anotherApplication: Application = new ApplicationMock()
                 before(async () => {
                     try {
-    
                         const resultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
                         defaultChild.id = resultChild.id
-    
+
                         const resultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
                         defaultEducator.id = resultEducator.id
-    
+
                         const resultHealthProfessional = await acc.saveHealthProfessional(accessTokenAdmin, defaultHealthProfessional)
                         defaultHealthProfessional.id = resultHealthProfessional.id
-    
+
                         defaultFamily.children = [resultChild]
                         const resultFamily = await acc.saveFamily(accessTokenAdmin, defaultFamily)
                         defaultFamily.id = resultFamily.id
                         defaultFamily.children = resultFamily.children
-    
+
                         const resultApplication = await acc.saveApplication(accessTokenAdmin, defaultApplication)
                         defaultApplication.id = resultApplication.id
-    
-                        accessTokenChild = await acc.auth('default child', 'default pass')
-                        accessTokenEducator = await acc.auth('default educator', 'default pass')
-                        accessTokenHealthProfessional = await acc.auth('default health professional', 'default pass')
-                        accessTokenApplication = await acc.auth('default application', 'default pass')
-                        accessTokenFamily = await acc.auth('default family', 'default pass')
-    
+
+                        anotherApplication.institution = defaultInstitution
+                        const resultAnotherApplicationMock = await acc.saveApplication(accessTokenAdmin, anotherApplication)
+                        anotherApplication.id = resultAnotherApplicationMock.id
+
+                        accessTokenDefaultChild = await acc.auth('default child', 'default pass')
+                        accessTokenDefaultEducator = await acc.auth('default educator', 'default pass')
+                        accessTokenDefaultHealthProfessional = await acc.auth('default health professional', 'default pass')
+                        accessTokenDefaultApplication = await acc.auth('default application', 'default pass')
+                        accessTokenDefaultFamily = await acc.auth('default family', 'default pass')
+
                     } catch (err) {
                         console.log('Failure in users.patch test: ', err)
                     }
@@ -1207,7 +1230,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${admin_ID}/password`)
                         .send({ old_password: 'admin123', new_password: 'admin123' })
-                        .set('Authorization', 'Bearer '.concat(accessTokenApplication))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultApplication))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -1220,7 +1243,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultChild.id}/password`)
                         .send({ old_password: defaultApplication.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenApplication))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultApplication))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -1233,7 +1256,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultEducator.id}/password`)
                         .send({ old_password: defaultApplication.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenApplication))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultApplication))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -1246,7 +1269,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultHealthProfessional.id}/password`)
                         .send({ old_password: defaultApplication.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultHealthProfessional))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -1259,7 +1282,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultFamily.id}/password`)
                         .send({ old_password: defaultApplication.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultFamily))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -1272,7 +1295,7 @@ describe('Routes: users', () => {
                     return request(URI)
                         .patch(`/users/${defaultApplication.id}/password`)
                         .send({ old_password: defaultApplication.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(accessTokenApplication))
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultApplication))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {
@@ -1283,9 +1306,9 @@ describe('Routes: users', () => {
                 it('users.patch066: should return status code 403 and info message from insufficient permissions for update another application password', () => {
 
                     return request(URI)
-                        .patch(`/users/${defaultApplication.id}/password`)
-                        .send({ old_password: defaultApplication.password, new_password: newPassword })
-                        .set('Authorization', 'Bearer '.concat(anotherApplicationToken))
+                        .patch(`/users/${anotherApplication.id}/password`)
+                        .send({ old_password: anotherApplication.password, new_password: newPassword })
+                        .set('Authorization', 'Bearer '.concat(accessTokenDefaultApplication))
                         .set('Content-Type', 'application/json')
                         .expect(403)
                         .then(err => {

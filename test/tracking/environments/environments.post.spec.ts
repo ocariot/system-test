@@ -9,7 +9,7 @@ import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Environment } from '../../../src/tracking-service/model/environment'
 import { EnvironmentMock } from '../../mocks/tracking-service/environment.mock'
 import { Location } from '../../../src/tracking-service/model/location'
-// import { Measurement} from '../../../src/tracking-service/model/measurement'
+import { Measurement } from '../../../src/tracking-service/model/measurement'
 
 describe('Routes: environments', () => {
 
@@ -41,7 +41,9 @@ describe('Routes: environments', () => {
     locationWithoutLocal.latitude = 0
     locationWithoutLocal.longitude = 0
 
-    // const invalidTimeStamp: Date = new Date()
+    const measurementWithoutType: Measurement = new Measurement()
+    measurementWithoutType.value = 35.6
+    measurementWithoutType.unit = 'ºC'
 
     before(async () => {
         try {
@@ -99,12 +101,19 @@ describe('Routes: environments', () => {
                     .send(defaultEnvironment.toJSON())
                     .expect(201)
                     .then(res => {
+                        expect(res.body).to.have.property('id')
+                        expect(res.body).to.have.property('institution_id', defaultEnvironment.institution_id)
+                        expect(res.body).to.have.deep.property('location', defaultEnvironment.location)
+                        expect(res.body).to.have.deep.property('measurements', defaultEnvironment.measurements)
+                        expect(res.body).to.have.deep.property('climatized', defaultEnvironment.climatized)
+                        expect(res.body).to.have.deep.property('timestamp', defaultEnvironment.timestamp.toISOString())                        
                     })
             })
 
             it('environments.post002: should return status code 201 and the saved environment measurement without climatized parameter', () => {
 
                 const environment: Environment = new EnvironmentMock()
+                environment.institution_id = defaultInstitution.id
                 delete environment.climatized
 
                 return request(URI)
@@ -114,7 +123,12 @@ describe('Routes: environments', () => {
                     .send(environment.toJSON())
                     .expect(201)
                     .then(res => {
-                        // climatized by default is false
+                        expect(res.body).to.have.property('id')
+                        expect(res.body).to.have.property('institution_id', environment.institution_id)
+                        expect(res.body).to.have.deep.property('location', environment.location)
+                        expect(res.body).to.have.deep.property('measurements', environment.measurements)
+                        expect(res.body).to.have.deep.property('climatized', false) // By default is created the climatized parameter with value false 
+                        expect(res.body).to.have.deep.property('timestamp', environment.timestamp.toISOString())                     
                     })
             })
 
@@ -127,6 +141,13 @@ describe('Routes: environments', () => {
                 environment = new EnvironmentMock()
                 environment.institution_id = defaultInstitution.id
             })
+            afterEach(async () => {
+                try {
+                    await trackingDB.deleteEnviroments()
+                } catch (err) {
+                    console.log('Failure in environments test: ', err)
+                }
+            })            
 
             it('environments.post003: should return status code 400 and info message from missing parameters, because institution_id is not provided', () => {
 
@@ -298,8 +319,9 @@ describe('Routes: environments', () => {
                     })
             })
 
-            // The measurement property it will change on next version
-            it('environments.post014: should return status code 400 and info message from invalid measurements, because ...', () => {
+            it('environments.post014: should return status code 400 and info message from invalid measurements, because type is required', () => {
+
+                environment.measurements = new Array<Measurement>(measurementWithoutType)
 
                 return request(URI)
                     .post('/environments')
@@ -307,9 +329,12 @@ describe('Routes: environments', () => {
                     .set('Content-Type', 'application/json')
                     .send(environment.toJSON())
                     .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_MEASUREMENT_TYPE_IS_REQUIRED)
+                    })
             })
 
-            it('environments.post???: should return status code 400 and info message from invalid timestamp, because month is invalid', () => {
+            it('environments.post015: should return status code 400 and info message from invalid timestamp, because month is invalid', () => {
 
                 environment.timestamp = new Date('2018-13-19T14:40:00Z')
 
@@ -334,7 +359,7 @@ describe('Routes: environments', () => {
                     console.log('Failure in environments.post test: ', err)
                 }
             })
-            it('environments.post0??: should return status code 409 and info message about environment is already registered', () => {
+            it('environments.post016: should return status code 409 and info message about environment is already registered', () => {
 
                 return request(URI)
                     .post('/environments')
@@ -350,7 +375,7 @@ describe('Routes: environments', () => {
 
         context('when the user does not have permission to register the environment measurement', () => {
 
-            it('environments.post: should return status code 403 and info message from insufficient permissions for admin user', () => {
+            it('environments.post017: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
                     .post('/environments')
@@ -363,7 +388,7 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('environments.post018: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .post('/environments')
@@ -376,7 +401,7 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('environments.post019: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
                     .post('/environments')
@@ -389,7 +414,7 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('environments.post020: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .post('/environments')
@@ -402,7 +427,7 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('environments.post021: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .post('/environments')
@@ -418,7 +443,7 @@ describe('Routes: environments', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('environments.post: should return the status code 401 and the authentication failure informational message', async () => {
+            it('environments.post022: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .post('/environments')

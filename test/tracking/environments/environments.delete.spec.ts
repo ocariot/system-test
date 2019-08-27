@@ -82,7 +82,7 @@ describe('Routes: environments', () => {
         })
 
         describe('when the application delete a environment measurement successfully', () => {
-            it('should return status code 204 and no content', () => {
+            it('environments.deletel001: should return status code 204 and no content', () => {
 
                 return request(URI)
                     .delete(`/environments/${defaultEnvironmentMeasurement.id}`)
@@ -96,7 +96,7 @@ describe('Routes: environments', () => {
         })
 
         describe('when the environment measurement does not exist', () => {
-            it('should return status code 204 and no content', () => {
+            it('environments.deletel002: should return status code 204 and no content', () => {
 
                 return request(URI)
                     .delete(`/environments/${acc.NON_EXISTENT_ID}`)
@@ -110,7 +110,7 @@ describe('Routes: environments', () => {
         })
 
         describe('when the environment_measurement_id is invalid', () => {
-            it('should return status code 400 and info message about for invalid_id', () => {
+            it('environments.deletel003: should return status code 400 and info message about for invalid_id', () => {
 
                 return request(URI)
                     .delete(`/environments/${acc.INVALID_ID}`)
@@ -125,7 +125,7 @@ describe('Routes: environments', () => {
 
         context('when the user does not have permission for delete environment measurement', () => {
             
-            it('should return status code 403 and info message from insufficient permissions for admin user', () => {
+            it('environments.deletel004: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
                     .delete(`/environments/${defaultEnvironmentMeasurement.id}`)
@@ -137,7 +137,7 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('environments.deletel005: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .delete(`/environments/${defaultEnvironmentMeasurement.id}`)
@@ -149,7 +149,7 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('environments.deletel006: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
                     .delete(`/environments/${defaultEnvironmentMeasurement.id}`)
@@ -161,7 +161,7 @@ describe('Routes: environments', () => {
                     })
             })
             
-            it('should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('environments.deletel007: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .delete(`/environments/${defaultEnvironmentMeasurement.id}`)
@@ -173,7 +173,7 @@ describe('Routes: environments', () => {
                     })
             })
             
-            it('should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('environments.deletel008: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .delete(`/environments/${defaultEnvironmentMeasurement.id}`)
@@ -188,7 +188,7 @@ describe('Routes: environments', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('environments.get_all12 should return the status code 401 and the authentication failure informational message', () => {
+            it('environments.deletel009: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .delete(`/environments/${defaultEnvironmentMeasurement.id}`)
