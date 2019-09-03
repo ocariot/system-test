@@ -6,7 +6,7 @@ import { Entity } from './entity'
 export class Log extends Entity {
     public date!: string // Date of the log according to the format yyyy-MM-dd.
     public value!: number // Total time in milliseconds spent in the day.
-    public type!: LogType // Log type
+    public type!: string // Log type
     public child_id!: string // Child ID
 
     public fromJSON(json: any): Log {

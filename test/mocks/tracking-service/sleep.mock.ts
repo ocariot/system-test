@@ -11,6 +11,7 @@ export class SleepMock extends Sleep {
 
     private generateSleep(): Sleep {
         const sleep = new Sleep()
+        
         sleep.id = this.generateObjectId()
         sleep.start_time = new Date()
         sleep.end_time = new Date(new Date(sleep.start_time)

@@ -334,7 +334,7 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post015: should return status code 400 and info message from invalid timestamp, because month is invalid', () => {
+            it('environments.post015: should return status code 400 and info message from invalid timestamp, because date is invalid', () => {
 
                 environment.timestamp = new Date('2018-13-19T14:40:00Z')
 
@@ -345,7 +345,7 @@ describe('Routes: environments', () => {
                     .send(environment.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_INVALID_TIMESTAMP)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_INVALID_DATE)
                     })
             })
 

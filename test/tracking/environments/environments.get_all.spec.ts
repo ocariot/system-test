@@ -289,7 +289,7 @@ describe('Routes: environments', () => {
 
             it('environments.get_all009: should return status code 200 and a list of all environment measurements sorted by least creation date', () => {
 
-                ENVIRONMENT_MEASUREMENTS.sort(function (e1, e2) { return e1.timestamp > e2.timestamp ? 1 : -1 })
+                ENVIRONMENT_MEASUREMENTS.sort(function (e1, e2) { return e1.timestamp > e2.timestamp ? 1 : -1 }) 
                 const SORT = 'timestamp'
 
                 return request(URI)
