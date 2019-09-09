@@ -18,6 +18,7 @@ import { Application } from '../../../src/account-service/model/application'
 import { ApplicationMock } from '../../mocks/account-service/application.mock'
 import { Sleep } from '../../../src/tracking-service/model/sleep'
 import { SleepMock } from '../../mocks/tracking-service/sleep.mock'
+import { SleepPatternDataSet } from '../../../src/tracking-service/model/sleep.pattern.data.set';
 
 describe('Routes: users.children.sleep', () => {
 
@@ -43,17 +44,32 @@ describe('Routes: users.children.sleep', () => {
     const defaultFamily: Family = new FamilyMock()
     const defaultApplication: Application = new ApplicationMock()
 
-    // // Incorrect sleep objects
-    // const incorrectSleepJSON: any = {
-    //     start_time: new Date('2018-12-14T12:52:59Z').toISOString(),
-    //     end_time: new Date('2018-12-14T13:12:37Z').toISOString(),
-    //     duration: 1178000,
-    //     pattern: undefined,
-    //     type: '',
-    // }
+    /**
+     * wrong Data Set Items
+     */
+    const wrongDataSetItemNameJSON: any = {
+        start_time: new Date('2018-08-18T01:30:30Z'),
+        name: 'awaki', // invalid name
+        duration: Math.floor(Math.random() * 5 + 1) * 60000 // 1-5min
+    }
 
-    // const incorrectActivity: Sleep = new Sleep().fromJSON(incorrectSleepJSON)
+    const wrongDataSetItemDateJSON: any = {
+        start_time: new Date('2018-12-32T01:30:30Z'), //invalid day
+        name: 'asleep',
+        duration: Math.floor(Math.random() * 5 + 1) * 60000 // 1-5min
+    }
 
+    const wrongDataSetItemDurationJSON: any = {
+        start_time: new Date('2018-08-18T01:30:30Z'),
+        name: 'asleep',
+        duration: -60000 // negative duration
+    }
+
+    // required field "name" is missing
+    const invalidDataSetItemJSON: any = {
+        start_time: new Date('2018-08-18T01:30:30Z'),
+        duration: Math.floor(Math.random() * 5 + 1) * 60000 // 1-5min
+    }
 
     before(async () => {
         try {
@@ -243,7 +259,7 @@ describe('Routes: users.children.sleep', () => {
 
         context('when a validation error occurs', () => {
 
-            it('sleep.post005: should return status code 400 and info message from validation error, because physical sleep start_time is not provided', () => {
+            it('sleep.post005: should return status code 400 and info message from validation error, because sleep start_time is not provided', () => {
 
                 delete sleep.start_time
 
@@ -258,7 +274,7 @@ describe('Routes: users.children.sleep', () => {
                     })
             })
 
-            it('sleep.post006: should return status code 400 and info message from validation error, because physical sleep end_time is not provided', () => {
+            it('sleep.post006: should return status code 400 and info message from validation error, because sleep end_time is not provided', () => {
 
                 delete sleep.end_time
 
@@ -273,7 +289,37 @@ describe('Routes: users.children.sleep', () => {
                     })
             })
 
-            it('sleep.post007: should return status code 400 and info message from validatio error, because start_time is greater than end_time', async () => {
+            it('sleep.post007: should return status code 400 and info message from validation error, because duration is not provided', () => {
+
+                delete sleep.duration
+
+                return request(URI)
+                    .post(`/users/children/${defaultChild.id}/sleep`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(sleep.toJSON())
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_DURATION_IS_REQUIRED)
+                    })
+            })
+
+            it('sleep.post008: should return status code 400 and info message from validation error, because sleep pattern data set is not provided', () => {
+
+                delete sleep.pattern
+
+                return request(URI)
+                    .post(`/users/children/${defaultChild.id}/sleep`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(sleep.toJSON())
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_PATTERN_IS_REQUIRED)
+                    })
+            })
+
+            it('sleep.post009: should return status code 400 and info message from validatio error, because start_time is greater than end_time', async () => {
 
                 sleep.end_time = new Date()
                 await sleepFunction(100)
@@ -290,9 +336,9 @@ describe('Routes: users.children.sleep', () => {
                     })
             })
 
-            it.only('sleep.post008: should return status code 400 and info message from validatio error, because duration is negative', () => {
+            it('sleep.post010: should return status code 400 and info message from validatio error, because duration is negative', () => {
 
-                sleep.duration! = -sleep.duration!
+                sleep.duration = -sleep.duration!
                 console.log(sleep.duration)
 
                 return request(URI)
@@ -302,7 +348,110 @@ describe('Routes: users.children.sleep', () => {
                     .send(sleep.toJSON())
                     .expect(400)
                     .then(err => {
-                        // expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_START_TIME_IS_GREATER_THAN_END_TIME)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_NEGATIVE_DURATION)
+                    })
+            })
+
+            it('sleep.post011: should return status code 400 and info message from validatio error, because sleep pattern data set array has a invalid item with invalid name', () => {
+
+                const notSuportedName = wrongDataSetItemNameJSON.name
+                sleep.pattern!.data_set = [new SleepPatternDataSet().fromJSON(wrongDataSetItemNameJSON)]
+
+                return request(URI)
+                    .post(`/users/children/${defaultChild.id}/sleep`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(sleep.toJSON())
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body.message).to.eql(`The sleep pattern name provided "${notSuportedName}" is not supported...`)
+                        expect(err.body.description).to.eql('The names of the allowed patterns are: awake, asleep, restless.')
+                    })
+            })
+
+            it('sleep.post012: should return status code 400 and info message from validatio error, because sleep pattern data set array has a invalid item with invalid start_time', () => {
+
+                sleep.pattern!.data_set = [new SleepPatternDataSet().fromJSON(wrongDataSetItemDateJSON)]
+
+                return request(URI)
+                    .post(`/users/children/${defaultChild.id}/sleep`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(sleep.toJSON())
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DATE)
+                    })
+            })
+
+            it('sleep.post013: should return status code 400 and info message from validatio error, because sleep pattern data set array has a invalid item with negative duration', () => {
+
+                sleep.pattern!.data_set = [new SleepPatternDataSet().fromJSON(wrongDataSetItemDurationJSON)]
+
+                return request(URI)
+                    .post(`/users/children/${defaultChild.id}/sleep`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(sleep.toJSON())
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_NEGATIVE_DURATION_OF_SLEEP_PATTERN_DATASET)
+                    })
+            })
+
+            it('sleep.post014: should return status code 400 and info message from validatio error, because duration does not match values passed in start_time and end_time', () => {
+
+                sleep.duration = sleep.duration! + 1
+
+                return request(URI)
+                    .post(`/users/children/${defaultChild.id}/sleep`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(sleep.toJSON())
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_DURATION_DOES_NOT_MATCH)
+                    })
+            })
+
+            it('sleep.post015: should return status code 400 and info message from validatio error, because ... ', () => {
+
+                sleep.pattern!.data_set = [new SleepPatternDataSet().fromJSON(invalidDataSetItemJSON)]
+
+                return request(URI)
+                    .post(`/users/children/${defaultChild.id}/sleep`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(sleep.toJSON())
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_NAME_IS_REQUIRED)
+                    })
+            })
+
+            it('sleep.post016: should return status code 400 and info message from validation error, because child not exist', () => {
+
+                return request(URI)
+                    .post(`/users/children/${acc.NON_EXISTENT_ID}/sleep`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(sleep.toJSON())
+                    .expect(400)
+                    .then(err => {
+                        // expect(err.body).to.eql(ApiGatewayException.SLEEP.????)
+                    })
+            })
+
+            it('sleep.post017: should return status code 400 and info message from validation error, because child_id is invalid', () => {
+
+                return request(URI)
+                    .post(`/users/children/${acc.INVALID_ID}/sleep`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(sleep.toJSON())
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
 
@@ -310,7 +459,7 @@ describe('Routes: users.children.sleep', () => {
 
         context('when posting a new Sleep for another user that not to be a child', () => {
 
-            it('physical.activities.post026: should return ??? for admin', async () => {
+            it('sleep.post018: should return ??? for admin', async () => {
 
                 return request(URI)
                     .post(`/users/children/${await acc.getAdminID()}/sleep`)
@@ -323,7 +472,7 @@ describe('Routes: users.children.sleep', () => {
                     })
             })
 
-            it('physical.activities.post027: should return ??? for educator', () => {
+            it('sleep.post019: should return ??? for educator', () => {
 
                 return request(URI)
                     .post(`/users/children/${defaultEducator.id}/sleep`)
@@ -336,7 +485,7 @@ describe('Routes: users.children.sleep', () => {
                     })
             })
 
-            it('physical.activities.post028: should return ??? for health professional', () => {
+            it('sleep.post020: should return ??? for health professional', () => {
 
                 return request(URI)
                     .post(`/users/children/${defaultHealthProfessional.id}/sleep`)
@@ -349,7 +498,7 @@ describe('Routes: users.children.sleep', () => {
                     })
             })
 
-            it('physical.activities.post029: should return ??? for family', () => {
+            it('sleep.post021: should return ??? for family', () => {
 
                 return request(URI)
                     .post(`/users/children/${defaultFamily.id}/sleep`)
@@ -362,7 +511,7 @@ describe('Routes: users.children.sleep', () => {
                     })
             })
 
-            it('physical.activities.post030: should return ??? for application', () => {
+            it('sleep.post022: should return ??? for application', () => {
 
                 return request(URI)
                     .post(`/users/children/${defaultApplication.id}/sleep`)
@@ -379,7 +528,7 @@ describe('Routes: users.children.sleep', () => {
 
         describe('when the child posting a new Sleep for another child', () => {
 
-            it('physical.activities.post031: should return status code 400 and info message ???', async () => {
+            it('sleep.post023: should return status code 400 and info message ???', async () => {
 
                 const anotherChild: Child = new ChildMock()
                 let anotherChildToken
@@ -406,7 +555,7 @@ describe('Routes: users.children.sleep', () => {
 
         context('when the user does not have permission for register Sleep', () => {
 
-            it('physical.activities.post032: should return status code 403 and info message from insufficient permissions for admin user', () => {
+            it('sleep.post024: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
                     .post(`/users/children/${defaultChild.id}/sleep`)
@@ -420,7 +569,7 @@ describe('Routes: users.children.sleep', () => {
 
             })
 
-            it('physical.activities.post033: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('sleep.post025: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .post(`/users/children/${defaultChild.id}/sleep`)
@@ -437,7 +586,7 @@ describe('Routes: users.children.sleep', () => {
 
         describe('when not informed the acess token', () => {
 
-            it('physical.activities.post034: should return the status code 401 and the authentication failure informational message', () => {
+            it('sleep.post026: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .post(`/users/children/${defaultChild.id}/sleep`)
@@ -453,7 +602,7 @@ describe('Routes: users.children.sleep', () => {
 
         describe('when a duplicate error occurs', () => {
 
-            it('physical.activities.post035: should return status code 409 and info message about duplicate itens', async () => {
+            it('sleep.post027: should return status code 409 and info message about duplicate itens', async () => {
 
                 try {
                     await trck.saveSleep(accessDefaultChildToken, sleep, defaultChild.id)
@@ -468,10 +617,9 @@ describe('Routes: users.children.sleep', () => {
                     .send(sleep.toJSON())
                     .expect(409)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_409_PHYSICAL_ACTIVITY_IS_ALREADY_REGISTERED)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_409_SLEEP_IS_ALREADY_REGISTERED)
                     })
             })
-
         })
     })
 })

@@ -100,7 +100,14 @@ export abstract class ApiGatewayException {
         ERROR_400_START_TIME_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Activity validation failed: start_time is required!').toJson(),
         ERROR_400_END_TIME_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Activity validation failed: end_time is required!').toJson(),
         ERROR_400_START_TIME_IS_GREATER_THAN_END_TIME: new ApiException(400, 'Date field is invalid...', 'Date validation failed: The end_time parameter can not contain a older date than that the start_time parameter!').toJson(),
-
+        ERROR_400_NEGATIVE_DURATION: new ApiException(400, 'Duration field is invalid...', 'Activity validation failed: The value provided has a negative value!').toJson(),
+        ERROR_400_INVALID_DATE: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
+        ERROR_400_NEGATIVE_DURATION_OF_SLEEP_PATTERN_DATASET: new ApiException(400, 'Some (or several) duration field of sleep pattern is invalid...', 'Sleep Pattern dataset validation failed: The value provided has a negative value!').toJson(),
+        ERROR_400_DURATION_DOES_NOT_MATCH: new ApiException(400, 'Duration field is invalid...', 'Duration validation failed: Activity duration value does not match values passed in start_time and end_time parameters!').toJson(),
+        ERROR_400_DURATION_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Activity validation failed: duration is required!').toJson(),
+        ERROR_400_PATTERN_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Sleep validation failed: pattern is required!').toJson(),
+        ERROR_400_INVALID_PATTERN_DATASET_NAME_IS_REQUIRED: new ApiException(400, 'Dataset are not in a format that is supported!', 'Validation of the sleep pattern dataset failed: data_set name is required!').toJson(),
+        ERROR_409_SLEEP_IS_ALREADY_REGISTERED: new ApiException(409, 'Sleep is already registered...').toJson(),
     }
 
     public static readonly ENVIRONMENT: any = {

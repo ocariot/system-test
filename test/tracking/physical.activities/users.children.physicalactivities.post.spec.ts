@@ -754,7 +754,7 @@ describe('Routes: users.children.physicalactivities', () => {
         })
 
         describe('when a duplicate error occurs', () => {
-            
+
             it('physical.activities.post035: should return status code 409 and info message about duplicate itens', async () => {
 
                 try {
@@ -763,7 +763,7 @@ describe('Routes: users.children.physicalactivities', () => {
                     console.log('Failure in physical.activities.post test: ', err.message)
                 }
 
-                return request(URI) 
+                return request(URI)
                     .post(`/users/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
