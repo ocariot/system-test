@@ -148,13 +148,13 @@ describe('Routes: users.children.physicalactivities', () => {
 
         context('when the user update a physical activity of the child successfully', () => {
 
-            it('physical.activities.patch001: should return status code 200 and updated start_time and end_time for educator user', () => {
+            it('physical.activities.patch001: should return status code 200 and updated start_time, end_time and duration for educator user', () => {
 
                 const body = {
                     name: defaultActivity.name,
                     start_time: otherActivity.start_time,
                     end_time: otherActivity.end_time,
-                    duration: defaultActivity.duration,
+                    duration: otherActivity.duration,
                     calories: defaultActivity.calories,
                     steps: defaultActivity.steps ? defaultActivity.steps : undefined,
                     levels: defaultActivity.levels ? defaultActivity.levels : undefined,
@@ -172,7 +172,7 @@ describe('Routes: users.children.physicalactivities', () => {
                         expect(res.body.name).to.eql(defaultActivity.name)
                         expect(res.body.start_time).to.eql(otherActivity.start_time!.toISOString())
                         expect(res.body.end_time).to.eql(otherActivity.end_time!.toISOString())
-                        expect(res.body.duration).to.eql(defaultActivity.duration)
+                        expect(res.body.duration).to.eql(otherActivity.duration)
                         expect(res.body.calories).to.eql(defaultActivity.calories)
                         if (defaultActivity.steps) {
                             expect(res.body.steps).to.eql(defaultActivity.steps)

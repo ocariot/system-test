@@ -107,6 +107,9 @@ export abstract class ApiGatewayException {
         ERROR_400_DURATION_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Activity validation failed: duration is required!').toJson(),
         ERROR_400_PATTERN_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Sleep validation failed: pattern is required!').toJson(),
         ERROR_400_INVALID_PATTERN_DATASET_NAME_IS_REQUIRED: new ApiException(400, 'Dataset are not in a format that is supported!', 'Validation of the sleep pattern dataset failed: data_set name is required!').toJson(),
+        ERROR_400_INVALID_CHILD_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea, is expected.').toJson(),
+        ERROR_400_INVALID_SLEEP_ID: new ApiException(400, 'Parameter {sleep_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea, is expected.').toJson(),
+        ERROR_404_SLEEP_NOT_FOUND: new ApiException(404, 'Sleep not found!', 'Sleep not found or already removed. A new operation for the same resource is not required!').toJson(),
         ERROR_409_SLEEP_IS_ALREADY_REGISTERED: new ApiException(409, 'Sleep is already registered...').toJson(),
     }
 
