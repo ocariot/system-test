@@ -339,7 +339,6 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.post010: should return status code 400 and info message from validatio error, because duration is negative', () => {
 
                 sleep.duration = -sleep.duration!
-                console.log(sleep.duration)
 
                 return request(URI)
                     .post(`/users/children/${defaultChild.id}/sleep`)
