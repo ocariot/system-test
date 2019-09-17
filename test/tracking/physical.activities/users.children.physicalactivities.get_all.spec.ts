@@ -386,7 +386,6 @@ describe('Routes: users.children.physicalactivities', () => {
                             })
                         })
                 })
-
             })
         }) // get physical activities successfully
 

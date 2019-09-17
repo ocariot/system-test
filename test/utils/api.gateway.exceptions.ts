@@ -55,7 +55,7 @@ export abstract class ApiGatewayException {
         ERROR_400_ASSOCIATION_FAILURE: new ApiException(400, 'The association could not be performed because the child does not have a record.').toJson(),
         ERROR_404_FAMILY_NOT_FOUND: new ApiException(404, 'Family not found!', 'Family not found or already removed. A new operation for the same resource is not required.').toJson(),
         ERROR_409_DUPLICATE: new ApiException(409, 'Family is already registered!').toJson()
-    }    
+    }
 
     public static readonly APPLICATION: any = {
         ERROR_400_USERNAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Application validation: username is required!').toJson(),
@@ -65,7 +65,7 @@ export abstract class ApiGatewayException {
         ERROR_409_DUPLICATE: new ApiException(409, 'Application is already registered!').toJson()
     }
 
-    public static readonly CHILDREN_GROUPS: any= {
+    public static readonly CHILDREN_GROUPS: any = {
         ERROR_400_NAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Children Group validation: name is required!').toJson(),
         ERROR_400_CHILDREN_IDS_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Children Group validation: Collection with children IDs is required!').toJson(),
         ERROR_400_CHILDREN_NOT_REGISTERED: new ApiException(400, 'It is necessary for children to be registered before proceeding.', 'The following IDs were verified without registration:').toJson(),
@@ -82,7 +82,7 @@ export abstract class ApiGatewayException {
         ERROR_400_INVALID_DATE: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
         ERROR_400_PARAMETERS_NAME_AND_DURATION_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of physical activity failed: name, duration is required!').toJson(),
         ERROR_400_ALL_PARAMETERS_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of physical activity failed: name, start_time, end_time, duration, calories is required!').toJson(),
-        ERROR_400_START_TIME_IS_GREATER_THAN_END_TIME: new ApiException(400, 'Date field is invalid...','Date validation failed: The end_time parameter can not contain a older date than that the start_time parameter!').toJson(),
+        ERROR_400_START_TIME_IS_GREATER_THAN_END_TIME: new ApiException(400, 'Date field is invalid...', 'Date validation failed: The end_time parameter can not contain a older date than that the start_time parameter!').toJson(),
         ERROR_400_NEGATIVE_DURATION: new ApiException(400, 'Duration field is invalid...', 'Physical Activity validation failed: The value provided has a negative value!').toJson(),
         ERROR_400_NEGATIVE_CALORIES: new ApiException(400, 'Calories field is invalid...', 'Physical Activity validation failed: The value provided has a negative value!').toJson(),
         ERROR_400_NEGATIVE_STEPS: new ApiException(400, 'Steps field is invalid...', 'Physical Activity validation failed: The value provided has a negative value!').toJson(),
@@ -97,7 +97,21 @@ export abstract class ApiGatewayException {
     }
 
     public static readonly SLEEP: any = {
-        PARAM_ID_NOT_VALID_FORMAT: 'Parameter {sleep_id} is not in valid format!'
+        ERROR_400_START_TIME_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Activity validation failed: start_time is required!').toJson(),
+        ERROR_400_END_TIME_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Activity validation failed: end_time is required!').toJson(),
+        ERROR_400_START_TIME_IS_GREATER_THAN_END_TIME: new ApiException(400, 'Date field is invalid...', 'Date validation failed: The end_time parameter can not contain a older date than that the start_time parameter!').toJson(),
+        ERROR_400_NEGATIVE_DURATION: new ApiException(400, 'Duration field is invalid...', 'Activity validation failed: The value provided has a negative value!').toJson(),
+        ERROR_400_INVALID_DATE: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
+        ERROR_400_NEGATIVE_DURATION_OF_SLEEP_PATTERN_DATASET: new ApiException(400, 'Some (or several) duration field of sleep pattern is invalid...', 'Sleep Pattern dataset validation failed: The value provided has a negative value!').toJson(),
+        ERROR_400_DURATION_DOES_NOT_MATCH: new ApiException(400, 'Duration field is invalid...', 'Duration validation failed: Activity duration value does not match values passed in start_time and end_time parameters!').toJson(),
+        ERROR_400_DURATION_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Activity validation failed: duration is required!').toJson(),
+        ERROR_400_PATTERN_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Sleep validation failed: pattern is required!').toJson(),
+        ERROR_400_INVALID_PATTERN_DATASET_NAME_IS_REQUIRED: new ApiException(400, 'Dataset are not in a format that is supported!', 'Validation of the sleep pattern dataset failed: data_set name is required!').toJson(),
+        ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_REQUIRED: new ApiException(400, 'Dataset are not in a format that is supported!', 'Validation of the sleep pattern dataset failed: data_set duration is required!').toJson(),
+        ERROR_400_INVALID_CHILD_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea, is expected.').toJson(),
+        ERROR_400_INVALID_SLEEP_ID: new ApiException(400, 'Parameter {sleep_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea, is expected.').toJson(),
+        ERROR_404_SLEEP_NOT_FOUND: new ApiException(404, 'Sleep not found!', 'Sleep not found or already removed. A new operation for the same resource is not required!').toJson(),
+        ERROR_409_SLEEP_IS_ALREADY_REGISTERED: new ApiException(409, 'Sleep is already registered...').toJson(),
     }
 
     public static readonly ENVIRONMENT: any = {
@@ -122,7 +136,7 @@ export abstract class ApiGatewayException {
     }
 
     public static readonly USER: any = {
-        ERROR_400_OLD_PASSWORD_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Change password validation failed: old_password is required!').toJson(),        
+        ERROR_400_OLD_PASSWORD_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Change password validation failed: old_password is required!').toJson(),
         ERROR_400_NEW_PASSWORD_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Change password validation failed: new_password is required!').toJson(),
         ERROR_400_PASSWORD_NOT_MATCH: new ApiException(400, 'Password does not match!', 'The old password parameter does not match with the actual user password.').toJson(),
         ERROR_404_USER_NOT_FOUND: new ApiException(404, 'User not found!', 'User not found or already removed. A new operation for the same resource is not required.').toJson(),

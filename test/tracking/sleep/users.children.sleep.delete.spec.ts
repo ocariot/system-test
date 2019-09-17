@@ -8,10 +8,10 @@ import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Institution } from '../../../src/account-service/model/institution'
 import { Child } from '../../../src/account-service/model/child'
 import { ChildMock } from '../../mocks/account-service/child.mock'
-import { PhysicalActivity } from '../../../src/tracking-service/model/physical.activity'
-import { PhysicalActivityMock } from '../../mocks/tracking-service/physical.activity.mock'
+import { Sleep } from '../../../src/tracking-service/model/sleep'
+import { SleepMock } from '../../mocks/tracking-service/sleep.mock'
 
-describe('Routes: users.children.physicalactivities', () => {
+describe('Routes: users.children.sleep', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -32,7 +32,7 @@ describe('Routes: users.children.physicalactivities', () => {
 
     let accessDefaultChildToken: string
 
-    const defaultActivity: PhysicalActivity = new PhysicalActivityMock()
+    const defaultSleep: Sleep = new SleepMock()
 
     before(async () => {
         try {
@@ -59,7 +59,7 @@ describe('Routes: users.children.physicalactivities', () => {
             }
 
         } catch (err) {
-            console.log('Failure on Before from physical.activities.delete test: ', err)
+            console.log('Failure on Before from sleep.delete test: ', err)
         }
     })
     after(async () => {
@@ -73,34 +73,34 @@ describe('Routes: users.children.physicalactivities', () => {
         }
     })
 
-    describe('DELETE /users/children/:child_id/physicalactivities/:physicalactivity_id', () => {
+    describe('DELETE /users/children/:child_id/sleep/:sleep_id', () => {
 
         beforeEach(async () => {
             try {
-                // save default physical activity for default child
-                const resultDefaultActivity = await trck.savePhysicalActivitiy(accessDefaultChildToken, defaultActivity, defaultChild.id)
-                defaultActivity.id = resultDefaultActivity.id
-                defaultActivity.child_id = resultDefaultActivity.child_id
+                // save default sleep for default child
+                const resultDefaultSleep = await trck.saveSleep(accessDefaultChildToken, defaultSleep, defaultChild.id)
+                defaultSleep.id = resultDefaultSleep.id
+                defaultSleep.child_id = resultDefaultSleep.child_id
 
             } catch (err) {
-                console.log('Failure on Before from physical.activities.delete test: ', err)
+                console.log('Failure on Before from sleep.delete test: ', err)
             }
         })
 
         afterEach(async () => {
             try {
-                trackingDB.deletePhysicalActivities()
+                trackingDB.deleteSleepsRecords()
             } catch (err) {
-                console.log('Failure on Before from physical.activities.delete test: ', err)
+                console.log('Failure on Before from sleep.delete test: ', err)
             }
         })
 
-        context('when the user delete a physical activity successfully', () => {
+        context('when the user delete a sleep successfully', () => {
 
-            it('physical.activities.delete001: should return status code 204 and no content for physical activity, when the educator delete a physical activity', () => {
+            it('sleep.delete001: should return status code 204 and no content for sleep, when the educator delete a sleep', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .delete(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -109,10 +109,10 @@ describe('Routes: users.children.physicalactivities', () => {
                     })
             })
 
-            it('physical.activities.delete002: should return status code 204 and no content for physical activity, when the application delete a physical activity', () => {
+            it('sleep.delete002: should return status code 204 and no content for sleep, when the application delete a sleep', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .delete(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -121,10 +121,10 @@ describe('Routes: users.children.physicalactivities', () => {
                     })
             })
 
-            it('physical.activities.delete003: should return status code 204 and no content for physical activity, when the family delete a physical activity', () => {
+            it('sleep.delete003: should return status code 204 and no content for sleep, when the family delete a sleep', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .delete(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -133,42 +133,41 @@ describe('Routes: users.children.physicalactivities', () => {
                     })
             })
 
-        }) //delete a physical activity successfully
+        }) //delete a sleep successfully
 
         context('when a validation error occurs', () => {
 
-            it('physical.activities.delete004: should return status code 400 and info message from invalid child_id', () => {
+            it('sleep.delete004: should return status code 400 and info message from invalid child_id', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${acc.INVALID_ID}/physicalactivities/${defaultActivity.id}`)
+                    .delete(`/users/children/${acc.INVALID_ID}/sleep/${defaultSleep.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_CHILD_ID)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_CHILD_ID)
                     })
             })
 
-            it('physical.activities.delete005: should return status code 400 and info message from invalid activity_id', () => {
+            it('sleep.delete005: should return status code 400 and info message from invalid sleep_id', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/physicalactivities/${acc.INVALID_ID}`)
+                    .delete(`/users/children/${defaultChild.id}/sleep/${acc.INVALID_ID}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_PHYSICAL_ACTIVY_ID)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_SLEEP_ID)
                     })
             })
         })
 
+        context('when the child or the sleep does not exist', () => {
 
-        context('when the child or the activity does not exist', () => {
-
-            it('physical.activities.delete006: should return status code 204 and no content for physical activity, when the child not exist', () => {
+            it('sleep.delete006: should return status code 204 and no content for sleep, when the child not exist', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${acc.NON_EXISTENT_ID}/physicalactivities/${defaultActivity.id}`)
+                    .delete(`/users/children/${acc.NON_EXISTENT_ID}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -177,10 +176,10 @@ describe('Routes: users.children.physicalactivities', () => {
                     })
             })
 
-            it('physical.activities.delete007: should return status code 204 and no content for physical activity, when the activity not exist', () => {
+            it('sleep.delete007: should return status code 204 and no content for sleep, when the sleep not exist', () => {
                 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/physicalactivities/${acc.NON_EXISTENT_ID}`)
+                    .delete(`/users/children/${defaultChild.id}/sleep/${acc.NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -190,12 +189,12 @@ describe('Routes: users.children.physicalactivities', () => {
             })
         })
 
-        context('when the user does not have permission for delete PhysicalActivity', () => {
+        context('when the user does not have permission for delete sleep', () => {
 
-            it('physical.activities.delete008: should return status code 403 and info message from insufficient permissions for admin user', () => {
+            it('sleep.delete008: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .expect(403)
@@ -204,10 +203,10 @@ describe('Routes: users.children.physicalactivities', () => {
                     })
             })
 
-            it('physical.activities.delete009: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('sleep.delete009: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .expect(403)
@@ -216,10 +215,10 @@ describe('Routes: users.children.physicalactivities', () => {
                     })
             })
 
-            it('physical.activities.delete010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('sleep.delete010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .expect(403)
@@ -231,11 +230,10 @@ describe('Routes: users.children.physicalactivities', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-
-            it('physical.activities.delete011: should return the status code 401 and the authentication failure informational message', () => {
+            it('sleep.delete011: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .delete(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(401)
@@ -244,6 +242,5 @@ describe('Routes: users.children.physicalactivities', () => {
                     })
             })
         })
-
     })
 })

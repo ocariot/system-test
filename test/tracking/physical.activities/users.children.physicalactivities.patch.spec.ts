@@ -148,13 +148,13 @@ describe('Routes: users.children.physicalactivities', () => {
 
         context('when the user update a physical activity of the child successfully', () => {
 
-            it('physical.activities.patch001: should return status code 200 and updated start_time and end_time for educator user', () => {
+            it('physical.activities.patch001: should return status code 200 and updated start_time, end_time and duration for educator user', () => {
 
                 const body = {
                     name: defaultActivity.name,
                     start_time: otherActivity.start_time,
                     end_time: otherActivity.end_time,
-                    duration: defaultActivity.duration,
+                    duration: otherActivity.duration,
                     calories: defaultActivity.calories,
                     steps: defaultActivity.steps ? defaultActivity.steps : undefined,
                     levels: defaultActivity.levels ? defaultActivity.levels : undefined,
@@ -172,7 +172,7 @@ describe('Routes: users.children.physicalactivities', () => {
                         expect(res.body.name).to.eql(defaultActivity.name)
                         expect(res.body.start_time).to.eql(otherActivity.start_time!.toISOString())
                         expect(res.body.end_time).to.eql(otherActivity.end_time!.toISOString())
-                        expect(res.body.duration).to.eql(defaultActivity.duration)
+                        expect(res.body.duration).to.eql(otherActivity.duration)
                         expect(res.body.calories).to.eql(defaultActivity.calories)
                         if (defaultActivity.steps) {
                             expect(res.body.steps).to.eql(defaultActivity.steps)
@@ -267,34 +267,9 @@ describe('Routes: users.children.physicalactivities', () => {
 
         }) // update physical activity successfully
 
-        describe('when a validation error occurs', () => {
+        describe('when a duplicate error occurrs', () => {
 
-            it('physical.activities.patch004: should return status code 400 and info message about invalid Date, because start_time is greater than end_time', () => {
-
-                const body = {
-                    name: defaultActivity.name,
-                    start_time: defaultEnd_time, // start_time greater than end_time
-                    end_time: defaultStart_time, // end_time smaller than start_time
-                    duration: defaultActivity.duration,
-                    calories: defaultActivity.calories,
-                    steps: defaultActivity.steps ? defaultActivity.steps : undefined,
-                    levels: defaultActivity.levels ? otherActivity.levels : undefined,
-                    child_id: defaultActivity.child_id
-                }
-
-                return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
-                    .send(body)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
-                    .expect(400)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_START_TIME_IS_GREATER_THAN_END_TIME)
-                    })
-
-            })
-
-            it('physical.activities.patch005: should return status code 400 and info message about invalid Date, because start_time is equal to that of another activity', async () => {
+            it('physical.activities.patch004: should return status code 409 and info message about invalid Date, because start_time is equal to that of another activity', async () => {
 
                 const result = await trck.savePhysicalActivitiy(accessDefaultChildToken, otherActivity, defaultChild.id)
                 otherActivity.id = result.id
@@ -321,6 +296,34 @@ describe('Routes: users.children.physicalactivities', () => {
                     .expect(409)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_409_PHYSICAL_ACTIVITY_IS_ALREADY_REGISTERED)
+                    })
+
+            })
+        })
+
+        describe('when a validation error occurs', () => {
+
+            it('physical.activities.patch005: should return status code 400 and info message about invalid Date, because start_time is greater than end_time', () => {
+
+                const body = {
+                    name: defaultActivity.name,
+                    start_time: defaultEnd_time, // start_time greater than end_time
+                    end_time: defaultStart_time, // end_time smaller than start_time
+                    duration: defaultActivity.duration,
+                    calories: defaultActivity.calories,
+                    steps: defaultActivity.steps ? defaultActivity.steps : undefined,
+                    levels: defaultActivity.levels ? otherActivity.levels : undefined,
+                    child_id: defaultActivity.child_id
+                }
+
+                return request(URI)
+                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .send(body)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_START_TIME_IS_GREATER_THAN_END_TIME)
                     })
 
             })
@@ -615,6 +618,8 @@ describe('Routes: users.children.physicalactivities', () => {
 
             it('physical.activities.patch017: should return status code 404 and info message from physical activity not found', () => {
 
+                const non_existent_activity_id = '111a111a111a11111aa111aa'
+
                 const body = {
                     name: defaultActivity.name,
                     start_time: defaultActivity.start_time,
@@ -627,7 +632,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${acc.NON_EXISTENT_ID}`)
+                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${non_existent_activity_id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
