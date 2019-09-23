@@ -4,11 +4,20 @@ services:
     image: mongo:latest
     container_name: ocariot-mongo-account
     restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ADMIN_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ADMIN_PASS}
+      - MONGO_APPLICATION_DATABASE=account
+      - MONGO_APPLICATION_USER=${ACCOUNT_DB_USER}
+      - MONGO_APPLICATION_PASS=${ACCOUNT_DB_PASS}
     ports:
       - 27018:27017
+    command: ["mongod", "--config", "/etc/mongod.conf"]
     volumes:
       - mongo-account-data:/data/db
-      - ./config/mongodb/mongod.conf:/etc/mongo.conf
+      - ${MONGO_PEM_KEY_PATH}:/etc/ssl/mongodb.pem
+      - ./config/mongodb/mongod.conf:/etc/mongod.conf
+      - ./config/mongodb/mongodb-entrypoint.sh:/docker-entrypoint-initdb.d/mongodb-entrypoint.sh
     networks:
       - ocariot-network
     logging:
@@ -20,11 +29,45 @@ services:
     image: mongo:latest
     container_name: ocariot-mongo-activity-tracking
     restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ADMIN_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ADMIN_PASS}
+      - MONGO_APPLICATION_DATABASE=activity-tracking
+      - MONGO_APPLICATION_USER=${AT_DB_USER}
+      - MONGO_APPLICATION_PASS=${AT_DB_PASS}
     ports:
       - 27019:27017
+    command: ["mongod", "--config", "/etc/mongod.conf"]
     volumes:
       - mongo-activity-tracking-data:/data/db
-      - ./config/mongodb/mongod.conf:/etc/mongo.conf
+      - ${MONGO_PEM_KEY_PATH}:/etc/ssl/mongodb.pem
+      - ./config/mongodb/mongod.conf:/etc/mongod.conf
+      - ./config/mongodb/mongodb-entrypoint.sh:/docker-entrypoint-initdb.d/mongodb-entrypoint.sh
+    networks:
+      - ocariot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  mongo-ds-agent: # MongoDB container for the Data Sync Agent service
+    image: mongo:latest
+    container_name: ocariot-mongo-ds-agent
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ADMIN_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ADMIN_PASS}
+      - MONGO_APPLICATION_DATABASE=ds-agent
+      - MONGO_APPLICATION_USER=${DS_DB_USER}
+      - MONGO_APPLICATION_PASS=${DS_DB_PASS}
+    ports:
+      - 27020:27017
+    command: ["mongod", "--config", "/etc/mongod.conf"]
+    volumes:
+      - mongo-ds-agent-data:/data/db
+      - ${MONGO_PEM_KEY_PATH}:/etc/ssl/mongodb.pem
+      - ./config/mongodb/mongod.conf:/etc/mongod.conf
+      - ./config/mongodb/mongodb-entrypoint.sh:/docker-entrypoint-initdb.d/mongodb-entrypoint.sh
     networks:
       - ocariot-network
     logging:
@@ -36,9 +79,20 @@ services:
     image: mongo:latest
     container_name: ocariot-mongo-quest
     restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ADMIN_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ADMIN_PASS}
+      - MONGO_APPLICATION_DATABASE=quest
+      - MONGO_APPLICATION_USER=${QUEST_DB_USER}
+      - MONGO_APPLICATION_PASS=${QUEST_DB_PASS}
+    ports:
+      - 27021:27017
+    command: ["mongod", "--config", "/etc/mongod.conf"]
     volumes:
       - mongo-quest-data:/data/db
-      - ./config/mongodb/mongod.conf:/etc/mongo.conf
+      - ${MONGO_PEM_KEY_PATH}:/etc/ssl/mongodb.pem
+      - ./config/mongodb/mongod.conf:/etc/mongod.conf
+      - ./config/mongodb/mongodb-entrypoint.sh:/docker-entrypoint-initdb.d/mongodb-entrypoint.sh
     networks:
       - ocariot-network
     logging:
@@ -50,10 +104,12 @@ services:
     image: redis:latest
     container_name: ocariot-redis-api-gateway
     restart: always
-    networks:
-      - ocariot-network
+    command: ["redis-server", "/etc/redis.conf"]
     volumes:
       - redis-api-gateway-data:/redis-master-data
+      - ./config/redisdb/redis.conf:/etc/redis.conf
+    networks:
+      - ocariot-network
     logging:
       driver: json-file
       options:
@@ -72,14 +128,15 @@ services:
       - PORT_HTTPS=${AG_PORT_HTTPS}
       - SSL_KEY_PATH=/etc/.certs/server.key
       - SSL_CERT_PATH=/etc/.certs/server.cert
-      - ISSUER=${ISSUER}
       - JWT_PUBLIC_KEY_PATH=/etc/.certs/jwt.pub
+      - ISSUER=ocariot
       - API_GATEWAY_SERVICE=https://api-gateway:${AG_PORT_HTTPS}
       - ACCOUNT_SERVICE=https://account:3001
       - ACTIVITY_SERVICE=https://activity-tracking:4001
-      - QUESTIONNAIRE_SERVICE=https://quest:5001
-      - GAMIFICATION_SERVICE=https://quest:5001
-      - MISSION_SERVICE=https://quest:5001
+      - DS_AGENT_SERVICE=https://ds-agent:5001
+      - QUESTIONNAIRE_SERVICE=https://quest:6001
+      - GAMIFICATION_SERVICE=https://quest:6001
+      - MISSION_SERVICE=https://quest:6001
       - EMULATE_REDIS=false
       - PORT_REDIS=6379
       - HOST_REDIS=redis-api-gateway
@@ -97,27 +154,24 @@ services:
         max-size: 100m
 
   account: # Container for OCARIoT Account service
-    image: ocariot/account-service
+    image: ocariot/account
     container_name: ocariot-account
     restart: always
-    environment: # Enviroment available for this service
+    environment: # Environment available for this service
       - NODE_ENV=${NODE_ENV}
       - PORT_HTTP=3000
       - PORT_HTTPS=3001
       - HOST_WHITELIST=${HOST_WHITELIST}
       - SSL_KEY_PATH=/etc/.certs/server.key
       - SSL_CERT_PATH=/etc/.certs/server.cert
-      - ISSUER=${ISSUER}
+      - ISSUER=ocariot
       - JWT_PRIVATE_KEY_PATH=/etc/.certs/jwt.key
       - JWT_PUBLIC_KEY_PATH=/etc/.certs/jwt.pub
+      - ENCRYPT_SECRET_KEY=${ENCRYPT_SECRET_KEY}
       - ADMIN_USERNAME=${ADMIN_USERNAME}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
-      - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_PORT=5672
-      - RABBITMQ_USERNAME=${AS_RABBITMQ_USERNAME}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
-      - MONGODB_URI=mongodb://mongo-account:27017/ocariot-account-test
-      - MONGODB_URI_TEST=mongodb://mongo-account:27017/ocariot-account-test
+      - MONGODB_URI=mongodb://${ACCOUNT_DB_USER}:${ACCOUNT_DB_PASS}@mongo-account:27017/account?ssl=true
+      - RABBITMQ_URI=${ACCOUNT_RABBITMQ_URI}
     volumes:
       - ${SSL_KEY_PATH}:/etc/.certs/server.key
       - ${SSL_CERT_PATH}:/etc/.certs/server.cert
@@ -141,20 +195,47 @@ services:
       - NODE_ENV=${NODE_ENV}
       - PORT_HTTP=4000
       - PORT_HTTPS=4001
+      - HOST_WHITELIST=${HOST_WHITELIST}
       - SSL_KEY_PATH=/etc/.certs/server.key
       - SSL_CERT_PATH=/etc/.certs/server.cert
-      - HOST_WHITELIST=${HOST_WHITELIST}
-      - MONGODB_URI=mongodb://mongo-activity-tracking:27017/ocariot-tracking-test
-      - MONGODB_URI_TEST=mongodb://mongo-activity-tracking:27017/ocariot-tracking-test
-      - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_PORT=5672
-      - RABBITMQ_USERNAME=${ATS_RABBITMQ_USERNAME}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - MONGODB_URI=mongodb://${AT_DB_USER}:${AT_DB_PASS}@mongo-activity-tracking:27017/activity-tracking?ssl=true
+      - RABBITMQ_URI=${AT_RABBITMQ_URI}
     volumes:
       - ${SSL_KEY_PATH}:/etc/.certs/server.key
       - ${SSL_CERT_PATH}:/etc/.certs/server.cert
     depends_on:
       - mongo-activity-tracking
+      - rabbitmq
+    networks:
+      - ocariot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  ds-agent: # Container for OCARIoT Data Sync Agent
+    image: ocariot/ds-agent
+    container_name: ocariot-ds-agent
+    restart: always
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT_HTTP=5000
+      - PORT_HTTPS=5001
+      - HOST_WHITELIST=${HOST_WHITELIST}
+      - SSL_KEY_PATH=/etc/.certs/server.key
+      - SSL_CERT_PATH=/etc/.certs/server.cert
+      - FITBIT_CLIENT_ID=${FITBIT_CLIENT_ID}
+      - FITBIT_CLIENT_SECRET=${FITBIT_CLIENT_SECRET}
+      - FITBIT_CLIENT_SUBSCRIBER=${FITBIT_CLIENT_SUBSCRIBER}
+      - FITBIT_SUBSCRIBER_ID=${FITBIT_SUBSCRIBER_ID}
+      - EXPRESSION_AUTO_SYNC=${EXPRESSION_AUTO_SYNC}
+      - MONGODB_URI=mongodb://${DS_DB_USER}:${DS_DB_PASS}@mongo-ds-agent:27017/ds-agent?ssl=true
+      - RABBITMQ_URI=${DS_RABBITMQ_URI}
+    volumes:
+      - ${SSL_KEY_PATH}:/etc/.certs/server.key
+      - ${SSL_CERT_PATH}:/etc/.certs/server.cert
+    depends_on:
+      - mongo-ds-agent
       - rabbitmq
     networks:
       - ocariot-network
@@ -169,11 +250,12 @@ services:
     restart: always
     environment:
       - PROTOCOL=https
-      - PORT=5001
+      - PORT=6001
       - HOST_WHITELIST=${HOST_WHITELIST}
       - SSL_KEY_PATH=/etc/.certs/server.key
       - SSL_CERT_PATH=/etc/.certs/server.cert
-      - MONGODB_URI=mongodb://mongo-quest:27017/quest
+      - MONGODB_URI=mongodb://${QUEST_DB_USER}:${QUEST_DB_PASS}@mongo-quest:27017/quest?ssl=true
+      - RABBITMQ_URI=${QUEST_RABBITMQ_URI}
     volumes:
       - ${SSL_KEY_PATH}:/etc/.certs/server.key
       - ${SSL_CERT_PATH}:/etc/.certs/server.cert
@@ -188,7 +270,7 @@ services:
         max-size: 100m
 
   rabbitmq: # Container for RabbitMQ
-    image: rabbitmq:3.7.7
+    image: rabbitmq:3.7.17
     container_name: ocariot-rabbitmq
     restart: always
     ports:
@@ -208,13 +290,15 @@ services:
 
 volumes:
   mongo-account-data:
-    name: ocariot-mongo-account-data
+    name: ocariot-mongo-account
   mongo-activity-tracking-data:
-    name: ocariot-mongo-activity-tracking-data
+    name: ocariot-mongo-activity-tracking
   mongo-quest-data:
-    name: ocariot-mongo-quest-data
+    name: ocariot-mongo-quest
+  mongo-ds-agent-data:
+    name: ocariot-mongo-ds-agent
   redis-api-gateway-data:
-    name: ocariot-redis-api-gateway-data
+    name: ocariot-redis-api-gateway
 
 networks:
   ocariot-network:

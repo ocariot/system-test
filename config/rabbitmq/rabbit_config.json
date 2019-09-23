@@ -1,181 +1,107 @@
 {
-    "rabbit_version":"3.7.7",
-    "users":[
+    "rabbit_version": "3.7.17",
+    "users": [
         {
-            "name":"iot.app",
-            "password_hash":"FMuh8FyCNkFwm1CiFLSfM9+axithLM7rOKZZi6mhSpLoeaXP",
-            "hashing_algorithm":"rabbit_password_hashing_sha256",
-            "tags":"application"
+            "name": "ocariot",
+            "password_hash": "3eWYpFa5/i2fgIiWucyXh0KzKdhClcTvX5bpKD0V1PqYmTcr",
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "tags": "administrator"
         },
         {
-            "name":"nutes",
-            "password_hash":"E6xV7u3Gpkr8QKp+gmzun3eooaDojtsD5PP3+6gC9QYL7xxs",
-            "hashing_algorithm":"rabbit_password_hashing_sha256",
-            "tags":"administrator"
+            "name": "account.app",
+            "password_hash": "PRLpG3MRqag5J2v2RkEDnT4EXiZOmKrcgEkE2UDYkW0RGm8D",
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "tags": "application"
         },
         {
-            "name":"activity.app",
-            "password_hash":"yOsFpNubNZktSIgFTQwFlHQKhFMPEw3yGKi59WbistPUGtwt",
-            "hashing_algorithm":"rabbit_password_hashing_sha256",
-            "tags":"application"
+            "name": "activity.app",
+            "password_hash": "D8r3uHE9uVfXspjaF9NITuloPFF/WTFS+mms/QEAv8SL/ooK",
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "tags": "application"
         },
         {
-            "name":"account.app",
-            "password_hash":"aWyG1NV9oZWfwp4J7fCXKwvD/QTrXI4E2Q6nKgzLIpC+J9r1",
-            "hashing_algorithm":"rabbit_password_hashing_sha256","tags":"application"
-        }],
-    "vhosts":[
-        {"name":"/"},
-        {"name":"ocariot"}],
-    "permissions":[
-        {
-            "user":"nutes",
-            "vhost":"/",
-            "configure":".*",
-            "write":".*",
-            "read":".*"
+            "name": "ds.app",
+            "password_hash": "5pPs5p6SVrhNl1BYEZ0Ry7BFh78zdaiQkXT5aG2B9x7rLYZE",
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "tags": "application"
         },
         {
-            "user":"account.app",
-            "vhost":"ocariot",
-            "configure":".*",
-            "write":".*","read":".*"
+            "name": "quest.app",
+            "password_hash": "FwGy5imCDwOeUA7M94rh6tor/mLffrEDgCVzEOqyT8PjFvbj",
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "tags": "application"
+        }
+    ],
+    "vhosts": [
+        {
+            "name": "/"
         },
         {
-            "user":"account.app",
-            "vhost":"/","configure":".*",
-            "write":".*",
-            "read":".*"
+            "name": "ocariot"
+        }
+    ],
+    "permissions": [
+        {
+            "user": "ocariot",
+            "vhost": "ocariot",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
         },
         {
-            "user":"activity.app",
-            "vhost":"/",
-            "configure":".*",
-            "write":".*",
-            "read":".*"
+            "user": "ocariot",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
         },
         {
-            "user":"activity.app",
-            "vhost":"ocariot",
-            "configure":".*",
-            "write":".*",
-            "read":".*"},
-        {
-            "user":"iot.app",
-            "vhost":"/",
-            "configure":".*",
-            "write":".*",
-            "read":".*"
+            "user": "account.app",
+            "vhost": "ocariot",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
         },
         {
-            "user":"nutes",
-            "vhost":"ocariot",
-            "configure":".*",
-            "write":".*",
-            "read":".*"
+            "user": "quest.app",
+            "vhost": "ocariot",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
         },
         {
-            "user":"iot.app",
-            "vhost":"ocariot",
-            "configure":".*",
-            "write":".*",
-            "read":".*"
-        }],
-    "topic_permissions":[
-        {
-            "user":"account.app",
-            "vhost":"ocariot",
-            "exchange":"",
-            "write":".*",
-            "read":".*"
+            "user": "ds.app",
+            "vhost": "ocariot",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
         },
         {
-            "user":"iot.app",
-            "vhost":"/",
-            "exchange":"amq.topic",
-            "write":".*",
-            "read":".*"
-        },
+            "user": "activity.app",
+            "vhost": "ocariot",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        }
+    ],
+    "topic_permissions": [
         {
-            "user":"activity.app",
-            "vhost":"ocariot",
-            "exchange":"amq.topic",
-            "write":".*",
-            "read":".*"
-        },
+            "user": "ocariot",
+            "vhost": "ocariot",
+            "exchange": "",
+            "write": ".*",
+            "read": ".*"
+        }
+    ],
+    "parameters": [],
+    "global_parameters": [
         {
-            "user":"activity.app",
-            "vhost":"ocariot",
-            "exchange":"",
-            "write":".*",
-            "read":".*"
-        },
-        {
-            "user":"account.app",
-            "vhost":"/",
-            "exchange":"",
-            "write":".*",
-            "read":".*"
-        },
-        {
-            "user":"nutes","vhost":"/",
-            "exchange":"",
-            "write":".*",
-            "read":".*"
-        },
-        {
-            "user":"account.app",
-            "vhost":"ocariot",
-            "exchange":"amq.topic",
-            "write":".*","read":".*"
-        },
-        {
-            "user":"iot.app",
-            "vhost":"ocariot",
-            "exchange":"",
-            "write":".*",
-            "read":".*"
-        },
-        {
-            "user":"account.app",
-            "vhost":"/",
-            "exchange":"amq.topic",
-            "write":".*",
-            "read":".*"
-        },
-        {
-            "user":"activity.app",
-            "vhost":"/",
-            "exchange":"amq.topic",
-            "write":".*",
-            "read":".*"
-        },
-        {
-            "user":"iot.app",
-            "vhost":"/",
-            "exchange":"",
-            "write":".*",
-            "read":".*"
-        },
-        {
-            "user":"activity.app",
-            "vhost":"/",
-            "exchange":"",
-            "write":".*",
-            "read":".*"
-        },
-        {
-            "user":"iot.app",
-            "vhost":"ocariot",
-            "exchange":"amq.topic",
-            "write":".*",
-            "read":".*"
-        }],
-    "parameters":[],
-    "global_parameters":[{"name":"cluster_name","value":"rabbit@nutes"}],
-    "policies":[],
-    "queues":[
-        {"name":"user","vhost":"/","durable":true,"auto_delete":false,"arguments":{}},
-        {"name":"users","vhost":"/","durable":true,"auto_delete":false,"arguments":{}}],
-    "exchanges":[],
-    "bindings":[]}
+            "name": "cluster_name",
+            "value": "rabbit@ocariot"
+        }
+    ],
+    "policies": [],
+    "queues": [],
+    "exchanges": [],
+    "bindings": []
+}
