@@ -1,4 +1,4 @@
-import { ChildMock } from './child.mock'
+// import { ChildMock } from './child.mock'
 import { Family } from '../../../src/account-service/model/family'
 import { Institution } from '../../../src/account-service/model/institution'
 
@@ -6,18 +6,16 @@ export class FamilyMock extends Family {
 
     constructor() {
         super()
-        super.fromJSON(JSON.stringify(this.generateFamily()))
+        this.generateFamily()
     }
 
-    private generateFamily(): Family {
-        const family: Family = new Family()
-        family.id = this.generateObjectId()
-        family.username = 'family_mock'
-        family.password = 'family_password'
-        family.institution = this.generateInstitution()
-        family.children = [new ChildMock(), new ChildMock()]
+    private generateFamily(): void {
+        super.id = this.generateObjectId()
+        super.username = 'family '.concat(this.generateObjectId())
+        super.password = 'family123'
+        super.institution = this.generateInstitution()
+        super.children = []
 
-        return family
     }
 
     private generateObjectId(): string {

@@ -5,18 +5,15 @@ import { ChildrenGroup } from '../../../src/account-service/model/children.group
 export class ChildrenGroupMock extends ChildrenGroup {
     constructor() {
         super()
-        super.fromJSON(JSON.stringify(this.generateChildrenGroup()))
+        this.generateChildrenGroup()
     }
 
-    private generateChildrenGroup(): ChildrenGroup {
-        const children_group: ChildrenGroup = new ChildrenGroup()
-        children_group.id = this.generateObjectId()
-        children_group.name = 'children group 1'
-        children_group.children = [new ChildMock(), new ChildMock()]
-        children_group.school_class = 'Room 01'
-        children_group.user = new UserMock()
-
-        return children_group
+    private generateChildrenGroup(): void {
+        super.id = this.generateObjectId()
+        super.name = 'children group '.concat(this.generateObjectId())
+        super.children = [new ChildMock(), new ChildMock()]
+        super.school_class = 'Room 01'
+        super.user = new UserMock()
     }
 
     private generateObjectId(): string {

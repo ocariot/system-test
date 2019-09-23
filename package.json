@@ -1,11 +1,13 @@
 {
   "name": "system-test",
   "version": "1.0.0",
-  "description": "System test",
+  "description": "OCARIoT platform system test.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --opts test/config/mocha.opts test/**/*.spec.ts",
-    "test:cov": "nyc --clean --all --reporter=html --reporter=text mocha --opts test/config/mocha.opts test/**/*.spec.ts"
+    "test": "mocha --opts test/config/mocha.opts test/**/**/*.spec.ts",
+    "account_tests": "mocha --opts test/config/mocha.opts test/account/**/**/*.spec.ts",
+    "tracking_tests": "mocha --opts test/config/mocha.opts test/tracking/**/*.spec.ts",
+    "test:single": "mocha --opts test/config/mocha.opts"
   },
   "repository": {
     "type": "git",
@@ -13,16 +15,19 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/mocha": "^5.2.6",
+    "@types/mongoose": "^5.5.6",
     "@types/node": "^11.13.2",
     "axios": "^0.18.0",
     "chai": "^4.2.0",
+    "dotenv": "^8.0.0",
+    "jwt-decode": "^2.2.0",
     "mocha": "^6.1.2",
+    "mongoose": "^5.5.14",
     "nyc": "^13.3.0",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
     "supertest": "^4.0.2",
     "ts-node": "^8.0.3",
     "typescript": "^3.4.3"
