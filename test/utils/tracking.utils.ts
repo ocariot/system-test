@@ -22,7 +22,7 @@ class TrackingUtil {
     public savePhysicalActivitiy(accessToken: string, physical_activity: PhysicalActivity, child_ID?: string): Promise<any> {
 
         return request(this.URI)
-            .post(`/users/children/${child_ID}/physicalactivities`)
+            .post(`/children/${child_ID}/physicalactivities`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .send(physical_activity.toJSON())
@@ -33,7 +33,7 @@ class TrackingUtil {
     public saveSleep(accessToken: string, sleep: Sleep, child_ID?: string): Promise<any> {
 
         return request(this.URI)
-            .post(`/users/children/${child_ID}/sleep`)
+            .post(`/children/${child_ID}/sleep`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .send(sleep.toJSON())
@@ -44,7 +44,7 @@ class TrackingUtil {
     public saveLogs(accessToken: string, resource: LogType, logs: Array<Log>, child_ID?: string): Promise<any> {
 
         return request(this.URI)
-            .post(`/users/children/${child_ID}/physicalactivities/logs/${resource}`)
+            .post(`/children/${child_ID}/logs/${resource}`)
             .send(logs)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')

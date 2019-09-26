@@ -1,4 +1,5 @@
 import { PhysicalActivity } from '../../../src/tracking-service/model/physical.activity'
+import { PhysicalActivityHeartRate } from '../../../src/tracking-service/model/physical.activity.heart.rate'
 import { ActivityLevelType, PhysicalActivityLevel } from '../../../src/tracking-service/model/physical.activity.level'
 
 export class PhysicalActivityMock extends PhysicalActivity {
@@ -25,8 +26,36 @@ export class PhysicalActivityMock extends PhysicalActivity {
         }
 
         physicalActivity.levels = this.generatePhysicalActivityLevels()
+        physicalActivity.heart_rate = this.generateHeartRate()
         return physicalActivity
     }
+
+    private generateHeartRate(): PhysicalActivityHeartRate {
+        const activityHeartRateJSON: any = {
+            average: Math.floor((Math.random() * 120 + 70)), // 70-189,
+            out_of_range_zone: {
+                min: 30,
+                max: 91,
+                duration: 0
+            },
+            fat_burn_zone: {
+                min: 91,
+                max: 127,
+                duration: 10
+            },
+            cardio_zone: {
+                min: 127,
+                max: 154,
+                duration: 0
+            },
+            peak_zone: {
+                min: 154,
+                max: 220,
+                duration: 0
+            },
+        }
+        return new PhysicalActivityHeartRate().fromJSON(activityHeartRateJSON)
+    }    
 
     private generatePhysicalActivityLevels(): Array<PhysicalActivityLevel> {
         const levels: Array<PhysicalActivityLevel> = []

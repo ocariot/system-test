@@ -80,7 +80,7 @@ describe('Routes: Auth', () => {
             defaultApplication.id = resultApplication.id
 
         } catch (err) {
-            console.log('Failure on Before from auth.post test', err)
+            console.log('Failure on Before from auth.post testeeee', err)
         }
     })
 
@@ -111,6 +111,7 @@ describe('Routes: Auth', () => {
 
             it('auth.post002: should return the access token to child', async () => {
 
+                console.log('username: ', defaultChild.username, '[pass]: ', defaultChild.password)
                 return request(URI)
                     .post('/auth')
                     .set('Content-Type', 'application/json')

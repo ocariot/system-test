@@ -6,16 +6,16 @@ export class HealthProfessionalMock extends HealthProfessional {
 
     constructor() {
         super()
-        this.generateEducator()
+        this.generateHealthProfessional()
     }
 
-    private generateEducator(): void {
+    private generateHealthProfessional(): void {
         super.id = this.generateObjectId()
         super.username = 'healthprofessional '.concat(this.generateObjectId())
         super.password = 'healthprofessional123'
         super.institution = this.generateInstitution()
-
         super.children_groups = [new ChildrenGroupMock(), new ChildrenGroupMock()]
+        super.last_login = new Date()
     }
 
     private generateObjectId(): string {
