@@ -276,7 +276,7 @@ class AccountUtil {
 
             return Promise.resolve(result)
         } catch (err) {
-            console.log('getAuths() - ERROR', err)
+            console.log('getAuths() - ERROR', err.message)
             return Promise.reject(err)
         }
     }

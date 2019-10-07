@@ -6,7 +6,7 @@ import { accountDB } from '../../../src/account-service/database/account.db'
 import { Child } from '../../../src/account-service/model/child'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 
-describe('Routes: users.children', () => {
+describe('Routes: children', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -57,7 +57,7 @@ describe('Routes: users.children', () => {
                 defaultChildToken = await acc.auth(defaultChild.username, defaultChild.password)
 
         } catch (err) {
-            console.log('Failure on Before from users.children.get_id test: ', err)
+            console.log('Failure on Before from children.get_id test: ', err)
         }
     })
 
@@ -70,14 +70,14 @@ describe('Routes: users.children', () => {
         }
     })
 
-    describe('GET /users/children/:child_id', () => {
+    describe('GET /children/:child_id', () => {
 
         context('when get a unique child in database successfully', () => {
 
-            it('children.get_id001: should return status code 200 and a child obtained by admin user', () => {
+            it('children.get_id001: should return status code 200 and information when the child has not yet logged in to the system for admin user', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}`)
+                    .get(`/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -86,73 +86,92 @@ describe('Routes: users.children', () => {
                         expect(res.body.username).to.eql(defaultChild.username)
                         expect(res.body.gender).to.eql(defaultChild.gender)
                         expect(res.body.age).to.eql(defaultChild.age)
-                        expect(res.body.institution).to.have.property('id')
-                        expect(res.body.institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body.institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body.institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body.institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body.institution.longitude).to.eql(defaultInstitution.longitude)
+                        expect(res.body.institution_id).to.eql(defaultInstitution.id)
+                        if (defaultChild.last_login)
+                            expect(res.body.last_login).to.eql(defaultChild.last_login)
                     })
             })
 
-            it('children.get_id002: should return status code 200 and only the ID, username and institution of the child', () => {
-
-                const fieldOne = 'username'
-                const fieldTwo = 'institution'
+            it('children.get_id002: should return status code 200 and information of the child for educator user', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}?fields=${fieldOne}%2C${fieldTwo}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .get(`/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body).to.have.property('id')
-                        expect(res.body).to.have.property('username')
-                        expect(res.body).to.have.property('institution')
-                        expect(res.body).to.not.have.property('gender')
-                        expect(res.body).to.not.have.property('age')
+                        expect(res.body.id).to.eql(defaultChild.id)
                         expect(res.body.username).to.eql(defaultChild.username)
-                        expect(res.body.institution.id).to.eql(defaultInstitution.id)
-                        expect(res.body.institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body.institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body.institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body.institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body.institution.longitude).to.eql(defaultInstitution.longitude)
+                        expect(res.body.gender).to.eql(defaultChild.gender)
+                        expect(res.body.age).to.eql(defaultChild.age)
+                        expect(res.body.institution_id).to.eql(defaultInstitution.id)
+                        if (defaultChild.last_login)
+                            expect(res.body.last_login).to.eql(defaultChild.last_login)
                     })
             })
 
-            it('children.get_id003: should return status code 200 and the child data obtained by herself', () => {
+            it('children.get_id003: should return status code 200 and information of the child for health professional user', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}`)
+                    .get(`/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                    .set('Content-Type', 'application/json')
+                    .expect(200)
+                    .then(res => {
+                        expect(res.body.id).to.eql(defaultChild.id)
+                        expect(res.body.username).to.eql(defaultChild.username)
+                        expect(res.body.gender).to.eql(defaultChild.gender)
+                        expect(res.body.age).to.eql(defaultChild.age)
+                        expect(res.body.institution_id).to.eql(defaultInstitution.id)
+                        if (defaultChild.last_login)
+                            expect(res.body.last_login).to.eql(defaultChild.last_login)
+                    })
+            })
+
+            it('children.get_id004: should return status code 200 and information of the child for family user', () => {
+
+                return request(URI)
+                    .get(`/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                    .set('Content-Type', 'application/json')
+                    .expect(200)
+                    .then(res => {
+                        expect(res.body.id).to.eql(defaultChild.id)
+                        expect(res.body.username).to.eql(defaultChild.username)
+                        expect(res.body.gender).to.eql(defaultChild.gender)
+                        expect(res.body.age).to.eql(defaultChild.age)
+                        expect(res.body.institution_id).to.eql(defaultInstitution.id)
+                        if (defaultChild.last_login)
+                            expect(res.body.last_login).to.eql(defaultChild.last_login)
+                    })
+            })
+
+            it('children.get_id005: should return status code 200 and the child data obtained by herself', () => {
+
+                return request(URI)
+                    .get(`/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(defaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body).to.have.property('id')
-                        expect(res.body).to.have.property('username')
-                        expect(res.body).to.have.property('institution')
-                        expect(res.body).to.have.property('gender')
-                        expect(res.body).to.have.property('age')
+                        expect(res.body.id).to.eql(defaultChild.id)
                         expect(res.body.username).to.eql(defaultChild.username)
                         expect(res.body.gender).to.eql(defaultChild.gender)
                         expect(res.body.age).to.eql(defaultChild.age)
-                        expect(res.body.institution.id).to.eql(defaultInstitution.id)
-                        expect(res.body.institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body.institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body.institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body.institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body.institution.longitude).to.eql(defaultInstitution.longitude)
+                        expect(res.body.institution_id).to.eql(defaultInstitution.id)
+                        if (defaultChild.last_login)
+                            expect(res.body.last_login).to.eql(defaultChild.last_login)
                     })
             })
 
         }) // get a unique child successfully
 
         describe('when the child is not found', () => {
-            it('children.get_id004: should return status code 404 and info message from child not found', () => {
+            it('children.get_id006: should return status code 404 and info message from child not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // child id does not exist
 
                 return request(URI)
-                    .get(`/users/children/${acc.NON_EXISTENT_ID}`)
+                    .get(`/children/${NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(404)
@@ -163,61 +182,27 @@ describe('Routes: users.children', () => {
         })
 
         describe('when the child_id is invalid', () => {
-            it('children.get_id005: should return status code 400 and message info about invalid id', () => {
+
+            it('children.get_id007: should return status code 400 and message info about invalid id', () => {
+                const INVALID_ID = '123' // invalid id of child
 
                 return request(URI)
-                    .get(`/users/children/${acc.INVALID_ID}`)
+                    .get(`/children/${INVALID_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
         })
 
         context('when the user does not have permission to get a unique child in database', () => {
 
-            it('children.get_id006: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('children.get_id008: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
-                    .set('Content-Type', 'application/json')
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
-            })
-
-            it('children.get_id007: should return status code 403 and info message from insufficient permissions for health professional user', () => {
-
-                return request(URI)
-                    .get(`/users/children/${defaultChild.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
-                    .set('Content-Type', 'application/json')
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
-            })
-
-            it('children.get_id008: should return status code 403 and info message from insufficient permissions for family user', () => {
-
-                return request(URI)
-                    .get(`/users/children/${defaultChild.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenFamily))
-                    .set('Content-Type', 'application/json')
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
-            })
-
-            it('children.get_id009: should return status code 403 and info message from insufficient permissions for application user', () => {
-
-                return request(URI)
-                    .get(`/users/children/${defaultChild.id}`)
+                    .get(`/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -226,10 +211,10 @@ describe('Routes: users.children', () => {
                     })
             })
 
-            it('children.get_id010: should return status code 403 and info message from insufficient permissions for another child user', () => {
+            it('children.get_id009: should return status code 403 and info message from insufficient permissions for another child user', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}`)
+                    .get(`/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -241,10 +226,10 @@ describe('Routes: users.children', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('children.get_id011: should return the status code 401 and the authentication failure informational message', async () => {
+            it('children.get_id010: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}`)
+                    .get(`/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
                     .expect(401)

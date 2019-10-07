@@ -23,6 +23,8 @@ export abstract class ApiGatewayException {
     public static readonly CHILD: any = {
         ERROR_400_USERNAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Child validation: username is required!').toJson(),
         ERROR_400_PASSWORD_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Child validation: password is required!').toJson(),
+        ERROR_400_INVALID_FORMAT_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
+        ERROR_400_INVALID_AGE: new ApiException(400, 'Age field is invalid...', 'Child validation: The age parameter can only contain a value greater than zero.').toJson(),
         ERROR_400_INSTITUTION_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Child validation: institution is required!').toJson(),
         ERROR_400_GENDER_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Child validation: gender is required!').toJson(),
         ERROR_400_AGE_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Child validation: age is required!').toJson(),
@@ -32,6 +34,7 @@ export abstract class ApiGatewayException {
 
     public static readonly EDUCATOR: any = {
         ERROR_400_USERNAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Educator validation: username is required!').toJson(),
+        ERROR_400_INVALID_FORMAT_ID: new ApiException(400, 'Parameter {educator_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_400_PASSWORD_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Educator validation: password is required!').toJson(),
         ERROR_400_INSTITUTION_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Educator validation: institution is required!').toJson(),
         ERROR_404_EDUCATOR_NOT_FOUND: new ApiException(404, 'Educator not found!', 'Educator not found or already removed. A new operation for the same resource is not required.').toJson(),
@@ -41,6 +44,7 @@ export abstract class ApiGatewayException {
     public static readonly HEALTH_PROFESSIONAL: any = {
         ERROR_400_USERNAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Health Professional validation: username is required!').toJson(),
         ERROR_400_PASSWORD_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Health Professional validation: password is required!').toJson(),
+        ERROR_400_INVALID_FORMAT_ID: new ApiException(400, 'Parameter {healthprofessional_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_400_INSTITUTION_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Health Professional validation: institution is required!').toJson(),
         ERROR_404_HEALTHPROFESSIONAL_NOT_FOUND: new ApiException(404, 'Health Professional not found!', 'Health Professional not found or already removed. A new operation for the same resource is not required.').toJson(),
         ERROR_409_DUPLICATE: new ApiException(409, 'Health Professional is already registered!').toJson()
@@ -50,6 +54,7 @@ export abstract class ApiGatewayException {
         ERROR_400_USERNAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Family validation: username is required!').toJson(),
         ERROR_400_PASSWORD_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Family validation: password is required!').toJson(),
         ERROR_400_INSTITUTION_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Family validation: institution is required!').toJson(),
+        ERROR_400_INVALID_FORMAT_ID: new ApiException(400, 'Parameter {family_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_400_CHILDREN_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Family validation: Collection with children IDs is required!').toJson(),
         ERROR_400_CHILDREN_NOT_REGISTERED: new ApiException(400, 'It is necessary for children to be registered before proceeding.', 'The following IDs were verified without registration:').toJson(),
         ERROR_400_ASSOCIATION_FAILURE: new ApiException(400, 'The association could not be performed because the child does not have a record.').toJson(),
