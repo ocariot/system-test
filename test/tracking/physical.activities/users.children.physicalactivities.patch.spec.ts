@@ -77,7 +77,7 @@ describe('Routes: users.children.physicalactivities', () => {
 
     let incorrectActivity2: PhysicalActivity = new PhysicalActivityMock() // The levels array has an item that contains negative duration
     incorrectActivityJSON.levels[0].name = ActivityLevelType.SEDENTARY
-    incorrectActivityJSON.levels[0].duration = -(Math.floor(Math.random() * 10) * 60000)
+    incorrectActivityJSON.levels[0].duration = -(Math.floor(Math.random() * 10 + 1) * 60000)
     incorrectActivity2 = incorrectActivity2.fromJSON(incorrectActivityJSON)
 
     let incorrectActivity3: PhysicalActivity = new PhysicalActivityMock() // The levels array has an item that contains ivalid name
@@ -123,7 +123,7 @@ describe('Routes: users.children.physicalactivities', () => {
         }
     })
 
-    describe('PATCH /users/children/:child_id/physicalactivities/:physicalactivity_id', () => {
+    describe('PATCH /children/:child_id/physicalactivities/:physicalactivity_id', () => {
 
         beforeEach(async () => {
             try {
@@ -162,7 +162,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
@@ -199,7 +199,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
@@ -242,7 +242,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${walkActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${walkActivity.id}`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
@@ -289,7 +289,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${otherActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${otherActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -317,7 +317,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -342,7 +342,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -367,7 +367,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -392,7 +392,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -417,7 +417,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -442,7 +442,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -470,7 +470,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -495,7 +495,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -520,7 +520,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -554,7 +554,7 @@ describe('Routes: users.children.physicalactivities', () => {
 
                 // updating the physical activity registered for a non-existent child
                 return request(URI)
-                    .patch(`/users/children/${non_existent_child_id}/physicalactivities/${activity.id}`)
+                    .patch(`/children/${non_existent_child_id}/physicalactivities/${activity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -578,7 +578,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${acc.INVALID_ID}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${acc.INVALID_ID}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -602,7 +602,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${acc.INVALID_ID}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${acc.INVALID_ID}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -632,7 +632,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${non_existent_activity_id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${non_existent_activity_id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -659,7 +659,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.patch018: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
@@ -672,7 +672,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.patch019: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
@@ -685,7 +685,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.patch020: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
@@ -703,7 +703,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.patch021: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .send({})
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
@@ -732,7 +732,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')

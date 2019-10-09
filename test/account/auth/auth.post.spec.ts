@@ -111,7 +111,6 @@ describe('Routes: Auth', () => {
 
             it('auth.post002: should return the access token to child', async () => {
 
-                console.log('username: ', defaultChild.username, '[pass]: ', defaultChild.password)
                 return request(URI)
                     .post('/auth')
                     .set('Content-Type', 'application/json')

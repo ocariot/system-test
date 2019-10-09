@@ -18,7 +18,8 @@ import { Application } from '../../../src/account-service/model/application'
 import { ApplicationMock } from '../../mocks/account-service/application.mock'
 import { PhysicalActivity } from '../../../src/tracking-service/model/physical.activity'
 import { ActivityLevelType, PhysicalActivityLevel } from '../../../src/tracking-service/model/physical.activity.level'
-import { PhysicalActivityMock } from '../../mocks/tracking-service/physical.activity.mock'
+import { PhysicalActivityMock, ActivityTypeMock } from '../../mocks/tracking-service/physical.activity.mock'
+import { HeartRateZone } from '../../../src/tracking-service/model/heart.rate.zone'
 
 describe('Routes: users.children.physicalactivities', () => {
 
@@ -81,12 +82,29 @@ describe('Routes: users.children.physicalactivities', () => {
 
     let incorrectActivity2: PhysicalActivity = new PhysicalActivityMock() // The levels array has an item that contains negative duration
     incorrectActivityJSON.levels[0].name = ActivityLevelType.SEDENTARY
-    incorrectActivityJSON.levels[0].duration = -(Math.floor(Math.random() * 10) * 60000)
+    incorrectActivityJSON.levels[0].duration = -(Math.floor(Math.random() * 10 + 1) * 60000)
     incorrectActivity2 = incorrectActivity2.fromJSON(incorrectActivityJSON)
 
     let incorrectActivity3: PhysicalActivity = new PhysicalActivityMock() // The levels array has an item that contains ivalid name
     incorrectActivityJSON.levels[0].name = notAllowedLevelsName
     incorrectActivity3 = incorrectActivity3.fromJSON(incorrectActivityJSON)
+
+    // The PhysicalActivityHeartRate is invalid (the average parameter is undefined)
+    let incorrectActivity4: PhysicalActivity = new PhysicalActivityMock()
+    incorrectActivity4.heart_rate!.average = undefined
+
+    // The PhysicalActivityHeartRate is invalid (the "out of range" min parameter is empty)
+    let incorrectActivity5: PhysicalActivity = new PhysicalActivityMock()
+    delete incorrectActivity5.heart_rate!.out_of_range_zone!.min
+
+    // The PhysicalActivityHeartRate is invalid (the "fat burn zone" duration parameter is negative)
+    let incorrectActivity6: PhysicalActivity = new PhysicalActivityMock()
+    incorrectActivity6.heart_rate!.fat_burn_zone!.duration! *= -1
+
+    const AMOUNT_OF_CORRECT_ACTIVITIES = 3
+    const correctActivities: Array<PhysicalActivity> = []
+    const mixedActivities: Array<PhysicalActivity> = []
+    const wrongActivities: Array<PhysicalActivity> = []
 
     before(async () => {
         try {
@@ -141,6 +159,20 @@ describe('Routes: users.children.physicalactivities', () => {
                 accessDefaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
             }
 
+            /* populating the activity arrays (correctActivities and mixedActivities) */
+            for (let i = 0; i < AMOUNT_OF_CORRECT_ACTIVITIES; i++) {
+                correctActivities[i] = new PhysicalActivityMock()
+                await sleep(20) // function sleep for 20 miliseconds so that the start_time of each activity is different
+            }
+
+            mixedActivities.push(new PhysicalActivityMock())
+            mixedActivities.push(incorrectActivity1)
+
+            wrongActivities.push(incorrectActivity2)
+            wrongActivities.push(incorrectActivity4)
+            wrongActivities.push(incorrectActivity5)
+            wrongActivities.push(incorrectActivity6)
+
         } catch (err) {
             console.log('Failure on Before from physical.activities.post test: ', err.message)
         }
@@ -156,11 +188,12 @@ describe('Routes: users.children.physicalactivities', () => {
         }
     })
 
-    describe('POST /users/children/:child_id/physicalactivities', () => {
+    describe('POST /children/:child_id/physicalactivities', () => {
         let physicalActivity: PhysicalActivity
 
         beforeEach(async () => {
             try {
+                // Correct physical activity generated with all fields
                 physicalActivity = new PhysicalActivityMock()
             } catch (err) {
                 console.log('Failure in physical.activities.post test: ', err.message)
@@ -179,7 +212,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.post001: should return status code 201 and the saved PhysicalActivity by the child user', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -191,9 +224,12 @@ describe('Routes: users.children.physicalactivities', () => {
                         expect(res.body.end_time).to.eql(physicalActivity.end_time!.toISOString())
                         expect(res.body.duration).to.eql(physicalActivity.duration)
                         expect(res.body.calories).to.eql(physicalActivity.calories)
-                        if (physicalActivity.steps) expect(res.body.steps).to.eql(physicalActivity.steps)
-                        if (physicalActivity.levels)
+                        expect(res.body.distance).to.eql(physicalActivity.distance)
+                        if (res.body.steps) expect(res.body.steps).to.eql(physicalActivity.steps)
+                        if (physicalActivity.levels) {
                             expect(res.body.levels).to.eql(physicalActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                        }
+                        if (physicalActivity.heart_rate) expect(res.body.heart_rate).to.deep.equal(physicalActivity.heart_rate)
                         expect(res.body.child_id).to.eql(defaultChild.id)
                     })
             })
@@ -201,7 +237,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.post002: should return status code 201 and the saved PhysicalActivity by the educator user', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(physicalActivity.toJSON())
@@ -213,9 +249,11 @@ describe('Routes: users.children.physicalactivities', () => {
                         expect(res.body.end_time).to.eql(physicalActivity.end_time!.toISOString())
                         expect(res.body.duration).to.eql(physicalActivity.duration)
                         expect(res.body.calories).to.eql(physicalActivity.calories)
+                        expect(res.body.distance).to.eql(physicalActivity.distance)
                         if (physicalActivity.steps) expect(res.body.steps).to.eql(physicalActivity.steps)
                         if (physicalActivity.levels)
                             expect(res.body.levels).to.eql(physicalActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                        if (physicalActivity.heart_rate) expect(res.body.heart_rate).to.deep.equal(physicalActivity.heart_rate)
                         expect(res.body.child_id).to.eql(defaultChild.id)
                     })
             })
@@ -223,7 +261,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.post003: should return status code 201 and the saved PhysicalActivity by family user', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .send(physicalActivity.toJSON())
@@ -235,9 +273,11 @@ describe('Routes: users.children.physicalactivities', () => {
                         expect(res.body.end_time).to.eql(physicalActivity.end_time!.toISOString())
                         expect(res.body.duration).to.eql(physicalActivity.duration)
                         expect(res.body.calories).to.eql(physicalActivity.calories)
+                        expect(res.body.distance).to.eql(physicalActivity.distance)
                         if (physicalActivity.steps) expect(res.body.steps).to.eql(physicalActivity.steps)
                         if (physicalActivity.levels)
                             expect(res.body.levels).to.eql(physicalActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                        if (physicalActivity.heart_rate) expect(res.body.heart_rate).to.deep.equal(physicalActivity.heart_rate)
                         expect(res.body.child_id).to.eql(defaultChild.id)
                     })
             })
@@ -245,7 +285,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.post004: should return status code 201 and the saved PhysicalActivity by application user', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .send(physicalActivity.toJSON())
@@ -257,24 +297,274 @@ describe('Routes: users.children.physicalactivities', () => {
                         expect(res.body.end_time).to.eql(physicalActivity.end_time!.toISOString())
                         expect(res.body.duration).to.eql(physicalActivity.duration)
                         expect(res.body.calories).to.eql(physicalActivity.calories)
+                        expect(res.body.distance).to.eql(physicalActivity.distance)
                         if (physicalActivity.steps) expect(res.body.steps).to.eql(physicalActivity.steps)
                         if (physicalActivity.levels)
                             expect(res.body.levels).to.eql(physicalActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                        if (physicalActivity.heart_rate) expect(res.body.heart_rate).to.deep.equal(physicalActivity.heart_rate)
                         expect(res.body.child_id).to.eql(defaultChild.id)
                     })
+            })
+
+            context('when saved an list activities', () => {
+
+                describe('when all the activities are correct and still do not saved', () => {
+                    it('physical.activities.post045: should return status code 207, create each PhysicalActivity and return a response with description of sucess each activity', () => {
+
+                        const body: any = []
+
+                        correctActivities.forEach(activity => {
+                            const bodyElem = {
+                                name: activity.name,
+                                start_time: activity.start_time,
+                                end_time: activity.end_time,
+                                duration: activity.duration,
+                                calories: activity.calories,
+                                steps: activity.steps ? activity.steps : undefined,
+                                distance: activity.distance ? activity.distance : undefined,
+                                levels: activity.levels ? activity.levels : undefined,
+                                heart_rate: activity.heart_rate ? activity.heart_rate : undefined
+                            }
+                            body.push(bodyElem)
+                        })
+                        return request(URI)
+                            .post(`/children/${defaultChild.id}/physicalactivities`)
+                            .set('Content-Type', 'application/json')
+                            .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
+                            .send(body)
+                            .expect(207)
+                            .then(res => {
+                                for (let i = 0; i < res.body.success.length; i++) {
+                                    expect(res.body.success[i].code).to.eql(201)
+                                    expect(res.body.success[i].item).to.have.property('id')
+                                    expect(res.body.success[i].item.name).to.eql(correctActivities[i].name)
+                                    expect(res.body.success[i].item.start_time).to.eql(correctActivities[i].start_time!.toISOString())
+                                    expect(res.body.success[i].item.end_time).to.eql(correctActivities[i].end_time!.toISOString())
+                                    expect(res.body.success[i].item.duration).to.eql(correctActivities[i].duration)
+                                    expect(res.body.success[i].item.calories).to.eql(correctActivities[i].calories)
+                                    if (correctActivities[i].steps) {
+                                        expect(res.body.success[i].item.steps).to.eql(correctActivities[i].steps)
+                                    }
+                                    expect(res.body.success[i].item.distance).to.eql(correctActivities[i].distance)
+                                    if (correctActivities[i].levels) {
+                                        expect(res.body.success[i].item.levels)
+                                            .to.eql(correctActivities[i].levels!.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                                    }
+                                    if (correctActivities[i].heart_rate) {
+                                        expect(res.body.success[i].item.heart_rate).to.eql(correctActivities[i].heart_rate!.toJSON())
+                                    }
+                                    expect(res.body.success[i].item.child_id).to.eql(defaultChild.id)
+                                }
+
+                                expect(res.body.error.length).to.eql(0)
+                            })
+                    })
+                })
+
+                describe('when all the activities are correct but already exists in the repository', () => {
+                    before(async () => {
+                        try {
+                            for (let i = 0; i < correctActivities.length; i++) {
+                                await trck.savePhysicalActivitiy(accessDefaultChildToken, correctActivities[i], defaultChild.id)
+                            }
+                        } catch (err) {
+                            console.log('Failure in physical.activities.post : ', err.message)
+                        }
+                    })
+                    it('physical.activities.post046: should return status code 207, and return a response with description of conflict in each activity', () => {
+
+                        const body: any = []
+
+                        correctActivities.forEach(activity => {
+                            const bodyElem = {
+                                name: activity.name,
+                                start_time: activity.start_time,
+                                end_time: activity.end_time,
+                                duration: activity.duration,
+                                calories: activity.calories,
+                                steps: activity.steps ? activity.steps : undefined,
+                                distance: activity.distance ? activity.distance : undefined,
+                                levels: activity.levels ? activity.levels : undefined,
+                                heart_rate: activity.heart_rate ? activity.heart_rate : undefined
+                            }
+                            body.push(bodyElem)
+                        })
+                        return request(URI)
+                            .post(`/children/${defaultChild.id}/physicalactivities`)
+                            .set('Content-Type', 'application/json')
+                            .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
+                            .send(body)
+                            .expect(207)
+                            .then(res => {
+                                for (let i = 0; i < res.body.error.length; i++) {
+                                    expect(res.body.error[i].code).to.eql(409)
+                                    expect(res.body.error[i].message).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_409_PHYSICAL_ACTIVITY_IS_ALREADY_REGISTERED.message)
+                                    expect(res.body.error[i].item.name).to.eql(correctActivities[i].name)
+                                    expect(res.body.error[i].item.start_time).to.eql(correctActivities[i].start_time!.toISOString())
+                                    expect(res.body.error[i].item.end_time).to.eql(correctActivities[i].end_time!.toISOString())
+                                    expect(res.body.error[i].item.duration).to.eql(correctActivities[i].duration)
+                                    expect(res.body.error[i].item.calories).to.eql(correctActivities[i].calories)
+                                    if (correctActivities[i].steps) {
+                                        expect(res.body.error[i].item.steps).to.eql(correctActivities[i].steps)
+                                    }
+                                    expect(res.body.error[i].item.distance).to.eql(correctActivities[i].distance)
+                                    if (correctActivities[i].levels) {
+                                        expect(res.body.error[i].item.levels)
+                                            .to.eql(correctActivities[i].levels!.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                                    }
+                                    if (correctActivities[i].heart_rate) {
+                                        expect(res.body.error[i].item.heart_rate).to.eql(correctActivities[i].heart_rate!.toJSON())
+                                    }
+                                    expect(res.body.error[i].item.child_id).to.eql(defaultChild.id)
+                                }
+
+                                expect(res.body.success.length).to.eql(0)
+                            })
+                    })
+                })
+
+                describe('when there are correct and incorrect activities in the body', () => {
+
+                    it('physical.activities.post047: should return status code 207, and return a response with description of sucess and error in each activity', () => {
+
+                        const body: any = []
+
+                        mixedActivities.forEach(activity => {
+                            const bodyElem = {
+                                name: activity.name,
+                                start_time: activity.start_time,
+                                end_time: activity.end_time,
+                                duration: activity.duration,
+                                calories: activity.calories,
+                                steps: activity.steps ? activity.steps : undefined,
+                                distance: activity.distance ? activity.distance : undefined,
+                                levels: activity.levels ? activity.levels : undefined,
+                                heart_rate: activity.heart_rate ? activity.heart_rate : undefined
+                            }
+                            body.push(bodyElem)
+                        })
+
+                        return request(URI)
+                            .post(`/children/${defaultChild.id}/physicalactivities`)
+                            .set('Content-Type', 'application/json')
+                            .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
+                            .send(body)
+                            .expect(207)
+                            .then(res => {
+                                expect(res.body.success.length).to.eql(1)
+                                expect(res.body.error.length).to.eql(1)
+
+                                // Success item
+                                expect(res.body.success[0].code).to.eql(201)
+                                expect(res.body.success[0].item).to.have.property('id')
+                                expect(res.body.success[0].item.name).to.eql(mixedActivities[0].name)
+                                expect(res.body.success[0].item.start_time).to.eql(mixedActivities[0].start_time!.toISOString())
+                                expect(res.body.success[0].item.end_time).to.eql(mixedActivities[0].end_time!.toISOString())
+                                expect(res.body.success[0].item.duration).to.eql(mixedActivities[0].duration)
+                                expect(res.body.success[0].item.calories).to.eql(mixedActivities[0].calories)
+                                if (mixedActivities[0].steps) {
+                                    expect(res.body.success[0].item.steps).to.eql(mixedActivities[0].steps)
+                                }
+                                expect(res.body.success[0].item.distance).to.eql(mixedActivities[0].distance)
+                                if (mixedActivities[0].levels) {
+                                    expect(res.body.success[0].item.levels)
+                                        .to.eql(mixedActivities[0].levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                                }
+                                if (mixedActivities[0].heart_rate) {
+                                    expect(res.body.success[0].item.heart_rate).to.eql(mixedActivities[0].heart_rate.toJSON())
+                                }
+                                expect(res.body.success[0].item.child_id).to.eql(defaultChild.id)
+
+                                // Error item
+                                expect(res.body.error[0].code).to.eql(400)
+                                expect(res.body.error[0].message).to.eql('Level are not in a format that is supported!')
+                                expect(res.body.error[0].description).to.eql('Must have values ​​for the following levels: sedentary, lightly, fairly, very.')
+                            })
+                    })
+                })
+
+                describe('when all the activities are incorrect', () => {
+
+                    it('physical.activities.post048: should return status code 207, and return a response with description of error in each activity', () => {
+
+                        const body: any = []
+
+                        wrongActivities.forEach(activity => {
+                            const bodyElem = {
+                                name: activity.name,
+                                start_time: activity.start_time,
+                                end_time: activity.end_time,
+                                duration: activity.duration,
+                                calories: activity.calories,
+                                steps: activity.steps ? activity.steps : undefined,
+                                distance: activity.distance ? activity.distance : undefined,
+                                levels: activity.levels ? activity.levels : undefined,
+                                heart_rate: activity.heart_rate ? activity.heart_rate : undefined
+                            }
+                            body.push(bodyElem)
+                        })
+
+                        return request(URI)
+                            .post(`/children/${defaultChild.id}/physicalactivities`)
+                            .set('Content-Type', 'application/json')
+                            .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
+                            .send(body)
+                            .expect(207)
+                            .then(res => {
+                                expect(res.body.error.length).to.eql(4)
+
+                                // incorrectActivity2
+                                expect(res.body.error[0].message).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_DURATION_IS_NEGATIVE.message)
+                                expect(res.body.error[0].description).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_DURATION_IS_NEGATIVE.description)
+
+                                // incorrectActivity4
+                                expect(res.body.error[1].message).to.eql('Required fields were not provided...')
+                                expect(res.body.error[1].description).to.eql('PhysicalActivityHeartRate validation failed: average is required!')
+
+                                // incorrectActivity5
+                                expect(res.body.error[2].message).to.eql('Required fields were not provided...')
+                                expect(res.body.error[2].description).to.eql('HeartRateZone validation failed: min is required!')
+
+                                // incorrectActivity6
+                                expect(res.body.error[3].message).to.eql('Duration field is invalid...')
+                                expect(res.body.error[3].description).to.eql('HeartRateZone validation failed: The value provided has a negative value!')
+
+                                for (let i = 0; i < wrongActivities.length; i++) {
+                                    expect(res.body.error[0].code).to.eql(400)
+                                    expect(res.body.error[0].item.name).to.eql(wrongActivities[0].name)
+                                    expect(res.body.error[0].item.start_time).to.eql(wrongActivities[0].start_time!.toISOString())
+                                    expect(res.body.error[0].item.end_time).to.eql(wrongActivities[0].end_time!.toISOString())
+                                    expect(res.body.error[0].item.duration).to.eql(wrongActivities[0].duration)
+                                    expect(res.body.error[0].item.calories).to.eql(wrongActivities[0].calories)
+                                    if (wrongActivities[0].steps) {
+                                        expect(res.body.error[0].item.steps).to.eql(wrongActivities[0].steps)
+                                    }
+                                    expect(res.body.error[0].item.distance).to.eql(wrongActivities[0].distance)
+                                    if (wrongActivities[0].levels) {
+                                        expect(res.body.error[0].item.levels)
+                                            .to.eql(wrongActivities[0].levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                                    }
+                                    if (wrongActivities[0].heart_rate) {
+                                        expect(res.body.error[0].item.heart_rate).to.eql(wrongActivities[0].heart_rate.toJSON())
+                                    }
+                                }
+
+                                expect(res.body.success.length).to.eql(0)
+                            })
+                    })
+                })
             })
 
         }) //user posting new physical activity successfully
 
         context('when posting a new physical activity with only required parameters', () => {
 
-            it('physical.activities.post005: should return status code 201 and the saved PhysicalActivity without steps', () => {
+            it('physical.activities.post044: should return status code 201 and the saved PhysicalActivity without distance', () => {
 
-                delete physicalActivity.steps
-                delete physicalActivity.levels
+                delete physicalActivity.distance
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -286,22 +576,75 @@ describe('Routes: users.children.physicalactivities', () => {
                         expect(res.body.end_time).to.eql(physicalActivity.end_time!.toISOString())
                         expect(res.body.duration).to.eql(physicalActivity.duration)
                         expect(res.body.calories).to.eql(physicalActivity.calories)
+                        expect(res.body).to.not.have.property('distance')
                         if (physicalActivity.steps) expect(res.body.steps).to.eql(physicalActivity.steps)
                         if (physicalActivity.levels)
                             expect(res.body.levels).to.eql(physicalActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                        if (physicalActivity.heart_rate) expect(res.body.heart_rate).to.deep.equal(physicalActivity.heart_rate)
+                        expect(res.body.child_id).to.eql(defaultChild.id)
+                    })
+            })
+
+            it('physical.activities.post005: should return status code 201 and the saved PhysicalActivity without steps', () => {
+
+                const swimActivity = new PhysicalActivityMock(ActivityTypeMock.SWIM)
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(swimActivity.toJSON())
+                    .expect(201)
+                    .then(res => {
+                        expect(res.body).to.have.property('id')
+                        expect(res.body.name).to.eql(swimActivity.name)
+                        expect(res.body.start_time).to.eql(swimActivity.start_time!.toISOString())
+                        expect(res.body.end_time).to.eql(swimActivity.end_time!.toISOString())
+                        expect(res.body.duration).to.eql(swimActivity.duration)
+                        expect(res.body.calories).to.eql(swimActivity.calories)
+                        expect(res.body.distance).to.eql(swimActivity.distance)
+                        expect(res.body).to.not.have.property('steps')
+                        if (swimActivity.levels)
+                            expect(res.body.levels).to.eql(swimActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                        if (swimActivity.heart_rate) expect(res.body.heart_rate).to.deep.equal(swimActivity.heart_rate)
                         expect(res.body.child_id).to.eql(defaultChild.id)
                     })
             })
 
             it('physical.activities.post006: should return status code 201 and the saved PhysicalActivity without levels', () => {
 
-                delete physicalActivity.levels
-                delete physicalActivity.steps
+                const walkActivity = new PhysicalActivityMock(ActivityTypeMock.WALK)
+                delete walkActivity.levels
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(walkActivity.toJSON())
+                    .expect(201)
+                    .then(res => {
+                        expect(res.body).to.have.property('id')
+                        expect(res.body.name).to.eql(walkActivity.name)
+                        expect(res.body.start_time).to.eql(walkActivity.start_time!.toISOString())
+                        expect(res.body.end_time).to.eql(walkActivity.end_time!.toISOString())
+                        expect(res.body.duration).to.eql(walkActivity.duration)
+                        expect(res.body.calories).to.eql(walkActivity.calories)
+                        expect(res.body.distance).to.eql(walkActivity.distance)
+                        expect(res.body).to.not.have.property('levels')
+                        if (walkActivity.steps) expect(res.body.steps).to.eql(walkActivity.steps)
+                        if (walkActivity.heart_rate) expect(res.body.heart_rate).to.deep.equal(walkActivity.heart_rate)
+                        expect(res.body.child_id).to.eql(defaultChild.id)
+                    })
+            })
+
+            it('physical.activities.post036: should return status code 201 and the saved PhysicalActivity without heart_rate', () => {
+
+                delete physicalActivity.heart_rate
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .send(physicalActivity.toJSON())
                     .expect(201)
                     .then(res => {
@@ -311,9 +654,11 @@ describe('Routes: users.children.physicalactivities', () => {
                         expect(res.body.end_time).to.eql(physicalActivity.end_time!.toISOString())
                         expect(res.body.duration).to.eql(physicalActivity.duration)
                         expect(res.body.calories).to.eql(physicalActivity.calories)
+                        expect(res.body.distance).to.eql(physicalActivity.distance)
                         if (physicalActivity.steps) expect(res.body.steps).to.eql(physicalActivity.steps)
                         if (physicalActivity.levels)
                             expect(res.body.levels).to.eql(physicalActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                        expect(res.body).to.not.have.property('heart_rate')
                         expect(res.body.child_id).to.eql(defaultChild.id)
                     })
             })
@@ -326,7 +671,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 delete physicalActivity.name
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -341,7 +686,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 delete physicalActivity.start_time
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -356,7 +701,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 delete physicalActivity.duration
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -371,7 +716,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 delete physicalActivity.calories
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -386,7 +731,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 delete physicalActivity.end_time
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -402,7 +747,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 delete physicalActivity.duration
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -421,7 +766,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 delete physicalActivity.calories
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -436,7 +781,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 physicalActivity.start_time = new Date('2018-13-19T14:40:00Z')
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -449,11 +794,11 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.post015: should return status code 400 and info message from validatio error, because start_time is greater than end_time', async () => {
 
                 physicalActivity.end_time = new Date()
-                await sleep(100)//function sleep for 100 miliseconds
+                await sleep(100) // function sleep for 100 miliseconds
                 physicalActivity.start_time = new Date()
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -468,7 +813,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 physicalActivity.duration = -1178000
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -483,7 +828,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 physicalActivity.duration ? physicalActivity.duration += 1 : undefined
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -498,7 +843,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 physicalActivity.calories = -1
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -513,7 +858,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 physicalActivity.steps = -1
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -526,7 +871,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.post020: should return status code 400 and info message from validation error, because level:name are not in a valid format', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectActivity1.toJSON())
@@ -544,7 +889,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 incorrectActivity = incorrectActivity.fromJSON(incorrectActivityJSON)
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectActivity.toJSON())
@@ -558,7 +903,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.post022: should return status code 400 and info message from validation error, because level:duration is negative', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectActivity2.toJSON())
@@ -568,10 +913,120 @@ describe('Routes: users.children.physicalactivities', () => {
                     })
             })
 
+            /* HEART_RATE INVALID */
+            it('physical.activities.post037: should return status code 400 and info message from validation error, because heart_rate is empty', () => {
+
+                physicalActivity.heart_rate = new HeartRateZone()
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(physicalActivity.toJSON())
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_ALL_PARAMETERS_OF_HEART_RATE_ARE_REQUIRED)
+                    })
+            })
+
+            it('physical.activities.post038: should return status code 400 and info message from validation error, because fat_burn_zone and peak_zone of heart_rate were not provided', () => {
+
+                delete physicalActivity.heart_rate!.fat_burn_zone
+                delete physicalActivity.heart_rate!.peak_zone
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(physicalActivity.toJSON())
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body.message).to.eql('Required fields were not provided...')
+                        expect(err.body.description).to.eql('PhysicalActivityHeartRate validation failed: fat_burn_zone, peak_zone is required!')
+                    })
+            })
+
+            it('physical.activities.post039: should return status code 400 and info message from validation error, because average of heart_rate is negative', () => {
+
+                physicalActivity.heart_rate!.average! *= -1
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(physicalActivity.toJSON())
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_NEGATIVE_AVERAGE)
+                    })
+
+            })
+
+            it('physical.activities.post040: should return status code 400 and info message from validation error, because min of fat_burn_zone is negative', () => {
+
+                physicalActivity.heart_rate!.fat_burn_zone!.min! *= -1
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(physicalActivity.toJSON())
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_NEGATIVE_MIN)
+                    })
+            })
+
+            it('physical.activities.post041: should return status code 400 and info message from validation error, because cardio_zone duration is negative', () => {
+
+                physicalActivity.heart_rate!.cardio_zone!.duration! *= -1
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(physicalActivity.toJSON())
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_NEGATIVE_DURATION)
+                    })
+            })
+
+            it('physical.activities.post042: should return status code 400 and info message from validation error, because peak_zone duration is not provided', () => {
+
+                delete physicalActivity.heart_rate!.peak_zone!.duration
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(physicalActivity.toJSON())
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_DURATION_IS_REQUIRED)
+                    })
+            })
+
+            it('physical.activities.post043: should return status code 400 and info message from validation error, because peak_zone duration is not provided', () => {
+
+                delete physicalActivity.heart_rate!.peak_zone
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(physicalActivity.toJSON())
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_PEAK_ZONE_IS_REQUIRED)
+                    })
+            })
+            /* /HEART_RATE INVALID */
+
             it('physical.activities.post023: should return status code 400 and info message from validation error, because child not exist', () => {
 
                 return request(URI)
-                    .post(`/users/children/${acc.NON_EXISTENT_ID}/physicalactivities`)
+                    .post(`/children/${acc.NON_EXISTENT_ID}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -584,20 +1039,20 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.post024: should return status code 400 and info message from validation error, because child_id is invalid', () => {
 
                 return request(URI)
-                    .post(`/users/children/${acc.INVALID_ID}/physicalactivities`)
+                    .post(`/children/${acc.INVALID_ID}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_CHILD_ID)
                     })
             })
 
             it('physical.activities.post025: should return status code 400 and info message from validation error, because level:name is not allowed', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectActivity3.toJSON())
@@ -615,7 +1070,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.post026: should return ??? for admin', async () => {
 
                 return request(URI)
-                    .post(`/users/children/${await acc.getAdminID()}/physicalactivities`)
+                    .post(`/children/${await acc.getAdminID()}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -628,7 +1083,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.post027: should return ??? for educator', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultEducator.id}/physicalactivities`)
+                    .post(`/children/${defaultEducator.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -641,7 +1096,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.post028: should return ??? for health professional', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultHealthProfessional.id}/physicalactivities`)
+                    .post(`/children/${defaultHealthProfessional.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -654,7 +1109,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.post029: should return ??? for family', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultFamily.id}/physicalactivities`)
+                    .post(`/children/${defaultFamily.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -667,7 +1122,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.post030: should return ??? for application', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultApplication.id}/physicalactivities`)
+                    .post(`/children/${defaultApplication.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -694,7 +1149,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(anotherChildToken))
                     .send(physicalActivity.toJSON())
@@ -711,7 +1166,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.post032: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .send(physicalActivity.toJSON())
@@ -725,7 +1180,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.post033: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
                     .send(physicalActivity.toJSON())
@@ -742,7 +1197,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.post034: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .send(physicalActivity.toJSON())
@@ -764,7 +1219,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 }
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())

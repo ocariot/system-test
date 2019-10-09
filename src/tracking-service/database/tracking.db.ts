@@ -19,7 +19,8 @@ class TrackingDb {
         useFindAndModify: false,
         bufferMaxEntries: 0,
         reconnectTries: Number.MAX_SAFE_INTEGER,
-        reconnectInterval: 1500
+        reconnectInterval: 1500,
+        useUnifiedTopology: true
     }
 
     /**
@@ -65,7 +66,7 @@ class TrackingDb {
         this.options.reconnectInterval = interval
 
         return new Promise<Connection>((resolve, reject) => {
-            mongoose.createConnection(this.getURL(), { useNewUrlParser: true })
+            mongoose.createConnection(this.getURL(), this.options)
                 .then((result) => resolve(result))
                 .catch(err => reject(err))
         })

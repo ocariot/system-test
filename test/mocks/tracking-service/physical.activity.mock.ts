@@ -24,7 +24,8 @@ export class PhysicalActivityMock extends PhysicalActivity {
         if (type === ActivityTypeMock.WALK || type === ActivityTypeMock.RUN) {
             physicalActivity.steps = Math.floor((Math.random() * 20000 + 100)) // 100-15000
         }
-
+        
+        physicalActivity.distance = Math.floor((Math.random() * 1000 + 100)) // 100-1100
         physicalActivity.levels = this.generatePhysicalActivityLevels()
         physicalActivity.heart_rate = this.generateHeartRate()
         return physicalActivity
@@ -36,7 +37,7 @@ export class PhysicalActivityMock extends PhysicalActivity {
             out_of_range_zone: {
                 min: 30,
                 max: 91,
-                duration: 0
+                duration: 1
             },
             fat_burn_zone: {
                 min: 91,
@@ -46,12 +47,12 @@ export class PhysicalActivityMock extends PhysicalActivity {
             cardio_zone: {
                 min: 127,
                 max: 154,
-                duration: 0
+                duration: 1
             },
             peak_zone: {
                 min: 154,
                 max: 220,
-                duration: 0
+                duration: 1 
             },
         }
         return new PhysicalActivityHeartRate().fromJSON(activityHeartRateJSON)
