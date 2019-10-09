@@ -6,7 +6,7 @@ import { accountDB } from '../../../src/account-service/database/account.db'
 import { Educator } from '../../../src/account-service/model/educator'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 
-describe('Routes: users.educators', () => {
+describe('Routes: educators', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -48,7 +48,7 @@ describe('Routes: users.educators', () => {
             defaultEducator.institution = defaultInstitution
 
         } catch (e) {
-            console.log('Failure on Before from users.educators.post test: ', e)
+            console.log('Failure on Before from educators.post test: ', e)
         }
     })
 
@@ -61,19 +61,20 @@ describe('Routes: users.educators', () => {
         }
     })
 
-    describe('POST /users/educators', () => {
+    describe('POST /educators', () => {
         afterEach(async () => {
             try {
                 await accountDB.deleteAllEducators()
             } catch (err) {
-                console.log('Failure in users.educator.post test: ', err)
+                console.log('Failure in educator.post test: ', err)
             }
         })
         context('when the admin posting a new educator user', () => {
+
             it('educators.post001: should return status code 201 and the saved educator', () => {
 
                 return request(URI)
-                    .post('/users/educators')
+                    .post('/educators')
                     .send(defaultEducator.toJSON())
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -81,12 +82,8 @@ describe('Routes: users.educators', () => {
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body.username).to.eql(defaultEducator.username)
-                        expect(res.body.institution).to.have.property('id')
-                        expect(res.body.institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body.institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body.institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body.institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body.institution.longitude).to.eql(defaultInstitution.longitude)
+                        expect(res.body.institution_id).to.eql(defaultInstitution.id)
+                        expect(res.body.children_groups.length).to.eql(0)
                     })
 
             })
@@ -97,7 +94,7 @@ describe('Routes: users.educators', () => {
         //     it('should return status code ? and message info about ...', () => {
 
         //         return request(URI)
-        //             .post('/users/educators')
+        //             .post('/educators')
         //             .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
         //             .set('Content-Type', 'application/json')
         //             .send(body)
@@ -110,13 +107,13 @@ describe('Routes: users.educators', () => {
                 try {
                     await acc.saveEducator(accessTokenAdmin, defaultEducator)
                 } catch (err) {
-                    console.log('Failure in users.educator.post test: ', err)
+                    console.log('Failure in educator.post test: ', err)
                 }
             })
             it('educators.post002: should return status code 409 and message info about educator is already registered', () => {
 
                 return request(URI)
-                    .post('/users/educators')
+                    .post('/educators')
                     .send(defaultEducator.toJSON())
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -137,7 +134,7 @@ describe('Routes: users.educators', () => {
                 }
 
                 return request(URI)
-                    .post('/users/educators')
+                    .post('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
@@ -155,7 +152,7 @@ describe('Routes: users.educators', () => {
                 }
 
                 return request(URI)
-                    .post('/users/educators')
+                    .post('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
@@ -173,7 +170,7 @@ describe('Routes: users.educators', () => {
                 }
 
                 return request(URI)
-                    .post('/users/educators')
+                    .post('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
@@ -184,15 +181,16 @@ describe('Routes: users.educators', () => {
             })
 
             it('educators.post006: should return status code 400 and message from institution not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the institution
 
                 const body = {
                     username: defaultEducator.username,
                     password: defaultEducator.password,
-                    institution_id: acc.NON_EXISTENT_ID
+                    institution_id: NON_EXISTENT_ID
                 }
 
                 return request(URI)
-                    .post('/users/educators')
+                    .post('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
@@ -203,14 +201,16 @@ describe('Routes: users.educators', () => {
             })
 
             it('educators.post007: should return status code 400 and message for invalid institution id', () => {
+                const INVALID_ID = '123' // invalid id of the institution
+
                 const body = {
                     username: defaultEducator.username,
                     password: defaultEducator.password,
-                    institution_id: acc.INVALID_ID
+                    institution_id: INVALID_ID
                 }
 
                 return request(URI)
-                    .post('/users/educators')
+                    .post('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
@@ -227,7 +227,7 @@ describe('Routes: users.educators', () => {
             it('educators.post008: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .post('/users/educators')
+                    .post('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .send(defaultEducator.toJSON())
@@ -240,7 +240,7 @@ describe('Routes: users.educators', () => {
             it('educators.post009: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
-                    .post('/users/educators')
+                    .post('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .send(defaultEducator.toJSON())
@@ -253,7 +253,7 @@ describe('Routes: users.educators', () => {
             it('educators.post010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .post('/users/educators')
+                    .post('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
                     .send(defaultEducator.toJSON())
@@ -266,7 +266,7 @@ describe('Routes: users.educators', () => {
             it('educators.post011: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
-                    .post('/users/educators')
+                    .post('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .send(defaultEducator.toJSON())
@@ -279,7 +279,7 @@ describe('Routes: users.educators', () => {
             it('educators.post012: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
-                    .post('/users/educators')
+                    .post('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(defaultEducator.toJSON())
@@ -295,7 +295,7 @@ describe('Routes: users.educators', () => {
             it('educators.post013: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
-                    .post('/users/educators')
+                    .post('/educators')
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
                     .send(defaultEducator.toJSON())

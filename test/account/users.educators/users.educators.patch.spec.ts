@@ -6,7 +6,7 @@ import { accountDB } from '../../../src/account-service/database/account.db'
 import { Educator } from '../../../src/account-service/model/educator'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 
-describe('Routes: users.educators', () => {
+describe('Routes: educators', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -69,7 +69,7 @@ describe('Routes: users.educators', () => {
                 defaultEducatorToken = await acc.auth(defaultEducator.username, defaultEducator.password)
 
         } catch (err) {
-            console.log('Failure on Before from users.educators.patch test: ', err)
+            console.log('Failure on Before from educators.patch test: ', err)
         }
     })
 
@@ -82,16 +82,17 @@ describe('Routes: users.educators', () => {
         }
     })
 
-    describe('PATCH /users/educators/:educator_id', () => {
+    describe('PATCH /educators/:educator_id', () => {
 
         context('when the admin update educator successfully', () => {
-            it('educators.patch001: should return status code 200 and updated username and institution of the educator', () => {
+
+            it('educators.patch001: should return status code 200 and updated username and institution of the educator for admin user', () => {
 
                 defaultEducator.username = 'newcoolusername'
                 defaultEducator.institution = anotherInstitution
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}`)
+                    .patch(`/educators/${defaultEducator.id}`)
                     .send({ username: 'newcoolusername', institution_id: anotherInstitution.id })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -99,12 +100,31 @@ describe('Routes: users.educators', () => {
                     .then(res => {
                         expect(res.body.id).to.eql(defaultEducator.id)
                         expect(res.body.username).to.eql(defaultEducator.username)
-                        expect(res.body.institution).to.have.property('id')
-                        expect(res.body.institution.type).to.eql(anotherInstitution.type)
-                        expect(res.body.institution.name).to.eql(anotherInstitution.name)
-                        expect(res.body.institution.address).to.eql(anotherInstitution.address)
-                        expect(res.body.institution.latitude).to.eql(anotherInstitution.latitude)
-                        expect(res.body.institution.longitude).to.eql(anotherInstitution.longitude)
+                        expect(res.body.institution_id).to.eql(anotherInstitution.id)
+                        expect(res.body.children_groups.length).to.eql(0)
+                        if (defaultEducator.last_login)
+                            expect(res.body.last_login).to.eql(defaultEducator.last_login)
+                    })
+            })
+
+            it('educators.patch002: should return status code 200 and updated username and institution of the educator by herself', () => {
+
+                defaultEducator.username = 'anothercoolusername'
+                defaultEducator.institution = defaultInstitution
+
+                return request(URI)
+                    .patch(`/educators/${defaultEducator.id}`)
+                    .send({ username: 'anothercoolusername', institution_id: defaultInstitution.id })
+                    .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
+                    .set('Content-Type', 'application/json')
+                    .expect(200)
+                    .then(res => {
+                        expect(res.body.id).to.eql(defaultEducator.id)
+                        expect(res.body.username).to.eql(defaultEducator.username)
+                        expect(res.body.institution_id).to.eql(defaultInstitution.id)
+                        expect(res.body.children_groups.length).to.eql(0)
+                        if (defaultEducator.last_login)
+                            expect(res.body.last_login).to.eql(defaultEducator.last_login)
                     })
             })
         })
@@ -115,13 +135,13 @@ describe('Routes: users.educators', () => {
                     anotherEducator.institution = anotherInstitution
                     await acc.saveEducator(accessTokenAdmin, anotherEducator)
                 } catch (err) {
-                    console.log('Failure on users.educators.patch test: ', err)
+                    console.log('Failure on educators.patch test: ', err)
                 }
             })
-            it('educators.patch002: should return status code 409 and info message about educator is already registered', () => {
+            it('educators.patch003: should return status code 409 and info message about educator is already registered', () => {
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}`)
+                    .patch(`/educators/${defaultEducator.id}`)
                     .send({ username: 'another educator' })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -133,10 +153,11 @@ describe('Routes: users.educators', () => {
         })
 
         describe('when the educator is not found', () => {
-            it('educators.patch003: should return status code 404 and info message from educator not found', () => {
+            it('educators.patch004: should return status code 404 and info message from educator not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the educator
 
                 return request(URI)
-                    .patch(`/users/educators/${acc.NON_EXISTENT_ID}`)
+                    .patch(`/educators/${NON_EXISTENT_ID}`)
                     .send({})
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -148,11 +169,12 @@ describe('Routes: users.educators', () => {
         })
 
         describe('when the institution provided does not exists', () => {
-            it('educators.patch004: should return status code 400 and message for institution not found', () => {
+            it('educators.patch005: should return status code 400 and message for institution not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the institution
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}`)
-                    .send({ institution_id: acc.NON_EXISTENT_ID })
+                    .patch(`/educators/${defaultEducator.id}`)
+                    .send({ institution_id: NON_EXISTENT_ID })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -163,11 +185,12 @@ describe('Routes: users.educators', () => {
         })
 
         describe('when the institution id provided was invalid', () => {
-            it('educators.patch005: should return status code 400 and message for invalid institution id', () => {
+            it('educators.patch006: should return status code 400 and message for invalid institution id', () => {
+                const INVALID_ID = '123' // invalid id of the institution
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}`)
-                    .send({ institution_id: acc.INVALID_ID })
+                    .patch(`/educators/${defaultEducator.id}`)
+                    .send({ institution_id: INVALID_ID })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -178,10 +201,11 @@ describe('Routes: users.educators', () => {
         })
 
         describe('when the educator_id provided was invalid', () => {
-            it('educators.patch006: should return status code 400 and message for invalid id', () => {
+            it('educators.patch007: should return status code 400 and message for invalid id', () => {
+                const INVALID_ID = '123' // invalid id of the educator
 
                 return request(URI)
-                    .patch(`/users/educators/${acc.INVALID_ID}`)
+                    .patch(`/educators/${INVALID_ID}`)
                     .send({})
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -196,25 +220,12 @@ describe('Routes: users.educators', () => {
 
         context('when the user does not have permission', () => {
 
-            it('educators.patch007: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('educators.patch008: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}`)
+                    .patch(`/educators/${defaultEducator.id}`)
                     .send({ username: 'anothercoolusername' })
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
-                    .set('Content-Type', 'application/json')
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
-            })
-
-
-            it('educators.patch008: should return status code 403 and info message from insufficient permissions for own educator user', () => {
-                return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}`)
-                    .send({ username: 'anothercoolusername' })
-                    .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(403)
                     .then(err => {
@@ -225,8 +236,8 @@ describe('Routes: users.educators', () => {
             it('educators.patch009: should return status code 403 and info message from insufficient permissions for another educator user', () => {
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}`)
-                    .send({ username: 'anothercoolusername' })
+                    .patch(`/educators/${defaultEducator.id}`)
+                    .send({ username: 'anycoolusername' })
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -238,7 +249,7 @@ describe('Routes: users.educators', () => {
             it('educators.patch010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}`)
+                    .patch(`/educators/${defaultEducator.id}`)
                     .send({ username: 'anothercoolusername' })
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
@@ -251,7 +262,7 @@ describe('Routes: users.educators', () => {
             it('educators.patch011: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}`)
+                    .patch(`/educators/${defaultEducator.id}`)
                     .send({ username: 'anothercoolusername' })
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
@@ -264,7 +275,7 @@ describe('Routes: users.educators', () => {
             it('educators.patch012: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}`)
+                    .patch(`/educators/${defaultEducator.id}`)
                     .send({ username: 'anothercoolusername' })
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
@@ -274,12 +285,12 @@ describe('Routes: users.educators', () => {
                     })
             })
         })
-        
+
         describe('when not informed the acess token', () => {
             it('educators.patch013: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}`)
+                    .patch(`/educators/${defaultEducator.id}`)
                     .send({ username: 'anothercoolusername' })
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
