@@ -225,7 +225,6 @@ describe('Routes: families', () => {
                     .expect(400)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
-                        // caso o ID contenha caracteres numéricos e alfabéticos (ex: 5a) o erro retornado é correto
                     })
             })
 

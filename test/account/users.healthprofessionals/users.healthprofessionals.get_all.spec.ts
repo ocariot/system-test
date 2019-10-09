@@ -142,7 +142,11 @@ describe('Routes: healthprofessionals', () => {
                 const healthSortedByUserNameArr = healthProfessionalsArr.slice() // copy of the array of health professionals that will be ordered
 
                 // Sorted healthProfessionals in ascending order by username ...
-                healthSortedByUserNameArr.sort((a, b) => { return a.username! < b.username! ? 1 : 0 })
+                healthSortedByUserNameArr.sort((a, b) => {
+                    a.username!.toLocaleLowerCase
+                    b.username!.toLocaleLowerCase
+                    return a.username! < b.username! ? 1 : 0
+                })
 
                 return request(URI)
                     .get(`/healthprofessionals?sort=${sort}`)
@@ -150,11 +154,9 @@ describe('Routes: healthprofessionals', () => {
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        // console.log('RESPOSTA', res.body)
-                        // console.log('ARRAY ORDENADO', healthSortedByUserNameArr)
                         for (let i = 0; i < res.body.length; i++) {
-                            expect(res.body[i].id).to.eql(healthSortedByUserNameArr[i].id)
                             expect(res.body[i].username).to.eql(healthSortedByUserNameArr[i].username)
+                            expect(res.body[i].id).to.eql(healthSortedByUserNameArr[i].id)
                             expect(res.body[i].children_groups).to.eql(healthSortedByUserNameArr[i].children_groups)
                             expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
                             expect(res.body[i].children_groups.length).to.eql(0)

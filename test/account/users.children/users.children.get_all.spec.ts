@@ -171,7 +171,11 @@ describe('Routes: children', () => {
                 const childrenSortedByUserNameArr = childArr.slice() // copy of the array of children that will be ordered
 
                 // Sorted childArr in ascending order by username ...
-                childrenSortedByUserNameArr.sort((a, b) => { return a.username! < b.username! ? 1 : 0 })
+                childrenSortedByUserNameArr.sort((a, b) => {
+                    a.username!.toLocaleLowerCase
+                    b.username!.toLocaleLowerCase
+                    return a.username! < b.username! ? 1 : 0
+                })
 
                 return request(URI)
                     .get(`/children?sort=${sort}`)
@@ -180,8 +184,8 @@ describe('Routes: children', () => {
                     .expect(200)
                     .then(res => {
                         for (let i = 0; i < res.body.length; i++) {
-                            expect(res.body[i].id).to.eql(childrenSortedByUserNameArr[i].id)
                             expect(res.body[i].username).to.eql(childrenSortedByUserNameArr[i].username)
+                            expect(res.body[i].id).to.eql(childrenSortedByUserNameArr[i].id)
                             expect(res.body[i].gender).to.eql(childrenSortedByUserNameArr[i].gender)
                             expect(res.body[i].age).to.eql(childrenSortedByUserNameArr[i].age)
                             expect(res.body[i].institution_id).to.eql(defaultInstitution.id)

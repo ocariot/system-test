@@ -188,7 +188,7 @@ services:
         max-size: 100m
 
   activity-tracking: # Container for OCARIoT Activity Tracking service
-    image: ocariot/activity-tracking
+    image: ocariot/iot-tracking
     container_name: ocariot-activity-tracking
     restart: always
     environment:

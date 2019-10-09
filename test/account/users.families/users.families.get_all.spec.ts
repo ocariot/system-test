@@ -142,7 +142,11 @@ describe('Routes: families', () => {
                 const familiesSortedByUserNameArr = familiesArr.slice() // copy of the array of families that will be ordered
 
                 // Sorted familiesArr in descending order by username ...
-                familiesSortedByUserNameArr.sort((a, b) => { return a.username! > b.username! ? 1 : 0 })
+                familiesSortedByUserNameArr.sort((a, b) => {
+                    a.username!.toLocaleLowerCase
+                    b.username!.toLocaleLowerCase
+                    return a.username! > b.username! ? 1 : 0
+                })
 
                 return request(URI)
                     .get(`/families?sort=-${sort}`)
@@ -152,8 +156,8 @@ describe('Routes: families', () => {
                     .then(res => {
 
                         for (let i = 0; i < res.body.length; i++) {
-                            expect(res.body[i].id).to.eql(familiesSortedByUserNameArr[i].id)
                             expect(res.body[i].username).to.eql(familiesSortedByUserNameArr[i].username)
+                            expect(res.body[i].id).to.eql(familiesSortedByUserNameArr[i].id)
                             expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
                             expect(res.body[i].children).to.eql(familiesSortedByUserNameArr[i].children)
                             expect(res.body[i].children.length).to.eql(1)

@@ -143,6 +143,7 @@ describe('Routes: families', () => {
                         .set('Content-Type', 'application/json')
                         .expect(200)
                         .then(res => {
+                            // console.log('RES', res.body)
                             expect(res.body.id).to.eql(defaultFamily.id)
                             expect(res.body.username).to.eql(defaultFamily.username)
                             expect(res.body.institution_id).to.eql(defaultInstitution.id)
@@ -188,7 +189,7 @@ describe('Routes: families', () => {
 
         context('when the user does not have permission to get a family', () => {
 
-            it('families.post006: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('families.get_id006: should return status code 403 and info message from insufficient permissions for child user', () => {
                 return request(URI)
                     .get(`/families/${defaultFamily.id}`)
                     .send(defaultFamily.toJSON())
@@ -200,7 +201,7 @@ describe('Routes: families', () => {
                     })
             })
 
-            it('families.post007: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('families.get_id007: should return status code 403 and info message from insufficient permissions for educator user', () => {
                 return request(URI)
                     .get(`/families/${defaultFamily.id}`)
                     .send(defaultFamily.toJSON())
@@ -212,7 +213,7 @@ describe('Routes: families', () => {
                     })
             })
 
-            it('families.post008: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('families.get_id008: should return status code 403 and info message from insufficient permissions for health professional user', () => {
                 return request(URI)
                     .get(`/families/${defaultFamily.id}`)
                     .send(defaultFamily.toJSON())
@@ -224,7 +225,7 @@ describe('Routes: families', () => {
                     })
             })
 
-            it('families.post009: should return status code 403 and info message from insufficient permissions for another family user', () => {
+            it('families.get_id009: should return status code 403 and info message from insufficient permissions for another family user', () => {
                 return request(URI)
                     .get(`/families/${defaultFamily.id}`)
                     .send(defaultFamily.toJSON())
@@ -236,7 +237,7 @@ describe('Routes: families', () => {
                     })
             })
 
-            it('families.post010: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('families.get_id010: should return status code 403 and info message from insufficient permissions for application user', () => {
                 return request(URI)
                     .get(`/families/${defaultFamily.id}`)
                     .send(defaultFamily.toJSON())
@@ -251,7 +252,7 @@ describe('Routes: families', () => {
         }) // user does not have permission 
 
         describe('when not informed the acess token', () => {
-            it('families.post011: should return the status code 401 and the authentication failure informational message', () => {
+            it('families.get_id011: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .get(`/families/${defaultFamily.id}`)

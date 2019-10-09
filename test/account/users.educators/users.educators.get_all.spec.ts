@@ -142,7 +142,11 @@ describe('Routes: educators', () => {
                 const educatorsSortedByUserNameArr = educatorsArr.slice() // copy of the array of educators that will be ordered
 
                 // Sorted educatorsArr in ascending order by username ...
-                educatorsSortedByUserNameArr.sort((a, b) => { return a.username! < b.username! ? 1 : 0 })
+                educatorsSortedByUserNameArr.sort((a, b) => { 
+                    a.username!.toLocaleLowerCase
+                    b.username!.toLocaleLowerCase
+                    return a.username! < b.username! ? 1 : 0 
+                })
 
                 return request(URI)
                     .get(`/educators?sort=${sort}`)
@@ -151,8 +155,8 @@ describe('Routes: educators', () => {
                     .expect(200)
                     .then(res => {
                         for (let i = 0; i < res.body.length; i++) {
-                            expect(res.body[i].id).to.eql(educatorsSortedByUserNameArr[i].id)
                             expect(res.body[i].username).to.eql(educatorsSortedByUserNameArr[i].username)
+                            expect(res.body[i].id).to.eql(educatorsSortedByUserNameArr[i].id)
                             expect(res.body[i].children_groups).to.eql(educatorsSortedByUserNameArr[i].children_groups)
                             expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
                             expect(res.body[i].children_groups.length).to.eql(0)

@@ -200,8 +200,6 @@ describe('Routes: families', () => {
                         const EXPECTED_RESPONSE = ApiGatewayException.FAMILY.ERROR_400_CHILDREN_NOT_REGISTERED
                         EXPECTED_RESPONSE.description += ' '.concat(acc.NON_EXISTENT_ID)
                         expect(err.body).to.eql(EXPECTED_RESPONSE)
-                        // se o ID enviado possuir caracteres numéricos e alfabéticos a resposta é correta!
-                        // se colocar um ID válido que não exista o sistema apaga a criança daquela familia
                     })
             })
 
@@ -216,7 +214,6 @@ describe('Routes: families', () => {
                     .expect(400)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
-                        // se colocar um ID inválido o sistema apaga a criança daquela familia 
                     })
             })
 
