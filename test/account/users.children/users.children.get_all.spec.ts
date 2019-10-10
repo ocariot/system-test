@@ -172,9 +172,7 @@ describe('Routes: children', () => {
 
                 // Sorted childArr in ascending order by username ...
                 childrenSortedByUserNameArr.sort((a, b) => {
-                    a.username!.toLocaleLowerCase
-                    b.username!.toLocaleLowerCase
-                    return a.username! < b.username! ? 1 : 0
+                    return a.username!.toLowerCase()! < b.username!.toLowerCase() ? -1 : 1
                 })
 
                 return request(URI)
@@ -183,6 +181,9 @@ describe('Routes: children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
+                        console.log('ARR ORIG', childArr)
+                        console.log('RES', res.body)
+                        console.log('ARR SORT', childrenSortedByUserNameArr)
                         for (let i = 0; i < res.body.length; i++) {
                             expect(res.body[i].username).to.eql(childrenSortedByUserNameArr[i].username)
                             expect(res.body[i].id).to.eql(childrenSortedByUserNameArr[i].id)

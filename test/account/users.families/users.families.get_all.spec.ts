@@ -143,9 +143,7 @@ describe('Routes: families', () => {
 
                 // Sorted familiesArr in descending order by username ...
                 familiesSortedByUserNameArr.sort((a, b) => {
-                    a.username!.toLocaleLowerCase
-                    b.username!.toLocaleLowerCase
-                    return a.username! > b.username! ? 1 : 0
+                    return a.username!.toLowerCase()! > b.username!.toLowerCase() ? -1 : 1
                 })
 
                 return request(URI)

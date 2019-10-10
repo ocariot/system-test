@@ -143,9 +143,7 @@ describe('Routes: educators', () => {
 
                 // Sorted educatorsArr in ascending order by username ...
                 educatorsSortedByUserNameArr.sort((a, b) => { 
-                    a.username!.toLocaleLowerCase
-                    b.username!.toLocaleLowerCase
-                    return a.username! < b.username! ? 1 : 0 
+                    return a.username!.toLowerCase()! < b.username!.toLowerCase() ? -1 : 1
                 })
 
                 return request(URI)
