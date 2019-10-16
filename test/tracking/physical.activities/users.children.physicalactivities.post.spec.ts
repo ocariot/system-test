@@ -1025,21 +1025,25 @@ describe('Routes: users.children.physicalactivities', () => {
 
             it('physical.activities.post023: should return status code 400 and info message from validation error, because child not exist', () => {
 
+                const NON_EXISTENT_ID = '111111111111111111111111'
+
                 return request(URI)
-                    .post(`/children/${acc.NON_EXISTENT_ID}/physicalactivities`)
+                    .post(`/children/${NON_EXISTENT_ID}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        // expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.????)
+                        expect(err.body.message).to.eql(`ID ${NON_EXISTENT_ID} is not associated with a child!`)
                     })
             })
 
             it('physical.activities.post024: should return status code 400 and info message from validation error, because child_id is invalid', () => {
 
+                const INVALID_ID = '123'
+
                 return request(URI)
-                    .post(`/children/${acc.INVALID_ID}/physicalactivities`)
+                    .post(`/children/${INVALID_ID}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
@@ -1067,20 +1071,22 @@ describe('Routes: users.children.physicalactivities', () => {
 
         context('when posting a new PhysicalActivity for another user that not to be a child', () => {
 
-            it('physical.activities.post026: should return ??? for admin', async () => {
+            it('physical.activities.post026: should return 400 and info message from error, when try create a activity for admin', async () => {
+
+                const ADMIN_ID = await acc.getAdminID() 
 
                 return request(URI)
-                    .post(`/children/${await acc.getAdminID()}/physicalactivities`)
+                    .post(`/children/${ADMIN_ID}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        // expect(err.body).to.eql(ApiGatewayException.???)
+                        expect(err.body.message).to.eql(`Child with ID ${ADMIN_ID} is not registered on the platform!`)
                     })
             })
 
-            it('physical.activities.post027: should return ??? for educator', () => {
+            it('physical.activities.post027: should return 400 and info message from error, when try create a activity for educator', () => {
 
                 return request(URI)
                     .post(`/children/${defaultEducator.id}/physicalactivities`)
@@ -1089,11 +1095,11 @@ describe('Routes: users.children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        // expect(err.body).to.eql(ApiGatewayException.???)
+                        expect(err.body.message).to.eql(`Child with ID ${defaultEducator.id} is not registered on the platform!`)
                     })
             })
 
-            it('physical.activities.post028: should return ??? for health professional', () => {
+            it('physical.activities.post028: should return 400 and info message from error, when try create a activity for health professional', () => {
 
                 return request(URI)
                     .post(`/children/${defaultHealthProfessional.id}/physicalactivities`)
@@ -1102,11 +1108,11 @@ describe('Routes: users.children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        // expect(err.body).to.eql(ApiGatewayException.???)
+                        expect(err.body.message).to.eql(`Child with ID ${defaultHealthProfessional.id} is not registered on the platform!`)
                     })
             })
 
-            it('physical.activities.post029: should return ??? for family', () => {
+            it('physical.activities.post029: should return 400 and info message from error, when try create a activity for family', () => {
 
                 return request(URI)
                     .post(`/children/${defaultFamily.id}/physicalactivities`)
@@ -1115,11 +1121,11 @@ describe('Routes: users.children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        // expect(err.body).to.eql(ApiGatewayException.???)
+                        expect(err.body.message).to.eql(`Child with ID ${defaultFamily.id} is not registered on the platform!`)
                     })
             })
 
-            it('physical.activities.post030: should return ??? for application', () => {
+            it('physical.activities.post030: should return 400 and info message from error, when try create a activity for application', () => {
 
                 return request(URI)
                     .post(`/children/${defaultApplication.id}/physicalactivities`)
@@ -1128,7 +1134,7 @@ describe('Routes: users.children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        // expect(err.body).to.eql(ApiGatewayException.???)
+                        expect(err.body.message).to.eql(`Child with ID ${defaultApplication.id} is not registered on the platform!`)
                     })
             })
 
@@ -1136,7 +1142,7 @@ describe('Routes: users.children.physicalactivities', () => {
 
         describe('when the child posting a new PhysicalActivity for another child', () => {
 
-            it('physical.activities.post031: should return status code 400 and info message ???', async () => {
+            it('physical.activities.post031: should return status code 400 and info message from error', async () => {
 
                 const anotherChild: Child = new ChildMock()
                 let anotherChildToken
@@ -1157,7 +1163,6 @@ describe('Routes: users.children.physicalactivities', () => {
                     .then(err => {
                         // expect(err.body).to.eql(ApiGatewayException.???)
                     })
-
             })
         })
 
@@ -1228,7 +1233,6 @@ describe('Routes: users.children.physicalactivities', () => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_409_PHYSICAL_ACTIVITY_IS_ALREADY_REGISTERED)
                     })
             })
-
         })
     })
 })
