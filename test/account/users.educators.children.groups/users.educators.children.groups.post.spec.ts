@@ -22,8 +22,6 @@ describe('Routes: educators.children.groups', () => {
     let accessTokenFamily: string
     let accessTokenApplication: string
 
-    let childArr: Array<Child> = new Array<Child>()
-
     const defaultInstitution: Institution = new Institution()
     defaultInstitution.type = 'default type'
     defaultInstitution.name = 'default name'
@@ -73,22 +71,13 @@ describe('Routes: educators.children.groups', () => {
             defaultInstitution.id = resultInstitution.id
 
             defaultChild.institution = defaultInstitution
-            anotherChild.institution = defaultInstitution
             defaultEducator.institution = defaultInstitution
             anotherEducator.institution = defaultInstitution
 
             const resultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
             defaultChild.id = resultChild.id
 
-            const resultAnotherChild = await acc.saveChild(accessTokenAdmin, anotherChild)
-            anotherChild.id = resultAnotherChild.id
-
-            defaultChildrenGroup.children = new Array<Child>()
-            defaultChildrenGroup.children.push(resultAnotherChild)
-            defaultChildrenGroup.children.push(resultChild)
-
-            childArr.push(resultAnotherChild)
-            childArr.push(resultChild)
+            defaultChildrenGroup.children = new Array<Child>(resultChild)
 
             const resultDefaultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
             defaultEducator.id = resultDefaultEducator.id
@@ -105,7 +94,6 @@ describe('Routes: educators.children.groups', () => {
                 anotherEducatorToken = await acc.
                     auth(anotherEducator.username, anotherEducator.password)
             }
-
 
         } catch (err) {
             console.log('Failure on Before from educator.children.groups.post test: : ', err)
@@ -147,14 +135,14 @@ describe('Routes: educators.children.groups', () => {
                     .expect(201)
                     .then(res => {
                         expect(res.body).to.have.property('id')
-                        expect(res.body.name).to.eql(defaultChildrenGroup.name)
-                        for (let i = 0; i < res.body.children.length; i++) {
-                            expect(res.body.children[i].id).to.eql(childArr[i].id)
-                            expect(res.body.children[i].username).to.eql(childArr[i].username)
-                            expect(res.body.children[i].gender).to.eql(childArr[i].gender)
-                            expect(res.body.children[i].age).to.eql(childArr[i].age)
-                            expect(res.body.children[i].institution_id).to.eql(defaultInstitution.id)
-                        }
+                        expect(res.body.name).to.eql(body.name)
+                        expect(res.body.children).is.an.instanceof(Array)
+                        expect(res.body.children.length).to.eql(1)
+                        expect(res.body.children[0]).to.have.property('id')
+                        expect(res.body.children[0].username).to.eql(defaultChild.username)
+                        expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
+                        expect(res.body.children[0].age).to.eql(defaultChild.age)
+                        expect(res.body.children[0].gender).to.eql(defaultChild.gender)
                     })
             })
 
@@ -178,14 +166,13 @@ describe('Routes: educators.children.groups', () => {
                         .then(res => {
                             expect(res.body).to.have.property('id')
                             expect(res.body.name).to.eql(defaultChildrenGroup.name)
-                            expect(res.body.school_class).to.eql(defaultChildrenGroup.school_class)
-                            for (let i = 0; i < res.body.children.length; i++) {
-                                expect(res.body.children[i].id).to.eql(childArr[i].id)
-                                expect(res.body.children[i].username).to.eql(childArr[i].username)
-                                expect(res.body.children[i].gender).to.eql(childArr[i].gender)
-                                expect(res.body.children[i].age).to.eql(childArr[i].age)
-                                expect(res.body.children[i].institution_id).to.eql(defaultInstitution.id)
-                            }
+                            expect(res.body.children).is.an.instanceof(Array)
+                            expect(res.body.children.length).to.eql(1)
+                            expect(res.body.children[0]).to.have.property('id')
+                            expect(res.body.children[0].username).to.eql(defaultChild.username)
+                            expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
+                            expect(res.body.children[0].age).to.eql(defaultChild.age)
+                            expect(res.body.children[0].gender).to.eql(defaultChild.gender)
                         })
                 })
             })

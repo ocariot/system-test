@@ -8,7 +8,7 @@ import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Child } from '../../../src/account-service/model/child'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 
-describe('Routes: users.educators.children.groups', () => {
+describe('Routes: educators.children.groups', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -97,7 +97,7 @@ describe('Routes: users.educators.children.groups', () => {
             anotherChildrenGroup.id = resultAnotherChildrenGroup.id
 
         } catch (err) {
-            console.log('Failure on Before from users.educators.children.groups.get_all test: ' + err)
+            console.log('Failure on Before from educators.children.groups.get_all test: ' + err)
         }
     })
 
@@ -110,14 +110,14 @@ describe('Routes: users.educators.children.groups', () => {
         }
     })
 
-    describe('GET  /users/educators/:educator_id/children/groups', () => {
+    describe('GET  /educators/:educator_id/children/groups', () => {
 
         context('when the educator get all yours children groups successfully', () => {
 
             it('educators.children.groups.get_all001: should return status code 200 and a list of children groups whitout child personal data (username, age and gender)', () => {
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .get(`/educators/${defaultEducator.id}/children/groups`)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -125,138 +125,90 @@ describe('Routes: users.educators.children.groups', () => {
                         expect(res.body).to.be.an.instanceof(Array)
                         expect(res.body.length).to.eql(2)
 
-                        expect(res.body[0]).to.have.property('id')
+                        expect(res.body[0].id).to.eql(anotherChildrenGroup.id)
                         expect(res.body[0].name).to.eql(anotherChildrenGroup.name)
                         expect(res.body[0]).to.have.property('children')
                         expect(res.body[0].children).is.an.instanceof(Array)
                         expect(res.body[0].children.length).to.eql(1)
                         expect(res.body[0].children[0]).to.have.property('id')
-                        expect(res.body[0].children[0]).to.not.have.property('username')
-                        expect(res.body[0].children[0].institution).to.have.property('id')
-                        expect(res.body[0].children[0].institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body[0].children[0].institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body[0].children[0].institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body[0].children[0].institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body[0].children[0].institution.longitude).to.eql(defaultInstitution.longitude)
-                        expect(res.body[0].children[0]).to.not.have.property('age')
-                        expect(res.body[0].children[0]).to.not.have.property('gender')
+                        expect(res.body[0].children[0]).to.have.property('username')
+                        expect(res.body[0].children[0].institution_id).to.eql(defaultInstitution.id)
+                        expect(res.body[0].children[0]).to.have.property('age')
+                        expect(res.body[0].children[0]).to.have.property('gender')
                         expect(res.body[0].school_class).to.eql(anotherChildrenGroup.school_class)
 
-                        expect(res.body[1]).to.have.property('id')
+                        expect(res.body[1].id).to.eql(defaultChildrenGroup.id)
                         expect(res.body[1].name).to.eql(defaultChildrenGroup.name)
                         expect(res.body[1]).to.have.property('children')
                         expect(res.body[1].children).is.an.instanceof(Array)
                         expect(res.body[1].children.length).to.eql(1)
                         expect(res.body[1].children[0]).to.have.property('id')
-                        expect(res.body[1].children[0]).to.not.have.property('username')
-                        expect(res.body[1].children[0].institution).to.have.property('id')
-                        expect(res.body[1].children[0].institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body[1].children[0].institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body[1].children[0].institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body[1].children[0].institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body[1].children[0].institution.longitude).to.eql(defaultInstitution.longitude)
-                        expect(res.body[1].children[0]).to.not.have.property('age')
-                        expect(res.body[1].children[0]).to.not.have.property('gender')
+                        expect(res.body[1].children[0]).to.have.property('username')
+                        expect(res.body[1].children[0].institution_id).to.eql(defaultInstitution.id)
+                        expect(res.body[1].children[0]).to.have.property('age')
+                        expect(res.body[1].children[0]).to.have.property('gender')
                         expect(res.body[1].school_class).to.eql(defaultChildrenGroup.school_class)
                     })
             })
 
-            it('educators.children.groups.get_all002: should return status code 200 and a list with only ID and name of children groups', () => {
-
-                const field = 'name'
-                return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}/children/groups?fields=${field}`)
-                    .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).to.be.an.instanceof(Array)
-                        expect(res.body.length).to.eql(2)
-                        expect(res.body[0]).to.have.property('id')
-                        expect(res.body[0].name).to.eql(anotherChildrenGroup.name)
-                        expect(res.body[0]).to.not.have.property('children')
-                        expect(res.body[0].to.not.have.property('school_class'))
-
-                        expect(res.body[1]).to.have.property('id')
-                        expect(res.body[1].name).to.eql(defaultChildrenGroup.name)
-                        expect(res.body[1]).to.not.have.property('children')
-                        expect(res.body[1].to.not.have.property('school_class'))
-                    })
-            })
-
-            it('educators.children.groups.get_all003: should return status code 200 and a list of children groups in ascending order by children group name', () => {
+            it('educators.children.groups.get_all002: should return status code 200 and a list of children groups in ascending order by children group name', () => {
 
                 const sort = 'name'
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}/children/groups?sort=${sort}`)
+                    .get(`/educators/${defaultEducator.id}/children/groups?sort=${sort}`)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.be.an.instanceof(Array)
                         expect(res.body.length).to.eql(2)
-                        expect(res.body[0]).to.have.property('id')
                         expect(res.body[0].name).to.eql(anotherChildrenGroup.name)
+                        expect(res.body[0].id).to.eql(anotherChildrenGroup.id)
                         expect(res.body[0].children).is.an.instanceof(Array)
                         expect(res.body[0].school_class).to.eql(anotherChildrenGroup.school_class)
                         expect(res.body[0].children.length).to.eql(1)
-                        expect(res.body[0].children[0]).to.have.property('id')
+                        expect(res.body[0].children[0].id).to.eql(anotherChild.id)
                         expect(res.body[0].children[0].username).to.eql(anotherChild.username)
-                        expect(res.body[0].children[0].institution).to.have.property('id')
-                        expect(res.body[0].children[0].institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body[0].children[0].institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body[0].children[0].institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body[0].children[0].institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body[0].children[0].institution.longitude).to.eql(defaultInstitution.longitude)
+                        expect(res.body[0].children[0].institution_id).to.eql(defaultInstitution.id)
                         expect(res.body[0].children[0].age).to.eql(anotherChild.age)
                         expect(res.body[0].children[0].gender).to.eql(anotherChild.gender)
 
-                        expect(res.body[1]).to.have.property('id')
                         expect(res.body[1].name).to.eql(defaultChildrenGroup.name)
+                        expect(res.body[1].id).to.eql(defaultChildrenGroup.id)
                         expect(res.body[1].children).is.an.instanceof(Array)
                         expect(res.body[1].school_class).to.eql(defaultChildrenGroup.school_class)
                         expect(res.body[1].children.length).to.eql(1)
-                        expect(res.body[1].children[0]).to.have.property('id')
+                        expect(res.body[1].children[0].id).to.eql(defaultChild.id)
                         expect(res.body[1].children[0].username).to.eql(defaultChild.username)
-                        expect(res.body[1].children[0].institution).to.have.property('id')
-                        expect(res.body[1].children[0].institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body[1].children[0].institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body[1].children[0].institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body[1].children[0].institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body[1].children[0].institution.longitude).to.eql(defaultInstitution.longitude)
+                        expect(res.body[1].children[0].institution_id).to.eql(defaultInstitution.id)
                         expect(res.body[1].children[0].age).to.eql(defaultChild.age)
                         expect(res.body[1].children[0].gender).to.eql(defaultChild.gender)
                     })
             })
 
-            it('educators.children.groups.get_all004: should return status code 200 and a list with only the most recently registered children group for the educator', () => {
+            it('educators.children.groups.get_all003: should return status code 200 and a list with only the most recently registered children group for the educator', () => {
 
                 const page = 1
                 const limit = 1
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}/children/groups?page=${page}&limit=${limit}`)
+                    .get(`/educators/${defaultEducator.id}/children/groups?page=${page}&limit=${limit}`)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.be.an.instanceof(Array)
                         expect(res.body.length).to.eql(1)
-                        expect(res.body[0]).to.have.property('id')
+                        expect(res.body[0].id).to.eql(anotherChildrenGroup.id)
                         expect(res.body[0].name).to.eql(anotherChildrenGroup.name)
                         expect(res.body[0]).to.have.property('children')
                         expect(res.body[0].children).is.an.instanceof(Array)
                         expect(res.body[0].children.length).to.eql(1)
                         expect(res.body[0].children[0]).to.have.property('id')
-                        expect(res.body[0].children[0]).to.not.have.property('username')
-                        expect(res.body[0].children[0].institution).to.have.property('id')
-                        expect(res.body[0].children[0].institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body[0].children[0].institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body[0].children[0].institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body[0].children[0].institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body[0].children[0].institution.longitude).to.eql(defaultInstitution.longitude)
-                        expect(res.body[0].children[0]).to.not.have.property('age')
-                        expect(res.body[0].children[0]).to.not.have.property('gender')
+                        expect(res.body[0].children[0]).to.have.property('username')
+                        expect(res.body[0].children[0].institution_id).to.eql(defaultInstitution.id)
+                        expect(res.body[0].children[0]).to.have.property('age')
+                        expect(res.body[0].children[0]).to.have.property('gender')
                         expect(res.body[0].school_class).to.eql(anotherChildrenGroup.school_class)
                     })
             })
@@ -272,39 +224,36 @@ describe('Routes: users.educators.children.groups', () => {
                         console.log('Failure on Educators test: ' + err.message)
                     }
                 })
-                it('educators.children.groups.get_all005: should return status code 200 and a list with only one children groups', () => {
+                it('educators.children.groups.get_all004: should return status code 200 and a list with only one children groups', () => {
 
                     return request(URI)
-                        .get(`/users/educators/${defaultEducator.id}/children/groups`)
+                        .get(`/educators/${defaultEducator.id}/children/groups`)
                         .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                         .set('Content-Type', 'application/json')
                         .expect(200)
                         .then(res => {
                             expect(res.body).to.be.an.instanceof(Array)
                             expect(res.body.length).to.eql(1)
-                            expect(res.body[0]).to.have.property('id')
+                            expect(res.body[0].id).to.eql(defaultChildrenGroup.id)
                             expect(res.body[0].name).to.eql(defaultChildrenGroup.name)
+                            expect(res.body[0]).to.have.property('children')
                             expect(res.body[0].children).is.an.instanceof(Array)
                             expect(res.body[0].children.length).to.eql(1)
                             expect(res.body[0].children[0]).to.have.property('id')
-                            expect(res.body[0].children[0].username).to.eql(defaultChild.username)
-                            expect(res.body[0].children[0].institution).to.have.property('id')
-                            expect(res.body[0].children[0].institution.type).to.eql(defaultInstitution.type)
-                            expect(res.body[0].children[0].institution.name).to.eql(defaultInstitution.name)
-                            expect(res.body[0].children[0].institution.address).to.eql(defaultInstitution.address)
-                            expect(res.body[0].children[0].institution.latitude).to.eql(defaultInstitution.latitude)
-                            expect(res.body[0].children[0].institution.longitude).to.eql(defaultInstitution.longitude)
-                            expect(res.body[0].children[0].age).to.eql(defaultChild.age)
-                            expect(res.body[0].children[0].gender).to.eql(defaultChild.gender)
+                            expect(res.body[0].children[0]).to.have.property('username')
+                            expect(res.body[0].children[0].institution_id).to.eql(defaultInstitution.id)
+                            expect(res.body[0].children[0]).to.have.property('age')
+                            expect(res.body[0].children[0]).to.have.property('gender')
                             expect(res.body[0].school_class).to.eql(defaultChildrenGroup.school_class)
                         })
                 })
             })
 
-            it('educators.children.groups.get_all006: should return status code 200 and empty array, because the educator was not found', () => {
+            it('educators.children.groups.get_all005: should return status code 200 and empty array, because the educator was not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the educator
 
                 return request(URI)
-                    .get(`/users/educators/${acc.NON_EXISTENT_ID}/children/groups`)
+                    .get(`/educators/${NON_EXISTENT_ID}/children/groups`)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -316,25 +265,26 @@ describe('Routes: users.educators.children.groups', () => {
         }) // get all children groups successfully
 
         describe('when the educator_id is invalid', () => {
-            it('educators.children.groups.get_all007: should return status code 400 and message info about invalid id', () => {
+            it('educators.children.groups.get_all006: should return status code 400 and message info about invalid id', () => {
+                const INVALID_ID = '123' // invalid id of the educator
 
                 return request(URI)
-                    .get(`/users/educators/${acc.INVALID_ID}/children/groups`)
+                    .get(`/educators/${INVALID_ID}/children/groups`)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.EDUCATOR.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
         })
 
         context('when the user does not have permission to get all children groups for the educator', () => {
 
-            it('educators.children.groups.get_all008: should return status code 403 and info message from insufficient permissions for admin user', () => {
+            it('educators.children.groups.get_all007: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .get(`/educators/${defaultEducator.id}/children/groups`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -343,10 +293,10 @@ describe('Routes: users.educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.get_all009: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('educators.children.groups.get_all008: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .get(`/educators/${defaultEducator.id}/children/groups`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -355,10 +305,10 @@ describe('Routes: users.educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.get_all010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('educators.children.groups.get_all009: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .get(`/educators/${defaultEducator.id}/children/groups`)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -367,10 +317,10 @@ describe('Routes: users.educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.get_all011: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('educators.children.groups.get_all010: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .get(`/educators/${defaultEducator.id}/children/groups`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -379,10 +329,10 @@ describe('Routes: users.educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.get_all012: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('educators.children.groups.get_all011: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .get(`/educators/${defaultEducator.id}/children/groups`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -391,10 +341,10 @@ describe('Routes: users.educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.get_all013: should return status code 403 and info message from insufficient permissions for another educator user', () => {
+            it('educators.children.groups.get_all012: should return status code 403 and info message from insufficient permissions for another educator user', () => {
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .get(`/educators/${defaultEducator.id}/children/groups`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -406,10 +356,10 @@ describe('Routes: users.educators.children.groups', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('educators.children.groups.get_all014: should return the status code 401 and the authentication failure informational message', async () => {
+            it('educators.children.groups.get_all013: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
-                    .get(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .get(`/educators/${defaultEducator.id}/children/groups`)
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
                     .expect(401)
