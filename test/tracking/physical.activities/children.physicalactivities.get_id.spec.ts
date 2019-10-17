@@ -336,9 +336,24 @@ describe('Routes: children.physicalactivities', () => {
             })
         })
 
+        describe('when a child get the physical activity of other child', () => {
+
+            it('physical.activities.get_id012: should return the status code 403 and info message from insufficient permissions', () => {
+
+                return request(URI)
+                    .get(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
+            })
+        })
+
         describe('when get a specific physical activity of a child that has been deleted', () => {
 
-            it('physical.activities.get_id012: should return status code 404 and info message from physical activity not found', async () => {
+            it('physical.activities.get_id013: should return status code 404 and info message from physical activity not found', async () => {
 
                 await acc.deleteUser(accessTokenAdmin, defaultChild.id)
 
@@ -349,21 +364,6 @@ describe('Routes: children.physicalactivities', () => {
                     .expect(404)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_404_PHYSICAL_ACTIVITY_NOT_FOUND)
-                    })
-            })
-        })
-
-        describe('when a child get the physical activity of other child', () => {
-
-            it('physical.activities.get_id013: should return the status code 403 and info message from insufficient permissions', () => {
-
-                return request(URI)
-                    .get(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessTokenChild))
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })

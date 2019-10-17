@@ -106,6 +106,7 @@ describe('Routes: children.physicalactivities', () => {
                             expect(res.body[index]).to.have.property('end_time', activity.end_time!.toISOString())
                             expect(res.body[index]).to.have.property('duration', activity.duration)
                             expect(res.body[index]).to.have.property('calories', activity.calories)
+                            expect(res.body[index]).to.have.property('distance', activity.distance)
                             if (activity.steps) {
                                 expect(res.body[index]).to.have.property('steps', activity.steps)
                             }
@@ -113,8 +114,12 @@ describe('Routes: children.physicalactivities', () => {
                                 expect(res.body[index].levels)
                                     .to.eql(activity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
                             }
+                            if (activity.heart_rate) {
+                                expect(res.body[index].heart_rate).to.deep.equal(activity.heart_rate)
+                            }
                             expect(res.body[index]).to.have.property('child_id', activity.child_id)
                         })
+                        
                     })
             })
 
@@ -137,6 +142,7 @@ describe('Routes: children.physicalactivities', () => {
                             expect(res.body[index]).to.have.property('end_time', activity.end_time!.toISOString())
                             expect(res.body[index]).to.have.property('duration', activity.duration)
                             expect(res.body[index]).to.have.property('calories', activity.calories)
+                            expect(res.body[index]).to.have.property('distance', activity.distance)
                             if (activity.steps) {
                                 expect(res.body[index]).to.have.property('steps', activity.steps)
                             }
@@ -144,7 +150,11 @@ describe('Routes: children.physicalactivities', () => {
                                 expect(res.body[index].levels)
                                     .to.eql(activity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
                             }
+                            if (activity.heart_rate) {
+                                expect(res.body[index].heart_rate).to.deep.equal(activity.heart_rate)
+                            }
                             expect(res.body[index]).to.have.property('child_id', activity.child_id)
+
                         })
                     })
             })
@@ -168,6 +178,7 @@ describe('Routes: children.physicalactivities', () => {
                             expect(res.body[index]).to.have.property('end_time', activity.end_time!.toISOString())
                             expect(res.body[index]).to.have.property('duration', activity.duration)
                             expect(res.body[index]).to.have.property('calories', activity.calories)
+                            expect(res.body[index]).to.have.property('distance', activity.distance)
                             if (activity.steps) {
                                 expect(res.body[index]).to.have.property('steps', activity.steps)
                             }
@@ -175,7 +186,11 @@ describe('Routes: children.physicalactivities', () => {
                                 expect(res.body[index].levels)
                                     .to.eql(activity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
                             }
+                            if (activity.heart_rate) {
+                                expect(res.body[index].heart_rate).to.deep.equal(activity.heart_rate)
+                            }
                             expect(res.body[index]).to.have.property('child_id', activity.child_id)
+
                         })
                     })
             })
@@ -199,6 +214,7 @@ describe('Routes: children.physicalactivities', () => {
                             expect(res.body[index]).to.have.property('end_time', activity.end_time!.toISOString())
                             expect(res.body[index]).to.have.property('duration', activity.duration)
                             expect(res.body[index]).to.have.property('calories', activity.calories)
+                            expect(res.body[index]).to.have.property('distance', activity.distance)
                             if (activity.steps) {
                                 expect(res.body[index]).to.have.property('steps', activity.steps)
                             }
@@ -206,7 +222,11 @@ describe('Routes: children.physicalactivities', () => {
                                 expect(res.body[index].levels)
                                     .to.eql(activity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
                             }
+                            if (activity.heart_rate) {
+                                expect(res.body[index].heart_rate).to.deep.equal(activity.heart_rate)
+                            }
                             expect(res.body[index]).to.have.property('child_id', activity.child_id)
+
                         })
                     })
             })
@@ -230,6 +250,7 @@ describe('Routes: children.physicalactivities', () => {
                             expect(res.body[index]).to.have.property('end_time', activity.end_time!.toISOString())
                             expect(res.body[index]).to.have.property('duration', activity.duration)
                             expect(res.body[index]).to.have.property('calories', activity.calories)
+                            expect(res.body[index]).to.have.property('distance', activity.distance)
                             if (activity.steps) {
                                 expect(res.body[index]).to.have.property('steps', activity.steps)
                             }
@@ -237,7 +258,11 @@ describe('Routes: children.physicalactivities', () => {
                                 expect(res.body[index].levels)
                                     .to.eql(activity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
                             }
+                            if (activity.heart_rate) {
+                                expect(res.body[index].heart_rate).to.deep.equal(activity.heart_rate)
+                            }
                             expect(res.body[index]).to.have.property('child_id', activity.child_id)
+
                         })
                     })
             })
@@ -261,6 +286,7 @@ describe('Routes: children.physicalactivities', () => {
                             expect(res.body[index]).to.have.property('end_time', activity.end_time!.toISOString())
                             expect(res.body[index]).to.have.property('duration', activity.duration)
                             expect(res.body[index]).to.have.property('calories', activity.calories)
+                            expect(res.body[index]).to.have.property('distance', activity.distance)
                             if (activity.steps) {
                                 expect(res.body[index]).to.have.property('steps', activity.steps)
                             }
@@ -268,7 +294,11 @@ describe('Routes: children.physicalactivities', () => {
                                 expect(res.body[index].levels)
                                     .to.eql(activity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
                             }
+                            if (activity.heart_rate) {
+                                expect(res.body[index].heart_rate).to.deep.equal(activity.heart_rate)
+                            }
                             expect(res.body[index]).to.have.property('child_id', activity.child_id)
+
                         })
                     })
             })
@@ -297,6 +327,7 @@ describe('Routes: children.physicalactivities', () => {
                                 expect(activity_res).to.have.property('end_time', PHYSICAL_ACTIVITIES[index].end_time!.toISOString())
                                 expect(activity_res).to.have.property('duration', PHYSICAL_ACTIVITIES[index].duration)
                                 expect(activity_res).to.have.property('calories', PHYSICAL_ACTIVITIES[index].calories)
+                                expect(activity_res).to.have.property('distance', PHYSICAL_ACTIVITIES[index].distance)
                                 if (activity_res.steps) {
                                     expect(activity_res).to.have.property('steps', PHYSICAL_ACTIVITIES[index].steps)
                                 }
@@ -304,6 +335,9 @@ describe('Routes: children.physicalactivities', () => {
                                     expect(activity_res.levels)
                                         .to.eql(PHYSICAL_ACTIVITIES[index].levels!.map((elem: PhysicalActivityLevel) => elem.toJSON()))
                                 }
+                                if (activity_res.heart_rate) {
+                                    expect(activity_res.heart_rate).to.deep.equal(PHYSICAL_ACTIVITIES[index].heart_rate)
+                                }                                
                                 expect(activity_res).to.have.property('child_id', PHYSICAL_ACTIVITIES[index].child_id)
                             })
                         })
@@ -337,6 +371,7 @@ describe('Routes: children.physicalactivities', () => {
                                 expect(activity_res).to.have.property('end_time', PHYSICAL_ACTIVITIES_COPY[index].end_time!.toISOString())
                                 expect(activity_res).to.have.property('duration', PHYSICAL_ACTIVITIES_COPY[index].duration)
                                 expect(activity_res).to.have.property('calories', PHYSICAL_ACTIVITIES_COPY[index].calories)
+                                expect(activity_res).to.have.property('distance', PHYSICAL_ACTIVITIES_COPY[index].distance)
                                 if (activity_res.steps) {
                                     expect(activity_res).to.have.property('steps', PHYSICAL_ACTIVITIES_COPY[index].steps)
                                 }
@@ -344,6 +379,9 @@ describe('Routes: children.physicalactivities', () => {
                                     expect(activity_res.levels)
                                         .to.eql(PHYSICAL_ACTIVITIES_COPY[index].levels!.map((elem: PhysicalActivityLevel) => elem.toJSON()))
                                 }
+                                if (activity_res.heart_rate) {
+                                    expect(activity_res.heart_rate).to.deep.equal(PHYSICAL_ACTIVITIES_COPY[index].heart_rate)
+                                }                                   
                                 expect(activity_res).to.have.property('child_id', PHYSICAL_ACTIVITIES_COPY[index].child_id)
                             })
                         })
@@ -375,6 +413,7 @@ describe('Routes: children.physicalactivities', () => {
                                 expect(activity_res).to.have.property('end_time', PHYSICAL_ACTIVITIES_COPY[index].end_time!.toISOString())
                                 expect(activity_res).to.have.property('duration', PHYSICAL_ACTIVITIES_COPY[index].duration)
                                 expect(activity_res).to.have.property('calories', PHYSICAL_ACTIVITIES_COPY[index].calories)
+                                expect(activity_res).to.have.property('distance', PHYSICAL_ACTIVITIES_COPY[index].distance)
                                 if (activity_res.steps) {
                                     expect(activity_res).to.have.property('steps', PHYSICAL_ACTIVITIES_COPY[index].steps)
                                 }
@@ -382,6 +421,9 @@ describe('Routes: children.physicalactivities', () => {
                                     expect(activity_res.levels)
                                         .to.eql(PHYSICAL_ACTIVITIES_COPY[index].levels!.map((elem: PhysicalActivityLevel) => elem.toJSON()))
                                 }
+                                if (activity_res.heart_rate) {
+                                    expect(activity_res.heart_rate).to.deep.equal(PHYSICAL_ACTIVITIES_COPY[index].heart_rate)
+                                }                                 
                                 expect(activity_res).to.have.property('child_id', PHYSICAL_ACTIVITIES_COPY[index].child_id)
                             })
                         })
@@ -399,7 +441,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_CHILD_ID)
                     })
             })            
 
@@ -437,6 +479,5 @@ describe('Routes: children.physicalactivities', () => {
                 })
             })
         })
-
     })
 })
