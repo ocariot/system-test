@@ -103,7 +103,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.get_all002: should return status code 200 and a list of children and information when the child has already first logged in to the admin user', async () => {
+            it('children.get_all002: should return status code 200 and a list of children and information when the child has already first logged in to the system for admin user', async () => {
                 await acc.auth(defaultChild.username!, defaultChild.password!)
                 await acc.auth(anotherChild.username!, anotherChild.password!)
 

@@ -8,7 +8,7 @@ import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Child } from '../../../src/account-service/model/child'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 
-describe('Routes: users.educators.children.groups', () => {
+describe('Routes: educators.children.groups', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -121,7 +121,7 @@ describe('Routes: users.educators.children.groups', () => {
         }
     })
 
-    describe('PATCH /users/educators/:educator_id/children/groups/:group_id', () => {
+    describe('PATCH /educators/:educator_id/children/groups/:group_id', () => {
 
         context('when the educator update your children group successfully', () => {
 
@@ -136,7 +136,7 @@ describe('Routes: users.educators.children.groups', () => {
                 }
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
@@ -148,12 +148,7 @@ describe('Routes: users.educators.children.groups', () => {
                         expect(res.body.children.length).to.eql(1)
                         expect(res.body.children[0]).to.have.property('id')
                         expect(res.body.children[0].username).to.eql(defaultChild.username)
-                        expect(res.body.children[0].institution).to.have.property('id')
-                        expect(res.body.children[0].institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body.children[0].institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body.children[0].institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body.children[0].institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body.children[0].institution.longitude).to.eql(defaultInstitution.longitude)
+                        expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
                         expect(res.body.children[0].age).to.eql(defaultChild.age)
                         expect(res.body.children[0].gender).to.eql(defaultChild.gender)
                         expect(res.body.school_class).to.eql(defaultChildrenGroup.school_class)
@@ -161,10 +156,10 @@ describe('Routes: users.educators.children.groups', () => {
             })
 
             it('educators.children.groups.patch002: should return status code 200 and associate a child to the children group', () => {
+                defaultChildrenGroup.children!.push(anotherChild) // associating anotherChild to the children group
 
-                // associating anotherChild to the children group
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .send({ children: [defaultChild.id, anotherChild.id] })
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
@@ -176,21 +171,11 @@ describe('Routes: users.educators.children.groups', () => {
                         expect(res.body.children.length).to.eql(2)
                         expect(res.body.children[0]).to.have.property('id')
                         expect(res.body.children[0].username).to.eql(defaultChild.username)
-                        expect(res.body.children[0].institution).to.have.property('id')
-                        expect(res.body.children[0].institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body.children[0].institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body.children[0].institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body.children[0].institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body.children[0].institution.longitude).to.eql(defaultInstitution.longitude)
+                        expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
                         expect(res.body.children[0].age).to.eql(defaultChild.age)
                         expect(res.body.children[0].gender).to.eql(defaultChild.gender)
                         expect(res.body.children[1].username).to.eql(anotherChild.username)
-                        expect(res.body.children[1].institution).to.have.property('id')
-                        expect(res.body.children[1].institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body.children[1].institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body.children[1].institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body.children[1].institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body.children[1].institution.longitude).to.eql(defaultInstitution.longitude)
+                        expect(res.body.children[1].institution_id).to.eql(defaultInstitution.id)
                         expect(res.body.children[1].age).to.eql(anotherChild.age)
                         expect(res.body.children[1].gender).to.eql(anotherChild.gender)
                         expect(res.body.school_class).to.eql(defaultChildrenGroup.school_class)
@@ -201,7 +186,7 @@ describe('Routes: users.educators.children.groups', () => {
 
                 // dissociating anotherChild from children group
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .send({ children: [defaultChild.id] })
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
@@ -213,12 +198,7 @@ describe('Routes: users.educators.children.groups', () => {
                         expect(res.body.children.length).to.eql(1)
                         expect(res.body.children[0]).to.have.property('id')
                         expect(res.body.children[0].username).to.eql(defaultChild.username)
-                        expect(res.body.children[0].institution).to.have.property('id')
-                        expect(res.body.children[0].institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body.children[0].institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body.children[0].institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body.children[0].institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body.children[0].institution.longitude).to.eql(defaultInstitution.longitude)
+                        expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
                         expect(res.body.children[0].age).to.eql(defaultChild.age)
                         expect(res.body.children[0].gender).to.eql(defaultChild.gender)
                         expect(res.body.school_class).to.eql(defaultChildrenGroup.school_class)
@@ -244,7 +224,7 @@ describe('Routes: users.educators.children.groups', () => {
                     defaultChildrenGroup.name = 'new cool username'
 
                     return request(URI)
-                        .patch(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                        .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                         .send({ name: 'new cool name' })
                         .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                         .set('Content-Type', 'application/json')
@@ -256,12 +236,7 @@ describe('Routes: users.educators.children.groups', () => {
                             expect(res.body.children.length).to.eql(1)
                             expect(res.body.children[0]).to.have.property('id')
                             expect(res.body.children[0].username).to.eql(defaultChild.username)
-                            expect(res.body.children[0].institution).to.have.property('id')
-                            expect(res.body.children[0].institution.type).to.eql(defaultInstitution.type)
-                            expect(res.body.children[0].institution.name).to.eql(defaultInstitution.name)
-                            expect(res.body.children[0].institution.address).to.eql(defaultInstitution.address)
-                            expect(res.body.children[0].institution.latitude).to.eql(defaultInstitution.latitude)
-                            expect(res.body.children[0].institution.longitude).to.eql(defaultInstitution.longitude)
+                            expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
                             expect(res.body.children[0].age).to.eql(defaultChild.age)
                             expect(res.body.children[0].gender).to.eql(defaultChild.gender)
                             expect(res.body.school_class).to.eql(defaultChildrenGroup.school_class)
@@ -275,7 +250,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.groups.patch005: should return status code 409 and info message about children group is already registered', () => {
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .send({ name: anotherChildGroup.name })
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
@@ -289,10 +264,11 @@ describe('Routes: users.educators.children.groups', () => {
         describe('when a validation error occurs', () => {
 
             it('educators.children.groups.patch006: should return status code 400 and message from child(ren) not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111'
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
-                    .send({ children: [defaultChild.id, acc.NON_EXISTENT_ID] })
+                    .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .send({ children: [defaultChild.id, NON_EXISTENT_ID] })
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -302,43 +278,45 @@ describe('Routes: users.educators.children.groups', () => {
             })
 
             it('educators.children.groups.patch007: should return status code 400 and info message from invalid ID, because children_id(s) is invalid', () => {
+                const INVALID_ID = '123'
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
-                    .send({ children: [acc.INVALID_ID] })
+                    .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .send({ children: [INVALID_ID] })
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
-                        // caso o ID contenha caracteres não numéricos (ex: 5a) o erro retornado é correto
                     })
 
             })
 
             it('educators.children.groups.patch008: should return status code 400 and info message from invalid ID, because educator_id is invalid', () => {
+                const INVALID_ID = '123'
 
                 return request(URI)
-                    .patch(`/users/educators/${acc.INVALID_ID}/children/groups/${defaultChildrenGroup.id}`)
+                    .patch(`/educators/${INVALID_ID}/children/groups/${defaultChildrenGroup.id}`)
                     .send({ children: [defaultChild.id] })
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.EDUCATOR.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
 
             it('educators.children.groups.patch009: should return status code 400 and info message from invalid ID, because children group_id is invalid', () => {
+                const INVALID_ID = '123'
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}/children/groups/${acc.INVALID_ID}`)
+                    .patch(`/educators/${defaultEducator.id}/children/groups/${INVALID_ID}`)
                     .send({ children: [defaultChild.id] })
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
 
@@ -349,7 +327,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.groups.patch010: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .send({})
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -362,7 +340,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.groups.patch011: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .send({})
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
@@ -375,7 +353,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.groups.patch012: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .send({})
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
@@ -388,7 +366,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.groups.patch013: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .send({})
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
@@ -401,7 +379,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.groups.patch014: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .send({})
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
@@ -414,7 +392,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.groups.patch015: should return status code 403 and info message from insufficient permissions for another educator user', () => {
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .send({})
                     .set('Authorization', 'Bearer '.concat(anotherEducatorToken))
                     .set('Content-Type', 'application/json')
@@ -429,7 +407,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.groups.patch016: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
-                    .patch(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .send({})
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')

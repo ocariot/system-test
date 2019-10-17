@@ -8,7 +8,7 @@ import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Child } from '../../../src/account-service/model/child'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group';
 
-describe('Routes: users.educators.children.groups', () => {
+describe('Routes: educators.children.groups', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -96,7 +96,7 @@ describe('Routes: users.educators.children.groups', () => {
             }
 
         } catch (err) {
-            console.log('Failure on Before from users.educator.children.groups.post test: : ', err)
+            console.log('Failure on Before from educator.children.groups.post test: : ', err)
         }
     })
 
@@ -109,12 +109,12 @@ describe('Routes: users.educators.children.groups', () => {
         }
     })
 
-    describe('POST /users/educators/:educator_id/children/groups', () => {
+    describe('POST /educators/:educator_id/children/groups', () => {
         afterEach(async () => {
             try {
                 await accountDB.deleteChildrenGroups()
             } catch (err) {
-                console.log('Failure in users.educators.children.groups test: ', err)
+                console.log('Failure in educators.children.groups test: ', err)
             }
         })
 
@@ -128,7 +128,7 @@ describe('Routes: users.educators.children.groups', () => {
                 }
 
                 return request(URI)
-                    .post(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .post(`/educators/${defaultEducator.id}/children/groups`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
@@ -140,12 +140,7 @@ describe('Routes: users.educators.children.groups', () => {
                         expect(res.body.children.length).to.eql(1)
                         expect(res.body.children[0]).to.have.property('id')
                         expect(res.body.children[0].username).to.eql(defaultChild.username)
-                        expect(res.body.children[0].institution).to.have.property('id')
-                        expect(res.body.children[0].institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body.children[0].institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body.children[0].institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body.children[0].institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body.children[0].institution.longitude).to.eql(defaultInstitution.longitude)
+                        expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
                         expect(res.body.children[0].age).to.eql(defaultChild.age)
                         expect(res.body.children[0].gender).to.eql(defaultChild.gender)
                     })
@@ -156,14 +151,14 @@ describe('Routes: users.educators.children.groups', () => {
                     try {
                         await acc.saveChildrenGroupsForEducator(defaultEducatorToken, defaultEducator, defaultChildrenGroup)
                     } catch (err) {
-                        console.log('Failure in users.educators.children.groups test: ', err)
+                        console.log('Failure in educators.children.groups test: ', err)
                     }
                 })
 
                 it('educators.children.group.post002: should return status code 201 and saved the children group', () => {
 
                     return request(URI)
-                        .post(`/users/educators/${anotherEducator.id}/children/groups`)
+                        .post(`/educators/${anotherEducator.id}/children/groups`)
                         .send(defaultChildrenGroup)
                         .set('Authorization', 'Bearer '.concat(anotherEducatorToken))
                         .set('Content-Type', 'application/json')
@@ -175,12 +170,7 @@ describe('Routes: users.educators.children.groups', () => {
                             expect(res.body.children.length).to.eql(1)
                             expect(res.body.children[0]).to.have.property('id')
                             expect(res.body.children[0].username).to.eql(defaultChild.username)
-                            expect(res.body.children[0].institution).to.have.property('id')
-                            expect(res.body.children[0].institution.type).to.eql(defaultInstitution.type)
-                            expect(res.body.children[0].institution.name).to.eql(defaultInstitution.name)
-                            expect(res.body.children[0].institution.address).to.eql(defaultInstitution.address)
-                            expect(res.body.children[0].institution.latitude).to.eql(defaultInstitution.latitude)
-                            expect(res.body.children[0].institution.longitude).to.eql(defaultInstitution.longitude)
+                            expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
                             expect(res.body.children[0].age).to.eql(defaultChild.age)
                             expect(res.body.children[0].gender).to.eql(defaultChild.gender)
                         })
@@ -200,7 +190,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.group.post003: should return status code 409 and message info about children group is already registered', () => {
 
                 return request(URI)
-                    .post(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .post(`/educators/${defaultEducator.id}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
@@ -221,7 +211,7 @@ describe('Routes: users.educators.children.groups', () => {
                 }
 
                 return request(URI)
-                    .post(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .post(`/educators/${defaultEducator.id}/children/groups`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
@@ -239,7 +229,7 @@ describe('Routes: users.educators.children.groups', () => {
                 }
 
                 return request(URI)
-                    .post(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .post(`/educators/${defaultEducator.id}/children/groups`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
@@ -260,7 +250,7 @@ describe('Routes: users.educators.children.groups', () => {
                 }
 
                 return request(URI)
-                    .post(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .post(`/educators/${defaultEducator.id}/children/groups`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
@@ -273,26 +263,27 @@ describe('Routes: users.educators.children.groups', () => {
             })
 
             it('educators.children.group.post007: should return status code 400 and info message from children id(ids) is invalid', () => {
+                const INVALID_ID = '123' // invalid id of the child
 
                 const body = {
                     name: 'Another Children Group',
-                    children: new Array<string | undefined>(acc.INVALID_ID),
+                    children: new Array<string | undefined>(INVALID_ID),
                     school_class: '4th Grade'
                 }
 
                 return request(URI)
-                    .post(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .post(`/educators/${defaultEducator.id}/children/groups`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
-                        // caso o ID contenha caracteres numéricos e alfabéticos (ex: 5a) o erro retornado é correto
                     })
             })
 
             it('educators.children.group.post008: should return status code 400 and info message from educator_id is invalid', () => {
+                const INVALID_ID = '123' // invalid id of the educator
 
                 const body = {
                     name: 'Another Children Group',
@@ -301,13 +292,13 @@ describe('Routes: users.educators.children.groups', () => {
                 }
 
                 return request(URI)
-                    .post(`/users/educators/${acc.INVALID_ID}/children/groups`)
+                    .post(`/educators/${INVALID_ID}/children/groups`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.EDUCATOR.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
 
@@ -315,13 +306,14 @@ describe('Routes: users.educators.children.groups', () => {
 
         describe('when the educator is not found', () => {
             it('educators.children.group.post009: should return status code 404 and info message about educator not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the educator
 
                 return request(URI)
-                    .post(`/users/educators/${acc.NON_EXISTENT_ID}/children/groups`)
+                    .post(`/educators/${NON_EXISTENT_ID}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
-                    .expect(404)
+                    .expect(400)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.EDUCATOR.ERROR_404_EDUCATOR_NOT_FOUND)
                     })
@@ -333,7 +325,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.group.post010: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
-                    .post(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .post(`/educators/${defaultEducator.id}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -346,7 +338,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.group.post011: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .post(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .post(`/educators/${defaultEducator.id}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
@@ -359,7 +351,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.group.post012: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .post(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .post(`/educators/${defaultEducator.id}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
@@ -372,7 +364,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.group.post013: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
-                    .post(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .post(`/educators/${defaultEducator.id}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
@@ -385,7 +377,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.group.post014: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
-                    .post(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .post(`/educators/${defaultEducator.id}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
@@ -398,7 +390,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.group.post015: should return status code 403 and info message from insufficient permissions for another educator user', () => {
 
                 return request(URI)
-                    .post(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .post(`/educators/${defaultEducator.id}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
@@ -413,7 +405,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.group.post016: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
-                    .post(`/users/educators/${defaultEducator.id}/children/groups`)
+                    .post(`/educators/${defaultEducator.id}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')

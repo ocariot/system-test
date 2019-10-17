@@ -8,7 +8,7 @@ import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Child } from '../../../src/account-service/model/child'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 
-describe('Routes: users.educators.children.groups', () => {
+describe('Routes: educators.children.groups', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -94,7 +94,7 @@ describe('Routes: users.educators.children.groups', () => {
         }
     })
 
-    describe('DELETE /users/educators/:educator_id/children/groups/:group_id', () => {
+    describe('DELETE /educators/:educator_id/children/groups/:group_id', () => {
         beforeEach(async () => {
             try {
                 const resultDefaultChildrenGroup = await acc.saveChildrenGroupsForEducator(defaultEducatorToken, defaultEducator, defaultChildrenGroup)
@@ -115,7 +115,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.groups.delete001: should return status code 204 and no content', () => {
 
                 return request(URI)
-                    .delete(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .delete(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -127,9 +127,10 @@ describe('Routes: users.educators.children.groups', () => {
 
         describe('when the educator is not found', () => {
             it('educators.children.groups.delete002: should return status code 204 and no content', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the educator
 
                 return request(URI)
-                    .delete(`/users/educators/${acc.NON_EXISTENT_ID}/children/groups/${defaultChildrenGroup.id}`)
+                    .delete(`/educators/${NON_EXISTENT_ID}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -141,37 +142,40 @@ describe('Routes: users.educators.children.groups', () => {
 
         describe('when the educator_id is invalid', () => {
             it('educators.children.groups.delete003: should return status code 400 and message for invalid educator id', () => {
+                const INVALID_ID = '123' // invalid id of the educator
 
                 return request(URI)
-                    .delete(`/users/educators/${acc.INVALID_ID}/children/groups/${defaultChildrenGroup.id}`)
+                    .delete(`/educators/${INVALID_ID}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.EDUCATOR.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
         })
 
         describe('when the children group_id is invalid', () => {
             it('educators.children.groups.delete004: should return status code 400 and message for invalid children group id', () => {
+                const INVALID_ID = '123' // invalid id of the child group
 
                 return request(URI)
-                    .delete(`/users/educators/${defaultEducator.id}/children/groups/${acc.INVALID_ID}`)
+                    .delete(`/educators/${defaultEducator.id}/children/groups/${INVALID_ID}`)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
         })
 
         describe('when the children group is not founded', () => {
             it('educators.children.groups.delete005: should return status code 404 and info message for children group not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the child group
 
                 return request(URI)
-                    .delete(`/users/educators/${defaultEducator.id}/children/groups/${acc.NON_EXISTENT_ID}`)
+                    .delete(`/educators/${defaultEducator.id}/children/groups/${NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -186,7 +190,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.groups.delete006: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
-                    .delete(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .delete(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -198,7 +202,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.groups.delete007: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .delete(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .delete(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -210,7 +214,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.groups.delete008: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .delete(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .delete(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -222,7 +226,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.groups.delete009: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
-                    .delete(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .delete(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -234,7 +238,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.groups.delete010: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
-                    .delete(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .delete(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -246,7 +250,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.groups.delete011: should return status code 403 and info message from insufficient permissions for another educator user', () => {
 
                 return request(URI)
-                    .delete(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .delete(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -261,7 +265,7 @@ describe('Routes: users.educators.children.groups', () => {
             it('educators.children.groups.delete012: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
-                    .delete(`/users/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .delete(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
                     .expect(401)

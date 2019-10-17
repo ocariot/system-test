@@ -6,7 +6,7 @@ import { accountDB } from '../../../src/account-service/database/account.db'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Application } from '../../../src/account-service/model/application';
 
-describe('Routes: users.applications', () => {
+describe('Routes: applications', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -56,7 +56,7 @@ describe('Routes: users.applications', () => {
                 defaultApplicationToken = await acc.auth(defaultApplication.username, defaultApplication.password)
 
         } catch (err) {
-            console.log('Failure on Before from users.applications.get_id test: ', err)
+            console.log('Failure on Before from applications.get_id test: ', err)
         }
     })
 
@@ -69,37 +69,43 @@ describe('Routes: users.applications', () => {
         }
     })
 
-    describe('GET /users/application/:application_id', () => {
+    describe('GET /application/:application_id', () => {
 
         context('when get a unique application successfully', () => {
 
             it('applications.get_id001: should return status code 200 and a application obtained by admin user', () => {
 
                 return request(URI)
-                    .get(`/users/applications/${defaultApplication.id}`)
+                    .get(`/applications/${defaultApplication.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body).to.have.property('id', defaultApplication.id)
-                        expect(res.body).to.have.property('username', defaultApplication.username)
-                        expect(res.body).to.have.property('application_name', defaultApplication.application_name)
-                        expect(res.body).to.have.property('institution')
+                        expect(res.body.id).to.eql(defaultApplication.id)
+                        expect(res.body.username).to.eql(defaultApplication.username)
+                        expect(res.body.application_name).to.eql(defaultApplication.application_name)
+                        expect(res.body.institution_id).to.eql(defaultInstitution.id)
+                        if (defaultApplication.last_login) {
+                            expect(res.body.last_login).to.eql(defaultApplication.last_login)
+                        }
                     })
             })
 
             it('applications.get_id002: should return status code 200 and a application obtained by own application', () => {
 
                 return request(URI)
-                    .get(`/users/applications/${defaultApplication.id}`)
+                    .get(`/applications/${defaultApplication.id}`)
                     .set('Authorization', 'Bearer '.concat(defaultApplicationToken))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body).to.have.property('id', defaultApplication.id)
-                        expect(res.body).to.have.property('username', defaultApplication.username)
-                        expect(res.body).to.have.property('application_name', defaultApplication.application_name)
-                        expect(res.body).to.have.property('institution')
+                        expect(res.body.id).to.eql(defaultApplication.id)
+                        expect(res.body.username).to.eql(defaultApplication.username)
+                        expect(res.body.application_name).to.eql(defaultApplication.application_name)
+                        expect(res.body.institution_id).to.eql(defaultInstitution.id)
+                        if (defaultApplication.last_login) {
+                            expect(res.body.last_login).to.eql(defaultApplication.last_login)
+                        }
                     })
             })
 
@@ -107,9 +113,10 @@ describe('Routes: users.applications', () => {
 
         describe('when the application is not found', () => {
             it('applications.get_id003: should return status code 404 and info message about application not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the application
 
                 return request(URI)
-                    .get(`/users/applications/${acc.NON_EXISTENT_ID}`)
+                    .get(`/applications/${NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(defaultApplicationToken))
                     .set('Content-Type', 'application/json')
                     .expect(404)
@@ -121,14 +128,15 @@ describe('Routes: users.applications', () => {
 
         describe('when the application_id provided is invalid', () => {
             it('applications.get_id004: should return status code 400 and info message from invalid application_id', () => {
+                const INVALID_ID = '123' // invalid id of the application
 
                 return request(URI)
-                    .get(`/users/applications/${acc.INVALID_ID}`)
+                    .get(`/applications/${INVALID_ID}`)
                     .set('Authorization', 'Bearer '.concat(defaultApplicationToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.APPLICATION.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
         })
@@ -138,7 +146,7 @@ describe('Routes: users.applications', () => {
             it('applications.get_id005: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
-                    .get(`/users/applications/${defaultApplication.id}`)
+                    .get(`/applications/${defaultApplication.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -150,7 +158,7 @@ describe('Routes: users.applications', () => {
             it('applications.get_id006: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .get(`/users/applications/${defaultApplication.id}`)
+                    .get(`/applications/${defaultApplication.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -162,7 +170,7 @@ describe('Routes: users.applications', () => {
             it('applications.get_id007: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
-                    .get(`/users/applications/${defaultApplication.id}`)
+                    .get(`/applications/${defaultApplication.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -174,7 +182,7 @@ describe('Routes: users.applications', () => {
             it('applications.get_id008: should return status code 403 and info message from insufficient permissions for another application user', () => {
 
                 return request(URI)
-                    .get(`/users/applications/${defaultApplication.id}`)
+                    .get(`/applications/${defaultApplication.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -186,7 +194,7 @@ describe('Routes: users.applications', () => {
             it('applications.get_id009: should return status code 403 and info message from insufficient permissions for another child user', () => {
 
                 return request(URI)
-                    .get(`/users/applications/${defaultApplication.id}`)
+                    .get(`/applications/${defaultApplication.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -201,7 +209,7 @@ describe('Routes: users.applications', () => {
             it('applications.get_id010: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
-                    .get(`/users/applications/${defaultApplication.id}`)
+                    .get(`/applications/${defaultApplication.id}`)
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
                     .expect(401)
