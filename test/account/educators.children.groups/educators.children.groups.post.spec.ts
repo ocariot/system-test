@@ -315,7 +315,7 @@ describe('Routes: educators.children.groups', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.EDUCATOR.ERROR_404_EDUCATOR_NOT_FOUND)
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUP_EDUCATOR_NOT_FOUND)
                     })
             })
         })

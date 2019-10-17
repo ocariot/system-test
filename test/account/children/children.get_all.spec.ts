@@ -181,9 +181,6 @@ describe('Routes: children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        console.log('ARR ORIG', childArr)
-                        console.log('RES', res.body)
-                        console.log('ARR SORT', childrenSortedByUserNameArr)
                         for (let i = 0; i < res.body.length; i++) {
                             expect(res.body[i].username).to.eql(childrenSortedByUserNameArr[i].username)
                             expect(res.body[i].id).to.eql(childrenSortedByUserNameArr[i].id)
