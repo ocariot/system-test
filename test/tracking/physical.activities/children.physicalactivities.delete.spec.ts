@@ -11,7 +11,7 @@ import { ChildMock } from '../../mocks/account-service/child.mock'
 import { PhysicalActivity } from '../../../src/tracking-service/model/physical.activity'
 import { PhysicalActivityMock } from '../../mocks/tracking-service/physical.activity.mock'
 
-describe('Routes: users.children.physicalactivities', () => {
+describe('Routes: children.physicalactivities', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 

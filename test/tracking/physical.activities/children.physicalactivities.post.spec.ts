@@ -21,7 +21,7 @@ import { ActivityLevelType, PhysicalActivityLevel } from '../../../src/tracking-
 import { PhysicalActivityMock, ActivityTypeMock } from '../../mocks/tracking-service/physical.activity.mock'
 import { HeartRateZone } from '../../../src/tracking-service/model/heart.rate.zone'
 
-describe('Routes: users.children.physicalactivities', () => {
+describe('Routes: children.physicalactivities', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -225,7 +225,9 @@ describe('Routes: users.children.physicalactivities', () => {
                         expect(res.body.duration).to.eql(physicalActivity.duration)
                         expect(res.body.calories).to.eql(physicalActivity.calories)
                         expect(res.body.distance).to.eql(physicalActivity.distance)
-                        if (res.body.steps) expect(res.body.steps).to.eql(physicalActivity.steps)
+                        if (res.body.steps) {
+                            expect(res.body.steps).to.eql(physicalActivity.steps)
+                        }
                         if (physicalActivity.levels) {
                             expect(res.body.levels).to.eql(physicalActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
                         }
@@ -1073,7 +1075,7 @@ describe('Routes: users.children.physicalactivities', () => {
 
             it('physical.activities.post026: should return 400 and info message from error, when try create a activity for admin', async () => {
 
-                const ADMIN_ID = await acc.getAdminID() 
+                const ADMIN_ID = await acc.getAdminID()
 
                 return request(URI)
                     .post(`/children/${ADMIN_ID}/physicalactivities`)

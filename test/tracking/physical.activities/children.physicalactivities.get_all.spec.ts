@@ -12,7 +12,7 @@ import { PhysicalActivity } from '../../../src/tracking-service/model/physical.a
 import { PhysicalActivityMock } from '../../mocks/tracking-service/physical.activity.mock'
 import { PhysicalActivityLevel } from '../../../src/tracking-service/model/physical.activity.level'
 
-describe('Routes: users.children.physicalactivities', () => {
+describe('Routes: children.physicalactivities', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 

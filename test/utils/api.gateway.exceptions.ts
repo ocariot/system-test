@@ -96,7 +96,7 @@ export abstract class ApiGatewayException {
         ERROR_400_LEVEL_NAME_IS_INVALID: new ApiException(400, 'Level are not in a format that is supported!', 'Must have values ​​for the following levels: sedentary, lightly, fairly, very.').toJson(),
         ERROR_400_LEVEL_DURATION_IS_NEGATIVE: new ApiException(400, 'Some (or several) duration field of levels array is invalid...', 'Physical Activity Level validation failed: The value provided has a negative value!').toJson(),
         ERROR_400_INVALID_CHILD_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
-        ERROR_400_INVALID_PHYSICAL_ACTIVY_ID: new ApiException(400, 'Parameter {physicalactivity_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea, is expected.').toJson(),
+        ERROR_400_INVALID_PHYSICAL_ACTIVY_ID: new ApiException(400, 'Parameter {physicalactivity_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_400_ALL_PARAMETERS_OF_HEART_RATE_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'PhysicalActivityHeartRate validation failed: average, out_of_range_zone, fat_burn_zone, cardio_zone, peak_zone is required!').toJson(),
         ERROR_400_HEART_RATE_NEGATIVE_AVERAGE: new ApiException(400, 'Average field is invalid...', 'PhysicalActivityHeartRate validation failed: The value provided has a negative value!').toJson(),
         ERROR_400_HEART_RATE_PEAK_ZONE_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'PhysicalActivityHeartRate validation failed: peak_zone is required!').toJson(),

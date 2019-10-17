@@ -12,11 +12,12 @@ import { PhysicalActivity } from '../../../src/tracking-service/model/physical.a
 import { PhysicalActivityMock } from '../../mocks/tracking-service/physical.activity.mock'
 import { PhysicalActivityLevel } from '../../../src/tracking-service/model/physical.activity.level'
 
-describe('Routes: users.children.physicalactivities', () => {
+describe('Routes: children.physicalactivities', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
     let accessTokenAdmin: string
+    let accessTokenChild
     let accessTokenEducator: string
     let accessTokenHealthProfessional: string
     let accessTokenFamily: string
@@ -42,6 +43,7 @@ describe('Routes: users.children.physicalactivities', () => {
 
             const tokens = await acc.getAuths()
             accessTokenAdmin = tokens.admin.access_token
+            accessTokenChild = tokens.child.access_token
             accessTokenEducator = tokens.educator.access_token
             accessTokenHealthProfessional = tokens.health_professional.access_token
             accessTokenFamily = tokens.family.access_token
@@ -97,12 +99,16 @@ describe('Routes: users.children.physicalactivities', () => {
                         expect(res.body.end_time).to.eql(defaultActivity.end_time!.toISOString())
                         expect(res.body.duration).to.eql(defaultActivity.duration)
                         expect(res.body.calories).to.eql(defaultActivity.calories)
+                        expect(res.body.distance).to.eql(defaultActivity.distance)
                         if (defaultActivity.steps) {
                             expect(res.body.steps).to.eql(defaultActivity.steps)
                         }
                         if (defaultActivity.levels) {
                             expect(res.body.levels)
                                 .to.eql(defaultActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                        }
+                        if (defaultActivity.heart_rate) {
+                            expect(res.body.heart_rate).to.deep.equal(defaultActivity.heart_rate)
                         }
                         expect(res.body.child_id).to.eql(defaultActivity.child_id)
                     })
@@ -122,12 +128,16 @@ describe('Routes: users.children.physicalactivities', () => {
                         expect(res.body.end_time).to.eql(defaultActivity.end_time!.toISOString())
                         expect(res.body.duration).to.eql(defaultActivity.duration)
                         expect(res.body.calories).to.eql(defaultActivity.calories)
+                        expect(res.body.distance).to.eql(defaultActivity.distance)
                         if (defaultActivity.steps) {
                             expect(res.body.steps).to.eql(defaultActivity.steps)
                         }
                         if (defaultActivity.levels) {
                             expect(res.body.levels)
                                 .to.eql(defaultActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                        }
+                        if (defaultActivity.heart_rate) {
+                            expect(res.body.heart_rate).to.deep.equal(defaultActivity.heart_rate)
                         }
                         expect(res.body.child_id).to.eql(defaultActivity.child_id)
                     })
@@ -147,12 +157,16 @@ describe('Routes: users.children.physicalactivities', () => {
                         expect(res.body.end_time).to.eql(defaultActivity.end_time!.toISOString())
                         expect(res.body.duration).to.eql(defaultActivity.duration)
                         expect(res.body.calories).to.eql(defaultActivity.calories)
+                        expect(res.body.distance).to.eql(defaultActivity.distance)
                         if (defaultActivity.steps) {
                             expect(res.body.steps).to.eql(defaultActivity.steps)
                         }
                         if (defaultActivity.levels) {
                             expect(res.body.levels)
                                 .to.eql(defaultActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                        }
+                        if (defaultActivity.heart_rate) {
+                            expect(res.body.heart_rate).to.deep.equal(defaultActivity.heart_rate)
                         }
                         expect(res.body.child_id).to.eql(defaultActivity.child_id)
                     })
@@ -172,12 +186,16 @@ describe('Routes: users.children.physicalactivities', () => {
                         expect(res.body.end_time).to.eql(defaultActivity.end_time!.toISOString())
                         expect(res.body.duration).to.eql(defaultActivity.duration)
                         expect(res.body.calories).to.eql(defaultActivity.calories)
+                        expect(res.body.distance).to.eql(defaultActivity.distance)
                         if (defaultActivity.steps) {
                             expect(res.body.steps).to.eql(defaultActivity.steps)
                         }
                         if (defaultActivity.levels) {
                             expect(res.body.levels)
                                 .to.eql(defaultActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                        }
+                        if (defaultActivity.heart_rate) {
+                            expect(res.body.heart_rate).to.deep.equal(defaultActivity.heart_rate)
                         }
                         expect(res.body.child_id).to.eql(defaultActivity.child_id)
                     })
@@ -197,12 +215,16 @@ describe('Routes: users.children.physicalactivities', () => {
                         expect(res.body.end_time).to.eql(defaultActivity.end_time!.toISOString())
                         expect(res.body.duration).to.eql(defaultActivity.duration)
                         expect(res.body.calories).to.eql(defaultActivity.calories)
+                        expect(res.body.distance).to.eql(defaultActivity.distance)
                         if (defaultActivity.steps) {
                             expect(res.body.steps).to.eql(defaultActivity.steps)
                         }
                         if (defaultActivity.levels) {
                             expect(res.body.levels)
                                 .to.eql(defaultActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                        }
+                        if (defaultActivity.heart_rate) {
+                            expect(res.body.heart_rate).to.deep.equal(defaultActivity.heart_rate)
                         }
                         expect(res.body.child_id).to.eql(defaultActivity.child_id)
                     })
@@ -222,12 +244,16 @@ describe('Routes: users.children.physicalactivities', () => {
                         expect(res.body.end_time).to.eql(defaultActivity.end_time!.toISOString())
                         expect(res.body.duration).to.eql(defaultActivity.duration)
                         expect(res.body.calories).to.eql(defaultActivity.calories)
+                        expect(res.body.distance).to.eql(defaultActivity.distance)
                         if (defaultActivity.steps) {
                             expect(res.body.steps).to.eql(defaultActivity.steps)
                         }
                         if (defaultActivity.levels) {
                             expect(res.body.levels)
                                 .to.eql(defaultActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                        }
+                        if (defaultActivity.heart_rate) {
+                            expect(res.body.heart_rate).to.deep.equal(defaultActivity.heart_rate)
                         }
                         expect(res.body.child_id).to.eql(defaultActivity.child_id)
                     })
@@ -237,10 +263,12 @@ describe('Routes: users.children.physicalactivities', () => {
 
         describe('when physical activity is not found', () => {
 
+            const NON_EXISTENT_ID = '111111111111111111111111'
+
             it('physical.activities.get_id007: should return status code 404 and info message from physical activity not found', () => {
 
                 return request(URI)
-                    .get(`/children/${acc.NON_EXISTENT_ID}/physicalactivities/${defaultActivity.id}`)
+                    .get(`/children/${NON_EXISTENT_ID}/physicalactivities/${defaultActivity.id}`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(404)
@@ -252,7 +280,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.get_id008: should return status code 404 and info message from physical activity not found', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/physicalactivities/${acc.NON_EXISTENT_ID}`)
+                    .get(`/children/${defaultChild.id}/physicalactivities/${NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(404)
@@ -265,10 +293,12 @@ describe('Routes: users.children.physicalactivities', () => {
 
         describe('when a validation error occurs', () => {
 
+            const INVALID_ID = '123'
+
             it('physical.activities.get_id009: should return status code 400 and info message from invalid child_id', () => {
 
                 return request(URI)
-                    .get(`/children/${acc.INVALID_ID}/physicalactivities/${defaultActivity.id}`)
+                    .get(`/children/${INVALID_ID}/physicalactivities/${defaultActivity.id}`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -280,7 +310,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.get_id010: should return status code 400 and info message from invalid activity_id, because activity_id is invalid', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/physicalactivities/${acc.INVALID_ID}`)
+                    .get(`/children/${defaultChild.id}/physicalactivities/${INVALID_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -319,6 +349,21 @@ describe('Routes: users.children.physicalactivities', () => {
                     .expect(404)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_404_PHYSICAL_ACTIVITY_NOT_FOUND)
+                    })
+            })
+        })
+
+        describe('when a child get the physical activity of other child', () => {
+
+            it('physical.activities.get_id013: should return the status code 403 and info message from insufficient permissions', () => {
+
+                return request(URI)
+                    .get(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
