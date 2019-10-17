@@ -73,7 +73,7 @@ describe('Routes: users.children.physicalactivities', () => {
         }
     })
 
-    describe('DELETE /users/children/:child_id/physicalactivities/:physicalactivity_id', () => {
+    describe('DELETE /children/:child_id/physicalactivities/:physicalactivity_id', () => {
 
         beforeEach(async () => {
             try {
@@ -100,7 +100,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.delete001: should return status code 204 and no content for physical activity, when the educator delete a physical activity', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .delete(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -112,7 +112,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.delete002: should return status code 204 and no content for physical activity, when the application delete a physical activity', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .delete(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -124,7 +124,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.delete003: should return status code 204 and no content for physical activity, when the family delete a physical activity', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .delete(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -140,7 +140,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.delete004: should return status code 400 and info message from invalid child_id', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${acc.INVALID_ID}/physicalactivities/${defaultActivity.id}`)
+                    .delete(`/children/${acc.INVALID_ID}/physicalactivities/${defaultActivity.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .expect(400)
@@ -152,7 +152,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.delete005: should return status code 400 and info message from invalid activity_id', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/physicalactivities/${acc.INVALID_ID}`)
+                    .delete(`/children/${defaultChild.id}/physicalactivities/${acc.INVALID_ID}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .expect(400)
@@ -168,7 +168,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.delete006: should return status code 204 and no content for physical activity, when the child not exist', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${acc.NON_EXISTENT_ID}/physicalactivities/${defaultActivity.id}`)
+                    .delete(`/children/${acc.NON_EXISTENT_ID}/physicalactivities/${defaultActivity.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -180,7 +180,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.delete007: should return status code 204 and no content for physical activity, when the activity not exist', () => {
                 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/physicalactivities/${acc.NON_EXISTENT_ID}`)
+                    .delete(`/children/${defaultChild.id}/physicalactivities/${acc.NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -195,7 +195,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.delete008: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .expect(403)
@@ -207,7 +207,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.delete009: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .expect(403)
@@ -219,7 +219,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.delete010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .expect(403)
@@ -235,7 +235,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.delete011: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .delete(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(401)

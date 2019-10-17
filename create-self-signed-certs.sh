@@ -20,13 +20,10 @@ encrypt_key  = no # Change to encrypt the private key using des3 or similar
 default_md   = sha256
 prompt       = no
 utf8         = yes
-
 # Speify the DN here so we aren't prompted (along with prompt = no above).
 distinguished_name = req_distinguished_name
-
 # Extensions for SAN IP and SAN DNS
 req_extensions = v3_req
-
 # Be sure to update the subject to match your organization.
 [req_distinguished_name]
 C  = UE
@@ -34,7 +31,6 @@ ST = Bruxelas
 L  = OCARIoT
 O  = OCARIoT
 CN = ocariot.com
-
 # Allow client and server auth. You may want to only allow server auth.
 # Link to SAN names.
 [v3_req]
@@ -43,7 +39,6 @@ subjectKeyIdentifier = hash
 keyUsage             = digitalSignature, keyEncipherment
 extendedKeyUsage     = clientAuth, serverAuth
 subjectAltName       = @alt_names
-
 # Alternative names are specified as IP.# and DNS.# for IP addresses and
 # DNS accordingly.
 [alt_names]
@@ -65,7 +60,7 @@ openssl req \
   -days 120 \
   -nodes \
   -x509 \
-  -subj "//C=UE\ST=Bruxelas\L=OCARIoT\O=OCARIoT CA" \
+  -subj "//C=UE\ST=UE\L=UE\O=OCARIoT CA\CN=ocariot.com" \
   -keyout "${DIR}/ca.key" \
   -out "${DIR}/ca.crt"
 # For each server/service you want to secure with your CA, repeat the
@@ -95,8 +90,8 @@ openssl x509 \
   -extfile "${DIR}/openssl.cnf" \
   -out "${DIR}/server.crt"
 
-# (Optional) Verify the certificate.
-openssl x509 -in "${DIR}/server.crt" -noout -text
+# Create MongoDB .pem file that contains the TLS/SSL certificate and key.
+cat "${DIR}/server.crt" "${DIR}/server.key" > "${DIR}/mongodb.pem"
 
 # (Optional) Remove unused files at the moment
 rm -rf "${DIR}/ca.key" "${DIR}/ca.srl" ".srl" "${DIR}/server.csr" "${DIR}/openssl.cnf"

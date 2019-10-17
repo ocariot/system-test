@@ -6,7 +6,7 @@ import { accountDB } from '../../../src/account-service/database/account.db'
 import { Child } from '../../../src/account-service/model/child'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 
-describe('Routes: users.children', () => {
+describe('Routes: children', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -16,6 +16,8 @@ describe('Routes: users.children', () => {
     let accessTokenHealthProfessional: string
     let accessTokenFamily: string
     let accessTokenApplication: string
+
+    let childArr: Array<Child> = new Array<Child>()
 
     const defaultInstitution: Institution = new Institution()
     defaultInstitution.type = 'default type'
@@ -56,11 +58,17 @@ describe('Routes: users.children', () => {
             anotherChild.institution = defaultInstitution
             defaultChild.institution = defaultInstitution
 
-            await acc.saveChild(accessTokenAdmin, anotherChild)
-            await acc.saveChild(accessTokenAdmin, defaultChild)
+            const resultAnotherChild = await acc.saveChild(accessTokenAdmin, anotherChild)
+            anotherChild.id = resultAnotherChild.id
+
+            const resultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
+            defaultChild.id = resultChild.id
+
+            childArr.push(resultChild)
+            childArr.push(resultAnotherChild)
 
         } catch (err) {
-            console.log('Failure on Before from users.children.get_all test: ', err)
+            console.log('Failure on Before from children.get_all test: ', err)
         }
     })
 
@@ -73,185 +81,165 @@ describe('Routes: users.children', () => {
         }
     })
 
-    describe('GET All /users/children', () => {
+    describe('GET All /children', () => {
 
         context('when get all children in database successfully', () => {
 
-            it('children.get_all001: should return status code 200 and a list of children', () => {
+            it('children.get_all001: should return status code 200 and a list of children and information when the child has not yet logged in to the system for admin user', () => {
 
                 return request(URI)
-                    .get('/users/children')
+                    .get('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body).is.an.instanceOf(Array)
-                        expect(res.body.length).to.eql(2)
-                        expect(res.body[0]).to.have.property('id')
-                        expect(res.body[0]).to.have.property('username')
-                        expect(res.body[0]).to.have.property('institution')
-                        expect(res.body[0].institution).to.have.property('id')
-                        expect(res.body[0].institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body[0].institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body[0].institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body[0].institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body[0].institution.longitude).to.eql(defaultInstitution.longitude)
-                        expect(res.body[0]).to.have.property('age')
-                        expect(res.body[0]).to.have.property('gender')
-                        expect(res.body[1]).to.have.property('id')
-                        expect(res.body[1]).to.have.property('username')
-                        expect(res.body[1]).to.have.property('institution')
-                        expect(res.body[1].institution).to.have.property('id')
-                        expect(res.body[1].institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body[1].institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body[1].institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body[1].institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body[1].institution.longitude).to.eql(defaultInstitution.longitude)
-                        expect(res.body[1]).to.have.property('age')
-                        expect(res.body[1]).to.have.property('gender')
+                        for (let i = 0; i < res.body.length; i++) {
+                            expect(res.body[i].id).to.eql(childArr[i].id)
+                            expect(res.body[i].username).to.eql(childArr[i].username)
+                            expect(res.body[i].gender).to.eql(childArr[i].gender)
+                            expect(res.body[i].age).to.eql(childArr[i].age)
+                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
+                        }
                     })
             })
 
-            it('children.get_all002: should return status code 200 and a list with only ID and username of children', () => {
-
-                const field = 'username'
+            it('children.get_all002: should return status code 200 and a list of children and information when the child has already first logged in to the system for admin user', async () => {
+                await acc.auth(defaultChild.username!, defaultChild.password!)
+                await acc.auth(anotherChild.username!, anotherChild.password!)
 
                 return request(URI)
-                    .get(`/users/children?fields=${field}`)
+                    .get('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body).is.an.instanceOf(Array)
-                        expect(res.body.length).to.eql(2)
-                        expect(res.body[0]).to.have.property('id')
-                        expect(res.body[0]).to.have.property('username')
-                        expect(res.body[0]).to.not.have.property('institution')
-                        expect(res.body[0]).to.not.have.property('gender')
-                        expect(res.body[0]).to.not.have.property('age')
-                        expect(res.body[1]).to.have.property('id')
-                        expect(res.body[1]).to.have.property('username')
-                        expect(res.body[1]).to.not.have.property('institution')
-                        expect(res.body[1]).to.not.have.property('gender')
-                        expect(res.body[1]).to.not.have.property('age')
+                        for (let i = 0; i < res.body.length; i++) {
+                            expect(res.body[i].id).to.eql(childArr[i].id)
+                            expect(res.body[i].username).to.eql(childArr[i].username)
+                            expect(res.body[i].gender).to.eql(childArr[i].gender)
+                            expect(res.body[i].age).to.eql(childArr[i].age)
+                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
+                            if (childArr[i].last_login)
+                                expect(res.body[i].last_login).to.eql(childArr[i].last_login)
+                        }
                     })
             })
 
-            it('children.get_all003: should return status code 200 and a list with only ID, institution and username of children', () => {
-
-                const fieldOne = 'username'
-                const fieldTwo = 'institution'
+            it('children.get_all003: should return status code 200 and a child list with child information for the educator user', () => {
 
                 return request(URI)
-                    .get(`/users/children?fields=${fieldOne}%2C${fieldTwo}`)
+                    .get('/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .set('Content-Type', 'application/json')
+                    .expect(200)
+                    .then(res => {
+                        for (let i = 0; i < res.body.length; i++) {
+                            expect(res.body[i].id).to.eql(childArr[i].id)
+                            expect(res.body[i].username).to.eql(childArr[i].username)
+                            expect(res.body[i].gender).to.eql(childArr[i].gender)
+                            expect(res.body[i].age).to.eql(childArr[i].age)
+                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
+                            if (childArr[i].last_login)
+                                expect(res.body[i].last_login).to.eql(childArr[i].last_login)
+                        }
+                    })
+            })
+
+            it('children.get_all004: should return status code 200 and a child list with child information for the health professional user', () => {
+
+                return request(URI)
+                    .get('/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                    .set('Content-Type', 'application/json')
+                    .expect(200)
+                    .then(res => {
+                        for (let i = 0; i < res.body.length; i++) {
+                            expect(res.body[i].id).to.eql(childArr[i].id)
+                            expect(res.body[i].username).to.eql(childArr[i].username)
+                            expect(res.body[i].gender).to.eql(childArr[i].gender)
+                            expect(res.body[i].age).to.eql(childArr[i].age)
+                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
+                            if (childArr[i].last_login)
+                                expect(res.body[i].last_login).to.eql(childArr[i].last_login)
+                        }
+                    })
+            })
+
+            // falta testar isso aqui ainda!!!!!!
+            it('children.get_all005: should return status code 200 and a list of children in ascending order by username', () => {
+                const sort = 'username' // parameter for sort the result of the query by order ascending
+                const childrenSortedByUserNameArr = childArr.slice() // copy of the array of children that will be ordered
+
+                // Sorted childArr in ascending order by username ...
+                childrenSortedByUserNameArr.sort((a, b) => {
+                    return a.username!.toLowerCase()! < b.username!.toLowerCase() ? -1 : 1
+                })
+
+                return request(URI)
+                    .get(`/children?sort=${sort}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body).is.an.instanceOf(Array)
-                        expect(res.body.length).to.eql(2)
-                        expect(res.body[0]).to.have.property('id')
-                        expect(res.body[0]).to.have.property('username')
-                        expect(res.body[0]).to.have.property('institution')
-                        expect(res.body[0]).to.not.have.property('gender')
-                        expect(res.body[0]).to.not.have.property('age')
-                        expect(res.body[1]).to.have.property('id')
-                        expect(res.body[1]).to.have.property('username')
-                        expect(res.body[1]).to.have.property('institution')
-                        expect(res.body[1]).to.not.have.property('gender')
-                        expect(res.body[1]).to.not.have.property('age')
+                        console.log('ARR ORIG', childArr)
+                        console.log('RES', res.body)
+                        console.log('ARR SORT', childrenSortedByUserNameArr)
+                        for (let i = 0; i < res.body.length; i++) {
+                            expect(res.body[i].username).to.eql(childrenSortedByUserNameArr[i].username)
+                            expect(res.body[i].id).to.eql(childrenSortedByUserNameArr[i].id)
+                            expect(res.body[i].gender).to.eql(childrenSortedByUserNameArr[i].gender)
+                            expect(res.body[i].age).to.eql(childrenSortedByUserNameArr[i].age)
+                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
+                            if (childArr[i].last_login)
+                                expect(res.body[i].last_login).to.eql(childArr[i].last_login)
+                        }
                     })
             })
 
-            it('children.get_all004: should return status code 200 and a list of children in ascending order by username', () => {
+            it('children.get_all006: should return status code 200 and a list of children in ascending order by age', () => {
+                const sort = 'age' // parameter for sort the result of the query by order ascending
+                const childSortedAgeArr = childArr.slice() // copy of the array of children that will be ordered
 
-                const sort = 'username'
+                // Sorted childArr in ascending order by age ...
+                childSortedAgeArr.sort((a, b) => { return a.age! > b.age! ? 1 : 0 })
 
                 return request(URI)
-                    .get(`/users/children?sort=${sort}`)
+                    .get(`/children?sort=${sort}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body).is.an.instanceOf(Array)
-                        expect(res.body.length).to.eql(2)
-                        expect(res.body[0]).to.have.property('id')
-                        expect(res.body[0]).to.have.property('username')
-                        expect(res.body[0]).to.have.property('institution')
-                        expect(res.body[0]).to.have.property('gender')
-                        expect(res.body[0]).to.have.property('age')
-                        expect(res.body[0].username).to.eql(anotherChild.username)
-                        expect(res.body[0].institution).to.eql(anotherChild.institution)
-                        expect(res.body[0].gender).to.eql(anotherChild.gender)
-                        expect(res.body[0].age).to.eql(anotherChild.age)
-                        expect(res.body[1]).to.have.property('id')
-                        expect(res.body[1]).to.have.property('username')
-                        expect(res.body[1]).to.have.property('institution')
-                        expect(res.body[1]).to.have.property('gender')
-                        expect(res.body[1]).to.have.property('age')
-                        expect(res.body[1].username).to.eql(defaultChild.username)
-                        expect(res.body[1].institution).to.eql(defaultChild.institution)
-                        expect(res.body[1].gender).to.eql(defaultChild.gender)
-                        expect(res.body[1].age).to.eql(defaultChild.age)
+                        for (let i = 0; i < res.body.length; i++) {
+                            expect(res.body[i].id).to.eql(childSortedAgeArr[i].id)
+                            expect(res.body[i].username).to.eql(childSortedAgeArr[i].username)
+                            expect(res.body[i].gender).to.eql(childSortedAgeArr[i].gender)
+                            expect(res.body[i].age).to.eql(childSortedAgeArr[i].age)
+                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
+                            if (childArr[i].last_login)
+                                expect(res.body[i].last_login).to.eql(childArr[i].last_login)
+                        }
                     })
             })
 
-            it('children.get_all005: should return status code 200 and a list of children in descending order by age', () => {
-
-                const sort = 'age'
-
-                return request(URI)
-                    .get(`/users/children?sort=-${sort}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).is.an.instanceOf(Array)
-                        expect(res.body.length).to.eql(2)
-                        expect(res.body[0]).to.have.property('id')
-                        expect(res.body[0]).to.have.property('username')
-                        expect(res.body[0]).to.have.property('institution')
-                        expect(res.body[0]).to.have.property('gender')
-                        expect(res.body[0]).to.have.property('age')
-                        expect(res.body[0].username).to.eql(defaultChild.username)
-                        expect(res.body[0].institution).to.eql(defaultChild.institution)
-                        expect(res.body[0].gender).to.eql(defaultChild.gender)
-                        expect(res.body[0].age).to.eql(defaultChild.age)
-                        expect(res.body[1]).to.have.property('id')
-                        expect(res.body[1]).to.have.property('username')
-                        expect(res.body[1]).to.have.property('institution')
-                        expect(res.body[1]).to.have.property('gender')
-                        expect(res.body[1]).to.have.property('age')
-                        expect(res.body[1].username).to.eql(anotherChild.username)
-                        expect(res.body[1].institution).to.eql(anotherChild.institution)
-                        expect(res.body[1].gender).to.eql(anotherChild.gender)
-                        expect(res.body[1].age).to.eql(anotherChild.age)
-                    })
-            })
-
-            it('children.get_all006: should return status code 200 and a list with only two most recent children registered in database', () => {
-
+            it('children.get_all007: should return status code 200 and a list with only two most recent children registered in database', async () => {
                 const page = 1
                 const limit = 2
 
                 return request(URI)
-                    .get(`/users/children?page=${page}&limit=${limit}`)
+                    .get(`/children?page=${page}&limit=${limit}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(2)
-                        expect(res.body[0]).to.have.property('id')
-                        expect(res.body[0]).to.have.property('username')
-                        expect(res.body[0]).to.have.property('institution')
-                        expect(res.body[0]).to.have.property('gender')
-                        expect(res.body[0]).to.have.property('age')
-                        expect(res.body[1]).to.have.property('id')
-                        expect(res.body[1]).to.have.property('username')
-                        expect(res.body[1]).to.have.property('institution')
-                        expect(res.body[1]).to.have.property('gender')
-                        expect(res.body[1]).to.have.property('age')
+                        for (let i = 0; i < res.body.length; i++) {
+                            expect(res.body[i].id).to.eql(childArr[i].id)
+                            expect(res.body[i].username).to.eql(childArr[i].username)
+                            expect(res.body[i].gender).to.eql(childArr[i].gender)
+                            expect(res.body[i].age).to.eql(childArr[i].age)
+                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
+                            if (childArr[i].last_login)
+                                expect(res.body[i].last_login).to.eql(childArr[i].last_login)
+                        }
                     })
             })
 
@@ -259,10 +247,10 @@ describe('Routes: users.children', () => {
 
         describe('when the user does not have permission to get all children in database', () => {
 
-            it('children.get_all007: should return status code 403 and info message from insufficient permissions for user child', () => {
+            it('children.get_all008: should return status code 403 and info message from insufficient permissions for user child', () => {
 
                 return request(URI)
-                    .get('/users/children')
+                    .get('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -271,34 +259,10 @@ describe('Routes: users.children', () => {
                     })
             })
 
-            it('children.get_all008: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('children.get_all009: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
-                    .get('/users/children')
-                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
-                    .set('Content-Type', 'application/json')
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
-            })
-
-            it('children.get_all009: should return status code 403 and info message from insufficient permissions for health professional user', () => {
-
-                return request(URI)
-                    .get('/users/children')
-                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
-                    .set('Content-Type', 'application/json')
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
-            })
-
-            it('children.get_all010: should return status code 403 and info message from insufficient permissions for family user', () => {
-
-                return request(URI)
-                    .get('/users/children')
+                    .get('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -307,10 +271,10 @@ describe('Routes: users.children', () => {
                     })
             })
 
-            it('children.get_all011: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('children.get_all010: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
-                    .get('/users/children')
+                    .get('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -321,10 +285,10 @@ describe('Routes: users.children', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('children.get_all012: should return the status code 401 and the authentication failure informational message', async () => {
+            it('children.get_all011: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
-                    .get('/users/children')
+                    .get('/children')
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
                     .expect(401)
@@ -342,10 +306,10 @@ describe('Routes: users.children', () => {
                     console.log('DB ERROR', err)
                 }
             })
-            it('children.get_all013: should return status code 200 and empty list ', () => {
+            it('children.get_all012: should return status code 200 and empty list ', () => {
 
                 return request(URI)
-                    .get('/users/children')
+                    .get('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)

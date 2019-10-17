@@ -6,7 +6,7 @@ import { accountDB } from '../../../src/account-service/database/account.db'
 import { Child } from '../../../src/account-service/model/child'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 
-describe('Routes: users.children', () => {
+describe('Routes: children', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -50,7 +50,7 @@ describe('Routes: users.children', () => {
             defaultChild.institution = defaultInstitution
 
         } catch (err) {
-            console.log('Failure on Before from users.children.post test: ', err)
+            console.log('Failure on Before from children.post test: ', err)
         }
     })
     after(async () => {
@@ -62,7 +62,7 @@ describe('Routes: users.children', () => {
         }
     })
 
-    describe('POST /users/children', () => {
+    describe('POST /children', () => {
 
         afterEach(async () => {
             try {
@@ -76,7 +76,7 @@ describe('Routes: users.children', () => {
             it('children.post001: should return status code 201 and the saved child', () => {
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(defaultChild.toJSON())
@@ -86,41 +86,23 @@ describe('Routes: users.children', () => {
                         expect(res.body.username).to.eql(defaultChild.username)
                         expect(res.body.gender).to.eql(defaultChild.gender)
                         expect(res.body.age).to.eql(defaultChild.age)
-                        expect(res.body.institution).to.have.property('id')
-                        expect(res.body.institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body.institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body.institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body.institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body.institution.longitude).to.eql(defaultInstitution.longitude)
+                        expect(res.body.institution_id).to.eql(defaultInstitution.id)
                     })
             })
         })
-
-        /* TESTES - RESTRIÇÕES NOS CAMPOS USERNAME/PASSWORD ... (CRIAR COM ESPAÇO ?)
-        context('when the username is a blank space', () => {
-            it('should return status code ? and message info about ...', () => {
-
-                return request(URI)
-                    .post('/users/children')
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .send(body)
-                    .expect(409)
-            })
-        })*/
 
         describe('when a duplicate error occurs', () => {
             before(async () => {
                 try {
                     await acc.saveChild(accessTokenAdmin, defaultChild)
                 } catch (err) {
-                    console.log('Failure in users.children.post test: ', err)
+                    console.log('Failure in children.post test: ', err)
                 }
             })
             it('children.post002: should return status code 409 and message info about child is already registered', () => {
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(defaultChild.toJSON())
@@ -143,7 +125,7 @@ describe('Routes: users.children', () => {
                 }
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
@@ -163,7 +145,7 @@ describe('Routes: users.children', () => {
                 }
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
@@ -183,7 +165,7 @@ describe('Routes: users.children', () => {
                 }
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
@@ -203,7 +185,7 @@ describe('Routes: users.children', () => {
                 }
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
@@ -223,7 +205,7 @@ describe('Routes: users.children', () => {
                 }
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
@@ -234,17 +216,18 @@ describe('Routes: users.children', () => {
             })
 
             it('children.post008: should return status code 400 and message for institution not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // institution id does not exist
 
                 const body = {
                     username: defaultChild.username,
                     password: defaultChild.password,
-                    institution_id: acc.NON_EXISTENT_ID,
+                    institution_id: NON_EXISTENT_ID,
                     gender: defaultChild.gender,
                     age: defaultChild.age
                 }
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
@@ -255,17 +238,18 @@ describe('Routes: users.children', () => {
             })
 
             it('children.post009: should return status code 400 and message for invalid institution id', () => {
+                const INVALID_ID = '123' // invalid id of institution
 
                 const body = {
                     username: defaultChild.username,
                     password: defaultChild.password,
-                    institution_id: acc.INVALID_ID,
+                    institution_id: INVALID_ID,
                     gender: defaultChild.gender,
                     age: defaultChild.age
                 }
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
@@ -276,45 +260,48 @@ describe('Routes: users.children', () => {
             })
 
             it('children.post010: should return status code 400 and message about invalid gender', () => {
+                const INVALID_GENDER = 123 // invalid gender because gender just can be (male, female)
 
                 const body = {
                     username: 'child_with_gender_equal_numbers',
                     password: defaultChild.password,
                     institution_id: defaultInstitution.id,
-                    gender: acc.INVALID_GENDER,
+                    gender: INVALID_GENDER,
                     age: defaultChild.age
                 }
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
                     .expect(400)
-                // .then(err => {
-                //     // expect(err.body).to.eql(ApiGatewayException.CHILD.?)
-                // })
+                    .then(err => {
+                        expect(err.body.message).to.eql(`The gender provided \"${INVALID_GENDER}\" is not supported...`)
+                        expect(err.body.description).to.eql('The names of the allowed genders are: male, female.')
+                    })
             })
 
             it('children.post011: should return status code 400 and message about negative age', () => {
+                const INVALID_AGE = -11 // invalid age because value is negative
 
                 const body = {
                     username: 'child_with_negative_age',
                     password: defaultChild.password,
                     institution_id: defaultInstitution.id,
                     gender: defaultChild.gender,
-                    age: acc.NEGATIVE_AGE
+                    age: INVALID_AGE
                 }
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
                     .expect(400)
-                // .then(err => {
-                //     // expect(err.body).to.eql(ApiGatewayException.CHILD.?)
-                // })
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_AGE)
+                    })
             })
 
         }) // validation error occurs
@@ -324,7 +311,7 @@ describe('Routes: users.children', () => {
             it('children.post012: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .send(defaultChild.toJSON())
@@ -337,7 +324,7 @@ describe('Routes: users.children', () => {
             it('children.post013: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .send(defaultChild.toJSON())
@@ -350,7 +337,7 @@ describe('Routes: users.children', () => {
             it('children.post014: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
                     .send(defaultChild.toJSON())
@@ -363,7 +350,7 @@ describe('Routes: users.children', () => {
             it('children.post015: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .send(defaultChild.toJSON())
@@ -376,7 +363,7 @@ describe('Routes: users.children', () => {
             it('children.post016: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(defaultChild.toJSON())
@@ -392,7 +379,7 @@ describe('Routes: users.children', () => {
             it('children.post017: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
-                    .post('/users/children')
+                    .post('/children')
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
                     .send(defaultChild.toJSON())

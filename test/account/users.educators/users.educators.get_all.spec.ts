@@ -8,7 +8,7 @@ import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Child } from '../../../src/account-service/model/child'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 
-describe('Routes: users.educators', () => {
+describe('Routes: educators', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -18,6 +18,8 @@ describe('Routes: users.educators', () => {
     let accessTokenHealthProfessional: string
     let accessTokenFamily: string
     let accessTokenApplication: string
+
+    let educatorsArr: Array<Educator> = new Array<Educator>()
 
     const defaultInstitution: Institution = new Institution()
     defaultInstitution.type = 'default type'
@@ -74,8 +76,11 @@ describe('Routes: users.educators', () => {
             const resultAnotherEducator = await acc.saveEducator(accessTokenAdmin, anotherEducator)
             anotherEducator.id = resultAnotherEducator.id
 
+            educatorsArr.push(resultAnotherEducator)
+            educatorsArr.push(resultDefaultEducator)
+
         } catch (err) {
-            console.log('Failure on Before from users.educators.get_all test: ', err)
+            console.log('Failure on Before from educators.get_all test: ', err)
         }
     })
 
@@ -88,95 +93,97 @@ describe('Routes: users.educators', () => {
         }
     })
 
-    describe('GET All /users/educators', () => {
+    describe('GET All /educators', () => {
 
         context('when the admin get all educators in database successfully', () => {
 
             it('educators.get_all001: should return status code 200 and a list of educators without children group data', () => {
 
                 return request(URI)
-                    .get('/users/educators')
+                    .get('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body).is.an.instanceOf(Array)
-                        expect(res.body.length).to.eql(2)
-                        expect(res.body[0]).to.have.property('id')
-                        expect(res.body[0]).to.have.property('username')
-                        expect(res.body[0]).to.have.property('institution')
-                        expect(res.body[0]).to.not.have.property('children_groups')
-                        expect(res.body[0].institution).to.have.property('id')
-                        expect(res.body[0].institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body[0].institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body[0].institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body[0].institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body[0].institution.longitude).to.eql(defaultInstitution.longitude)
-                        expect(res.body[1]).to.have.property('id')
-                        expect(res.body[1]).to.have.property('username')
-                        expect(res.body[1]).to.have.property('institution')
-                        expect(res.body[1]).to.have.property('children_groups')
-                        expect(res.body[1].institution).to.not.have.property('id')
-                        expect(res.body[1].institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body[1].institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body[1].institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body[1].institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body[1].institution.longitude).to.eql(defaultInstitution.longitude)
+                        for (let i = 0; i < res.body.length; i++) {
+                            expect(res.body[i].id).to.eql(educatorsArr[i].id)
+                            expect(res.body[i].username).to.eql(educatorsArr[i].username)
+                            expect(res.body[i].children_groups).to.eql(educatorsArr[i].children_groups)
+                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
+                            expect(res.body[i].children_groups.length).to.eql(0)
+                        }
                     })
             })
 
-            it('educators.get_all002: should return status code 200 and a list of educators in ascending order by username', () => {
-
-                const sort = 'username'
+            it('educators.get_all002: should return status code 200 and a list of educators when they are first logged in to the system for admin user', async () => {
+                await acc.auth(defaultEducator.username!, defaultEducator.password!)
+                await acc.auth(anotherEducator.username!, anotherEducator.password!)
 
                 return request(URI)
-                    .get(`/users/educators?sort=${sort}`)
+                    .get('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body).is.an.instanceOf(Array)
-                        expect(res.body.length).to.eql(2)
-                        expect(res.body[0]).to.have.property('id')
-                        expect(res.body[0]).to.have.property('username')
-                        expect(res.body[0]).to.have.property('institution')
-                        expect(res.body[0]).to.have.property('children_groups')
-                        expect(res.body[0].username).to.eql(anotherEducator.username)
-                        expect(res.body[0].institution).to.eql(anotherEducator.institution)
-                        expect(res.body[1]).to.have.property('id')
-                        expect(res.body[1]).to.have.property('username')
-                        expect(res.body[1]).to.have.property('institution')
-                        expect(res.body[1]).to.have.property('children_groups')
-                        expect(res.body[1].username).to.eql(defaultEducator.username)
-                        expect(res.body[1].institution).to.eql(defaultEducator.institution)
+                        for (let i = 0; i < res.body.length; i++) {
+                            expect(res.body[i].id).to.eql(educatorsArr[i].id)
+                            expect(res.body[i].username).to.eql(educatorsArr[i].username)
+                            expect(res.body[i].children_groups).to.eql(educatorsArr[i].children_groups)
+                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
+                            expect(res.body[i].children_groups.length).to.eql(0)
+                            if (educatorsArr[i].last_login)
+                                expect(res.body[i].last_login).to.eql(educatorsArr[i].last_login)
+                        }
                     })
             })
 
-            it('educators.get_all003: should return status code 200 and a list with only two most recent educators registered in database', () => {
+            it('educators.get_all003: should return status code 200 and a list of educators in ascending order by username', () => {
+                const sort = 'username' // parameter for sort the result of the query by order ascending
+                const educatorsSortedByUserNameArr = educatorsArr.slice() // copy of the array of educators that will be ordered
+
+                // Sorted educatorsArr in ascending order by username ...
+                educatorsSortedByUserNameArr.sort((a, b) => { 
+                    return a.username!.toLowerCase()! < b.username!.toLowerCase() ? -1 : 1
+                })
+
+                return request(URI)
+                    .get(`/educators?sort=${sort}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(200)
+                    .then(res => {
+                        for (let i = 0; i < res.body.length; i++) {
+                            expect(res.body[i].username).to.eql(educatorsSortedByUserNameArr[i].username)
+                            expect(res.body[i].id).to.eql(educatorsSortedByUserNameArr[i].id)
+                            expect(res.body[i].children_groups).to.eql(educatorsSortedByUserNameArr[i].children_groups)
+                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
+                            expect(res.body[i].children_groups.length).to.eql(0)
+                            if (educatorsSortedByUserNameArr[i].last_login)
+                                expect(res.body[i].last_login).to.eql(educatorsArr[i].last_login)
+                        }
+                    })
+            })
+
+            it('educators.get_all004: should return status code 200 and a list with only two most recent educators registered in database', () => {
 
                 const page = 1
                 const limit = 2
 
                 return request(URI)
-                    .get(`/users/educators?page=${page}&limit=${limit}`)
+                    .get(`/educators?page=${page}&limit=${limit}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body).is.an.instanceOf(Array)
-                        expect(res.body.length).to.eql(2)
-                        expect(res.body[0]).to.have.property('id')
-                        expect(res.body[0]).to.have.property('username')
-                        expect(res.body[0]).to.have.property('institution')
-                        expect(res.body[0]).to.have.property('children_groups')
-                        expect(res.body[0].username).to.eql(anotherEducator.username)
-                        expect(res.body[0].institution).to.eql(anotherEducator.institution)
-                        expect(res.body[1]).to.have.property('id')
-                        expect(res.body[1]).to.have.property('username')
-                        expect(res.body[1]).to.have.property('institution')
-                        expect(res.body[1]).to.have.property('children_groups')
-                        expect(res.body[1].username).to.eql(defaultEducator.username)
-                        expect(res.body[1].institution).to.eql(defaultEducator.institution)
+                        for (let i = 0; i < res.body.length; i++) {
+                            expect(res.body[i].id).to.eql(educatorsArr[i].id)
+                            expect(res.body[i].username).to.eql(educatorsArr[i].username)
+                            expect(res.body[i].children_groups).to.eql(educatorsArr[i].children_groups)
+                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
+                            expect(res.body[i].children_groups.length).to.eql(0)
+                            if (educatorsArr[i].last_login)
+                                expect(res.body[i].last_login).to.eql(educatorsArr[i].last_login)
+                        }
                     })
             })
 
@@ -188,10 +195,10 @@ describe('Routes: users.educators', () => {
                         console.log('DB ERROR', err)
                     }
                 })
-                it('educators.get_all004: should return status code 200 and empty array ', () => {
+                it('educators.get_all005: should return status code 200 and empty array ', () => {
 
                     return request(URI)
-                        .get('/users/educators')
+                        .get('/educators')
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
                         .expect(200)
@@ -205,10 +212,10 @@ describe('Routes: users.educators', () => {
 
         context('when the user does not have permission to get all educators in database', () => {
 
-            it('educators.get_all005: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('educators.get_all006: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .get('/users/educators')
+                    .get('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -217,10 +224,10 @@ describe('Routes: users.educators', () => {
                     })
             })
 
-            it('educators.get_all006: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('educators.get_all007: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
-                    .get('/users/educators')
+                    .get('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -229,10 +236,10 @@ describe('Routes: users.educators', () => {
                     })
             })
 
-            it('educators.get_all007: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('educators.get_all008: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .get('/users/educators')
+                    .get('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -241,10 +248,10 @@ describe('Routes: users.educators', () => {
                     })
             })
 
-            it('educators.get_all008: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('educators.get_all009: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
-                    .get('/users/educators')
+                    .get('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -253,10 +260,10 @@ describe('Routes: users.educators', () => {
                     })
             })
 
-            it('educators.get_all009: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('educators.get_all010: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
-                    .get('/users/educators')
+                    .get('/educators')
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -268,10 +275,10 @@ describe('Routes: users.educators', () => {
         }) //user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('educators.get_all010: should return the status code 401 and the authentication failure informational message', async () => {
+            it('educators.get_all011: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
-                    .get('/users/educators')
+                    .get('/educators')
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
                     .expect(401)

@@ -7,7 +7,7 @@ import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Child } from '../../../src/account-service/model/child'
 import { Family } from '../../../src/account-service/model/family'
 
-describe('Routes: users.families', () => {
+describe('Routes: families', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -49,6 +49,7 @@ describe('Routes: users.families', () => {
     anotherFamily.username = 'another family'
     anotherFamily.password = 'another pass'
 
+    let defaultFamilyToken: string
 
     before(async () => {
         try {
@@ -87,9 +88,11 @@ describe('Routes: users.families', () => {
             const resultDefaultFamily = await acc.saveFamily(accessTokenAdmin, defaultFamily)
             defaultFamily.id = resultDefaultFamily.id
 
+            if (defaultFamily.username && defaultFamily.password)
+            defaultFamilyToken = await acc.auth(defaultFamily.username, defaultFamily.password)
 
         } catch (err) {
-            console.log('Failure on Before from users.families.patch test: ', err)
+            console.log('Failure on Before from families.patch test: ', err)
         }
     })
 
@@ -102,42 +105,62 @@ describe('Routes: users.families', () => {
         }
     })
 
-    describe('PATCH /users/families/:family_id', () => {
+    describe('PATCH /families/:family_id', () => {
 
         context('when the admin update a family successfully', () => {
-            it('families.post001: should return status code 200 and username, children and institution of the family updated', () => {
+
+            it('families.patch001: should return status code 200 and username, children and institution of the family updated for admin user', () => {
 
                 defaultFamily.username = 'new cool username'
                 defaultFamily.children = new Array<Child>(anotherChild)
                 defaultFamily.institution = anotherInstitution
 
                 return request(URI)
-                    .patch(`/users/families/${defaultFamily.id}`)
+                    .patch(`/families/${defaultFamily.id}`)
                     .send({ username: 'new cool username', children: [anotherChild.id], institution_id: anotherInstitution.id })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body).to.have.property('id', defaultFamily.id)
-                        expect(res.body).to.have.property('username', defaultFamily.username)
-                        expect(res.body).to.have.property('children')
-                        expect(res.body.children[0]).to.have.property('id', anotherChild.id)
-                        expect(res.body.children[0]).to.have.property('username', anotherChild.username)
-                        expect(res.body.children[0]).to.have.property('gender', anotherChild.gender)
-                        expect(res.body.children[0]).to.have.property('age', anotherChild.age)
-                        expect(res.body.children[0]).to.have.property('institution')
-                        expect(res.body.children[0].institution).to.have.property('id', defaultInstitution.id)
-                        expect(res.body.children[0].institution).to.have.property('type', defaultInstitution.type)
-                        expect(res.body.children[0].institution).to.have.property('name', defaultInstitution.name)
-                        expect(res.body.children[0].institution).to.have.property('address', defaultInstitution.address)
-                        expect(res.body.children[0].institution).to.have.property('latitude', defaultInstitution.latitude)
-                        expect(res.body.children[0].institution).to.have.property('longitude', defaultInstitution.longitude)
-                        expect(res.body).to.have.property('institution')
-                        expect(res.body.institution).to.have.property('id', anotherInstitution.id)
-                        expect(res.body.institution).to.have.property('type', anotherInstitution.type)
-                        expect(res.body.institution).to.have.property('name', anotherInstitution.name)
+                        expect(res.body.id).to.eql(defaultFamily.id)
+                        expect(res.body.username).to.eql(defaultFamily.username)
+                        expect(res.body.institution_id).to.eql(anotherInstitution.id)
+                        expect(res.body.children[0].id).to.eql(anotherChild.id)
+                        expect(res.body.children[0].username).to.eql(anotherChild.username)
+                        expect(res.body.children[0].gender).to.eql(anotherChild.gender)
+                        expect(res.body.children[0].age).to.eql(anotherChild.age)
+                        expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
+                        if(defaultFamily.last_login)
+                            expect(res.body.last_login).to.eql(defaultFamily.last_login)
                     })
             })
+
+            it('families.patch002: should return status code 200 and username, children and institution of the family updated by herself', () => {
+
+                defaultFamily.username = 'anothercoolusername'
+                defaultFamily.children = new Array<Child>(defaultChild)
+                defaultFamily.institution = defaultInstitution
+
+                return request(URI)
+                    .patch(`/families/${defaultFamily.id}`)
+                    .send({ username: 'anothercoolusername', children: [defaultChild.id], institution_id: defaultInstitution.id })
+                    .set('Authorization', 'Bearer '.concat(defaultFamilyToken))
+                    .set('Content-Type', 'application/json')
+                    .expect(200)
+                    .then(res => {
+                        expect(res.body.id).to.eql(defaultFamily.id)
+                        expect(res.body.username).to.eql(defaultFamily.username)
+                        expect(res.body.institution_id).to.eql(defaultInstitution.id)
+                        expect(res.body.children[0].id).to.eql(defaultChild.id)
+                        expect(res.body.children[0].username).to.eql(defaultChild.username)
+                        expect(res.body.children[0].gender).to.eql(defaultChild.gender)
+                        expect(res.body.children[0].age).to.eql(defaultChild.age)
+                        expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
+                        if(defaultFamily.last_login)
+                            expect(res.body.last_login).to.eql(defaultFamily.last_login)
+                    })
+            })
+
         })
 
         describe('when a duplicate error occurs', () => {
@@ -145,13 +168,13 @@ describe('Routes: users.families', () => {
                 try {
                     await acc.saveFamily(accessTokenAdmin, anotherFamily)
                 } catch (err) {
-                    console.log('Failure on users.families.patch test: ', err)
+                    console.log('Failure on families.patch test: ', err)
                 }
             })
-            it('families.patch002: should return status code 409 and info message about family is already registered', () => {
+            it('families.patch003: should return status code 409 and info message about family is already registered', () => {
 
                 return request(URI)
-                    .patch(`/users/families/${defaultFamily.id}`)
+                    .patch(`/families/${defaultFamily.id}`)
                     .send({ username: anotherFamily.username })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -164,11 +187,12 @@ describe('Routes: users.families', () => {
 
         describe('when a validation error occurs', () => {
 
-            it('families.patch003: should return status code 400 and message info message from invalid parameter, because children does not exist', () => {
+            it('families.patch004: should return status code 400 and message info message from invalid parameter, because children does not exist', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the child
 
                 return request(URI)
-                    .patch(`/users/families/${defaultFamily.id}`)
-                    .send({ children: [acc.NON_EXISTENT_ID] })
+                    .patch(`/families/${defaultFamily.id}`)
+                    .send({ children: [NON_EXISTENT_ID] })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -176,15 +200,15 @@ describe('Routes: users.families', () => {
                         const EXPECTED_RESPONSE = ApiGatewayException.FAMILY.ERROR_400_CHILDREN_NOT_REGISTERED
                         EXPECTED_RESPONSE.description += ' '.concat(acc.NON_EXISTENT_ID)
                         expect(err.body).to.eql(EXPECTED_RESPONSE)
-                        // se o ID enviado possuir caracteres numéricos e alfabéticos a resposta é correta!
                     })
             })
 
-            it('families.patch004: should return status code 400 and info message from children id(ids) is invalid', () => {
+            it('families.patch005: should return status code 400 and info message from children id(ids) is invalid', () => {
+                const INVALID_ID = '123' // invalid id of the child
 
                 return request(URI)
-                    .patch(`/users/families/${defaultFamily.id}`)
-                    .send({ children: [acc.INVALID_ID] })
+                    .patch(`/families/${defaultFamily.id}`)
+                    .send({ children: [INVALID_ID] })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -193,11 +217,12 @@ describe('Routes: users.families', () => {
                     })
             })
 
-            it('families.patch005: should return status code 400 and info message from invalid parameter, because institution_id is invalid', () => {
+            it('families.patch006: should return status code 400 and info message from invalid parameter, because institution_id is invalid', () => {
+                const INVALID_ID = '123' // invalid id of the institution
 
                 return request(URI)
-                    .patch(`/users/families/${defaultFamily.id}`)
-                    .send({ institution_id: acc.INVALID_ID })
+                    .patch(`/families/${defaultFamily.id}`)
+                    .send({ institution_id: INVALID_ID })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -206,11 +231,12 @@ describe('Routes: users.families', () => {
                     })
             })
 
-            it('families.patch006: should return status code 400 and info message from invalid parameter, because institution was not registered', () => {
+            it('families.patch007: should return status code 400 and info message from invalid parameter, because institution was not registered', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the institution
 
                 return request(URI)
-                    .patch(`/users/families/${defaultFamily.id}`)
-                    .send({ institution_id: acc.NON_EXISTENT_ID })
+                    .patch(`/families/${defaultFamily.id}`)
+                    .send({ institution_id: NON_EXISTENT_ID })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -222,9 +248,9 @@ describe('Routes: users.families', () => {
 
         context('when the user does not have permission to update families', () => {
 
-            it('families.patch007: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('families.patch008: should return status code 403 and info message from insufficient permissions for child user', () => {
                 return request(URI)
-                    .patch(`/users/families/${defaultFamily.id}`)
+                    .patch(`/families/${defaultFamily.id}`)
                     .send({ username: 'updated name' })
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
@@ -234,9 +260,9 @@ describe('Routes: users.families', () => {
                     })
             })
 
-            it('families.patch008: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('families.patch009: should return status code 403 and info message from insufficient permissions for educator user', () => {
                 return request(URI)
-                    .patch(`/users/families/${defaultFamily.id}`)
+                    .patch(`/families/${defaultFamily.id}`)
                     .send({ username: 'updated name' })
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
@@ -246,9 +272,9 @@ describe('Routes: users.families', () => {
                     })
             })
 
-            it('families.patch009: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('families.patch010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
                 return request(URI)
-                    .patch(`/users/families/${defaultFamily.id}`)
+                    .patch(`/families/${defaultFamily.id}`)
                     .send({ username: 'updated name' })
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
@@ -258,9 +284,9 @@ describe('Routes: users.families', () => {
                     })
             })
 
-            it('families.patch010: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('families.patch011: should return status code 403 and info message from insufficient permissions for family user', () => {
                 return request(URI)
-                    .patch(`/users/families/${defaultFamily.id}`)
+                    .patch(`/families/${defaultFamily.id}`)
                     .send({ username: 'updated name' })
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
@@ -270,9 +296,9 @@ describe('Routes: users.families', () => {
                     })
             })
 
-            it('families.patch011: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('families.patch012: should return status code 403 and info message from insufficient permissions for application user', () => {
                 return request(URI)
-                    .patch(`/users/families/${defaultFamily.id}`)
+                    .patch(`/families/${defaultFamily.id}`)
                     .send({ username: 'updated name' })
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
@@ -285,10 +311,10 @@ describe('Routes: users.families', () => {
         }) // user does not have permission 
 
         describe('when not informed the acess token', () => {
-            it('families.patch012: should return the status code 401 and the authentication failure informational message', () => {
+            it('families.patch013: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .patch(`/users/families/${defaultFamily.id}`)
+                    .patch(`/families/${defaultFamily.id}`)
                     .send({ username: 'updated name' })
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')

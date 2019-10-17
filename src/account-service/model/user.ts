@@ -11,6 +11,7 @@ export class User extends Entity {
     public password?: string // Password for user authentication.
     public type?: string // Type of user. Can be Child, Educator, Health Professional or Family.
     public institution?: Institution // Institution to which the user belongs.
+    public last_login?: Date // Last login time according to the UTC.
     public scopes?: Array<string> // Scope that signal the types of access the user has.
 
     public fromJSON(json: any): User {
@@ -24,6 +25,9 @@ export class User extends Entity {
         } else if (json.institution_id !== undefined) {
             this.institution = new Institution().fromJSON(json)
         }
+        if (json.last_login !== undefined && json.last_login instanceof Date) {
+            this.last_login = json.last_login
+        }
         if (json.scope !== undefined) this.scopes = json.scope
 
         return this
@@ -35,7 +39,8 @@ export class User extends Entity {
             username: this.username,
             password: this.password,
             type: this.type,
-            institution_id: this.institution ? this.institution.id : undefined
+            institution_id: this.institution ? this.institution.id : undefined,
+            last_login: this.last_login
         }
     }
 }

@@ -83,14 +83,14 @@ describe('Routes: users.children.physicalactivities', () => {
         }
     })
 
-    describe('GET /users/children/:child_id/physicalactivities', () => {
+    describe('GET /children/:child_id/physicalactivities', () => {
 
         context('when the user get all physical activities of the child successfully', () => {
 
             it('physical.activities.get_all001: should return status code 200 and and a list with all physical activities for admin user', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .get(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -121,7 +121,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.get_all002: should return status code 200 and and a list with all physical activities for child user', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .get(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -152,7 +152,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.get_all003: should return status code 200 and and a list with all physical activities for educator user', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .get(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -183,7 +183,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.get_all004: should return status code 200 and and a list with all physical activities for health professional user', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .get(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -214,7 +214,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.get_all005: should return status code 200 and and a list with all physical activities for family user', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .get(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -245,7 +245,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.get_all006: should return status code 200 and and a list with all physical activities for application user', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .get(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -281,7 +281,7 @@ describe('Routes: users.children.physicalactivities', () => {
                     const LIMIT = 5
 
                     return request(URI)
-                        .get(`/users/children/${defaultChild.id}/physicalactivities?page=${PAGE}&limit=${LIMIT}`)
+                        .get(`/children/${defaultChild.id}/physicalactivities?page=${PAGE}&limit=${LIMIT}`)
                         .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                         .set('Content-Type', 'application/json')
                         .expect(200)
@@ -322,7 +322,7 @@ describe('Routes: users.children.physicalactivities', () => {
                     PHYSICAL_ACTIVITIES_COPY.sort(function (a1, a2) { return a1.start_time! > a2.start_time! ? 1 : -1 })
 
                     return request(URI)
-                        .get(`/users/children/${defaultChild.id}/physicalactivities?page=${PAGE}&limit=${LIMIT}&sort=${SORT}`)
+                        .get(`/children/${defaultChild.id}/physicalactivities?page=${PAGE}&limit=${LIMIT}&sort=${SORT}`)
                         .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                         .set('Content-Type', 'application/json')
                         .expect(200)
@@ -360,7 +360,7 @@ describe('Routes: users.children.physicalactivities', () => {
                     PHYSICAL_ACTIVITIES_COPY.sort(function (a1, a2) { return a1.duration! < a2.duration! ? 1 : -1 })
 
                     return request(URI)
-                        .get(`/users/children/${defaultChild.id}/physicalactivities?sort=-${SORT}`) // sort by the biggest duration
+                        .get(`/children/${defaultChild.id}/physicalactivities?sort=-${SORT}`) // sort by the biggest duration
                         .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                         .set('Content-Type', 'application/json')
                         .expect(200)
@@ -394,7 +394,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.get_all010: should return status code 400 and info message from child_id is invalid', () => {
 
                 return request(URI)
-                    .get(`/users/children/${acc.INVALID_ID}/physicalactivities`)
+                    .get(`/children/${acc.INVALID_ID}/physicalactivities`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -410,7 +410,7 @@ describe('Routes: users.children.physicalactivities', () => {
             it('physical.activities.get_all011: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/physicalactivities`)
+                    .get(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(401)
@@ -427,7 +427,7 @@ describe('Routes: users.children.physicalactivities', () => {
                 await acc.deleteUser(accessTokenAdmin, defaultChild.id)
 
                 return request(URI)
-                .get(`/users/children/${defaultChild.id}/physicalactivities`)
+                .get(`/children/${defaultChild.id}/physicalactivities`)
                 .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                 .set('Content-Type', 'application/json')
                 .expect(200)

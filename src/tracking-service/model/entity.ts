@@ -6,5 +6,17 @@
  */
 
 export abstract class Entity {
-    public id?: string
+    public _id?: string
+
+    protected constructor(id?: string) {
+        this.id = id
+    }
+
+    get id(): string | undefined {
+        return this._id
+    }
+
+    set id(value: string | undefined) {
+        this._id = value
+    }
 }

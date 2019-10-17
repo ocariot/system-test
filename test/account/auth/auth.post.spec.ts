@@ -80,7 +80,7 @@ describe('Routes: Auth', () => {
             defaultApplication.id = resultApplication.id
 
         } catch (err) {
-            console.log('Failure on Before from auth.post test', err)
+            console.log('Failure on Before from auth.post testeeee', err)
         }
     })
 

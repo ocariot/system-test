@@ -6,7 +6,7 @@ import { accountDB } from '../../../src/account-service/database/account.db'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Application } from '../../../src/account-service/model/application';
 
-describe('Routes: users.applications', () => {
+describe('Routes: applications', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -73,7 +73,7 @@ describe('Routes: users.applications', () => {
             anotherInstitution.id = resultAnotherInstitution.id
 
         } catch (err) {
-            console.log('Failure on Before from users.applications.patch test: ', err)
+            console.log('Failure on Before from applications.patch test: ', err)
         }
     })
 
@@ -86,7 +86,7 @@ describe('Routes: users.applications', () => {
         }
     })
 
-    describe('PATCH /users/applications/:application_id', () => {
+    describe('PATCH /applications/:application_id', () => {
 
         context('when the update was successful by admin user', () => {
 
@@ -98,7 +98,7 @@ describe('Routes: users.applications', () => {
 
 
                 return request(URI)
-                    .patch(`/users/applications/${defaultApplication.id}`)
+                    .patch(`/applications/${defaultApplication.id}`)
                     .send(
                         {
                             username: defaultApplication.username,
@@ -111,14 +111,12 @@ describe('Routes: users.applications', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body.id).to.eql(defaultApplication.id)
-                        expect(res.body).to.have.property('username', 'Default username updated')
-                        expect(res.body).to.have.property('application_name', 'APP2 updated')
-                        expect(res.body.institution).to.have.property('id')
-                        expect(res.body.institution.type).to.eql(anotherInstitution.type)
-                        expect(res.body.institution.name).to.eql(anotherInstitution.name)
-                        expect(res.body.institution.address).to.eql(anotherInstitution.address)
-                        expect(res.body.institution.latitude).to.eql(anotherInstitution.latitude)
-                        expect(res.body.institution.longitude).to.eql(anotherInstitution.longitude)
+                        expect(res.body.username).to.eql(defaultApplication.username)
+                        expect(res.body.application_name).to.eql(defaultApplication.application_name)
+                        expect(res.body.institution_id).to.eql(anotherInstitution.id)
+                        if(defaultApplication.last_login){
+                            expect(res.body.last_login).to.eql(defaultApplication.last_login)
+                        }
                     })
             })
         })
@@ -128,13 +126,13 @@ describe('Routes: users.applications', () => {
                 try {
                     await acc.saveApplication(accessTokenAdmin, anotherApplication)
                 } catch (err) {
-                    console.log('Failure on Before from users.applications.patch test: ', err)
+                    console.log('Failure on Before from applications.patch test: ', err)
                 }
             })
             it('applications.patch002: should return status code 409 and message info about application is already registered', () => {
 
                 return request(URI)
-                    .patch(`/users/applications/${defaultApplication.id}`)
+                    .patch(`/applications/${defaultApplication.id}`)
                     .send(
                         { username: anotherApplication.username }
                     )
@@ -151,11 +149,12 @@ describe('Routes: users.applications', () => {
         context('when a validation error occurs', () => {
 
             it('applications.patch003: should return status code 400 and message info about invalid parameter, because the institution provided does not exist', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the institution
 
                 return request(URI)
-                    .patch(`/users/applications/${defaultApplication.id}`)
+                    .patch(`/applications/${defaultApplication.id}`)
                     .send(
-                        { institution_id: acc.NON_EXISTENT_ID }
+                        { institution_id: NON_EXISTENT_ID }
                     )
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -167,11 +166,12 @@ describe('Routes: users.applications', () => {
             })
 
             it('applications.patch004: should return status code 400 and message info about invalid parameter, because the institution_id provided is invalid', () => {
+                const INVALID_ID = '123' // invalid id of the institution
 
                 return request(URI)
-                    .patch(`/users/applications/${defaultApplication.id}`)
+                    .patch(`/applications/${defaultApplication.id}`)
                     .send(
-                        { institution_id: acc.INVALID_ID }
+                        { institution_id: INVALID_ID }
                     )
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -182,9 +182,10 @@ describe('Routes: users.applications', () => {
             })
 
             it('applications.patch005: should return status code 400 and message info about invalid parameter, because the application_id provided is invalid', () => {
+                const INVALID_ID = '123' // invalid id of the application
 
                 return request(URI)
-                    .patch(`/users/applications/${acc.INVALID_ID}`)
+                    .patch(`/applications/${INVALID_ID}`)
                     .send(
                         { username: 'new cool username' }
                     )
@@ -200,9 +201,10 @@ describe('Routes: users.applications', () => {
 
         describe('when the applications is not found', () => {
             it('applications.patch006: should return status code 404 and message info from application not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the application
 
                 return request(URI)
-                    .patch(`/users/applications/${acc.NON_EXISTENT_ID}`)
+                    .patch(`/applications/${NON_EXISTENT_ID}`)
                     .send(
                         { username: 'new cool username' }
                     )
@@ -220,7 +222,7 @@ describe('Routes: users.applications', () => {
             it('applications.patch007: should return status code 403 and info message from insufficient permissions for own application user', () => {
 
                 return request(URI)
-                    .patch(`/users/applications/${defaultApplication.id}`)
+                    .patch(`/applications/${defaultApplication.id}`)
                     .send({ username: 'new cool username' })
                     .set('Authorization', 'Bearer '.concat(defaultApplicationToken))
                     .set('Content-Type', 'application/json')
@@ -233,7 +235,7 @@ describe('Routes: users.applications', () => {
             it('applications.patch008: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
-                    .patch(`/users/applications/${defaultApplication.id}`)
+                    .patch(`/applications/${defaultApplication.id}`)
                     .send({ username: 'new cool username' })
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
@@ -246,7 +248,7 @@ describe('Routes: users.applications', () => {
             it('applications.patch009: should return status code 403 and info message from insufficient permissions for healh professional user', () => {
 
                 return request(URI)
-                    .patch(`/users/applications/${defaultApplication.id}`)
+                    .patch(`/applications/${defaultApplication.id}`)
                     .send({ username: 'new cool username' })
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
@@ -259,7 +261,7 @@ describe('Routes: users.applications', () => {
             it('applications.patch010: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
-                    .patch(`/users/applications/${defaultApplication.id}`)
+                    .patch(`/applications/${defaultApplication.id}`)
                     .send({ username: 'new cool username' })
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
@@ -272,7 +274,7 @@ describe('Routes: users.applications', () => {
             it('applications.patch011: should return status code 403 and info message from insufficient permissions for another application user', () => {
 
                 return request(URI)
-                    .patch(`/users/applications/${defaultApplication.id}`)
+                    .patch(`/applications/${defaultApplication.id}`)
                     .send({ username: 'new cool username' })
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
@@ -285,7 +287,7 @@ describe('Routes: users.applications', () => {
             it('applications.patch012: should return status code 403 and info message from insufficient permissions for another child user', () => {
 
                 return request(URI)
-                    .patch(`/users/applications/${defaultApplication.id}`)
+                    .patch(`/applications/${defaultApplication.id}`)
                     .send({ username: 'new cool username' })
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
@@ -301,7 +303,7 @@ describe('Routes: users.applications', () => {
             it('applications.patch013: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
-                    .patch(`/users/applications/${defaultApplication.id}`)
+                    .patch(`/applications/${defaultApplication.id}`)
                     .send({ username: 'new cool username' })
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')

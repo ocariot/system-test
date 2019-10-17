@@ -53,5 +53,8 @@ export class Log extends Entity {
 
 export enum LogType {
     STEPS = 'steps',
-    CALORIES = 'calories'
+    CALORIES = 'calories',
+    ACTIVE_MINUTES = 'active_minutes',
+    LIGHTLY_ACTIVE_MINUTES = 'lightly_active_minutes',
+    SEDENTARY_MINUTES = 'sedentary_minutes'
 }

@@ -14,6 +14,7 @@ export class ApplicationMock extends Application {
         super.password = 'application123'
         super.institution = this.generateInstitution()
         super.application_name = 'application test'
+        super.last_login = new Date()
     }
 
     private generateObjectId(): string {
