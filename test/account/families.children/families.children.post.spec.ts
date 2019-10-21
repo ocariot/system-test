@@ -7,7 +7,7 @@ import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Child } from '../../../src/account-service/model/child'
 import { Family } from '../../../src/account-service/model/family'
 
-describe('Routes: users.families.children', () => {
+describe('Routes: families.children', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -73,7 +73,7 @@ describe('Routes: users.families.children', () => {
             anotherChild.id = resultAnotherChild.id
 
         } catch (err) {
-            console.log('Failure on Before from users.families.children.post test: ', err)
+            console.log('Failure on Before from families.children.post test: ', err)
         }
     })
 
@@ -86,12 +86,12 @@ describe('Routes: users.families.children', () => {
         }
     })
 
-    describe('POST /users/families/:family_id/children/:child_id', () => {
+    describe('POST /families/:family_id/children/:child_id', () => {
         afterEach(async () => {
             try {
                 await acc.dissociateChildWithFamily(accessTokenAdmin, defaultFamily.id, defaultChild.id)
             } catch (err) {
-                console.log('Failure in users.families.children.post test: ', err)
+                console.log('Failure in families.children.post test: ', err)
             }
         })
 
@@ -100,7 +100,7 @@ describe('Routes: users.families.children', () => {
                 try {
                     await acc.dissociateChildWithFamily(accessTokenAdmin, defaultFamily.id, anotherChild.id)
                 } catch (err) {
-                    console.log('Failure in users.families.children.post test: ', err)
+                    console.log('Failure in families.children.post test: ', err)
                 }
             })
 
@@ -109,29 +109,24 @@ describe('Routes: users.families.children', () => {
                 defaultFamily.children = new Array<Child>(defaultChild, anotherChild)
 
                 return request(URI)
-                    .post(`/users/families/${defaultFamily.id}/children/${anotherChild.id}`)
+                    .post(`/families/${defaultFamily.id}/children/${anotherChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body).to.have.property('id', defaultFamily.id)
-                        expect(res.body).to.have.property('username', defaultFamily.username)
-                        expect(res.body).to.have.property('institution')
-                        expect(res.body.institution).to.have.property('id', defaultInstitution.id)
-                        expect(res.body).to.have.property('children')
-                        expect(res.body.children[0]).to.have.property('id', defaultChild.id)
-                        expect(res.body.children[0]).to.have.property('username', defaultChild.username)
-                        expect(res.body.children[0]).to.have.property('gender', defaultChild.gender)
-                        expect(res.body.children[0]).to.have.property('age', defaultChild.age)
-                        expect(res.body.children[0]).to.have.property('institution')
-                        expect(res.body.children[0].institution).to.have.property('id', defaultInstitution.id)
-                        expect(res.body.children[1]).to.have.property('id', anotherChild.id)
-                        expect(res.body.children[1]).to.have.property('username', anotherChild.username)
-                        expect(res.body.children[1]).to.have.property('gender', anotherChild.gender)
-                        expect(res.body.children[1]).to.have.property('age', anotherChild.age)
-                        expect(res.body.children[1]).to.have.property('institution')
-                        expect(res.body.children[1].institution).to.have.property('id', defaultInstitution.id)
-
+                        expect(res.body).to.have.property('id')
+                        expect(res.body.username).to.eql(defaultFamily.username)
+                        expect(res.body.institution_id).to.eql(defaultInstitution.id)
+                        expect(res.body.children[0].id).to.eql(defaultChild.id)
+                        expect(res.body.children[0].username).to.eql(defaultChild.username)
+                        expect(res.body.children[0].gender).to.eql(defaultChild.gender)
+                        expect(res.body.children[0].age).to.eql(defaultChild.age)
+                        expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
+                        expect(res.body.children[1].id).to.eql(anotherChild.id)
+                        expect(res.body.children[1].username).to.eql(anotherChild.username)
+                        expect(res.body.children[1].gender).to.eql(anotherChild.gender)
+                        expect(res.body.children[1].age).to.eql(anotherChild.age)
+                        expect(res.body.children[1].institution_id).to.eql(defaultInstitution.id)
                     })
             })
         })
@@ -143,28 +138,25 @@ describe('Routes: users.families.children', () => {
                     
                     await acc.associateChildWithFamily(accessTokenAdmin, defaultFamily.id, defaultChild.id)
                 } catch (err) {
-                    console.log('Failure in users.families.children.post test: ', err)
+                    console.log('Failure in families.children.post test: ', err)
                 }
             })
             it('families.children.post002: should return status code 200 and the family with the child associated', () => {
 
                 return request(URI)
-                    .post(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .post(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body).to.have.property('id', defaultFamily.id)
-                        expect(res.body).to.have.property('username', defaultFamily.username)
-                        expect(res.body).to.have.property('institution')
-                        expect(res.body.institution).to.have.property('id', defaultInstitution.id)
-                        expect(res.body).to.have.property('children')
-                        expect(res.body.children[0]).to.have.property('id', defaultChild.id)
-                        expect(res.body.children[0]).to.have.property('username', defaultChild.username)
-                        expect(res.body.children[0]).to.have.property('gender', defaultChild.gender)
-                        expect(res.body.children[0]).to.have.property('age', defaultChild.age)
-                        expect(res.body.children[0]).to.have.property('institution')
-                        expect(res.body.children[0].institution).to.have.property('id', defaultInstitution.id)
+                        expect(res.body).to.have.property('id')
+                        expect(res.body.username).to.eql(defaultFamily.username)
+                        expect(res.body.institution_id).to.eql(defaultInstitution.id)
+                        expect(res.body.children[0].id).to.eql(defaultChild.id)
+                        expect(res.body.children[0].username).to.eql(defaultChild.username)
+                        expect(res.body.children[0].gender).to.eql(defaultChild.gender)
+                        expect(res.body.children[0].age).to.eql(defaultChild.age)
+                        expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
                     })
             })
         })        
@@ -172,9 +164,10 @@ describe('Routes: users.families.children', () => {
         describe('when a validation error occurs', () => {
 
             it('families.children.post003: should return status code 404 and info message about family not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the family
 
                 return request(URI)
-                    .post(`/users/families/${acc.NON_EXISTENT_ID}/children/${defaultChild.id}`)
+                    .post(`/families/${NON_EXISTENT_ID}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(404)
@@ -184,9 +177,10 @@ describe('Routes: users.families.children', () => {
             })
 
             it('families.children.post004: should return status code 400 and info message from association failure, because the child does not have a record', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the child
 
                 return request(URI)
-                    .post(`/users/families/${defaultFamily.id}/children/${acc.NON_EXISTENT_ID}`)
+                    .post(`/families/${defaultFamily.id}/children/${NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -196,26 +190,28 @@ describe('Routes: users.families.children', () => {
             })
 
             it('families.children.post005: should return status code 400 and info message from invalid child ID', () => {
+                const INVALID_ID = '123' // invalid id of the child
 
                 return request(URI)
-                    .post(`/users/families/${defaultFamily.id}/children/${acc.INVALID_ID}`)
+                    .post(`/families/${defaultFamily.id}/children/${INVALID_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_FORMAT_ID_CHILD)
                     })
             })
 
             it('families.children.post006: should return status code 400 and info message from invalid family ID', () => {
+                const INVALID_ID = '123' // invalid id of the family
 
                 return request(URI)
-                    .post(`/users/families/${acc.INVALID_ID}/children/${defaultChild.id}`)
+                    .post(`/families/${INVALID_ID}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
         }) //validation error occurs 
@@ -225,7 +221,7 @@ describe('Routes: users.families.children', () => {
 
             it('families.children.post007: should return status code 403 and info message from insufficient permissions for child user', () => {
                 return request(URI)
-                    .post(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .post(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -236,7 +232,7 @@ describe('Routes: users.families.children', () => {
 
             it('families.children.post008: should return status code 403 and info message from insufficient permissions for educator user', () => {
                 return request(URI)
-                    .post(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .post(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -247,7 +243,7 @@ describe('Routes: users.families.children', () => {
 
             it('families.children.post009: should return status code 403 and info message from insufficient permissions for health professional user', () => {
                 return request(URI)
-                    .post(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .post(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -258,7 +254,7 @@ describe('Routes: users.families.children', () => {
 
             it('families.children.post010: should return status code 403 and info message from insufficient permissions for family user', () => {
                 return request(URI)
-                    .post(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .post(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -269,7 +265,7 @@ describe('Routes: users.families.children', () => {
 
             it('families.children.post011: should return status code 403 and info message from insufficient permissions for application user', () => {
                 return request(URI)
-                    .post(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .post(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -284,7 +280,7 @@ describe('Routes: users.families.children', () => {
             it('families.children.post012: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .post(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .post(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
                     .expect(401)
