@@ -273,7 +273,9 @@ describe('Routes: educators.children.groups', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_INVALID_CHILDREN_IDS)
+                        expect(err.body.code).to.eql(400)
+                        expect(err.body.message).to.eql('It is necessary for children to be registered before proceeding.')
+                        expect(err.body.description).to.eql(`The following IDs were verified without registration: ${NON_EXISTENT_ID}`)
                     })
             })
 
@@ -287,7 +289,9 @@ describe('Routes: educators.children.groups', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body.message).to.eql('A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.')
+                        expect(err.body.description).to.eql('Children Group validation: ' +
+                            `Invalid children attribute. The following set of IDs is not in valid format: ${INVALID_ID}`)
                     })
 
             })
