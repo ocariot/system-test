@@ -162,7 +162,6 @@ describe('Routes: children.physicalactivities', () => {
             })
         })
 
-
         context('when the child or the activity does not exist', () => {
 
             it('physical.activities.delete006: should return status code 204 and no content for physical activity, when the child not exist', () => {
@@ -244,6 +243,5 @@ describe('Routes: children.physicalactivities', () => {
                     })
             })
         })
-
     })
 })

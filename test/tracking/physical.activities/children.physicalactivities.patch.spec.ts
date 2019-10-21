@@ -10,7 +10,7 @@ import { Child } from '../../../src/account-service/model/child'
 import { ChildMock } from '../../mocks/account-service/child.mock'
 import { PhysicalActivity } from '../../../src/tracking-service/model/physical.activity'
 import { ActivityLevelType, PhysicalActivityLevel } from '../../../src/tracking-service/model/physical.activity.level'
-import { PhysicalActivityMock, ActivityTypeMock } from '../../mocks/tracking-service/physical.activity.mock'
+import { ActivityTypeMock, PhysicalActivityMock } from '../../mocks/tracking-service/physical.activity.mock'
 
 describe('Routes: children.physicalactivities', () => {
 
@@ -34,11 +34,6 @@ describe('Routes: children.physicalactivities', () => {
     let accessDefaultChildToken: string
 
     const defaultActivity: PhysicalActivity = new PhysicalActivityMock()
-    const otherActivity: PhysicalActivity = new PhysicalActivityMock()
-
-    const defaultStart_time: Date = new Date()
-    const defaultEnd_time: Date = new Date(new Date(defaultStart_time)
-        .setMilliseconds(Math.floor(Math.random() * 35 + 10) * 60000)) // 10-45min in milliseconds
 
     //Mock through JSON
     const incorrectActivityJSON: any = {
@@ -48,6 +43,7 @@ describe('Routes: children.physicalactivities', () => {
         name: 'walk',
         calories: 200,
         steps: 1000,
+        distance: 800,
         levels: [
             {
                 name: ActivityLevelType.SEDENTARY,
@@ -65,24 +61,52 @@ describe('Routes: children.physicalactivities', () => {
                 name: ActivityLevelType.VERY,
                 duration: Math.floor((Math.random() * 10) * 60000)
             }
-        ]
+        ],
+        heart_rate: {
+            average: 107,
+            out_of_range_zone: {
+                min: 30,
+                max: 91,
+                duration: 0
+            },
+            fat_burn_zone: {
+                min: 91,
+                max: 127,
+                duration: 600000
+            },
+            cardio_zone: {
+                min: 127,
+                max: 154,
+                duration: 0
+            },
+            peak_zone: {
+                min: 154,
+                max: 220,
+                duration: 0
+            }
+        }
     }
 
-    const notAllowedLevelsName = 'sedentaries'
+    let incorrectActivity1: PhysicalActivity = new PhysicalActivityMock() // The PhysicalActivityHeartRate is invalid (the average parameter is negative)
+    incorrectActivity1.heart_rate!.average! = -150
 
-    let incorrectActivity1: PhysicalActivity = new PhysicalActivityMock() // The levels array has an item that contains empty fields
-    incorrectActivityJSON.levels[0].name = ''
-    incorrectActivityJSON.levels[0].duration = undefined
-    incorrectActivity1 = incorrectActivity1.fromJSON(incorrectActivityJSON)
+    let incorrectActivity2: PhysicalActivity = new PhysicalActivityMock() // The PhysicalActivityHeartRate is invalid (the "out of range" min parameter is negative)
+    incorrectActivity2.heart_rate!.out_of_range_zone!.min = -30
 
-    let incorrectActivity2: PhysicalActivity = new PhysicalActivityMock() // The levels array has an item that contains negative duration
-    incorrectActivityJSON.levels[0].name = ActivityLevelType.SEDENTARY
-    incorrectActivityJSON.levels[0].duration = -(Math.floor(Math.random() * 10 + 1) * 60000)
-    incorrectActivity2 = incorrectActivity2.fromJSON(incorrectActivityJSON)
+    let incorrectActivity3: PhysicalActivity = new PhysicalActivityMock() // The PhysicalActivityHeartRate is invalid (the "fat_burn_zone" max parameter is empty)
+    delete incorrectActivity3.heart_rate!.fat_burn_zone!.max
 
-    let incorrectActivity3: PhysicalActivity = new PhysicalActivityMock() // The levels array has an item that contains ivalid name
-    incorrectActivityJSON.levels[0].name = notAllowedLevelsName
-    incorrectActivity3 = incorrectActivity3.fromJSON(incorrectActivityJSON)
+    let incorrectActivity4: PhysicalActivity = new PhysicalActivityMock() // The PhysicalActivityHeartRate is invalid (the "peak_zone" duration parameter is a text)
+    incorrectActivityJSON.heart_rate.peak_zone.duration = 'asText'
+    incorrectActivity4 = incorrectActivity4.fromJSON(incorrectActivityJSON)
+
+    let incorrectActivity5: PhysicalActivity = new PhysicalActivityMock() // The PhysicalActivityHeartRate is invalid (the average parameter is a text)
+    incorrectActivityJSON.heart_rate.average = 'asText'
+    incorrectActivityJSON.heart_rate.cardio_zone.duration = 0 // correcting
+    incorrectActivity5 = incorrectActivity5.fromJSON(incorrectActivityJSON)
+
+    let incorrectActivity6: PhysicalActivity = new PhysicalActivityMock() // The PhysicalActivityHeartRate is invalid (the "cardio_zone" is empty)
+    delete incorrectActivity6.heart_rate!.cardio_zone
 
     before(async () => {
         try {
@@ -127,7 +151,6 @@ describe('Routes: children.physicalactivities', () => {
 
         beforeEach(async () => {
             try {
-
                 // save default physical activity for default child
                 const resultDefaultActivity = await trck.savePhysicalActivitiy(accessDefaultChildToken, defaultActivity, defaultChild.id)
                 defaultActivity.id = resultDefaultActivity.id
@@ -148,103 +171,67 @@ describe('Routes: children.physicalactivities', () => {
 
         context('when the user update a physical activity of the child successfully', () => {
 
-            it('physical.activities.patch001: should return status code 200 and updated start_time, end_time and duration for educator user', () => {
+            it('physical.activities.patch001: should return status code 200 and updated name and calories by educator user', async () => {
+
+                const bikeActivity: PhysicalActivity = new PhysicalActivityMock(ActivityTypeMock.BIKE)
+
+                const resultActivity = await trck.savePhysicalActivitiy(accessDefaultChildToken, bikeActivity, defaultChild.id)
+                bikeActivity.id = resultActivity.id
+                bikeActivity.child_id = resultActivity.child_id
+
+                const newActivityName = ActivityTypeMock.SWIM
+                const newActivityCalories = bikeActivity.calories! + 100
 
                 const body = {
-                    name: defaultActivity.name,
-                    start_time: otherActivity.start_time,
-                    end_time: otherActivity.end_time,
-                    duration: otherActivity.duration,
-                    calories: defaultActivity.calories,
-                    steps: defaultActivity.steps ? defaultActivity.steps : undefined,
-                    levels: defaultActivity.levels ? defaultActivity.levels : undefined,
-                    child_id: defaultActivity.child_id
+                    name: newActivityName,
+                    calories: newActivityCalories
                 }
 
                 return request(URI)
-                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${bikeActivity.id}`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body.id).to.eql(defaultActivity.id)
-                        expect(res.body.name).to.eql(defaultActivity.name)
-                        expect(res.body.start_time).to.eql(otherActivity.start_time!.toISOString())
-                        expect(res.body.end_time).to.eql(otherActivity.end_time!.toISOString())
-                        expect(res.body.duration).to.eql(otherActivity.duration)
-                        expect(res.body.calories).to.eql(defaultActivity.calories)
-                        if (defaultActivity.steps) {
-                            expect(res.body.steps).to.eql(defaultActivity.steps)
-                        }
-                        if (defaultActivity.levels) {
+                        expect(res.body.id).to.eql(bikeActivity.id)
+                        expect(res.body.name).to.eql(newActivityName) //updated
+                        expect(res.body.start_time).to.eql(bikeActivity.start_time!.toISOString())
+                        expect(res.body.end_time).to.eql(bikeActivity.end_time!.toISOString())
+                        expect(res.body.duration).to.eql(bikeActivity.duration)
+                        expect(res.body.calories).to.eql(newActivityCalories) //updated
+                        expect(res.body).to.not.have.property('steps')
+                        if (bikeActivity.levels) {
                             expect(res.body.levels)
-                                .to.eql(defaultActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                                .to.eql(bikeActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                        }
+                        if (bikeActivity.heart_rate) {
+                            expect(res.body.heart_rate).to.deep.equals(bikeActivity.heart_rate)
                         }
                         expect(res.body.child_id).to.eql(defaultActivity.child_id)
                     })
             })
 
-            it('physical.activities.patch002: should return status code 200 and updated start_time, end_time, duration and calories for application user', () => {
-
-                const body = {
-                    name: defaultActivity.name,
-                    start_time: otherActivity.start_time,
-                    end_time: otherActivity.end_time,
-                    duration: otherActivity.duration,
-                    calories: otherActivity.calories,
-                    steps: defaultActivity.steps ? defaultActivity.steps : undefined,
-                    levels: defaultActivity.levels ? defaultActivity.levels : undefined,
-                    child_id: defaultActivity.child_id
-                }
-
-                return request(URI)
-                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
-                    .send(body)
-                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body.id).to.eql(defaultActivity.id)
-                        expect(res.body.name).to.eql(defaultActivity.name)
-                        expect(res.body.start_time).to.eql(otherActivity.start_time!.toISOString())
-                        expect(res.body.end_time).to.eql(otherActivity.end_time!.toISOString())
-                        expect(res.body.duration).to.eql(otherActivity.duration)
-                        expect(res.body.calories).to.eql(otherActivity.calories)
-                        if (defaultActivity.steps) {
-                            expect(res.body.steps).to.eql(defaultActivity.steps)
-                        }
-                        if (defaultActivity.levels) {
-                            expect(res.body.levels)
-                                .to.eql(defaultActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
-                        }
-                        expect(res.body.child_id).to.eql(defaultActivity.child_id)
-                    })
-            })
-
-            it('physical.activities.patch003: should return status code 200 and updated levels for family user', async () => {
+            it('physical.activities.patch002: should return status code 200 and updated steps and distance by application user', async () => {
 
                 const walkActivity: PhysicalActivity = new PhysicalActivityMock(ActivityTypeMock.WALK)
 
-                const result = await trck.savePhysicalActivitiy(accessDefaultChildToken, walkActivity, defaultChild.id)
-                walkActivity.id = result.id
-                walkActivity.child_id = result.child_id
+                const resultActivity = await trck.savePhysicalActivitiy(accessDefaultChildToken, walkActivity, defaultChild.id)
+                walkActivity.id = resultActivity.id
+                walkActivity.child_id = resultActivity.child_id
+
+                const newActivitySteps = walkActivity.steps! + 100
+                const newActivityDistance = walkActivity.distance! + 100
 
                 const body = {
-                    name: walkActivity.name,
-                    start_time: walkActivity.start_time,
-                    end_time: walkActivity.end_time,
-                    duration: walkActivity.duration,
-                    calories: walkActivity.calories,
-                    steps: walkActivity.steps ? walkActivity.steps : undefined,
-                    levels: walkActivity.levels ? otherActivity.levels : undefined, // only levels will be updated
-                    child_id: walkActivity.child_id
+                    steps: newActivitySteps,
+                    distance: newActivityDistance
                 }
 
                 return request(URI)
                     .patch(`/children/${defaultChild.id}/physicalactivities/${walkActivity.id}`)
                     .send(body)
-                    .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
@@ -254,66 +241,62 @@ describe('Routes: children.physicalactivities', () => {
                         expect(res.body.end_time).to.eql(walkActivity.end_time!.toISOString())
                         expect(res.body.duration).to.eql(walkActivity.duration)
                         expect(res.body.calories).to.eql(walkActivity.calories)
-                        if (walkActivity.steps) {
-                            expect(res.body.steps).to.eql(walkActivity.steps)
-                        }
+                        expect(res.body.distance).to.eql(newActivityDistance) //updated
+                        expect(res.body.steps).to.eql(newActivitySteps) //updated
                         if (walkActivity.levels) {
                             expect(res.body.levels)
-                                .to.eql(otherActivity.levels!.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                                .to.eql(walkActivity.levels.map((elem: PhysicalActivityLevel) => elem.toJSON()))
+                        }
+                        if (walkActivity.heart_rate) {
+                            expect(res.body.heart_rate).to.deep.equals(walkActivity.heart_rate)
                         }
                         expect(res.body.child_id).to.eql(walkActivity.child_id)
                     })
             })
 
+            it('physical.activities.patch003: should return status code 200 and updated levels and heart_rate by family user', async () => {
+
+                const swimActivity: PhysicalActivity = new PhysicalActivityMock(ActivityTypeMock.SWIM)
+                const heartRateJSON = swimActivity.heart_rate!.toJSON()
+                heartRateJSON.average += 100
+
+                const result = await trck.savePhysicalActivitiy(accessDefaultChildToken, swimActivity, defaultChild.id)
+                swimActivity.id = result.id
+                swimActivity.child_id = result.child_id
+
+                const body = {
+                    levels: [], //update levels for empty array
+                    heart_rate: heartRateJSON
+                }
+
+                return request(URI)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${swimActivity.id}`)
+                    .send(body)
+                    .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                    .set('Content-Type', 'application/json')
+                    .expect(200)
+                    .then(res => {
+                        expect(res.body.id).to.eql(swimActivity.id)
+                        expect(res.body.name).to.eql(swimActivity.name)
+                        expect(res.body.start_time).to.eql(swimActivity.start_time!.toISOString())
+                        expect(res.body.end_time).to.eql(swimActivity.end_time!.toISOString())
+                        expect(res.body.duration).to.eql(swimActivity.duration)
+                        expect(res.body.calories).to.eql(swimActivity.calories)
+                        expect(res.body).to.not.have.property('steps')
+                        expect(res.body).to.not.have.property('levels')
+                        expect(res.body.heart_rate).to.deep.equal(heartRateJSON)
+                        expect(res.body.child_id).to.eql(swimActivity.child_id)
+                    })
+            })
+
         }) // update physical activity successfully
 
-        describe('when a duplicate error occurrs', () => {
-
-            it('physical.activities.patch004: should return status code 409 and info message about invalid Date, because start_time is equal to that of another activity', async () => {
-
-                const result = await trck.savePhysicalActivitiy(accessDefaultChildToken, otherActivity, defaultChild.id)
-                otherActivity.id = result.id
-                otherActivity.child_id = result.child_id
-
-                const current_date = new Date()
-
-                const body = {
-                    name: otherActivity.name,
-                    start_time: defaultActivity.start_time, // start_time of otherActivity is equal start_time of defaultActivity and both to belong the same child
-                    end_time: current_date,
-                    duration: current_date.getTime() - defaultActivity.start_time!.getTime(),
-                    calories: otherActivity.calories,
-                    steps: otherActivity.steps ? otherActivity.steps : undefined,
-                    levels: otherActivity.levels ? otherActivity.levels : undefined,
-                    child_id: otherActivity.child_id
-                }
-
-                return request(URI)
-                    .patch(`/children/${defaultChild.id}/physicalactivities/${otherActivity.id}`)
-                    .send(body)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
-                    .expect(409)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_409_PHYSICAL_ACTIVITY_IS_ALREADY_REGISTERED)
-                    })
-
-            })
-        })
-
         describe('when a validation error occurs', () => {
-
-            it('physical.activities.patch005: should return status code 400 and info message about invalid Date, because start_time is greater than end_time', () => {
+            // NOT UPDATEABLE
+            it('physical.activities.patch004: should return status code 400 and info message about not updateable attributes, because start_time is not updateable', async () => {
 
                 const body = {
-                    name: defaultActivity.name,
-                    start_time: defaultEnd_time, // start_time greater than end_time
-                    end_time: defaultStart_time, // end_time smaller than start_time
-                    duration: defaultActivity.duration,
-                    calories: defaultActivity.calories,
-                    steps: defaultActivity.steps ? defaultActivity.steps : undefined,
-                    levels: defaultActivity.levels ? otherActivity.levels : undefined,
-                    child_id: defaultActivity.child_id
+                    start_time: new Date('2018-12-19T14:40:00Z')
                 }
 
                 return request(URI)
@@ -323,22 +306,16 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_START_TIME_IS_GREATER_THAN_END_TIME)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_ATTRIBUTES_NOT_UPDATEABLE)
                     })
 
             })
 
-            it('physical.activities.patch006: should return status code 400 and info message about invalid Date, because start_time is invalid', async () => {
+            it('physical.activities.patch005: should return status code 400 and info message about not updateable attributes, because end_time is not updateable', async () => {
 
                 const body = {
-                    name: defaultActivity.name,
-                    start_time: new Date('2018-13-19T14:40:00Z'), // invalid Month(13)
-                    end_time: defaultActivity.end_time,
-                    duration: defaultActivity.duration,
-                    calories: defaultActivity.calories,
-                    steps: defaultActivity.steps ? defaultActivity.steps : undefined,
-                    levels: defaultActivity.levels ? defaultActivity.levels : undefined,
-                    child_id: defaultActivity.child_id
+                    name: ActivityTypeMock.RUN,
+                    start_time: new Date('2018-12-19T14:40:00Z')
                 }
 
                 return request(URI)
@@ -348,22 +325,17 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_DATE)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_ATTRIBUTES_NOT_UPDATEABLE)
                     })
 
             })
 
-            it('physical.activities.patch007: should return status code 400 and info message about invalid duration, because duration value does not match values passed in start_time and end_time parameters', async () => {
+            it('physical.activities.patch006: should return status code 400 and info message about not updateable attributes, because duration is not updateable', async () => {
 
                 const body = {
                     name: defaultActivity.name,
-                    start_time: defaultActivity.start_time,
-                    end_time: defaultActivity.end_time,
-                    duration: defaultActivity.duration! + 10, // duration value does not match values passed in start_time and end_time parameters
                     calories: defaultActivity.calories,
-                    steps: defaultActivity.steps ? defaultActivity.steps : undefined,
-                    levels: defaultActivity.levels ? defaultActivity.levels : undefined,
-                    child_id: defaultActivity.child_id
+                    duration: defaultActivity.duration
                 }
 
                 return request(URI)
@@ -373,22 +345,18 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_DURATION_DOES_NOT_MATCH)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_ATTRIBUTES_NOT_UPDATEABLE)
                     })
-
             })
 
-            it('physical.activities.patch008: should return status code 400 and info message about negative duration', async () => {
+            it('physical.activities.patch007: should return status code 400 and info message about not updateable attributes, because levels is not updateable', async () => {
 
                 const body = {
                     name: defaultActivity.name,
-                    start_time: defaultActivity.start_time,
-                    end_time: defaultActivity.end_time,
-                    duration: -defaultActivity.duration!, // negative duration
                     calories: defaultActivity.calories,
-                    steps: defaultActivity.steps ? defaultActivity.steps : undefined,
-                    levels: defaultActivity.levels ? defaultActivity.levels : undefined,
-                    child_id: defaultActivity.child_id
+                    steps: defaultActivity.steps,
+                    distance: defaultActivity.distance,
+                    levels: defaultActivity.levels
                 }
 
                 return request(URI)
@@ -398,22 +366,49 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_NEGATIVE_DURATION)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_ATTRIBUTES_NOT_UPDATEABLE)
+                    })
+
+            })
+            // NOT UPDATEABLE
+
+            it('physical.activities.patch008: should return status code 400 and info message about invalid name, because name must be a string ', () => {
+
+                const invalidName = 150
+                const body = { name: invalidName }
+
+                return request(URI)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .send(body)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body.message).to.eql(`field name must be a string!`)
+                    })
+            })
+
+            it('physical.activities.patch009: should return status code 400 and info message about invalid calories, because calories provided was a text', () => {
+
+                const invalidCalories = 'asText'
+                const body = { calories: invalidCalories }
+
+                return request(URI)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .send(body)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_CALORIES)
                     })
 
             })
 
-            it('physical.activities.patch009: should return status code 400 and info message about negative calories', async () => {
+            it('physical.activities.patch010: should return status code 400 and info message about invalid calories, because calories value provided was negative', async () => {
 
                 const body = {
-                    name: defaultActivity.name,
-                    start_time: defaultActivity.start_time,
-                    end_time: defaultActivity.end_time,
-                    duration: defaultActivity.duration,
-                    calories: -defaultActivity.calories!, // negative calories
-                    steps: defaultActivity.steps ? defaultActivity.steps : undefined,
-                    levels: defaultActivity.levels ? defaultActivity.levels : undefined,
-                    child_id: defaultActivity.child_id
+                    calories: defaultActivity.calories! * (-1) // negative calories
                 }
 
                 return request(URI)
@@ -428,16 +423,32 @@ describe('Routes: children.physicalactivities', () => {
 
             })
 
-            it('physical.activities.patch010: should return status code 400 and info message about invalid steps, because steps value provided is a text', async () => {
+            it('physical.activities.patch011: should return status code 400 and info message about invalid steps, because steps value provided was a text', async () => {
 
                 const body = {
                     name: defaultActivity.name,
-                    start_time: defaultActivity.start_time,
-                    end_time: defaultActivity.end_time,
-                    duration: defaultActivity.duration,
                     calories: defaultActivity.calories,
-                    steps: 'invalid steps', // steps must be integers
-                    levels: defaultActivity.levels ? defaultActivity.levels : undefined,
+                    steps: 'invalid steps' // steps must be integers
+                }
+
+                return request(URI)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .send(body)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body.message).to.eql('Steps field is invalid...')
+                        expect(err.body.description).to.eql('Physical Activity validation failed: The value provided is not a valid number!')
+                    })
+
+            })
+
+            it('physical.activities.patch012: should return status code 400 and info message about invalid steps, because steps value provided was negative', async () => {
+
+                const body = {
+                    calories: defaultActivity.calories,
+                    steps: -2700,
                     child_id: defaultActivity.child_id
                 }
 
@@ -448,26 +459,14 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .expect(400)
                     .then(err => {
-                        // the error message should state that the steps are invalid, not that the id provided is invalid
-                        expect(err.body.message).to.not.eql('Some ID provided, does not have a valid format.')
-                        expect(err.body.description).to.not.eql('A 24-byte hex ID similar to this: 507f191e810c19729de860ea, is expected.')
-                        // what error message to expect when the steps are invalid ?
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_NEGATIVE_STEPS)
                     })
 
             })
 
-            it('physical.activities.patch011: should return status code 400 and info message about invalid levels, because the levels array has an item that contains empty fields', async () => {
+            it('physical.activities.patch013: should return status code 400 and info message about invalid distance, because distance value provided was a text', async () => {
 
-                const body = {
-                    name: defaultActivity.name,
-                    start_time: defaultActivity.start_time,
-                    end_time: defaultActivity.end_time,
-                    duration: defaultActivity.duration,
-                    calories: defaultActivity.calories,
-                    steps: defaultActivity.steps ? defaultActivity.steps : undefined,
-                    levels: incorrectActivity1.levels ? incorrectActivity1.levels : undefined, // The levels array has an item that contains empty fields
-                    child_id: defaultActivity.child_id
-                }
+                const body = { distance: 'invalid_distance' }
 
                 return request(URI)
                     .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
@@ -476,23 +475,14 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_NAME_IS_INVALID)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_DISTANCE)
                     })
 
             })
 
-            it('physical.activities.patch012: should return status code 400 and info message about invalid levels, because the levels array has an item that contains negative duration', async () => {
+            it('physical.activities.patch014: should return status code 400 and info message about invalid steps, because steps value provided was negative', async () => {
 
-                const body = {
-                    name: defaultActivity.name,
-                    start_time: defaultActivity.start_time,
-                    end_time: defaultActivity.end_time,
-                    duration: defaultActivity.duration,
-                    calories: defaultActivity.calories,
-                    steps: defaultActivity.steps ? defaultActivity.steps : undefined,
-                    levels: incorrectActivity2.levels ? incorrectActivity2.levels : undefined, // The levels array has an item that contains negative duration
-                    child_id: defaultActivity.child_id
-                }
+                const body = { distance: defaultActivity.distance! * (-1) }
 
                 return request(URI)
                     .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
@@ -501,37 +491,11 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_DURATION_IS_NEGATIVE)
-                    })
-
-            })
-
-            it('physical.activities.patch013: should return status code 400 and info message about invalid levels, because the levels array has an item that contains invalid name', async () => {
-
-                const body = {
-                    name: defaultActivity.name,
-                    start_time: defaultActivity.start_time,
-                    end_time: defaultActivity.end_time,
-                    duration: defaultActivity.duration,
-                    calories: defaultActivity.calories,
-                    steps: defaultActivity.steps ? defaultActivity.steps : undefined,
-                    levels: incorrectActivity3.levels ? incorrectActivity3.levels : undefined, // The levels array has an item that contains ivalid name
-                    child_id: defaultActivity.child_id
-                }
-
-                return request(URI)
-                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
-                    .send(body)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
-                    .expect(400)
-                    .then(err => {
-                        expect(err.body.message).to.eql(`The name of level provided \"${notAllowedLevelsName}\" is not supported...`)
-                        expect(err.body.description).to.eql('The names of the allowed levels are: sedentary, lightly, fairly, very.')
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_NEGATIVE_DISTANCE)
                     })
             })
 
-            it('physical.activities.patch014: should return status code 400 and info message about child not found', async () => {
+            it('physical.activities.patch015: should return status code 400 and info message about child not found', async () => {
 
                 const non_existent_child_id = '111a111a111a11111aa111aa'
                 const activity: PhysicalActivity = new PhysicalActivityMock()
@@ -543,12 +507,9 @@ describe('Routes: children.physicalactivities', () => {
 
                 const body = {
                     name: activity.name,
-                    start_time: activity.start_time,
-                    end_time: activity.end_time,
-                    duration: activity.duration,
                     calories: activity.calories,
+                    distance: activity.distance,
                     steps: activity.steps ? activity.steps : undefined,
-                    levels: activity.levels ? activity.levels : undefined,
                     child_id: non_existent_child_id
                 }
 
@@ -560,25 +521,25 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .expect(400)
                     .then(err => {
-                        // expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.????)
+                        expect(err.body.message).to.eql(`Child with ID ${non_existent_child_id} is not registered on the platform!`)
                     })
             })
 
-            it('physical.activities.patch015: should return status code 400 and info message from invalid child_id', () => {
+            it('physical.activities.patch016: should return status code 400 and info message from invalid child_id', () => {
+
+                const INVALID_ID = '123'
 
                 const body = {
                     name: defaultActivity.name,
-                    start_time: defaultActivity.start_time,
-                    end_time: defaultActivity.end_time,
-                    duration: defaultActivity.duration,
                     calories: defaultActivity.calories,
+                    distance: defaultActivity.distance,
                     steps: defaultActivity.steps ? defaultActivity.steps : undefined,
-                    levels: defaultActivity.levels ? defaultActivity.levels : undefined,
+                    heart_rate: defaultActivity.heart_rate,
                     child_id: defaultActivity.child_id
                 }
 
                 return request(URI)
-                    .patch(`/children/${acc.INVALID_ID}/physicalactivities/${defaultActivity.id}`)
+                    .patch(`/children/${INVALID_ID}/physicalactivities/${defaultActivity.id}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -588,21 +549,21 @@ describe('Routes: children.physicalactivities', () => {
                     })
             })
 
-            it('physical.activities.patch016: should return status code 400 and info message from invalid activity_id', () => {
+            it('physical.activities.patch017: should return status code 400 and info message from invalid activity_id', () => {
+
+                const INVALID_ACTIVITY_ID = '123'
 
                 const body = {
                     name: defaultActivity.name,
-                    start_time: defaultActivity.start_time,
-                    end_time: defaultActivity.end_time,
-                    duration: defaultActivity.duration,
                     calories: defaultActivity.calories,
+                    distance: defaultActivity.distance,
                     steps: defaultActivity.steps ? defaultActivity.steps : undefined,
-                    levels: defaultActivity.levels ? defaultActivity.levels : undefined,
+                    heart_rate: defaultActivity.heart_rate,
                     child_id: defaultActivity.child_id
                 }
 
                 return request(URI)
-                    .patch(`/children/${defaultChild.id}/physicalactivities/${acc.INVALID_ID}`)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${INVALID_ACTIVITY_ID}`)
                     .send(body)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -612,22 +573,151 @@ describe('Routes: children.physicalactivities', () => {
                     })
             })
 
+            it('physical.activities.patch018: should return status code 400 and info message from invalid activity_id', () => {
+
+                const INVALID_ACTIVITY_ID = '123'
+
+                const body = {
+                    name: defaultActivity.name,
+                    calories: defaultActivity.calories,
+                    distance: defaultActivity.distance,
+                    steps: defaultActivity.steps ? defaultActivity.steps : undefined,
+                    heart_rate: defaultActivity.heart_rate,
+                    child_id: defaultActivity.child_id
+                }
+
+                return request(URI)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${INVALID_ACTIVITY_ID}`)
+                    .send(body)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_PHYSICAL_ACTIVY_ID)
+                    })
+            })
+
+            // INVALID HEART_RATE
+            it('physical.activities.patch019: should return status code 400 and info message from invalid heart rate, because average value provided was negative', () => {
+
+                const body = { heart_rate: incorrectActivity1.heart_rate }
+
+                return request(URI)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .send(body)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_NEGATIVE_AVERAGE)
+                    })
+            })
+
+            it('physical.activities.patch020: should return status code 400 and info message from invalid heart rate, because out_of_range_zone min parameter is negative', () => {
+
+                const body = { heart_rate: incorrectActivity2.heart_rate }
+
+                return request(URI)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .send(body)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_NEGATIVE_MIN)
+                    })
+            })
+
+            it('physical.activities.patch021: should return status code 400 and info message from invalid heart rate, because fat_burn_zone was not provided', () => {
+
+                const body = { heart_rate: incorrectActivity3.heart_rate }
+
+                return request(URI)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .send(body)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_MAX_IS_REQUIRED)
+                    })
+            })
+
+            it('physical.activities.patch022: should return status code 400 and info message from invalid heart rate, because cardio_zone parameter duration is a text', () => {
+
+                const body = { heart_rate: incorrectActivity4.heart_rate }
+
+                return request(URI)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .send(body)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_DURATION_IS_INVALID)
+                    })
+            })
+
+            it('physical.activities.patch023: should return status code 400 and info message from invalid heart rate, because cardio_zone parameter duration is a text', () => {
+
+                const body = { heart_rate: incorrectActivity4.heart_rate }
+
+                return request(URI)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .send(body)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_DURATION_IS_INVALID)
+                    })
+            })
+
+            it('physical.activities.patch024: should return status code 400 and info message from invalid heart rate, because average value provided was a text', () => {
+
+                const body = { heart_rate: incorrectActivity5.heart_rate }
+
+                return request(URI)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .send(body)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_AVERAGE)
+                    })
+            })
+
+            it('physical.activities.patch025: should return status code 400 and info message from invalid heart rate, because peak_zone was not provided', () => {
+
+                const body = { heart_rate: incorrectActivity6.heart_rate }
+
+                return request(URI)
+                    .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                    .send(body)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_CARDIO_ZONE_IS_REQUIRED)
+                    })
+            })
+            // INVALID HEART_RATE
+
         }) // validation error occurs
 
         describe('when physical activity is not found', () => {
 
-            it('physical.activities.patch017: should return status code 404 and info message from physical activity not found', () => {
+            it('physical.activities.patch026: should return status code 404 and info message from physical activity not found', () => {
 
                 const non_existent_activity_id = '111a111a111a11111aa111aa'
 
                 const body = {
                     name: defaultActivity.name,
-                    start_time: defaultActivity.start_time,
-                    end_time: defaultActivity.end_time,
-                    duration: defaultActivity.duration,
                     calories: defaultActivity.calories,
+                    distance: defaultActivity.distance,
                     steps: defaultActivity.steps ? defaultActivity.steps : undefined,
-                    levels: defaultActivity.levels ? defaultActivity.levels : undefined,
+                    heart_rate: defaultActivity.heart_rate,
                     child_id: defaultActivity.child_id
                 }
 
@@ -647,16 +737,14 @@ describe('Routes: children.physicalactivities', () => {
 
             const body = {
                 name: defaultActivity.name,
-                start_time: defaultActivity.start_time,
-                end_time: defaultActivity.end_time,
-                duration: defaultActivity.duration,
                 calories: defaultActivity.calories,
+                distance: defaultActivity.distance,
                 steps: defaultActivity.steps ? defaultActivity.steps : undefined,
-                levels: defaultActivity.levels ? defaultActivity.levels : undefined,
+                heart_rate: defaultActivity.heart_rate,
                 child_id: defaultActivity.child_id
             }
 
-            it('physical.activities.patch018: should return status code 403 and info message from insufficient permissions for admin user', () => {
+            it('physical.activities.patch027: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
                     .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
@@ -669,7 +757,7 @@ describe('Routes: children.physicalactivities', () => {
                     })
             })
 
-            it('physical.activities.patch019: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('physical.activities.patch028: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
@@ -682,7 +770,7 @@ describe('Routes: children.physicalactivities', () => {
                     })
             })
 
-            it('physical.activities.patch020: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('physical.activities.patch029: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
@@ -700,7 +788,7 @@ describe('Routes: children.physicalactivities', () => {
 
         describe('when not informed the acess token', () => {
 
-            it('physical.activities.patch021: should return the status code 401 and the authentication failure informational message', () => {
+            it('physical.activities.patch030: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .patch(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
@@ -716,18 +804,16 @@ describe('Routes: children.physicalactivities', () => {
 
         describe('when update a physical activity of a child that has been deleted', () => {
 
-            it('physical.activities.patch022: should return status code 404 and info message from physical activity not found', async () => {
+            it('physical.activities.patch031: should return status code 404 and info message from physical activity not found', async () => {
 
                 await acc.deleteUser(accessTokenAdmin, defaultChild.id)
 
                 const body = {
                     name: defaultActivity.name,
-                    start_time: defaultActivity.start_time,
-                    end_time: defaultActivity.end_time,
-                    duration: defaultActivity.duration,
                     calories: defaultActivity.calories,
+                    distance: defaultActivity.distance,
                     steps: defaultActivity.steps ? defaultActivity.steps : undefined,
-                    levels: defaultActivity.levels ? defaultActivity.levels : undefined,
+                    heart_rate: defaultActivity.heart_rate,
                     child_id: defaultActivity.child_id
                 }
 

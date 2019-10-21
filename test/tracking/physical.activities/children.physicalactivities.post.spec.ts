@@ -101,6 +101,10 @@ describe('Routes: children.physicalactivities', () => {
     let incorrectActivity6: PhysicalActivity = new PhysicalActivityMock()
     incorrectActivity6.heart_rate!.fat_burn_zone!.duration! *= -1
 
+    let incorrectActivity7: PhysicalActivity = new PhysicalActivityMock()
+    incorrectActivityJSON.start_time = new Date('2018-13-19T14:40:00Z') // The start_time contains an invalid Date, because month is invalid (13)
+    incorrectActivity7 = incorrectActivity7.fromJSON(incorrectActivityJSON)
+
     const AMOUNT_OF_CORRECT_ACTIVITIES = 3
     const correctActivities: Array<PhysicalActivity> = []
     const mixedActivities: Array<PhysicalActivity> = []
@@ -780,13 +784,11 @@ describe('Routes: children.physicalactivities', () => {
 
             it('physical.activities.post014: should return status code 400 and info message from validatio error, because date is invalid', () => {
 
-                physicalActivity.start_time = new Date('2018-13-19T14:40:00Z')
-
                 return request(URI)
                     .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .send(physicalActivity.toJSON())
+                    .send(incorrectActivity7)
                     .expect(400)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_DATE)
