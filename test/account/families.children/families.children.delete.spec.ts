@@ -76,12 +76,12 @@ describe('Routes: users.families.children', () => {
         }
     })
 
-    describe('DELETE /users/families/:family_id/children/:child_id', () => {
+    describe('DELETE /families/:family_id/children/:child_id', () => {
 
         context('when the admin dissociate a child from the family successfully', () => {
             it('families.children.delete001: should return status code 204 and no content', () => {
                 return request(URI)
-                    .delete(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -94,7 +94,7 @@ describe('Routes: users.families.children', () => {
         describe('when the child is nout found', () => {
             it('families.children.delete002: should return status code 204 and no content', () => {
                 return request(URI)
-                    .delete(`/users/families/${defaultFamily.id}/children/${acc.NON_EXISTENT_ID}`)
+                    .delete(`/families/${defaultFamily.id}/children/${acc.NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -105,14 +105,16 @@ describe('Routes: users.families.children', () => {
         })
 
         describe('when the family is nout found', () => {
-            it('families.children.delete003: should return status code 204 and no content', () => {
+            it('families.children.delete003: should return status code 404 and info message because family not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the family
+
                 return request(URI)
-                    .delete(`/users/families/${acc.NON_EXISTENT_ID}/children/${defaultChild.id}`)
+                    .delete(`/families/${NON_EXISTENT_ID}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
-                    .expect(204)
-                    .then(res => {
-                        expect(res.body).to.eql({})
+                    .expect(404)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_404_FAMILY_NOT_FOUND)
                     })
             })
         })
@@ -120,24 +122,28 @@ describe('Routes: users.families.children', () => {
         context('when a validation error occurs', () => {
 
             it('families.children.delete004: should return status code 400 and info message from invalid child_id', () => {
+                const INVALID_ID = '123' // invalid id of the child
+
                 return request(URI)
-                    .delete(`/users/families/${defaultFamily.id}/children/${acc.INVALID_ID}`)
+                    .delete(`/families/${defaultFamily.id}/children/${INVALID_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_FORMAT_ID_CHILD)
                     })
             })
 
             it('families.children.delete005: should return status code 400 and info message from invalid family_id', () => {
+                const INVALID_ID = '123' // invalid id of the family
+
                 return request(URI)
-                    .delete(`/users/families/${acc.INVALID_ID}/children/${defaultChild.id}`)
+                    .delete(`/families/${INVALID_ID}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
 
@@ -147,7 +153,7 @@ describe('Routes: users.families.children', () => {
 
             it('families.children.post006: should return status code 403 and info message from insufficient permissions for child user', () => {
                 return request(URI)
-                    .delete(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -158,7 +164,7 @@ describe('Routes: users.families.children', () => {
 
             it('families.children.post007: should return status code 403 and info message from insufficient permissions for educator user', () => {
                 return request(URI)
-                    .delete(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -169,7 +175,7 @@ describe('Routes: users.families.children', () => {
 
             it('families.children.post008: should return status code 403 and info message from insufficient permissions for health professional user', () => {
                 return request(URI)
-                    .delete(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -180,7 +186,7 @@ describe('Routes: users.families.children', () => {
 
             it('families.children.post009: should return status code 403 and info message from insufficient permissions for family user', () => {
                 return request(URI)
-                    .delete(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -191,7 +197,7 @@ describe('Routes: users.families.children', () => {
 
             it('families.children.post010: should return status code 403 and info message from insufficient permissions for application user', () => {
                 return request(URI)
-                    .delete(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -205,7 +211,7 @@ describe('Routes: users.families.children', () => {
         describe('when not informed the acess token', () => {
             it('families.children.post011: should return the status code 401 and the authentication failure informational message', () => {
                 return request(URI)
-                    .delete(`/users/families/${defaultFamily.id}/children/${defaultChild.id}`)
+                    .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
                     .expect(401)
