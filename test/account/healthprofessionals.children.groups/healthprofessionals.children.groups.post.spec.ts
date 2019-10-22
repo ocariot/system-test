@@ -8,7 +8,7 @@ import { Child } from '../../../src/account-service/model/child'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { HealthProfessional } from '../../../src/account-service/model/health.professional'
 
-describe('Routes: users.healthprofessionals.children.groups', () => {
+describe('Routes: healthprofessionals.children.groups', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -109,12 +109,12 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
         }
     })
 
-    describe('POST /users/healthprofessionals/:healthprofessional_id/children/groups', () => {
+    describe('POST /healthprofessionals/:healthprofessional_id/children/groups', () => {
         afterEach(async () => {
             try {
                 await accountDB.deleteChildrenGroups()
             } catch (err) {
-                console.log('Failure in users.healthprofessionals.children.groups.post test: ', err)
+                console.log('Failure in healthprofessionals.children.groups.post test: ', err)
             }
         })
 
@@ -128,7 +128,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
                 }
 
                 return request(URI)
-                    .post(`/users/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
+                    .post(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
@@ -140,12 +140,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
                         expect(res.body.children.length).to.eql(1)
                         expect(res.body.children[0]).to.have.property('id')
                         expect(res.body.children[0].username).to.eql(defaultChild.username)
-                        expect(res.body.children[0].institution).to.have.property('id')
-                        expect(res.body.children[0].institution.type).to.eql(defaultInstitution.type)
-                        expect(res.body.children[0].institution.name).to.eql(defaultInstitution.name)
-                        expect(res.body.children[0].institution.address).to.eql(defaultInstitution.address)
-                        expect(res.body.children[0].institution.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body.children[0].institution.longitude).to.eql(defaultInstitution.longitude)
+                        expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
                         expect(res.body.children[0].age).to.eql(defaultChild.age)
                         expect(res.body.children[0].gender).to.eql(defaultChild.gender)
                     })
@@ -156,14 +151,14 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
                     try {
                         await acc.saveChildrenGroupsForHealthProfessional(defaultHealthProfessionalToken, defaultHealthProfessional, defaultChildrenGroup)
                     } catch (err) {
-                        console.log('Failure in users.healthprofessionals.children.groups.post test: ', err)
+                        console.log('Failure in healthprofessionals.children.groups.post test: ', err)
                     }
                 })
 
                 it('healthprofessionals.children.groups.post002: should return status code 201 and saved the children group', () => {
 
                     return request(URI)
-                        .post(`/users/healthprofessionals/${anotherHealthProfessional.id}/children/groups`)
+                        .post(`/healthprofessionals/${anotherHealthProfessional.id}/children/groups`)
                         .send(defaultChildrenGroup)
                         .set('Authorization', 'Bearer '.concat(anotherHealthProfessionalToken))
                         .set('Content-Type', 'application/json')
@@ -175,12 +170,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
                             expect(res.body.children.length).to.eql(1)
                             expect(res.body.children[0]).to.have.property('id')
                             expect(res.body.children[0].username).to.eql(defaultChild.username)
-                            expect(res.body.children[0].institution).to.have.property('id')
-                            expect(res.body.children[0].institution.type).to.eql(defaultInstitution.type)
-                            expect(res.body.children[0].institution.name).to.eql(defaultInstitution.name)
-                            expect(res.body.children[0].institution.address).to.eql(defaultInstitution.address)
-                            expect(res.body.children[0].institution.latitude).to.eql(defaultInstitution.latitude)
-                            expect(res.body.children[0].institution.longitude).to.eql(defaultInstitution.longitude)
+                            expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
                             expect(res.body.children[0].age).to.eql(defaultChild.age)
                             expect(res.body.children[0].gender).to.eql(defaultChild.gender)
                         })
@@ -194,13 +184,13 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
                 try {
                     await acc.saveChildrenGroupsForHealthProfessional(defaultHealthProfessionalToken, defaultHealthProfessional, defaultChildrenGroup)
                 } catch (err) {
-                    console.log('Failure in users.healthprofessionals.children.groups.post test: ', err)
+                    console.log('Failure in healthprofessionals.children.groups.post test: ', err)
                 }
             })
             it('healthprofessionals.children.groups.post003: should return status code 409 and message info about children group is already registered', () => {
 
                 return request(URI)
-                    .post(`/users/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
+                    .post(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
@@ -221,7 +211,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
                 }
 
                 return request(URI)
-                    .post(`/users/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
+                    .post(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
@@ -239,7 +229,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
                 }
 
                 return request(URI)
-                    .post(`/users/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
+                    .post(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
@@ -260,7 +250,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
                 }
 
                 return request(URI)
-                    .post(`/users/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
+                    .post(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
@@ -272,26 +262,29 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
             })
 
             it('healthprofessionals.children.groups.post007: should return status code 400 and info message from children id(ids) is invalid', () => {
+                const INVALID_ID = '123' // invalid id of the child
 
                 const body = {
                     name: 'Another Children Group',
-                    children: new Array<string | undefined>('123'),
+                    children: new Array<string | undefined>(INVALID_ID),
                     school_class: '4th Grade'
                 }
 
                 return request(URI)
-                    .post(`/users/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
+                    .post(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
-                        // caso o ID contenha caracteres não numéricos (ex: 5a) o erro retornado é correto
+                        expect(err.body.message).to.eql('A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.')
+                        expect(err.body.description).to.eql('Children Group validation: ' +
+                            `Invalid children attribute. The following set of IDs is not in valid format: ${INVALID_ID}`)
                     })
             })
 
             it('healthprofessionals.children.groups.post008: should return status code 400 and info message from healthprofessional_id is invalid', () => {
+                const INVALID_ID = '123' // invalid id of the health professional
 
                 const body = {
                     name: 'Another Children Group',
@@ -300,29 +293,30 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
                 }
 
                 return request(URI)
-                    .post(`/users/healthprofessionals/${acc.INVALID_ID}/children/groups`)
+                    .post(`/healthprofessionals/${INVALID_ID}/children/groups`)
                     .send(body)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_HEALTHPROFESSIONAL_INVALID_ID)
                     })
             })
 
         }) //validation erros occurs
 
         describe('when the health professional is not found', () => {
-            it('healthprofessionals.children.groups.post009: should return status code 404 and info message about health professional not found', () => {
+            it('healthprofessionals.children.groups.post009: should return status code 400 and info message about health professional not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the health professional
 
                 return request(URI)
-                    .post(`/users/healthprofessionals/${acc.NON_EXISTENT_ID}/children/groups`)
+                    .post(`/healthprofessionals/${NON_EXISTENT_ID}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
-                    .expect(404)
+                    .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.HEALTH_PROFESSIONAL.ERROR_404_HEALTHPROFESSIONAL_NOT_FOUND)
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_HEALTHPROFESSIONAL_NOT_FOUND)
                     })
             })
         })
@@ -332,7 +326,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
             it('healthprofessionals.children.groups.post010: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
-                    .post(`/users/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
+                    .post(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -345,7 +339,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
             it('healthprofessionals.children.groups.post011: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .post(`/users/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
+                    .post(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
@@ -358,7 +352,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
             it('healthprofessionals.children.groups.post012: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
-                    .post(`/users/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
+                    .post(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
@@ -371,7 +365,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
             it('healthprofessionals.children.groups.post013: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
-                    .post(`/users/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
+                    .post(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
@@ -384,7 +378,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
             it('healthprofessionals.children.groups.post014: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
-                    .post(`/users/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
+                    .post(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
@@ -397,7 +391,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
             it('healthprofessionals.children.groups.post015: should return status code 403 and info message from insufficient permissions for another health professional user', () => {
 
                 return request(URI)
-                    .post(`/users/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
+                    .post(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
@@ -412,7 +406,7 @@ describe('Routes: users.healthprofessionals.children.groups', () => {
             it('healthprofessionals.children.groups.post016: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
-                    .post(`/users/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
+                    .post(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups`)
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')

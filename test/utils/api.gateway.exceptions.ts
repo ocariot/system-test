@@ -76,8 +76,11 @@ export abstract class ApiGatewayException {
         ERROR_400_NAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Children Group validation: name is required!').toJson(),
         ERROR_400_CHILDREN_IDS_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Children Group validation: Collection with children IDs is required!').toJson(),
         ERROR_400_INVALID_FORMAT_ID: new ApiException(400, 'Parameter {group_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
+        ERROR_400_CHILDREN_GROUPS_HEALTHPROFESSIONAL_INVALID_ID: new ApiException(400, 'Parameter {healthprofessional_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
+        ERROR_400_CHILDREN_GROUPS_EDUCATOR_INVALID_FORMAT_ID: new ApiException(400, 'Parameter {educator_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_400_CHILDREN_NOT_REGISTERED: new ApiException(400, 'It is necessary for children to be registered before proceeding.', 'The following IDs were verified without registration:').toJson(),
         ERROR_400_CHILDREN_GROUPS_EDUCATOR_NOT_FOUND: new ApiException(400, 'Educator not found!', 'Educator not found or already removed. A new operation for the same resource is not required.').toJson(),
+        ERROR_400_CHILDREN_GROUPS_HEALTHPROFESSIONAL_NOT_FOUND: new ApiException(400, 'Health Professional not found!', 'Health Professional not found or already removed. A new operation for the same resource is not required.').toJson(),
         ERROR_404_CHILDREN_GROUP_NOT_FOUND: new ApiException(404, 'Children Group not found!', 'Children Group not found or already removed. A new operation for the same resource is not required.').toJson(),
         ERROR_409_DUPLICATE_CHILDREN_GROUPS: new ApiException(409, 'Children Group is already registered...').toJson()
     }

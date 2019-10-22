@@ -297,7 +297,7 @@ describe('Routes: educators.children.groups', () => {
             })
 
             it('educators.children.groups.patch008: should return status code 400 and info message from invalid ID, because educator_id is invalid', () => {
-                const INVALID_ID = '123'
+                const INVALID_ID = '123' // invalid id of the educator
 
                 return request(URI)
                     .patch(`/educators/${INVALID_ID}/children/groups/${defaultChildrenGroup.id}`)
@@ -306,7 +306,7 @@ describe('Routes: educators.children.groups', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.EDUCATOR.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_EDUCATOR_INVALID_FORMAT_ID)
                     })
             })
 

@@ -300,14 +300,14 @@ describe('Routes: educators.children.groups', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.EDUCATOR.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_EDUCATOR_INVALID_FORMAT_ID)
                     })
             })
 
         }) //validation erros occurs
 
         describe('when the educator is not found', () => {
-            it('educators.children.group.post009: should return status code 404 and info message about educator not found', () => {
+            it('educators.children.group.post009: should return status code 400 and info message about educator not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the educator
 
                 return request(URI)

@@ -202,16 +202,16 @@ describe('Routes: educators.children.groups', () => {
         }) // get a unique children_group successfully
 
         describe('when the educator is not found', () => {
-            it('educators.children.groups.get_id004: should return status code 404 and info message from educator not found', () => {
+            it('educators.children.groups.get_id004: should return status code 400 and info message from educator not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the educator
 
                 return request(URI)
                     .get(`/educators/${NON_EXISTENT_ID}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
-                    .expect(404)
+                    .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.EDUCATOR.ERROR_404_EDUCATOR_NOT_FOUND)
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_EDUCATOR_NOT_FOUND)
                     })
             })
         })
@@ -242,7 +242,7 @@ describe('Routes: educators.children.groups', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.EDUCATOR.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_EDUCATOR_INVALID_FORMAT_ID)
                     })
             })
 
