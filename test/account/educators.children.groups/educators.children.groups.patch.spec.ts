@@ -156,8 +156,8 @@ describe('Routes: educators.children.groups', () => {
             })
 
             it('educators.children.groups.patch002: should return status code 200 and associate a child to the children group', () => {
-                defaultChildrenGroup.children!.push(anotherChild) // associating anotherChild to the children group
 
+                // associating anotherChild to the children group
                 return request(URI)
                     .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
                     .send({ children: [defaultChild.id, anotherChild.id] })
@@ -264,7 +264,7 @@ describe('Routes: educators.children.groups', () => {
         describe('when a validation error occurs', () => {
 
             it('educators.children.groups.patch006: should return status code 400 and message from child(ren) not found', () => {
-                const NON_EXISTENT_ID = '111111111111111111111111'
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the child
 
                 return request(URI)
                     .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -280,7 +280,7 @@ describe('Routes: educators.children.groups', () => {
             })
 
             it('educators.children.groups.patch007: should return status code 400 and info message from invalid ID, because children_id(s) is invalid', () => {
-                const INVALID_ID = '123'
+                const INVALID_ID = '123' // invalid id of the child
 
                 return request(URI)
                     .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
