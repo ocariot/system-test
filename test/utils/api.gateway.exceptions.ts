@@ -16,6 +16,7 @@ export abstract class ApiGatewayException {
         ERROR_400_INVALID_FORMAT_ID: new ApiException(400, 'Some ID provided does not have a valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_400_HAS_ASSOCIATION: new ApiException(400, 'The institution is associated with one or more users.').toJson(),
         ERROR_400_INSTITUTION_NOT_REGISTERED: new ApiException(400, 'The institution provided does not have a registration.', 'It is necessary that the institution be registered before trying again.').toJson(),
+        ERROR_400_INSTITUTION_ID_IS_INVALID: new ApiException(400, 'Parameter {institution_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_404_INSTITUTION_NOT_FOUND: new ApiException(404, 'Institution not found!', 'Institution not found or already removed. A new operation for the same resource is not required.').toJson(),
         ERROR_409_DUPLICATE: new ApiException(409, 'Institution is already registered!').toJson()
     }
@@ -143,18 +144,19 @@ export abstract class ApiGatewayException {
 
     public static readonly ENVIRONMENT: any = {
         PARAM_ID_NOT_VALID_FORMAT: 'Parameter {environment_id} is not in valid format!',
-        ERROR_400_INSTITUTION_ID_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment measurements failed: institution_id required!').toJson(),
-        ERROR_400_LOCATION_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment measurements failed: location required!').toJson(),
-        ERROR_400_MEASUREMENTS_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment measurements failed: measurements required!').toJson(),
-        ERROR_400_TIMESTAMP_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment measurements failed: timestamp required!').toJson(),
-        ERROR_400_INSTITUTION_ID_AND_MEASUREMENTS_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment measurements failed: institution_id, measurements required!').toJson(),
-        ERROR_400_TIMESTAMP_AND_LOCATION_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment measurements failed: timestamp, location required!').toJson(),
-        ERROR_400_ALL_PARAMETERS_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment measurements failed: timestamp, institution_id, location, measurements required!').toJson(),
+        ERROR_400_INSTITUTION_ID_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment failed: institution_id required!').toJson(),
+        ERROR_400_LOCATION_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment failed: location required!').toJson(),
+        ERROR_400_MEASUREMENTS_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment failed: measurements required!').toJson(),
+        ERROR_400_TIMESTAMP_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment failed: timestamp required!').toJson(),
+        ERROR_400_INSTITUTION_ID_AND_MEASUREMENTS_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment failed: institution_id, measurements required!').toJson(),
+        ERROR_400_TIMESTAMP_AND_LOCATION_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment failed: timestamp, location required!').toJson(),
+        ERROR_400_ALL_PARAMETERS_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment failed: timestamp, institution_id, location, measurements required!').toJson(),
         ERROR_400_LOCATION_LOCAL_IS_REQUIRED: new ApiException(400, 'Location are not in a format that is supported...', 'Validation of location failed: location local is required!').toJson(),
         ERROR_400_LOCATION_ROOM_IS_REQUIRED: new ApiException(400, 'Location are not in a format that is supported...', 'Validation of location failed: location room is required!').toJson(),
         ERROR_400_INVALID_DATE: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
-        ERROR_400_MEASUREMENT_TYPE_IS_REQUIRED: new ApiException(400, 'Measurement are not in a format that is supported!', 'Validation of measurements failed: measurement type is required!').toJson(),
-        ERROR_409_ENVIRONMENT_MEASUREMENT_IS_ALREADY_REGISTERED: new ApiException(409, 'Measurement of environment is already registered...').toJson(),
+        ERROR_400_MEASUREMENT_TYPE_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment failed: measurement type required!').toJson(),
+        ERROR_400_MEASUREMENT_VALUE_FIELD_IS_INVALID: new ApiException(400, 'Measurement value field is invalid...', 'Validation of environment failed: The value provided is not a valid number!').toJson(),
+        ERROR_409_ENVIRONMENT_MEASUREMENT_IS_ALREADY_REGISTERED: new ApiException(409, 'Environment is already registered...').toJson(),
     }
 
     public static readonly APP: any = {
