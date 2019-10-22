@@ -93,8 +93,10 @@ describe('Routes: users.families.children', () => {
 
         describe('when the child is nout found', () => {
             it('families.children.delete002: should return status code 204 and no content', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the child
+
                 return request(URI)
-                    .delete(`/families/${defaultFamily.id}/children/${acc.NON_EXISTENT_ID}`)
+                    .delete(`/families/${defaultFamily.id}/children/${NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -151,7 +153,7 @@ describe('Routes: users.families.children', () => {
 
         context('when the user does not have permission to dissociate a child from the family', () => {
 
-            it('families.children.post006: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('families.children.delete006: should return status code 403 and info message from insufficient permissions for child user', () => {
                 return request(URI)
                     .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
@@ -162,7 +164,7 @@ describe('Routes: users.families.children', () => {
                     })
             })
 
-            it('families.children.post007: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('families.children.delete007: should return status code 403 and info message from insufficient permissions for educator user', () => {
                 return request(URI)
                     .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -173,7 +175,7 @@ describe('Routes: users.families.children', () => {
                     })
             })
 
-            it('families.children.post008: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('families.children.delete008: should return status code 403 and info message from insufficient permissions for health professional user', () => {
                 return request(URI)
                     .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
@@ -184,7 +186,7 @@ describe('Routes: users.families.children', () => {
                     })
             })
 
-            it('families.children.post009: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('families.children.delete009: should return status code 403 and info message from insufficient permissions for family user', () => {
                 return request(URI)
                     .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
@@ -195,7 +197,7 @@ describe('Routes: users.families.children', () => {
                     })
             })
 
-            it('families.children.post010: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('families.children.delete010: should return status code 403 and info message from insufficient permissions for application user', () => {
                 return request(URI)
                     .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
@@ -209,7 +211,7 @@ describe('Routes: users.families.children', () => {
         }) // user does not have permission 
 
         describe('when not informed the acess token', () => {
-            it('families.children.post011: should return the status code 401 and the authentication failure informational message', () => {
+            it('families.children.delete011: should return the status code 401 and the authentication failure informational message', () => {
                 return request(URI)
                     .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer ')
