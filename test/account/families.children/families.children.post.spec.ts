@@ -163,16 +163,17 @@ describe('Routes: families.children', () => {
 
         describe('when a validation error occurs', () => {
 
-            it('families.children.post003: should return status code 404 and info message about family not found', () => {
+            it('families.children.post003: should return status code 400 and info message about family not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the family
 
                 return request(URI)
                     .post(`/families/${NON_EXISTENT_ID}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
-                    .expect(404)
+                    .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_404_FAMILY_NOT_FOUND)
+                        expect(err.body.message).to.eql('Family not found!')
+                        expect(err.body.description).to.eql('Family not found or already removed. A new operation for the same resource is not required.')
                     })
             })
 

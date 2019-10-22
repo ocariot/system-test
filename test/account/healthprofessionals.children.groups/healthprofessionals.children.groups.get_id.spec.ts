@@ -202,14 +202,14 @@ describe('Routes: healthprofessionals.children.groups', () => {
         }) // get a unique children_group successfully
 
         describe('when the health professional is not found', () => {
-            it('healthprofessionals.children.groups.get_id004: should return status code 404 and info message from health professional not found', () => {
+            it('healthprofessionals.children.groups.get_id004: should return status code 400 and info message from health professional not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the health professional
 
                 return request(URI)
                     .get(`/healthprofessionals/${NON_EXISTENT_ID}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
-                    .expect(404)
+                    .expect(400)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_HEALTHPROFESSIONAL_NOT_FOUND)
                     })
