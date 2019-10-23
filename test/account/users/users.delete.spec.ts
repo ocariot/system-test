@@ -121,9 +121,10 @@ describe('Routes: users', () => {
     describe('DELETE /users/:user_id', () => {
 
         it('users.post001: should return status code 204 and no content, because user does not exists', () => {
+            const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the user
 
             return request(URI)
-                .delete(`/users/${acc.NON_EXISTENT_ID}`)
+                .delete(`/users/${NON_EXISTENT_ID}`)
                 .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                 .set('Content-Type', 'application/json')
                 .expect(204)
@@ -133,14 +134,15 @@ describe('Routes: users', () => {
         })
 
         it('users.post002: should return status code 400 and message info about invalid id', () => {
+            const INVALID_ID = '123' // invalid id of the user
 
             return request(URI)
-                .delete(`/users/${acc.INVALID_ID}`)
+                .delete(`/users/${INVALID_ID}`)
                 .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                 .set('Content-Type', 'application/json')
                 .expect(400)
                 .then(err => {
-                    expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                    expect(err.body).to.eql(ApiGatewayException.USER.ERROR_400_INVALID_FORMAT_ID)
                 })
         })
 
