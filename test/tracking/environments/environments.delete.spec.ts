@@ -27,7 +27,7 @@ describe('Routes: environments', () => {
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
 
-    const defaultEnvironmentMeasurement: Environment = new EnvironmentMock()
+    const defaultEnvironment: Environment = new EnvironmentMock()
 
     before(async () => {
         try {
@@ -46,7 +46,7 @@ describe('Routes: environments', () => {
 
             const resultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = resultInstitution.id
-            defaultEnvironmentMeasurement.institution_id = defaultInstitution.id
+            defaultEnvironment.institution_id = defaultInstitution.id
 
         } catch (err) {
             console.log('Failure on Before from environments.delete test: ', err)
@@ -67,8 +67,8 @@ describe('Routes: environments', () => {
 
         beforeEach(async () => {
             try {
-                const resultDefaultEnvironmentMeasurement = await trck.saveEnvironment(accessTokenApplication, defaultEnvironmentMeasurement)
-                defaultEnvironmentMeasurement.id = resultDefaultEnvironmentMeasurement.id
+                const resultDefaultEnvironment = await trck.saveEnvironment(accessTokenApplication, defaultEnvironment)
+                defaultEnvironment.id = resultDefaultEnvironment.id
             } catch (err) {
                 console.log('Failure in environments.delete test: ', err.body)
             }
@@ -81,11 +81,11 @@ describe('Routes: environments', () => {
             }
         })
 
-        describe('when the application delete a environment measurement successfully', () => {
+        describe('when the application delete a environment successfully', () => {
             it('environments.deletel001: should return status code 204 and no content', () => {
 
                 return request(URI)
-                    .delete(`/environments/${defaultEnvironmentMeasurement.id}`)
+                    .delete(`/environments/${defaultEnvironment.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -95,7 +95,7 @@ describe('Routes: environments', () => {
             })
         })
 
-        describe('when the environment measurement does not exist', () => {
+        describe('when the environment does not exist', () => {
             it('environments.deletel002: should return status code 204 and no content', () => {
 
                 return request(URI)
@@ -109,7 +109,7 @@ describe('Routes: environments', () => {
             })
         })
 
-        describe('when the environment_measurement_id is invalid', () => {
+        describe('when the environment_id is invalid', () => {
             it('environments.deletel003: should return status code 400 and info message about for invalid_id', () => {
 
                 return request(URI)
@@ -118,17 +118,17 @@ describe('Routes: environments', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_INVALID_ID)
                     })
             })
         })
 
-        context('when the user does not have permission for delete environment measurement', () => {
+        context('when the user does not have permission for delete environment', () => {
             
             it('environments.deletel004: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
-                    .delete(`/environments/${defaultEnvironmentMeasurement.id}`)
+                    .delete(`/environments/${defaultEnvironment.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -140,7 +140,7 @@ describe('Routes: environments', () => {
             it('environments.deletel005: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .delete(`/environments/${defaultEnvironmentMeasurement.id}`)
+                    .delete(`/environments/${defaultEnvironment.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -152,7 +152,7 @@ describe('Routes: environments', () => {
             it('environments.deletel006: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
-                    .delete(`/environments/${defaultEnvironmentMeasurement.id}`)
+                    .delete(`/environments/${defaultEnvironment.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -164,7 +164,7 @@ describe('Routes: environments', () => {
             it('environments.deletel007: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .delete(`/environments/${defaultEnvironmentMeasurement.id}`)
+                    .delete(`/environments/${defaultEnvironment.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -176,7 +176,7 @@ describe('Routes: environments', () => {
             it('environments.deletel008: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
-                    .delete(`/environments/${defaultEnvironmentMeasurement.id}`)
+                    .delete(`/environments/${defaultEnvironment.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -191,7 +191,7 @@ describe('Routes: environments', () => {
             it('environments.deletel009: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .delete(`/environments/${defaultEnvironmentMeasurement.id}`)
+                    .delete(`/environments/${defaultEnvironment.id}`)
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
                     .expect(401)

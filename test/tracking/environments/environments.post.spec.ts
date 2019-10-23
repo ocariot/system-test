@@ -148,9 +148,9 @@ describe('Routes: environments', () => {
             }
         })
 
-        context('when the application posting a new environment measurement successfully', () => {
+        context('when the application posting a new environment successfully', () => {
 
-            it('environments.post001: should return status code 201 and the saved environment measurement', () => {
+            it('environments.post001: should return status code 201 and the saved environment', () => {
 
                 return request(URI)
                     .post('/environments')
@@ -168,7 +168,7 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post002: should return status code 201 and the saved environment measurement without climatized parameter', () => {
+            it('environments.post002: should return status code 201 and the saved environment without climatized parameter', () => {
 
                 const environment: Environment = new EnvironmentMock()
                 environment.institution_id = defaultInstitution.id
@@ -315,7 +315,7 @@ describe('Routes: environments', () => {
                 })
             })
 
-            describe('when all the activities are incorrect', () => {
+            describe('when all the environments are incorrect', () => {
                 it('environments.post006: should return status code 207, and return a response with description of error in each environment', () => {
 
                     const body: any = []
@@ -575,7 +575,8 @@ describe('Routes: environments', () => {
                     .send(incorrectEnvironment1)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_INVALID_DATE)
+                        expect(err.body.message).to.eql('Location local field is invalid...')
+                        expect(err.body.description).to.eql('field local must be a string!')
                     })
             })
 
@@ -630,7 +631,7 @@ describe('Routes: environments', () => {
             })
         })
 
-        context('when the user does not have permission to register the environment measurement', () => {
+        context('when the user does not have permission to register the environment', () => {
 
             it('environments.post024: should return status code 403 and info message from insufficient permissions for admin user', () => {
 

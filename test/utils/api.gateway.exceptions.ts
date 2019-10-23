@@ -156,6 +156,7 @@ export abstract class ApiGatewayException {
         ERROR_400_INVALID_DATE: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
         ERROR_400_MEASUREMENT_TYPE_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Validation of environment failed: measurement type required!').toJson(),
         ERROR_400_MEASUREMENT_VALUE_FIELD_IS_INVALID: new ApiException(400, 'Measurement value field is invalid...', 'Validation of environment failed: The value provided is not a valid number!').toJson(),
+        ERROR_400_INVALID_ID: new ApiException(400, 'Parameter {environment_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_409_ENVIRONMENT_MEASUREMENT_IS_ALREADY_REGISTERED: new ApiException(409, 'Environment is already registered...').toJson(),
     }
 
