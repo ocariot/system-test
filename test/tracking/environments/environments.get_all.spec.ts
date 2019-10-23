@@ -27,7 +27,7 @@ describe('Routes: environments', () => {
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
 
-    const ENVIRONMENT_MEASUREMENTS: Array<Environment> = new Array()
+    const ENVIRONMENTS_ARRAY: Array<Environment> = new Array()
 
     before(async () => {
         try {
@@ -67,13 +67,13 @@ describe('Routes: environments', () => {
 
         beforeEach(async () => {
             try {
-                ENVIRONMENT_MEASUREMENTS.length = 0 // clear ENVIRONMENTS_MEASUREMENTS
-                AMOUNT = await Math.floor(Math.random() * 6 + 5) // 5-10 (the amount of environments measurement can change for each test case)
+                ENVIRONMENTS_ARRAY.length = 0 // clear ENVIRONMENTS_ARRAY
+                AMOUNT = await Math.floor(Math.random() * 6 + 5) // 5-10 (the amount of environments can change for each test case)
 
                 for (let i = (AMOUNT - 1); i >= 0; i--) { // The first environment saved is the last one returned
                     const environment = new EnvironmentMock()
                     environment.institution_id = defaultInstitution.id
-                    ENVIRONMENT_MEASUREMENTS[i] = await trck.saveEnvironment(accessTokenApplication, environment)
+                    ENVIRONMENTS_ARRAY[i] = await trck.saveEnvironment(accessTokenApplication, environment)
                 }
             } catch (err) {
                 console.log('Failure in environments.get_all test: ', err.body)
@@ -87,9 +87,9 @@ describe('Routes: environments', () => {
             }
         })
 
-        context('when the user get all environments measurements successfully', () => {
+        context('when the user get all environments successfully', () => {
 
-            it(`environments.get_all001: should return status code 200 and a list with all environments measurements for admin user`, () => {
+            it(`environments.get_all001: should return status code 200 and a list with all environments for admin user`, () => {
 
                 return request(URI)
                     .get('/environments')
@@ -99,7 +99,7 @@ describe('Routes: environments', () => {
                     .then(res => {
                         expect(res.body.length).to.eql(AMOUNT)
 
-                        ENVIRONMENT_MEASUREMENTS.forEach(function (environment, index) {
+                        ENVIRONMENTS_ARRAY.forEach(function (environment, index) {
                             expect(res.body[index]).to.have.property('id', environment.id)
                             expect(res.body[index]).to.have.property('institution_id', environment.institution_id)
                             expect(res.body[index]).to.have.deep.property('location', environment.location)
@@ -113,7 +113,7 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it(`environments.get_all002: should return status code 200 and a list with all environments measurements for child user`, () => {
+            it(`environments.get_all002: should return status code 200 and a list with all environments for child user`, () => {
 
                 return request(URI)
                     .get('/environments')
@@ -123,7 +123,7 @@ describe('Routes: environments', () => {
                     .then(res => {
                         expect(res.body.length).to.eql(AMOUNT)
 
-                        ENVIRONMENT_MEASUREMENTS.forEach(function (environment, index) {
+                        ENVIRONMENTS_ARRAY.forEach(function (environment, index) {
                             expect(res.body[index]).to.have.property('id', environment.id)
                             expect(res.body[index]).to.have.property('institution_id', environment.institution_id)
                             expect(res.body[index]).to.have.deep.property('location', environment.location)
@@ -137,7 +137,7 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it(`environments.get_all003: should return status code 200 and a list with all environments measurements for educator user`, () => {
+            it(`environments.get_all003: should return status code 200 and a list with all environments for educator user`, () => {
 
                 return request(URI)
                     .get('/environments')
@@ -147,7 +147,7 @@ describe('Routes: environments', () => {
                     .then(res => {
                         expect(res.body.length).to.eql(AMOUNT)
 
-                        ENVIRONMENT_MEASUREMENTS.forEach(function (environment, index) {
+                        ENVIRONMENTS_ARRAY.forEach(function (environment, index) {
                             expect(res.body[index]).to.have.property('id', environment.id)
                             expect(res.body[index]).to.have.property('institution_id', environment.institution_id)
                             expect(res.body[index]).to.have.deep.property('location', environment.location)
@@ -161,7 +161,7 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it(`environments.get_all004: should return status code 200 and a list with all environments measurements for health professional user`, () => {
+            it(`environments.get_all004: should return status code 200 and a list with all environments for health professional user`, () => {
 
                 return request(URI)
                     .get('/environments')
@@ -171,7 +171,7 @@ describe('Routes: environments', () => {
                     .then(res => {
                         expect(res.body.length).to.eql(AMOUNT)
 
-                        ENVIRONMENT_MEASUREMENTS.forEach(function (environment, index) {
+                        ENVIRONMENTS_ARRAY.forEach(function (environment, index) {
                             expect(res.body[index]).to.have.property('id', environment.id)
                             expect(res.body[index]).to.have.property('institution_id', environment.institution_id)
                             expect(res.body[index]).to.have.deep.property('location', environment.location)
@@ -185,7 +185,7 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it(`environments.get_all005: should return status code 200 and a list with all environments measurements for family user`, () => {
+            it(`environments.get_all005: should return status code 200 and a list with all environments for family user`, () => {
 
                 return request(URI)
                     .get('/environments')
@@ -195,7 +195,7 @@ describe('Routes: environments', () => {
                     .then(res => {
                         expect(res.body.length).to.eql(AMOUNT)
 
-                        ENVIRONMENT_MEASUREMENTS.forEach(function (environment, index) {
+                        ENVIRONMENTS_ARRAY.forEach(function (environment, index) {
                             expect(res.body[index]).to.have.property('id', environment.id)
                             expect(res.body[index]).to.have.property('institution_id', environment.institution_id)
                             expect(res.body[index]).to.have.deep.property('location', environment.location)
@@ -209,7 +209,7 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it(`environments.get_all006: should return status code 200 and a list with all environments measurements for application user`, () => {
+            it(`environments.get_all006: should return status code 200 and a list with all environments for application user`, () => {
 
                 return request(URI)
                     .get('/environments')
@@ -219,7 +219,7 @@ describe('Routes: environments', () => {
                     .then(res => {
                         expect(res.body.length).to.eql(AMOUNT)
 
-                        ENVIRONMENT_MEASUREMENTS.forEach(function (environment, index) {
+                        ENVIRONMENTS_ARRAY.forEach(function (environment, index) {
                             expect(res.body[index]).to.have.property('id', environment.id)
                             expect(res.body[index]).to.have.property('institution_id', environment.institution_id)
                             expect(res.body[index]).to.have.deep.property('location', environment.location)
@@ -233,35 +233,11 @@ describe('Routes: environments', () => {
                     })
             })
 
-        }) // user get all environments measurements successfully
+        }) // user get all environments successfully
 
-        context('when get all environments measurements with some specification', () => {
+        context('when get all environments with some specification', () => {
 
-            it('environments.get_all007: should return status code 200 and a list with only ID and location of all environments measurements', () => {
-
-                return request(URI)
-                    .get('/environments')
-                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body.length).to.eql(AMOUNT)
-
-                        ENVIRONMENT_MEASUREMENTS.forEach(function (environment, index) {
-                            expect(res.body[index]).to.have.property('id', environment.id)
-                            expect(res.body[index]).to.have.deep.property('location', environment.location)
-                            expect(res.body[index]).to.not.property('institution_id')
-                            expect(res.body[index]).to.not.have.property('measurements')
-                            expect(res.body[index]).to.not.have.property('climatized')
-                            expect(res.body[index]).to.not.have.property('timestamp')
-                        })
-                    })
-                    .catch(err => {
-                        throw new Error(err.message)
-                    })
-            })
-
-            it('environments.get_all008: should return status code 200 and a list with the three most recently collected environment measurements', () => {
+            it('environments.get_all007: should return status code 200 and a list with the three most recently collected environment', () => {
 
                 const PAGE = 1
                 const LIMIT = 3
@@ -274,12 +250,12 @@ describe('Routes: environments', () => {
                     .then(res => {
                         expect(res.body.length).to.eql(LIMIT)
                         for (let i = 0; i < LIMIT; i++) {
-                            expect(res.body[i]).to.have.property('id', ENVIRONMENT_MEASUREMENTS[i].id)
-                            expect(res.body[i]).to.have.property('institution_id', ENVIRONMENT_MEASUREMENTS[i].institution_id)
-                            expect(res.body[i]).to.have.deep.property('location', ENVIRONMENT_MEASUREMENTS[i].location)
-                            expect(res.body[i]).to.have.deep.property('measurements', ENVIRONMENT_MEASUREMENTS[i].measurements)
-                            expect(res.body[i]).to.have.deep.property('climatized', ENVIRONMENT_MEASUREMENTS[i].climatized)
-                            expect(res.body[i]).to.have.deep.property('timestamp', ENVIRONMENT_MEASUREMENTS[i].timestamp)
+                            expect(res.body[i]).to.have.property('id', ENVIRONMENTS_ARRAY[i].id)
+                            expect(res.body[i]).to.have.property('institution_id', ENVIRONMENTS_ARRAY[i].institution_id)
+                            expect(res.body[i]).to.have.deep.property('location', ENVIRONMENTS_ARRAY[i].location)
+                            expect(res.body[i]).to.have.deep.property('measurements', ENVIRONMENTS_ARRAY[i].measurements)
+                            expect(res.body[i]).to.have.deep.property('climatized', ENVIRONMENTS_ARRAY[i].climatized)
+                            expect(res.body[i]).to.have.deep.property('timestamp', ENVIRONMENTS_ARRAY[i].timestamp)
                         }
                     })
                     .catch(err => {
@@ -287,9 +263,12 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.get_all009: should return status code 200 and a list of all environment measurements sorted by least creation date', () => {
+            it('environments.get_all008: should return status code 200 and a list of all environment sorted by least creation date', () => {
 
-                ENVIRONMENT_MEASUREMENTS.sort(function (e1, e2) { return e1.timestamp > e2.timestamp ? 1 : -1 }) 
+                // Sort environments by least timestamp
+                ENVIRONMENTS_ARRAY.sort(function (e1, e2) {
+                    return e1.timestamp > e2.timestamp ? 1 : -1
+                })
                 const SORT = 'timestamp'
 
                 return request(URI)
@@ -300,7 +279,7 @@ describe('Routes: environments', () => {
                     .then(res => {
                         expect(res.body.length).to.eql(AMOUNT)
 
-                        ENVIRONMENT_MEASUREMENTS.forEach(function (environment, index) {
+                        ENVIRONMENTS_ARRAY.forEach(function (environment, index) {
                             expect(res.body[index]).to.have.property('id', environment.id)
                             expect(res.body[index]).to.have.property('institution_id', environment.institution_id)
                             expect(res.body[index]).to.have.deep.property('location', environment.location)
@@ -314,7 +293,7 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.get_all010: should return status code 200 and a list of all environment measurements sorted by most recently creation date', () => {
+            it('environments.get_all009: should return status code 200 and a list of all environment sorted by most recently creation date', () => {
 
                 const SORT = 'timestamp'
 
@@ -326,7 +305,7 @@ describe('Routes: environments', () => {
                     .then(res => {
                         expect(res.body.length).to.eql(AMOUNT)
 
-                        ENVIRONMENT_MEASUREMENTS.forEach(function (environment, index) {
+                        ENVIRONMENTS_ARRAY.forEach(function (environment, index) {
                             expect(res.body[index]).to.have.property('id', environment.id)
                             expect(res.body[index]).to.have.property('institution_id', environment.institution_id)
                             expect(res.body[index]).to.have.deep.property('location', environment.location)
@@ -340,7 +319,7 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.get_all011: should return status code 200 and a empty list', async () => {
+            it('environments.get_all010: should return status code 200 and a empty list', async () => {
 
                 await trackingDB.deleteEnviroments()
 
@@ -356,7 +335,7 @@ describe('Routes: environments', () => {
         })
 
         describe('when not informed the acess token', () => {
-            it('environments.get_all012: should return the status code 401 and the authentication failure informational message', () => {
+            it('environments.get_all011: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .get('/environments')
