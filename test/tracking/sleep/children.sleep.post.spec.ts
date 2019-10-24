@@ -100,7 +100,6 @@ describe('Routes: children.sleep', () => {
     const mixedSleepsSummary: Array<any> = []
     const wrongSleeps: Array<Sleep> = []
 
-
     before(async () => {
         try {
             await accountDB.connect()

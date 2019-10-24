@@ -493,7 +493,7 @@ describe('Routes: environments', () => {
 
             it('environments.post015: should return status code 400 and info message from invalid parameters, because institution_id is invalid', () => {
 
-                environment.institution_id = acc.INVALID_ID
+                environment.institution_id = '123'
 
                 return request(URI)
                     .post('/environments')

@@ -16,10 +16,7 @@ class AccountUtil {
     /* Retirar */
     public readonly NON_EXISTENT_ID: string = '111111111111111111111111'
     public readonly INVALID_ID: string = '123'
-    public readonly INVALID_GENDER: Number = 1234
-    public readonly NEGATIVE_AGE: Number = -11
     public readonly NON_EXISTENT_PASSWORD: string = 'non_existent_password'
-    public readonly ADMIN_ID: string = '5d07dc2cdd61ed00356c5c3b'
     /* /Retirar */
     
     public async auth(username: string, password: string): Promise<any> {
@@ -188,7 +185,7 @@ class AccountUtil {
 
     public deleteUser(accessToken: string, userID?: string): Promise<any> {
         return request(this.URI)
-            .delete(`/${userID}`)
+            .delete(`/users/${userID}`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .then(res => Promise.resolve(res.body))
@@ -197,7 +194,7 @@ class AccountUtil {
 
     public changeUserPass(accessToken: string, userID?: string): Promise<any> {
         return request(this.URI)
-            .patch(`/${userID}/password`)
+            .put(`/users/${userID}/password`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .then(res => Promise.resolve(res.body))

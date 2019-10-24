@@ -8,8 +8,9 @@ import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Institution } from '../../../src/account-service/model/institution'
 import { Child } from '../../../src/account-service/model/child'
 import { ChildMock } from '../../mocks/account-service/child.mock'
-import { Sleep } from '../../../src/tracking-service/model/sleep'
+import { Sleep, SleepType } from '../../../src/tracking-service/model/sleep'
 import { SleepMock } from '../../mocks/tracking-service/sleep.mock'
+import { PhasesPatternType, StagesPatternType } from '../../../src/tracking-service/model/sleep.pattern.data.set'
 
 describe('Routes: users.children.sleep', () => {
 
@@ -33,6 +34,7 @@ describe('Routes: users.children.sleep', () => {
     let accessDefaultChildToken: string
 
     const defaultSleep: Sleep = new SleepMock()
+    const defaultSleepSummary: any = getSummary(defaultSleep)
 
     before(async () => {
         try {
@@ -94,13 +96,13 @@ describe('Routes: users.children.sleep', () => {
                         expect(res.body).to.have.property('start_time', defaultSleep.start_time!.toISOString())
                         expect(res.body).to.have.property('end_time', defaultSleep.end_time!.toISOString())
                         expect(res.body).to.have.property('duration', defaultSleep.duration)
-
+                        expect(res.body).to.have.property('type', defaultSleep.type)
                         defaultSleep.pattern!.data_set.forEach(function (elem, index) {
                             expect(res.body.pattern.data_set[index].start_time).to.eql(elem.start_time.toISOString())
                             expect(res.body.pattern.data_set[index].name).to.eql(elem.name)
                             expect(res.body.pattern.data_set[index].duration).to.eql(elem.duration)
                         })
-
+                        expect(res.body.pattern.summary).to.have.deep.eql(defaultSleepSummary)
                         expect(res.body).to.have.property('child_id', defaultSleep.child_id)
                     })
             })
@@ -117,13 +119,13 @@ describe('Routes: users.children.sleep', () => {
                         expect(res.body).to.have.property('start_time', defaultSleep.start_time!.toISOString())
                         expect(res.body).to.have.property('end_time', defaultSleep.end_time!.toISOString())
                         expect(res.body).to.have.property('duration', defaultSleep.duration)
-
+                        expect(res.body).to.have.property('type', defaultSleep.type)
                         defaultSleep.pattern!.data_set.forEach(function (elem, index) {
                             expect(res.body.pattern.data_set[index].start_time).to.eql(elem.start_time.toISOString())
                             expect(res.body.pattern.data_set[index].name).to.eql(elem.name)
                             expect(res.body.pattern.data_set[index].duration).to.eql(elem.duration)
                         })
-
+                        expect(res.body.pattern.summary).to.have.deep.eql(defaultSleepSummary)
                         expect(res.body).to.have.property('child_id', defaultSleep.child_id)
                     })
             })
@@ -140,13 +142,13 @@ describe('Routes: users.children.sleep', () => {
                         expect(res.body).to.have.property('start_time', defaultSleep.start_time!.toISOString())
                         expect(res.body).to.have.property('end_time', defaultSleep.end_time!.toISOString())
                         expect(res.body).to.have.property('duration', defaultSleep.duration)
-
+                        expect(res.body).to.have.property('type', defaultSleep.type)
                         defaultSleep.pattern!.data_set.forEach(function (elem, index) {
                             expect(res.body.pattern.data_set[index].start_time).to.eql(elem.start_time.toISOString())
                             expect(res.body.pattern.data_set[index].name).to.eql(elem.name)
                             expect(res.body.pattern.data_set[index].duration).to.eql(elem.duration)
                         })
-
+                        expect(res.body.pattern.summary).to.have.deep.eql(defaultSleepSummary)
                         expect(res.body).to.have.property('child_id', defaultSleep.child_id)
                     })
             })
@@ -163,13 +165,13 @@ describe('Routes: users.children.sleep', () => {
                         expect(res.body).to.have.property('start_time', defaultSleep.start_time!.toISOString())
                         expect(res.body).to.have.property('end_time', defaultSleep.end_time!.toISOString())
                         expect(res.body).to.have.property('duration', defaultSleep.duration)
-
+                        expect(res.body).to.have.property('type', defaultSleep.type)
                         defaultSleep.pattern!.data_set.forEach(function (elem, index) {
                             expect(res.body.pattern.data_set[index].start_time).to.eql(elem.start_time.toISOString())
                             expect(res.body.pattern.data_set[index].name).to.eql(elem.name)
                             expect(res.body.pattern.data_set[index].duration).to.eql(elem.duration)
                         })
-
+                        expect(res.body.pattern.summary).to.have.deep.eql(defaultSleepSummary)
                         expect(res.body).to.have.property('child_id', defaultSleep.child_id)
                     })
             })
@@ -186,13 +188,13 @@ describe('Routes: users.children.sleep', () => {
                         expect(res.body).to.have.property('start_time', defaultSleep.start_time!.toISOString())
                         expect(res.body).to.have.property('end_time', defaultSleep.end_time!.toISOString())
                         expect(res.body).to.have.property('duration', defaultSleep.duration)
-
+                        expect(res.body).to.have.property('type', defaultSleep.type)
                         defaultSleep.pattern!.data_set.forEach(function (elem, index) {
                             expect(res.body.pattern.data_set[index].start_time).to.eql(elem.start_time.toISOString())
                             expect(res.body.pattern.data_set[index].name).to.eql(elem.name)
                             expect(res.body.pattern.data_set[index].duration).to.eql(elem.duration)
                         })
-
+                        expect(res.body.pattern.summary).to.have.deep.eql(defaultSleepSummary)
                         expect(res.body).to.have.property('child_id', defaultSleep.child_id)
                     })
             })
@@ -209,13 +211,13 @@ describe('Routes: users.children.sleep', () => {
                         expect(res.body).to.have.property('start_time', defaultSleep.start_time!.toISOString())
                         expect(res.body).to.have.property('end_time', defaultSleep.end_time!.toISOString())
                         expect(res.body).to.have.property('duration', defaultSleep.duration)
-
+                        expect(res.body).to.have.property('type', defaultSleep.type)
                         defaultSleep.pattern!.data_set.forEach(function (elem, index) {
                             expect(res.body.pattern.data_set[index].start_time).to.eql(elem.start_time.toISOString())
                             expect(res.body.pattern.data_set[index].name).to.eql(elem.name)
                             expect(res.body.pattern.data_set[index].duration).to.eql(elem.duration)
                         })
-
+                        expect(res.body.pattern.summary).to.have.deep.eql(defaultSleepSummary)
                         expect(res.body).to.have.property('child_id', defaultSleep.child_id)
                     })
             })
@@ -224,10 +226,12 @@ describe('Routes: users.children.sleep', () => {
 
         describe('when sleep is not found', () => {
 
+            const NON_EXISTENT_ID = '111111111111111111111111'
+
             it('sleep.get_id007: should return status code 404 and info message from sleep not found', () => {
 
                 return request(URI)
-                    .get(`/children/${acc.NON_EXISTENT_ID}/sleep/${defaultSleep.id}`)
+                    .get(`/children/${NON_EXISTENT_ID}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(404)
@@ -239,7 +243,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.get_id008: should return status code 404 and info message from sleep not found', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/sleep/${acc.NON_EXISTENT_ID}`)
+                    .get(`/children/${defaultChild.id}/sleep/${NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(404)
@@ -252,10 +256,12 @@ describe('Routes: users.children.sleep', () => {
 
         describe('when a validation error occurs', () => {
 
+            const INVALID_ID = '123'
+
             it('sleep.get_id009: should return status code 400 and info message from invalid child_id', () => {
 
                 return request(URI)
-                    .get(`/children/${acc.INVALID_ID}/sleep/${defaultSleep.id}`)
+                    .get(`/children/${INVALID_ID}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -267,7 +273,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.get_id010: should return status code 400 and info message from invalid sleep_id, because sleep_id is invalid', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/sleep/${acc.INVALID_ID}`)
+                    .get(`/children/${defaultChild.id}/sleep/${INVALID_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -311,3 +317,81 @@ describe('Routes: users.children.sleep', () => {
         })
     })
 })
+
+function getSummary(sleep: Sleep) {
+    let summary: any = getSummaryJSON(sleep.type)
+
+    if (sleep.type === SleepType.CLASSIC) {
+        sleep.pattern!.data_set.forEach(item => {
+            if (item.name === PhasesPatternType.ASLEEP) {
+                summary.asleep.count += 1
+                summary.asleep.duration += item.duration
+            } else if (item.name === PhasesPatternType.AWAKE) {
+                summary.awake.count += 1
+                summary.awake.duration += item.duration
+            } else if (item.name === PhasesPatternType.RESTLESS) {
+                summary.restless.count += 1
+                summary.restless.duration += item.duration
+            }
+        })
+    } else {
+        sleep.pattern!.data_set.forEach(item => {
+            if (item.name === StagesPatternType.AWAKE) {
+                summary.awake.count += 1
+                summary.awake.duration += item.duration
+            } else if (item.name === StagesPatternType.LIGHT) {
+                summary.light.count += 1
+                summary.light.duration += item.duration
+            } else if (item.name === StagesPatternType.DEEP) {
+                summary.deep.count += 1
+                summary.deep.duration += item.duration
+            } else if (item.name === StagesPatternType.REM) {
+                summary.rem.count += 1
+                summary.rem.duration += item.duration
+            }
+        })
+    }
+
+    return summary
+}
+
+function getSummaryJSON(type?: SleepType) {
+    let summaryJSON: any
+    if (type === SleepType.CLASSIC) {
+        summaryJSON = {
+            asleep: {
+                count: 0,
+                duration: 0
+            },
+            awake: {
+                count: 0,
+                duration: 0
+            },
+            restless: {
+                count: 0,
+                duration: 0
+            }
+        }
+    } else {
+        summaryJSON = {
+            light: {
+                count: 0,
+                duration: 0
+            },
+            awake: {
+                count: 0,
+                duration: 0
+            },
+            deep: {
+                count: 0,
+                duration: 0
+            },
+            rem: {
+                count: 0,
+                duration: 0
+            }
+        }
+    }
+
+    return summaryJSON
+}

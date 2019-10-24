@@ -98,8 +98,10 @@ describe('Routes: environments', () => {
         describe('when the environment does not exist', () => {
             it('environments.deletel002: should return status code 204 and no content', () => {
 
+                const NON_EXISTENT_ID = '111111111111111111111111'
+
                 return request(URI)
-                    .delete(`/environments/${acc.NON_EXISTENT_ID}`)
+                    .delete(`/environments/${NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -112,8 +114,10 @@ describe('Routes: environments', () => {
         describe('when the environment_id is invalid', () => {
             it('environments.deletel003: should return status code 400 and info message about for invalid_id', () => {
 
+                const INVALID_ID = '123'
+
                 return request(URI)
-                    .delete(`/environments/${acc.INVALID_ID}`)
+                    .delete(`/environments/${INVALID_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(400)

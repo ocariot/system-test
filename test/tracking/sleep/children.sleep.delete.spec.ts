@@ -137,10 +137,12 @@ describe('Routes: users.children.sleep', () => {
 
         context('when a validation error occurs', () => {
 
+            const INVALID_ID = '123'
+
             it('sleep.delete004: should return status code 400 and info message from invalid child_id', () => {
 
                 return request(URI)
-                    .delete(`/children/${acc.INVALID_ID}/sleep/${defaultSleep.id}`)
+                    .delete(`/children/${INVALID_ID}/sleep/${defaultSleep.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .expect(400)
@@ -152,7 +154,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.delete005: should return status code 400 and info message from invalid sleep_id', () => {
 
                 return request(URI)
-                    .delete(`/children/${defaultChild.id}/sleep/${acc.INVALID_ID}`)
+                    .delete(`/children/${defaultChild.id}/sleep/${INVALID_ID}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .expect(400)
@@ -164,10 +166,12 @@ describe('Routes: users.children.sleep', () => {
 
         context('when the child or the sleep does not exist', () => {
 
+            const NON_EXISTENT_ID = '111111111111111111111111'
+
             it('sleep.delete006: should return status code 204 and no content for sleep, when the child not exist', () => {
 
                 return request(URI)
-                    .delete(`/children/${acc.NON_EXISTENT_ID}/sleep/${defaultSleep.id}`)
+                    .delete(`/children/${NON_EXISTENT_ID}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -179,7 +183,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.delete007: should return status code 204 and no content for sleep, when the sleep not exist', () => {
                 
                 return request(URI)
-                    .delete(`/children/${defaultChild.id}/sleep/${acc.NON_EXISTENT_ID}`)
+                    .delete(`/children/${defaultChild.id}/sleep/${NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(204)
