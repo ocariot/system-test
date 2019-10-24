@@ -1,4 +1,4 @@
-import { Sleep, SleepType } from '../../../src/tracking-service/model/sleep'
+import { Sleep } from '../../../src/tracking-service/model/sleep'
 import { SleepPattern } from '../../../src/tracking-service/model/sleep.pattern'
 import {
     PhasesPatternType,
@@ -8,22 +8,23 @@ import {
 
 export class SleepMock extends Sleep {
 
-    constructor() {
+    constructor(type?: SleepType) {
         super()
-        super.fromJSON(JSON.stringify(this.generateSleep()))
+        super.fromJSON(JSON.stringify(this.generateSleep(type)))
     }
 
-    private generateSleep(): Sleep {
-        const sleep = new Sleep()
+    private generateSleep(type?: SleepType): Sleep {
+        if(!type) type = this.chooseType()
 
+        const sleep = new Sleep()
         sleep.id = this.generateObjectId()
         sleep.start_time = new Date()
         sleep.end_time = new Date(new Date(sleep.start_time)
             .setMilliseconds(Math.floor(Math.random() * 7 + 4) * 3.6e+6)) // 4-10h in milliseconds
         sleep.duration = sleep.end_time.getTime() - sleep.start_time.getTime()
         sleep.child_id = '5a62be07de34500146d9c544'
-        sleep.type = this.generateType()
-        sleep.pattern = this.generateSleepPattern(sleep.start_time, sleep.duration, sleep.type)
+        sleep.type = type
+        sleep.pattern = this.generateSleepPattern(sleep.start_time, sleep.duration, type)
 
         return sleep
     }
@@ -101,7 +102,7 @@ export class SleepMock extends Sleep {
         return randS
     }
 
-    private generateType(): SleepType {
+    private chooseType(): SleepType {
         switch (Math.floor((Math.random() * 2))) { // 0-1
             case 0:
                 return SleepType.CLASSIC
@@ -111,4 +112,9 @@ export class SleepMock extends Sleep {
                 return SleepType.CLASSIC
         }
     }
+}
+
+export enum SleepType {
+    CLASSIC = 'classic',
+    STAGES = 'stages'
 }

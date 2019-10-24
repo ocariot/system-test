@@ -78,14 +78,14 @@ describe('Routes: users.children.sleep', () => {
         }
     })
 
-    describe('GET /users/children/:child_id/sleep/:sleep_id', () => {
+    describe('GET /children/:child_id/sleep/:sleep_id', () => {
 
         context('when the user get a specific sleep of the child successfully', () => {
 
             it('sleep.get_id001: should return status code 200 and and the specific sleep for admin user', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .get(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -108,7 +108,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.get_id002: should return status code 200 and and the specific sleep for own child', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .get(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -131,7 +131,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.get_id003: should return status code 200 and and the specific sleep for educator user', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .get(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -154,7 +154,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.get_id004: should return status code 200 and and the specific sleep for health professional user', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .get(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -177,7 +177,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.get_id005: should return status code 200 and and the specific sleep for family user', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .get(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -200,7 +200,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.get_id006: should return status code 200 and and the specific sleep for application user', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .get(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -227,7 +227,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.get_id007: should return status code 404 and info message from sleep not found', () => {
 
                 return request(URI)
-                    .get(`/users/children/${acc.NON_EXISTENT_ID}/sleep/${defaultSleep.id}`)
+                    .get(`/children/${acc.NON_EXISTENT_ID}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(404)
@@ -239,7 +239,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.get_id008: should return status code 404 and info message from sleep not found', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/sleep/${acc.NON_EXISTENT_ID}`)
+                    .get(`/children/${defaultChild.id}/sleep/${acc.NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(404)
@@ -255,7 +255,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.get_id009: should return status code 400 and info message from invalid child_id', () => {
 
                 return request(URI)
-                    .get(`/users/children/${acc.INVALID_ID}/sleep/${defaultSleep.id}`)
+                    .get(`/children/${acc.INVALID_ID}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -267,7 +267,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.get_id010: should return status code 400 and info message from invalid sleep_id, because sleep_id is invalid', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/sleep/${acc.INVALID_ID}`)
+                    .get(`/children/${defaultChild.id}/sleep/${acc.INVALID_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -283,7 +283,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.get_id011: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .get(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(401)
@@ -300,7 +300,7 @@ describe('Routes: users.children.sleep', () => {
                 await acc.deleteUser(accessTokenAdmin, defaultChild.id)
 
                 return request(URI)
-                    .get(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .get(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(404)

@@ -78,7 +78,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
         }
     })
 
-    describe('POST /users/children/:child_id/physicalactivities/logs/:resource', () => {
+    describe('POST /children/:child_id/physicalactivities/logs/:resource', () => {
 
         context('when posting a new Log with success', () => {
             let body: any = []
@@ -108,7 +108,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
             it('logs.post001: should return status code 201 and the saved log by the child user', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
+                    .post(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(body)
@@ -126,7 +126,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
             it('logs.post002: should return status code 201 and the saved log by the educator user', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
+                    .post(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .send(body)
@@ -144,7 +144,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
             it('logs.post003: should return status code 201 and the saved log by the family user', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
+                    .post(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .send(body)
@@ -162,7 +162,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
             it('logs.post004: should return status code 201 and the saved log by the application user', () => {
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
+                    .post(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .send(body)
@@ -214,7 +214,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                 body.push(Log5)
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
+                    .post(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(body)
@@ -247,7 +247,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                 body.push(Log4)
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
+                    .post(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(body)
@@ -279,7 +279,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                 body.push(Log0)
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
+                    .post(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(body)
@@ -312,7 +312,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                     body.push(Log1)
 
                     return request(URI)
-                        .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
+                        .post(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenChild))
                         .send(body)
@@ -345,7 +345,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                     body.push(Log01)
 
                     return request(URI)
-                        .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
+                        .post(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenChild))
                         .send(body)
@@ -379,7 +379,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                     body.push(Log001)
 
                     return request(URI)
-                        .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${LogType.CALORIES}`)
+                        .post(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.CALORIES}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenChild))
                         .send(body)
@@ -415,7 +415,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                 body.push(Log2)
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${LogType.CALORIES}`)
+                    .post(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.CALORIES}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(body)
@@ -447,7 +447,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                 body.push(Log3)
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
+                    .post(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(body)
@@ -474,7 +474,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                 const invalid_resource = 'WALKING-SKATE'
 
                 return request(URI)
-                    .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${invalid_resource}`)
+                    .post(`/children/${defaultChild.id}/physicalactivities/logs/${invalid_resource}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(body)
@@ -491,7 +491,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
             it('logs.post014: should return status code 400 and info message from validation error, because child_id is invalid', () => {
 
                 return request(URI)
-                    .post(`/users/children/${acc.INVALID_ID}/physicalactivities/logs/${LogType.STEPS}`)
+                    .post(`/children/${acc.INVALID_ID}/physicalactivities/logs/${LogType.STEPS}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(body)
@@ -513,7 +513,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
             it('logs.post015: should return status code 400 and info message from validation error, because child not exist', () => {
 
                 return request(URI)
-                    .post(`/users/children/${acc.NON_EXISTENT_ID}/physicalactivities/logs/${LogType.STEPS}`)
+                    .post(`/children/${acc.NON_EXISTENT_ID}/physicalactivities/logs/${LogType.STEPS}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(body)
@@ -543,7 +543,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                     anotherChildToken = await acc.auth(anotherChild.username!, anotherChild.password!)
 
                     return request(URI)
-                        .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${LogType.CALORIES}`)
+                        .post(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.CALORIES}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(anotherChildToken))
                         .send(body)
@@ -559,7 +559,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                 it('logs.post017: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                     return request(URI)
-                        .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
+                        .post(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .send(body)
@@ -573,7 +573,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                 it('logs.post018: should return status code 403 and info message from insufficient permissions for health professionals', () => {
 
                     return request(URI)
-                        .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
+                        .post(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                         .send(body)
@@ -590,7 +590,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                 it('logs.post019: should return the status code 401 and the authentication failure informational message', () => {
 
                     return request(URI)
-                        .post(`/users/children/${defaultChild.id}/physicalactivities/logs/${LogType.CALORIES}`)
+                        .post(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.CALORIES}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer ')
                         .send(body)

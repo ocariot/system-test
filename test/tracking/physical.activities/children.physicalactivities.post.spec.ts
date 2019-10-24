@@ -312,7 +312,7 @@ describe('Routes: children.physicalactivities', () => {
                     })
             })
 
-            context('when saved an list activities', () => {
+            context('when saved an list of activities', () => {
 
                 describe('when all the activities are correct and still do not saved', () => {
                     it('physical.activities.post045: should return status code 207, create each PhysicalActivity and return a response with description of sucess each activity', () => {
@@ -782,7 +782,7 @@ describe('Routes: children.physicalactivities', () => {
                     })
             })
 
-            it('physical.activities.post014: should return status code 400 and info message from validatio error, because date is invalid', () => {
+            it('physical.activities.post014: should return status code 400 and info message from validation error, because date is invalid', () => {
 
                 return request(URI)
                     .post(`/children/${defaultChild.id}/physicalactivities`)
@@ -795,7 +795,7 @@ describe('Routes: children.physicalactivities', () => {
                     })
             })
 
-            it('physical.activities.post015: should return status code 400 and info message from validatio error, because start_time is greater than end_time', async () => {
+            it('physical.activities.post015: should return status code 400 and info message from validation error, because start_time is greater than end_time', async () => {
 
                 physicalActivity.end_time = new Date()
                 await sleep(100) // function sleep for 100 miliseconds
@@ -812,7 +812,7 @@ describe('Routes: children.physicalactivities', () => {
                     })
             })
 
-            it('physical.activities.post016: should return status code 400 and info message from validatio error, because duration is negative', () => {
+            it('physical.activities.post016: should return status code 400 and info message from validation error, because duration is negative', () => {
 
                 physicalActivity.duration = -1178000
 
@@ -827,7 +827,7 @@ describe('Routes: children.physicalactivities', () => {
                     })
             })
 
-            it('physical.activities.post017: should return status code 400 and info message from validatio error, because duration does not match values passed in start_time and end_time', () => {
+            it('physical.activities.post017: should return status code 400 and info message from validation error, because duration does not match values passed in start_time and end_time', () => {
 
                 physicalActivity.duration ? physicalActivity.duration += 1 : undefined
 

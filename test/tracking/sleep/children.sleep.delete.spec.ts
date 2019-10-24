@@ -73,7 +73,7 @@ describe('Routes: users.children.sleep', () => {
         }
     })
 
-    describe('DELETE /users/children/:child_id/sleep/:sleep_id', () => {
+    describe('DELETE /children/:child_id/sleep/:sleep_id', () => {
 
         beforeEach(async () => {
             try {
@@ -100,7 +100,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.delete001: should return status code 204 and no content for sleep, when the educator delete a sleep', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .delete(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -112,7 +112,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.delete002: should return status code 204 and no content for sleep, when the application delete a sleep', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .delete(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -124,7 +124,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.delete003: should return status code 204 and no content for sleep, when the family delete a sleep', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .delete(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -140,7 +140,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.delete004: should return status code 400 and info message from invalid child_id', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${acc.INVALID_ID}/sleep/${defaultSleep.id}`)
+                    .delete(`/children/${acc.INVALID_ID}/sleep/${defaultSleep.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .expect(400)
@@ -152,7 +152,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.delete005: should return status code 400 and info message from invalid sleep_id', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/sleep/${acc.INVALID_ID}`)
+                    .delete(`/children/${defaultChild.id}/sleep/${acc.INVALID_ID}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .expect(400)
@@ -167,7 +167,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.delete006: should return status code 204 and no content for sleep, when the child not exist', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${acc.NON_EXISTENT_ID}/sleep/${defaultSleep.id}`)
+                    .delete(`/children/${acc.NON_EXISTENT_ID}/sleep/${defaultSleep.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -179,7 +179,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.delete007: should return status code 204 and no content for sleep, when the sleep not exist', () => {
                 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/sleep/${acc.NON_EXISTENT_ID}`)
+                    .delete(`/children/${defaultChild.id}/sleep/${acc.NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -194,7 +194,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.delete008: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .patch(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .expect(403)
@@ -206,7 +206,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.delete009: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .patch(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .expect(403)
@@ -218,7 +218,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.delete010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .patch(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .patch(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .expect(403)
@@ -233,7 +233,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.delete011: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .delete(`/users/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .delete(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(401)

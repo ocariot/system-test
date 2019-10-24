@@ -188,7 +188,7 @@ class AccountUtil {
 
     public deleteUser(accessToken: string, userID?: string): Promise<any> {
         return request(this.URI)
-            .delete(`/users/${userID}`)
+            .delete(`/${userID}`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .then(res => Promise.resolve(res.body))
@@ -197,7 +197,7 @@ class AccountUtil {
 
     public changeUserPass(accessToken: string, userID?: string): Promise<any> {
         return request(this.URI)
-            .patch(`/users/${userID}/password`)
+            .patch(`/${userID}/password`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .then(res => Promise.resolve(res.body))
