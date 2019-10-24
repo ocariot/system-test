@@ -124,7 +124,7 @@ describe('Routes: users', () => {
             const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the user
 
             return request(URI)
-                .delete(`/${NON_EXISTENT_ID}`)
+                .delete(`/users/${NON_EXISTENT_ID}`)
                 .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                 .set('Content-Type', 'application/json')
                 .expect(204)
@@ -137,7 +137,7 @@ describe('Routes: users', () => {
             const INVALID_ID = '123' // invalid id of the user
 
             return request(URI)
-                .delete(`/${INVALID_ID}`)
+                .delete(`/users/${INVALID_ID}`)
                 .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                 .set('Content-Type', 'application/json')
                 .expect(400)
@@ -161,7 +161,7 @@ describe('Routes: users', () => {
                 it('users.post003: should return status code 403 and info message from insufficient permissions when delete herself', () => {
 
                     return request(URI)
-                        .delete(`/${defaultChild.id}`)
+                        .delete(`/users/${defaultChild.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenChild))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -173,7 +173,7 @@ describe('Routes: users', () => {
                 it('users.post004: should return status code 403 and info message from insufficient permissions when delete admin', async () => {
 
                     return request(URI)
-                        .delete(`/${admin_ID}`)
+                        .delete(`/users/${admin_ID}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenChild))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -185,7 +185,7 @@ describe('Routes: users', () => {
                 it('users.post005: should return status code 403 and info message from insufficient permissions when delete educator', () => {
 
                     return request(URI)
-                        .delete(`/${defaultEducator.id}`)
+                        .delete(`/users/${defaultEducator.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenChild))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -197,7 +197,7 @@ describe('Routes: users', () => {
                 it('users.post006: should return status code 403 and info message from insufficient permissions when delete health professional', () => {
 
                     return request(URI)
-                        .delete(`/${defaultHealthProfessional.id}`)
+                        .delete(`/users/${defaultHealthProfessional.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenChild))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -209,7 +209,7 @@ describe('Routes: users', () => {
                 it('users.post007: should return status code 403 and info message from insufficient permissions when delete family', () => {
 
                     return request(URI)
-                        .delete(`/${defaultFamily.id}`)
+                        .delete(`/users/${defaultFamily.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenChild))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -221,7 +221,7 @@ describe('Routes: users', () => {
                 it('users.post008: should return status code 403 and info message from insufficient permissions when delete application', () => {
 
                     return request(URI)
-                        .delete(`/${defaultApplication.id}`)
+                        .delete(`/users/${defaultApplication.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenChild))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -233,7 +233,7 @@ describe('Routes: users', () => {
                 it('users.post009: should return status code 403 and info message from insufficient permissions when delete another child', () => {
 
                     return request(URI)
-                        .delete(`/${defaultChild.id}`)
+                        .delete(`/users/${defaultChild.id}`)
                         .set('Authorization', 'Bearer '.concat(anotherChildToken))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -248,7 +248,7 @@ describe('Routes: users', () => {
                 it('users.post010: should return status code 403 and info message from insufficient permissions when delete child', () => {
 
                     return request(URI)
-                        .delete(`/${defaultChild.id}`)
+                        .delete(`/users/${defaultChild.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -260,7 +260,7 @@ describe('Routes: users', () => {
                 it('users.post011: should return status code 403 and info message from insufficient permissions when delete admin', () => {
 
                     return request(URI)
-                        .delete(`/${admin_ID}`)
+                        .delete(`/users/${admin_ID}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -272,7 +272,7 @@ describe('Routes: users', () => {
                 it('users.post012: should return status code 403 and info message from insufficient permissions when delete himself', () => {
 
                     return request(URI)
-                        .delete(`/${defaultEducator.id}`)
+                        .delete(`/users/${defaultEducator.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -284,7 +284,7 @@ describe('Routes: users', () => {
                 it('users.post013: should return status code 403 and info message from insufficient permissions when delete health professional', () => {
 
                     return request(URI)
-                        .delete(`/${defaultHealthProfessional.id}`)
+                        .delete(`/users/${defaultHealthProfessional.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -296,7 +296,7 @@ describe('Routes: users', () => {
                 it('users.post014: should return status code 403 and info message from insufficient permissions when delete family', () => {
 
                     return request(URI)
-                        .delete(`/${defaultFamily.id}`)
+                        .delete(`/users/${defaultFamily.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -308,7 +308,7 @@ describe('Routes: users', () => {
                 it('users.post015: should return status code 403 and info message from insufficient permissions when delete application', () => {
 
                     return request(URI)
-                        .delete(`/${defaultApplication.id}`)
+                        .delete(`/users/${defaultApplication.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -320,7 +320,7 @@ describe('Routes: users', () => {
                 it('users.post016: should return status code 403 and info message from insufficient permissions when delete another educator', () => {
 
                     return request(URI)
-                        .delete(`/${defaultEducator.id}`)
+                        .delete(`/users/${defaultEducator.id}`)
                         .set('Authorization', 'Bearer '.concat(anotherEducatorToken))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -335,7 +335,7 @@ describe('Routes: users', () => {
                 it('users.post017: should return status code 403 and info message from insufficient permissions when delete child', () => {
 
                     return request(URI)
-                        .delete(`/${defaultChild.id}`)
+                        .delete(`/users/${defaultChild.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -347,7 +347,7 @@ describe('Routes: users', () => {
                 it('users.post018: should return status code 403 and info message from insufficient permissions when delete admin', () => {
 
                     return request(URI)
-                        .delete(`/${admin_ID}`)
+                        .delete(`/users/${admin_ID}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -359,7 +359,7 @@ describe('Routes: users', () => {
                 it('users.post019: should return status code 403 and info message from insufficient permissions when delete educator', () => {
 
                     return request(URI)
-                        .delete(`/${defaultEducator.id}`)
+                        .delete(`/users/${defaultEducator.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -371,7 +371,7 @@ describe('Routes: users', () => {
                 it('users.post020: should return status code 403 and info message from insufficient permissions when delete himself', () => {
 
                     return request(URI)
-                        .delete(`/${defaultHealthProfessional.id}`)
+                        .delete(`/users/${defaultHealthProfessional.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -383,7 +383,7 @@ describe('Routes: users', () => {
                 it('users.post021: should return status code 403 and info message from insufficient permissions when delete family', () => {
 
                     return request(URI)
-                        .delete(`/${defaultFamily.id}`)
+                        .delete(`/users/${defaultFamily.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -395,7 +395,7 @@ describe('Routes: users', () => {
                 it('users.post022: should return status code 403 and info message from insufficient permissions when delete application', () => {
 
                     return request(URI)
-                        .delete(`/${defaultApplication.id}`)
+                        .delete(`/users/${defaultApplication.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -407,7 +407,7 @@ describe('Routes: users', () => {
                 it('users.post023: should return status code 403 and info message from insufficient permissions when delete another health professional', () => {
 
                     return request(URI)
-                        .delete(`/${defaultHealthProfessional.id}`)
+                        .delete(`/users/${defaultHealthProfessional.id}`)
                         .set('Authorization', 'Bearer '.concat(anotherHealthProfessionalToken))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -422,7 +422,7 @@ describe('Routes: users', () => {
                 it('users.post024: should return status code 403 and info message from insufficient permissions when delete child', () => {
 
                     return request(URI)
-                        .delete(`/${defaultChild.id}`)
+                        .delete(`/users/${defaultChild.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -434,7 +434,7 @@ describe('Routes: users', () => {
                 it('users.post025: should return status code 403 and info message from insufficient permissions when delete admin', () => {
 
                     return request(URI)
-                        .delete(`/${admin_ID}`)
+                        .delete(`/users/${admin_ID}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -446,7 +446,7 @@ describe('Routes: users', () => {
                 it('users.post026: should return status code 403 and info message from insufficient permissions when delete educator', () => {
 
                     return request(URI)
-                        .delete(`/${defaultEducator.id}`)
+                        .delete(`/users/${defaultEducator.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -458,7 +458,7 @@ describe('Routes: users', () => {
                 it('users.post027: should return status code 403 and info message from insufficient permissions when delete health professional', () => {
 
                     return request(URI)
-                        .delete(`/${defaultHealthProfessional.id}`)
+                        .delete(`/users/${defaultHealthProfessional.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -470,7 +470,7 @@ describe('Routes: users', () => {
                 it('users.post028: should return status code 403 and info message from insufficient permissions when delete herself', () => {
 
                     return request(URI)
-                        .delete(`/${defaultFamily.id}`)
+                        .delete(`/users/${defaultFamily.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -482,7 +482,7 @@ describe('Routes: users', () => {
                 it('users.post029: should return status code 403 and info message from insufficient permissions when delete application', () => {
 
                     return request(URI)
-                        .delete(`/${defaultApplication.id}`)
+                        .delete(`/users/${defaultApplication.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -494,7 +494,7 @@ describe('Routes: users', () => {
                 it('users.post030: should return status code 403 and info message from insufficient permissions when delete another family', () => {
 
                     return request(URI)
-                        .delete(`/${defaultFamily.id}`)
+                        .delete(`/users/${defaultFamily.id}`)
                         .set('Authorization', 'Bearer '.concat(anotherFamilyToken))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -509,7 +509,7 @@ describe('Routes: users', () => {
                 it('users.post031: should return status code 403 and info message from insufficient permissions when delete child', () => {
 
                     return request(URI)
-                        .delete(`/${defaultChild.id}`)
+                        .delete(`/users/${defaultChild.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -521,7 +521,7 @@ describe('Routes: users', () => {
                 it('users.post032: should return status code 403 and info message from insufficient permissions when delete admin', () => {
 
                     return request(URI)
-                        .delete(`/${admin_ID}`)
+                        .delete(`/users/${admin_ID}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -533,7 +533,7 @@ describe('Routes: users', () => {
                 it('users.post033: should return status code 403 and info message from insufficient permissions when delete educator', () => {
 
                     return request(URI)
-                        .delete(`/${defaultEducator.id}`)
+                        .delete(`/users/${defaultEducator.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -545,7 +545,7 @@ describe('Routes: users', () => {
                 it('users.post034: should return status code 403 and info message from insufficient permissions when delete health professional', () => {
 
                     return request(URI)
-                        .delete(`/${defaultHealthProfessional.id}`)
+                        .delete(`/users/${defaultHealthProfessional.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -557,7 +557,7 @@ describe('Routes: users', () => {
                 it('users.post035: should return status code 403 and info message from insufficient permissions when delete family', () => {
 
                     return request(URI)
-                        .delete(`/${defaultFamily.id}`)
+                        .delete(`/users/${defaultFamily.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -569,7 +569,7 @@ describe('Routes: users', () => {
                 it('users.post036: should return status code 403 and info message from insufficient permissions when delete herself', () => {
 
                     return request(URI)
-                        .delete(`/${defaultApplication.id}`)
+                        .delete(`/users/${defaultApplication.id}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -581,7 +581,7 @@ describe('Routes: users', () => {
                 it('users.post037: should return status code 403 and info message from insufficient permissions when delete another application', () => {
 
                     return request(URI)
-                        .delete(`/${defaultApplication.id}`)
+                        .delete(`/users/${defaultApplication.id}`)
                         .set('Authorization', 'Bearer '.concat(anotherApplicationToken))
                         .set('Content-Type', 'application/json')
                         .expect(403)
@@ -599,7 +599,7 @@ describe('Routes: users', () => {
                 const admin_ID = await acc.getAdminID()
 
                 return request(URI)
-                    .delete(`/${admin_ID}`)
+                    .delete(`/users/${admin_ID}`)
                     .set('Content-Type', 'application/json')
                     .expect(401)
                     .then(err => {
@@ -610,7 +610,7 @@ describe('Routes: users', () => {
             it('users.post039: should return status code 401 and info message about unauthorized when delete child', () => {
 
                 return request(URI)
-                    .delete(`/${defaultChild.id}`)
+                    .delete(`/users/${defaultChild.id}`)
                     .set('Content-Type', 'application/json')
                     .expect(401)
                     .then(err => {
@@ -621,7 +621,7 @@ describe('Routes: users', () => {
             it('users.post040: should return status code 401 and info message about unauthorized when delete educator', () => {
 
                 return request(URI)
-                    .delete(`/${defaultEducator.id}`)
+                    .delete(`/users/${defaultEducator.id}`)
                     .set('Content-Type', 'application/json')
                     .expect(401)
                     .then(err => {
@@ -632,7 +632,7 @@ describe('Routes: users', () => {
             it('users.post041: should return status code 401 and info message about unauthorized when delete health professional', () => {
 
                 return request(URI)
-                    .delete(`/${defaultHealthProfessional.id}`)
+                    .delete(`/users/${defaultHealthProfessional.id}`)
                     .set('Content-Type', 'application/json')
                     .expect(401)
                     .then(err => {
@@ -643,7 +643,7 @@ describe('Routes: users', () => {
             it('users.post042: should return status code 401 and info message about unauthorized when delete family', () => {
 
                 return request(URI)
-                    .delete(`/${defaultFamily.id}`)
+                    .delete(`/users/${defaultFamily.id}`)
                     .set('Content-Type', 'application/json')
                     .expect(401)
                     .then(err => {
@@ -654,7 +654,7 @@ describe('Routes: users', () => {
             it('users.post043: should return status code 401 and info message about unauthorized when delete application', () => {
 
                 return request(URI)
-                    .delete(`/${defaultApplication.id}`)
+                    .delete(`/users/${defaultApplication.id}`)
                     .set('Content-Type', 'application/json')
                     .expect(401)
                     .then(err => {
@@ -668,7 +668,7 @@ describe('Routes: users', () => {
             it('users.post044: should return status code 204 and no content for child user', () => {
 
                 return request(URI)
-                    .delete(`/${defaultChild.id}`)
+                    .delete(`/users/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -680,7 +680,7 @@ describe('Routes: users', () => {
             it('users.post045: should return status code 204 and no content for educator user', () => {
 
                 return request(URI)
-                    .delete(`/${defaultEducator.id}`)
+                    .delete(`/users/${defaultEducator.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -692,7 +692,7 @@ describe('Routes: users', () => {
             it('users.post046: should return status code 204 and no content for health professional user', () => {
 
                 return request(URI)
-                    .delete(`/${defaultHealthProfessional.id}`)
+                    .delete(`/users/${defaultHealthProfessional.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -704,7 +704,7 @@ describe('Routes: users', () => {
             it('users.post047: should return status code 204 and no content for family user', () => {
 
                 return request(URI)
-                    .delete(`/${defaultFamily.id}`)
+                    .delete(`/users/${defaultFamily.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -716,7 +716,7 @@ describe('Routes: users', () => {
             it('users.post048: should return status code 204 and no content for application user', () => {
 
                 return request(URI)
-                    .delete(`/${defaultApplication.id}`)
+                    .delete(`/users/${defaultApplication.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(204)

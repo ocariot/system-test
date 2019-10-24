@@ -78,7 +78,7 @@ describe('Routes: users', () => {
             defaultApplication.institution = resultInstitution
 
         } catch (err) {
-            console.log('Failure on Before from users.patch test: ', err)
+            console.log('Failure on Before from users.put test: ', err)
         }
     })
 
@@ -91,7 +91,7 @@ describe('Routes: users', () => {
         }
     })
 
-    describe('PATCH /:user_id/password', () => {
+    describe('put /:user_id/password', () => {
 
         context('when the administrator successfully updates the user password', () => {
             
@@ -122,7 +122,7 @@ describe('Routes: users', () => {
                     accessTokenDefaultFamily = await acc.auth('default family', 'default pass')
 
                 } catch (err) {
-                    console.log('Failure in users.patch test: ', err)
+                    console.log('Failure in users.put test: ', err)
                 }
             })
             after(async () => {
@@ -133,10 +133,10 @@ describe('Routes: users', () => {
                 }
             })
 
-            it('users.patch001: should return status code 204 and no content for himself', async () => {
+            it('users.put001: should return status code 204 and no content for himself', async () => {
 
                 return request(URI)
-                    .patch(`/${admin_ID}/password`)
+                    .put(`/users/${admin_ID}/password`)
                     .send({ old_password: 'admin123', new_password: 'admin123' })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -146,10 +146,10 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.patch002: should return status code 204 and no content for child user', () => {
+            it('users.put002: should return status code 204 and no content for child user', () => {
 
                 return request(URI)
-                    .patch(`/${defaultChild.id}/password`)
+                    .put(`/users/${defaultChild.id}/password`)
                     .send({ old_password: defaultChild.password, new_password: newPassword })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -159,10 +159,10 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.patch003: should return status code 204 and no content for educator user', () => {
+            it('users.put003: should return status code 204 and no content for educator user', () => {
 
                 return request(URI)
-                    .patch(`/${defaultEducator.id}/password`)
+                    .put(`/users/${defaultEducator.id}/password`)
                     .send({ old_password: defaultEducator.password, new_password: newPassword })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -172,10 +172,10 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.patch004: should return status code 204 and no content for health professional user', () => {
+            it('users.put004: should return status code 204 and no content for health professional user', () => {
 
                 return request(URI)
-                    .patch(`/${defaultHealthProfessional.id}/password`)
+                    .put(`/users/${defaultHealthProfessional.id}/password`)
                     .send({ old_password: defaultHealthProfessional.password, new_password: newPassword })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -185,10 +185,10 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.patch005: should return status code 204 and no content for family user', () => {
+            it('users.put005: should return status code 204 and no content for family user', () => {
 
                 return request(URI)
-                    .patch(`/${defaultFamily.id}/password`)
+                    .put(`/users/${defaultFamily.id}/password`)
                     .send({ old_password: defaultFamily.password, new_password: newPassword })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -198,10 +198,10 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.patch006: should return status code 204 and no content for application user', () => {
+            it('users.put006: should return status code 204 and no content for application user', () => {
 
                 return request(URI)
-                    .patch(`/${defaultApplication.id}/password`)
+                    .put(`/users/${defaultApplication.id}/password`)
                     .send({ old_password: defaultApplication.password, new_password: newPassword })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -242,7 +242,7 @@ describe('Routes: users', () => {
                     accessTokenDefaultFamily = await acc.auth('default family', 'default pass')
 
                 } catch (err) {
-                    console.log('Failure in users.patch test: ', err)
+                    console.log('Failure in users.put test: ', err)
                 }
             })
 
@@ -256,10 +256,10 @@ describe('Routes: users', () => {
 
             context('the user old password does not match', () => {
 
-                it('users.patch007: should return status code 400 and info message from old admin password does not match', () => {
+                it('users.put007: should return status code 400 and info message from old admin password does not match', () => {
 
                     return request(URI)
-                        .patch(`/${admin_ID}/password`)
+                        .put(`/users/${admin_ID}/password`)
                         .send({ old_password: acc.NON_EXISTENT_PASSWORD, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -269,10 +269,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch008: should return status code 400 and info message from old child password does not match', () => {
+                it('users.put008: should return status code 400 and info message from old child password does not match', () => {
 
                     return request(URI)
-                        .patch(`/${defaultChild.id}/password`)
+                        .put(`/users/${defaultChild.id}/password`)
                         .send({ old_password: acc.NON_EXISTENT_PASSWORD, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -282,10 +282,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch009: should return status code 400 and info message from old educator password does not match', () => {
+                it('users.put009: should return status code 400 and info message from old educator password does not match', () => {
 
                     return request(URI)
-                        .patch(`/${defaultEducator.id}/password`)
+                        .put(`/users/${defaultEducator.id}/password`)
                         .send({ old_password: acc.NON_EXISTENT_PASSWORD, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -295,10 +295,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch010: should return status code 400 and info message from old health professional password does not match', () => {
+                it('users.put010: should return status code 400 and info message from old health professional password does not match', () => {
 
                     return request(URI)
-                        .patch(`/${defaultHealthProfessional.id}/password`)
+                        .put(`/users/${defaultHealthProfessional.id}/password`)
                         .send({ old_password: acc.NON_EXISTENT_PASSWORD, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -308,10 +308,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch011: should return status code 400 and info message from old family password does not match', () => {
+                it('users.put011: should return status code 400 and info message from old family password does not match', () => {
 
                     return request(URI)
-                        .patch(`/${defaultFamily.id}/password`)
+                        .put(`/users/${defaultFamily.id}/password`)
                         .send({ old_password: acc.NON_EXISTENT_PASSWORD, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -321,10 +321,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch012: should return status code 400 and info message from old application password does not match', () => {
+                it('users.put012: should return status code 400 and info message from old application password does not match', () => {
 
                     return request(URI)
-                        .patch(`/${defaultApplication.id}/password`)
+                        .put(`/users/${defaultApplication.id}/password`)
                         .send({ old_password: acc.NON_EXISTENT_PASSWORD, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -338,10 +338,10 @@ describe('Routes: users', () => {
 
             context('when the old password does not provided', () => {
 
-                it('users.patch013: should return status code 400 and info message from old admin password does not provided', () => {
+                it('users.put013: should return status code 400 and info message from old admin password does not provided', () => {
 
                     return request(URI)
-                        .patch(`/${admin_ID}/password`)
+                        .put(`/users/${admin_ID}/password`)
                         .send({ new_password: 'admin123' })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -351,10 +351,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch014: should return status code 400 and info message from old child password does not provided', () => {
+                it('users.put014: should return status code 400 and info message from old child password does not provided', () => {
 
                     return request(URI)
-                        .patch(`/${defaultChild.id}/password`)
+                        .put(`/users/${defaultChild.id}/password`)
                         .send({ new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -364,10 +364,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch015: should return status code 400 and info message from old educator password does not provided', () => {
+                it('users.put015: should return status code 400 and info message from old educator password does not provided', () => {
 
                     return request(URI)
-                        .patch(`/${defaultEducator.id}/password`)
+                        .put(`/users/${defaultEducator.id}/password`)
                         .send({ new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -377,10 +377,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch016: should return status code 400 and info message from old health professional password does not provided', () => {
+                it('users.put016: should return status code 400 and info message from old health professional password does not provided', () => {
 
                     return request(URI)
-                        .patch(`/${defaultHealthProfessional.id}/password`)
+                        .put(`/users/${defaultHealthProfessional.id}/password`)
                         .send({ new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -390,10 +390,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch017: should return status code 400 and info message from old family password does not provided', () => {
+                it('users.put017: should return status code 400 and info message from old family password does not provided', () => {
 
                     return request(URI)
-                        .patch(`/${defaultFamily.id}/password`)
+                        .put(`/users/${defaultFamily.id}/password`)
                         .send({ new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -403,10 +403,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch018: should return status code 400 and info message from old application password does not provided', () => {
+                it('users.put018: should return status code 400 and info message from old application password does not provided', () => {
 
                     return request(URI)
-                        .patch(`/${defaultApplication.id}/password`)
+                        .put(`/users/${defaultApplication.id}/password`)
                         .send({ new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -420,10 +420,10 @@ describe('Routes: users', () => {
 
             context('the new password does not provided', () => {
 
-                it('users.patch019: should return status code 400 and info message from new admin password does not provided', () => {
+                it('users.put019: should return status code 400 and info message from new admin password does not provided', () => {
 
                     return request(URI)
-                        .patch(`/${admin_ID}/password`)
+                        .put(`/users/${admin_ID}/password`)
                         .send({ old_password: 'admin123' })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -433,10 +433,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch020: should return status code 400 and info message from new child password does not provided', () => {
+                it('users.put020: should return status code 400 and info message from new child password does not provided', () => {
 
                     return request(URI)
-                        .patch(`/${defaultChild.id}/password`)
+                        .put(`/users/${defaultChild.id}/password`)
                         .send({ old_password: defaultChild.password })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -446,10 +446,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch021: should return status code 400 and info message from new educator password does not provided', () => {
+                it('users.put021: should return status code 400 and info message from new educator password does not provided', () => {
 
                     return request(URI)
-                        .patch(`/${defaultEducator.id}/password`)
+                        .put(`/users/${defaultEducator.id}/password`)
                         .send({ old_password: defaultChild.password })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -459,10 +459,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch022: should return status code 400 and info message from new health professional password does not provided', () => {
+                it('users.put022: should return status code 400 and info message from new health professional password does not provided', () => {
 
                     return request(URI)
-                        .patch(`/${defaultHealthProfessional.id}/password`)
+                        .put(`/users/${defaultHealthProfessional.id}/password`)
                         .send({ old_password: defaultChild.password })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -472,10 +472,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch023: should return status code 400 and info message from new family password does not provided', () => {
+                it('users.put023: should return status code 400 and info message from new family password does not provided', () => {
 
                     return request(URI)
-                        .patch(`/${defaultFamily.id}/password`)
+                        .put(`/users/${defaultFamily.id}/password`)
                         .send({ old_password: defaultChild.password })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -485,10 +485,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch024: should return status code 400 and info message from new application password does not provided', () => {
+                it('users.put024: should return status code 400 and info message from new application password does not provided', () => {
 
                     return request(URI)
-                        .patch(`/${defaultApplication.id}/password`)
+                        .put(`/users/${defaultApplication.id}/password`)
                         .send({ old_password: defaultChild.password })
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -501,10 +501,10 @@ describe('Routes: users', () => {
             }) // new password does not provided
 
             describe('when user_id is invalid', () => {
-                it('users.patch025: should return status code 400 and info message from invalid id', () => {
+                it('users.put025: should return status code 400 and info message from invalid id', () => {
 
                     return request(URI)
-                        .patch(`/${acc.INVALID_ID}/password`)
+                        .put(`/users/${acc.INVALID_ID}/password`)
                         .send({})
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
@@ -546,7 +546,7 @@ describe('Routes: users', () => {
                     accessTokenDefaultFamily = await acc.auth('default family', 'default pass')
 
                 } catch (err) {
-                    console.log('Failure in users.patch test: ', err)
+                    console.log('Failure in users.put test: ', err)
                 }
             })
 
@@ -558,10 +558,10 @@ describe('Routes: users', () => {
                 }
             })
 
-            it('users.patch026: should return status code 401 and info message about unauthorized for update admin user', () => {
+            it('users.put026: should return status code 401 and info message about unauthorized for update admin user', () => {
 
                 return request(URI)
-                    .patch(`/${admin_ID}/password`)
+                    .put(`/users/${admin_ID}/password`)
                     .send({ old_password: 'admin123', new_password: 'admin123' })
                     .set('Content-Type', 'application/json')
                     .expect(401)
@@ -570,10 +570,10 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.patch027: should return status code 401 and info message about unauthorized for update child user', () => {
+            it('users.put027: should return status code 401 and info message about unauthorized for update child user', () => {
 
                 return request(URI)
-                    .patch(`/${defaultChild.id}/password`)
+                    .put(`/users/${defaultChild.id}/password`)
                     .send({ old_password: defaultChild.password, new_password: newPassword })
                     .set('Content-Type', 'application/json')
                     .expect(401)
@@ -582,10 +582,10 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.patch028: should return status code 401 and info message about unauthorized for update educator user', () => {
+            it('users.put028: should return status code 401 and info message about unauthorized for update educator user', () => {
 
                 return request(URI)
-                    .patch(`/${defaultEducator.id}/password`)
+                    .put(`/users/${defaultEducator.id}/password`)
                     .send({ old_password: defaultEducator.password, new_password: newPassword })
                     .set('Content-Type', 'application/json')
                     .expect(401)
@@ -594,10 +594,10 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.patch029: should return status code 401 and info message about unauthorized for update health professional user', () => {
+            it('users.put029: should return status code 401 and info message about unauthorized for update health professional user', () => {
 
                 return request(URI)
-                    .patch(`/${defaultHealthProfessional.id}/password`)
+                    .put(`/users/${defaultHealthProfessional.id}/password`)
                     .send({ old_password: defaultHealthProfessional.password, new_password: newPassword })
                     .set('Content-Type', 'application/json')
                     .expect(401)
@@ -606,10 +606,10 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.patch030: should return status code 401 and info message about unauthorized for update family user', () => {
+            it('users.put030: should return status code 401 and info message about unauthorized for update family user', () => {
 
                 return request(URI)
-                    .patch(`/${defaultFamily.id}/password`)
+                    .put(`/users/${defaultFamily.id}/password`)
                     .send({ old_password: defaultFamily.password, new_password: newPassword })
                     .set('Content-Type', 'application/json')
                     .expect(401)
@@ -618,10 +618,10 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.patch031: should return status code 401 and info message about unauthorized for update application user', () => {
+            it('users.put031: should return status code 401 and info message about unauthorized for update application user', () => {
 
                 return request(URI)
-                    .patch(`/${defaultApplication.id}/password`)
+                    .put(`/users/${defaultApplication.id}/password`)
                     .send({ old_password: defaultApplication.password, new_password: newPassword })
                     .set('Content-Type', 'application/json')
                     .expect(401)
@@ -667,7 +667,7 @@ describe('Routes: users', () => {
                         accessTokenDefaultFamily = await acc.auth('default family', 'default pass')
 
                     } catch (err) {
-                        console.log('Failure in users.patch test: ', err)
+                        console.log('Failure in users.put test: ', err)
                     }
                 })
                 after(async () => {
@@ -678,10 +678,10 @@ describe('Routes: users', () => {
                     }
                 })
 
-                it('users.patch032: should return status code 403 and info message from insufficient permissions for update admin password', () => {
+                it('users.put032: should return status code 403 and info message from insufficient permissions for update admin password', () => {
 
                     return request(URI)
-                        .patch(`/${admin_ID}/password`)
+                        .put(`/users/${admin_ID}/password`)
                         .send({ old_password: 'admin123', new_password: 'admin123' })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultChild))
                         .set('Content-Type', 'application/json')
@@ -691,10 +691,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch033: should return status code 403 and info message from insufficient permissions for update your own password', () => {
+                it('users.put033: should return status code 403 and info message from insufficient permissions for update your own password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultChild.id}/password`)
+                        .put(`/users/${defaultChild.id}/password`)
                         .send({ old_password: defaultChild.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultChild))
                         .set('Content-Type', 'application/json')
@@ -704,10 +704,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch034: should return status code 403 and info message from insufficient permissions for update educator password', () => {
+                it('users.put034: should return status code 403 and info message from insufficient permissions for update educator password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultEducator.id}/password`)
+                        .put(`/users/${defaultEducator.id}/password`)
                         .send({ old_password: defaultEducator.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultChild))
                         .set('Content-Type', 'application/json')
@@ -717,10 +717,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch035: should return status code 403 and info message from insufficient permissions for update health professional password', () => {
+                it('users.put035: should return status code 403 and info message from insufficient permissions for update health professional password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultHealthProfessional.id}/password`)
+                        .put(`/users/${defaultHealthProfessional.id}/password`)
                         .send({ old_password: defaultHealthProfessional.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultChild))
                         .set('Content-Type', 'application/json')
@@ -730,10 +730,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch036: should return status code 403 and info message from insufficient permissions for update family password', () => {
+                it('users.put036: should return status code 403 and info message from insufficient permissions for update family password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultFamily.id}/password`)
+                        .put(`/users/${defaultFamily.id}/password`)
                         .send({ old_password: defaultFamily.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultChild))
                         .set('Content-Type', 'application/json')
@@ -743,10 +743,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch037: should return status code 403 and info message from insufficient permissions for update application password', () => {
+                it('users.put037: should return status code 403 and info message from insufficient permissions for update application password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultApplication.id}/password`)
+                        .put(`/users/${defaultApplication.id}/password`)
                         .send({ old_password: defaultApplication.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultChild))
                         .set('Content-Type', 'application/json')
@@ -756,10 +756,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch038: should return status code 403 and info message from insufficient permissions for update another child password', () => {
+                it('users.put038: should return status code 403 and info message from insufficient permissions for update another child password', () => {
 
                     return request(URI)
-                        .patch(`/${anotherChild.id}/password`)
+                        .put(`/users/${anotherChild.id}/password`)
                         .send({ old_password: anotherChild.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultChild))
                         .set('Content-Type', 'application/json')
@@ -803,7 +803,7 @@ describe('Routes: users', () => {
                         accessTokenDefaultFamily = await acc.auth('default family', 'default pass')
 
                     } catch (err) {
-                        console.log('Failure in users.patch test: ', err)
+                        console.log('Failure in users.put test: ', err)
                     }
                 })
                 after(async () => {
@@ -814,10 +814,10 @@ describe('Routes: users', () => {
                     }
                 })
 
-                it('users.patch039: should return status code 403 and info message from insufficient permissions for update admin password', () => {
+                it('users.put039: should return status code 403 and info message from insufficient permissions for update admin password', () => {
 
                     return request(URI)
-                        .patch(`/${admin_ID}/password`)
+                        .put(`/users/${admin_ID}/password`)
                         .send({ old_password: 'admin123', new_password: 'admin123' })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultEducator))
                         .set('Content-Type', 'application/json')
@@ -827,10 +827,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch040: should return status code 403 and info message from insufficient permissions for update child password', () => {
+                it('users.put040: should return status code 403 and info message from insufficient permissions for update child password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultChild.id}/password`)
+                        .put(`/users/${defaultChild.id}/password`)
                         .send({ old_password: defaultEducator.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultEducator))
                         .set('Content-Type', 'application/json')
@@ -840,10 +840,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch041: should return status code 403 and info message from insufficient permissions for update your own password', () => {
+                it('users.put041: should return status code 403 and info message from insufficient permissions for update your own password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultEducator.id}/password`)
+                        .put(`/users/${defaultEducator.id}/password`)
                         .send({ old_password: defaultEducator.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultEducator))
                         .set('Content-Type', 'application/json')
@@ -853,10 +853,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch042: should return status code 403 and info message from insufficient permissions for update health professional password', () => {
+                it('users.put042: should return status code 403 and info message from insufficient permissions for update health professional password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultHealthProfessional.id}/password`)
+                        .put(`/users/${defaultHealthProfessional.id}/password`)
                         .send({ old_password: defaultEducator.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultEducator))
                         .set('Content-Type', 'application/json')
@@ -866,10 +866,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch043: should return status code 403 and info message from insufficient permissions for update family password', () => {
+                it('users.put043: should return status code 403 and info message from insufficient permissions for update family password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultFamily.id}/password`)
+                        .put(`/users/${defaultFamily.id}/password`)
                         .send({ old_password: defaultEducator.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultEducator))
                         .set('Content-Type', 'application/json')
@@ -879,10 +879,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch044: should return status code 403 and info message from insufficient permissions for update application password', () => {
+                it('users.put044: should return status code 403 and info message from insufficient permissions for update application password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultApplication.id}/password`)
+                        .put(`/users/${defaultApplication.id}/password`)
                         .send({ old_password: defaultEducator.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultEducator))
                         .set('Content-Type', 'application/json')
@@ -892,10 +892,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch045: should return status code 403 and info message from insufficient permissions for update another educator password', () => {
+                it('users.put045: should return status code 403 and info message from insufficient permissions for update another educator password', () => {
 
                     return request(URI)
-                        .patch(`/${anotherEducator.id}/password`)
+                        .put(`/users/${anotherEducator.id}/password`)
                         .send({ old_password: anotherEducator.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultEducator))
                         .set('Content-Type', 'application/json')
@@ -939,7 +939,7 @@ describe('Routes: users', () => {
                         accessTokenDefaultFamily = await acc.auth('default family', 'default pass')
 
                     } catch (err) {
-                        console.log('Failure in users.patch test: ', err)
+                        console.log('Failure in users.put test: ', err)
                     }
                 })
                 after(async () => {
@@ -950,10 +950,10 @@ describe('Routes: users', () => {
                     }
                 })
 
-                it('users.patch046: should return status code 403 and info message from insufficient permissions for update admin password', () => {
+                it('users.put046: should return status code 403 and info message from insufficient permissions for update admin password', () => {
 
                     return request(URI)
-                        .patch(`/${admin_ID}/password`)
+                        .put(`/users/${admin_ID}/password`)
                         .send({ old_password: 'admin123', new_password: 'admin123' })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultHealthProfessional))
                         .set('Content-Type', 'application/json')
@@ -963,10 +963,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch047: should return status code 403 and info message from insufficient permissions for update child password', () => {
+                it('users.put047: should return status code 403 and info message from insufficient permissions for update child password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultChild.id}/password`)
+                        .put(`/users/${defaultChild.id}/password`)
                         .send({ old_password: defaultHealthProfessional.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultHealthProfessional))
                         .set('Content-Type', 'application/json')
@@ -976,10 +976,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch048: should return status code 403 and info message from insufficient permissions for update educator password', () => {
+                it('users.put048: should return status code 403 and info message from insufficient permissions for update educator password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultEducator.id}/password`)
+                        .put(`/users/${defaultEducator.id}/password`)
                         .send({ old_password: defaultHealthProfessional.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultHealthProfessional))
                         .set('Content-Type', 'application/json')
@@ -989,10 +989,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch049: should return status code 403 and info message from insufficient permissions for update your own password', () => {
+                it('users.put049: should return status code 403 and info message from insufficient permissions for update your own password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultHealthProfessional.id}/password`)
+                        .put(`/users/${defaultHealthProfessional.id}/password`)
                         .send({ old_password: defaultHealthProfessional.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultHealthProfessional))
                         .set('Content-Type', 'application/json')
@@ -1002,10 +1002,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch050: should return status code 403 and info message from insufficient permissions for update family password', () => {
+                it('users.put050: should return status code 403 and info message from insufficient permissions for update family password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultFamily.id}/password`)
+                        .put(`/users/${defaultFamily.id}/password`)
                         .send({ old_password: defaultHealthProfessional.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultHealthProfessional))
                         .set('Content-Type', 'application/json')
@@ -1015,10 +1015,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch051: should return status code 403 and info message from insufficient permissions for update application password', () => {
+                it('users.put051: should return status code 403 and info message from insufficient permissions for update application password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultApplication.id}/password`)
+                        .put(`/users/${defaultApplication.id}/password`)
                         .send({ old_password: defaultHealthProfessional.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultHealthProfessional))
                         .set('Content-Type', 'application/json')
@@ -1028,10 +1028,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch052: should return status code 403 and info message from insufficient permissions for update another health professional password', () => {
+                it('users.put052: should return status code 403 and info message from insufficient permissions for update another health professional password', () => {
 
                     return request(URI)
-                        .patch(`/${anotherHealthProfessional.id}/password`)
+                        .put(`/users/${anotherHealthProfessional.id}/password`)
                         .send({ old_password: anotherHealthProfessional.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultHealthProfessional))
                         .set('Content-Type', 'application/json')
@@ -1078,7 +1078,7 @@ describe('Routes: users', () => {
                         accessTokenDefaultFamily = await acc.auth('default family', 'default pass')
 
                     } catch (err) {
-                        console.log('Failure in users.patch test: ', err)
+                        console.log('Failure in users.put test: ', err)
                     }
                 })
                 after(async () => {
@@ -1089,10 +1089,10 @@ describe('Routes: users', () => {
                     }
                 })
 
-                it('users.patch053: should return status code 403 and info message from insufficient permissions for update admin password', () => {
+                it('users.put053: should return status code 403 and info message from insufficient permissions for update admin password', () => {
 
                     return request(URI)
-                        .patch(`/${admin_ID}/password`)
+                        .put(`/users/${admin_ID}/password`)
                         .send({ old_password: 'admin123', new_password: 'admin123' })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultFamily))
                         .set('Content-Type', 'application/json')
@@ -1102,10 +1102,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch054: should return status code 403 and info message from insufficient permissions for update child password', () => {
+                it('users.put054: should return status code 403 and info message from insufficient permissions for update child password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultChild.id}/password`)
+                        .put(`/users/${defaultChild.id}/password`)
                         .send({ old_password: defaultFamily.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultFamily))
                         .set('Content-Type', 'application/json')
@@ -1115,10 +1115,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch055: should return status code 403 and info message from insufficient permissions for update educator password', () => {
+                it('users.put055: should return status code 403 and info message from insufficient permissions for update educator password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultEducator.id}/password`)
+                        .put(`/users/${defaultEducator.id}/password`)
                         .send({ old_password: defaultFamily.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultFamily))
                         .set('Content-Type', 'application/json')
@@ -1128,10 +1128,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch056: should return status code 403 and info message from insufficient permissions for update health professional password', () => {
+                it('users.put056: should return status code 403 and info message from insufficient permissions for update health professional password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultHealthProfessional.id}/password`)
+                        .put(`/users/${defaultHealthProfessional.id}/password`)
                         .send({ old_password: defaultFamily.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultFamily))
                         .set('Content-Type', 'application/json')
@@ -1141,10 +1141,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch057: should return status code 403 and info message from insufficient permissions for update your own password', () => {
+                it('users.put057: should return status code 403 and info message from insufficient permissions for update your own password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultFamily.id}/password`)
+                        .put(`/users/${defaultFamily.id}/password`)
                         .send({ old_password: defaultFamily.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultFamily))
                         .set('Content-Type', 'application/json')
@@ -1154,10 +1154,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch058: should return status code 403 and info message from insufficient permissions for update application password', () => {
+                it('users.put058: should return status code 403 and info message from insufficient permissions for update application password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultApplication.id}/password`)
+                        .put(`/users/${defaultApplication.id}/password`)
                         .send({ old_password: defaultFamily.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultFamily))
                         .set('Content-Type', 'application/json')
@@ -1167,10 +1167,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch059: should return status code 403 and info message from insufficient permissions for update another family password', () => {
+                it('users.put059: should return status code 403 and info message from insufficient permissions for update another family password', () => {
 
                     return request(URI)
-                        .patch(`/${anotherFamily.id}/password`)
+                        .put(`/users/${anotherFamily.id}/password`)
                         .send({ old_password: anotherFamily.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultFamily))
                         .set('Content-Type', 'application/json')
@@ -1214,7 +1214,7 @@ describe('Routes: users', () => {
                         accessTokenDefaultFamily = await acc.auth('default family', 'default pass')
 
                     } catch (err) {
-                        console.log('Failure in users.patch test: ', err)
+                        console.log('Failure in users.put test: ', err)
                     }
                 })
                 after(async () => {
@@ -1225,10 +1225,10 @@ describe('Routes: users', () => {
                     }
                 })
 
-                it('users.patch060: should return status code 403 and info message from insufficient permissions for update admin password', () => {
+                it('users.put060: should return status code 403 and info message from insufficient permissions for update admin password', () => {
 
                     return request(URI)
-                        .patch(`/${admin_ID}/password`)
+                        .put(`/users/${admin_ID}/password`)
                         .send({ old_password: 'admin123', new_password: 'admin123' })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultApplication))
                         .set('Content-Type', 'application/json')
@@ -1238,10 +1238,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch061: should return status code 403 and info message from insufficient permissions for update child password', () => {
+                it('users.put061: should return status code 403 and info message from insufficient permissions for update child password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultChild.id}/password`)
+                        .put(`/users/${defaultChild.id}/password`)
                         .send({ old_password: defaultApplication.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultApplication))
                         .set('Content-Type', 'application/json')
@@ -1251,10 +1251,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch062: should return status code 403 and info message from insufficient permissions for update educator password', () => {
+                it('users.put062: should return status code 403 and info message from insufficient permissions for update educator password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultEducator.id}/password`)
+                        .put(`/users/${defaultEducator.id}/password`)
                         .send({ old_password: defaultApplication.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultApplication))
                         .set('Content-Type', 'application/json')
@@ -1264,10 +1264,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch063: should return status code 403 and info message from insufficient permissions for update health professional password', () => {
+                it('users.put063: should return status code 403 and info message from insufficient permissions for update health professional password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultHealthProfessional.id}/password`)
+                        .put(`/users/${defaultHealthProfessional.id}/password`)
                         .send({ old_password: defaultApplication.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultHealthProfessional))
                         .set('Content-Type', 'application/json')
@@ -1277,10 +1277,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch064: should return status code 403 and info message from insufficient permissions for update family password', () => {
+                it('users.put064: should return status code 403 and info message from insufficient permissions for update family password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultFamily.id}/password`)
+                        .put(`/users/${defaultFamily.id}/password`)
                         .send({ old_password: defaultApplication.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultFamily))
                         .set('Content-Type', 'application/json')
@@ -1290,10 +1290,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch065: should return status code 403 and info message from insufficient permissions for update your own password', () => {
+                it('users.put065: should return status code 403 and info message from insufficient permissions for update your own password', () => {
 
                     return request(URI)
-                        .patch(`/${defaultApplication.id}/password`)
+                        .put(`/users/${defaultApplication.id}/password`)
                         .send({ old_password: defaultApplication.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultApplication))
                         .set('Content-Type', 'application/json')
@@ -1303,10 +1303,10 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.patch066: should return status code 403 and info message from insufficient permissions for update another application password', () => {
+                it('users.put066: should return status code 403 and info message from insufficient permissions for update another application password', () => {
 
                     return request(URI)
-                        .patch(`/${anotherApplication.id}/password`)
+                        .put(`/users/${anotherApplication.id}/password`)
                         .send({ old_password: anotherApplication.password, new_password: newPassword })
                         .set('Authorization', 'Bearer '.concat(accessTokenDefaultApplication))
                         .set('Content-Type', 'application/json')
