@@ -752,7 +752,7 @@ describe('Routes: children.sleep', () => {
                     })
             })
 
-            it('sleep.post026: should return 400 and info message from error, when try create a sleep for for educator', () => {
+            it('sleep.post026: should return 400 and info message from error, when try create a sleep for educator', () => {
 
                 return request(URI)
                     .post(`/children/${defaultEducator.id}/sleep`)
@@ -765,7 +765,7 @@ describe('Routes: children.sleep', () => {
                     })
             })
 
-            it('sleep.post027: should return 400 and info message from error, when try create a sleep for for health professional', () => {
+            it('sleep.post027: should return 400 and info message from error, when try create a sleep for health professional', () => {
 
                 return request(URI)
                     .post(`/children/${defaultHealthProfessional.id}/sleep`)
@@ -778,7 +778,7 @@ describe('Routes: children.sleep', () => {
                     })
             })
 
-            it('sleep.post028: should return 400 and info message from error, when try create a sleep for for family', () => {
+            it('sleep.post028: should return 400 and info message from error, when try create a sleep for family', () => {
 
                 return request(URI)
                     .post(`/children/${defaultFamily.id}/sleep`)
@@ -791,7 +791,7 @@ describe('Routes: children.sleep', () => {
                     })
             })
 
-            it('sleep.post029: should return 400 and info message from error, when try create a sleep for for application', () => {
+            it('sleep.post029: should return 400 and info message from error, when try create a sleep for application', () => {
 
                 return request(URI)
                     .post(`/children/${defaultApplication.id}/sleep`)
