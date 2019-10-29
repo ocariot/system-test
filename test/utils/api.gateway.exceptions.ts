@@ -128,6 +128,17 @@ export abstract class ApiGatewayException {
         ERROR_409_PHYSICAL_ACTIVITY_IS_ALREADY_REGISTERED: new ApiException(409, 'Physical Activity is already registered...').toJson(),
     }
 
+    public static readonly LOGS: any = {
+        ERROR_400_DATE_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Child log validation failed: date is required!').toJson(),
+        ERROR_400_VALUE_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Child log validation failed: value is required!').toJson(),
+        ERROR_400_DATE_AND_VALUE_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Child log validation failed: date, value is required!').toJson(),
+        ERROR_400_VALUE_NEGATIVE: new ApiException(400, 'Value field is invalid...', 'Child log validation failed: The value provided has a negative value!').toJson(),
+        ERROR_400_VALUE_IS_NOT_A_NUMBER: new ApiException(400, 'Value field is invalid...', 'Child log validation failed: The value provided is not a valid number!').toJson(),
+        ERROR_400_INVALID_CHILD_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
+        ERROR_404_CHILD_NOT_FOUND: new ApiException(404, 'Child not found!', 'Child not found or already removed. A new operation for the same resource is not required.').toJson(),
+    }
+
+
     public static readonly SLEEP: any = {
         ERROR_400_START_TIME_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Sleep validation failed: start_time is required!').toJson(),
         ERROR_400_END_TIME_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Sleep validation failed: end_time is required!').toJson(),

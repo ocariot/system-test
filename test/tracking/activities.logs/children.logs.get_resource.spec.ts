@@ -26,7 +26,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
 
     const defaultInstitution: Institution = new InstitutionMock()
     const defaultChild: Child = new ChildMock()
-    const AMOUNT_LOGS = 10 // amount of logs that will be inserted into the array PHYSICAL_ACTIVITIES_LOGS
+    const AMOUNT_LOGS = 2 // amount of logs that will be inserted into the array PHYSICAL_ACTIVITIES_LOGS
 
     // Mock objects for Log of type STEPS
     const logsStepsArr: Array<Log> = new Array<Log>()
@@ -103,18 +103,19 @@ describe('Routes: users.children.physicalactivities.logs', () => {
         }
     })
 
-    describe('GET /children/:child_id/physicalactivities/logs/:resource/date/:date_start/:date_end', () => {
+    describe('GET /children/:child_id/logs/:resource/date/:date_start/:date_end', () => {
 
         context('when the user get all logs for specified resource of the child successfully', () => {
 
-            it('logs.get_resource001: should return status code 200 and the all logs registered for specific resource for admin user', () => {
+            it.only('logs.get_resource001: should return status code 200 and the all logs registered for specific resource for admin user', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}/date/${LOG_DATE_START_STEPS}/${LOG_DATE_END_STEPS}`)
+                    .get(`/children/${defaultChild.id}/logs/${LogType.STEPS}/date/${LOG_DATE_START_STEPS}/${LOG_DATE_END_STEPS}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
+                        console.log(res.body)
                         expect(res.body).is.an.instanceOf(Array)
                         for (let i = 0; i < res.body.length; i++) {
                             expect(res.body[i].date).to.eql(logsSortedSteps[i].date)
@@ -126,7 +127,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
             it('logs.get_resource002: should return status code 200 and the all logs registered for specific resource for own child', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}/date/${LOG_DATE_START_STEPS}/${LOG_DATE_END_STEPS}`)
+                    .get(`/children/${defaultChild.id}/logs/${LogType.STEPS}/date/${LOG_DATE_START_STEPS}/${LOG_DATE_END_STEPS}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -142,7 +143,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
             it('logs.get_resource003: should return status code 200 and the all logs registered for specific resource for educator user', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.CALORIES}/date/${LOG_DATE_START_CALORIES}/${LOG_DATE_END_CALORIES}`)
+                    .get(`/children/${defaultChild.id}/logs/${LogType.CALORIES}/date/${LOG_DATE_START_CALORIES}/${LOG_DATE_END_CALORIES}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -158,7 +159,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
             it('logs.get_resource004: should return status code 200 and the all logs registered for specific resource for health professional user', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.CALORIES}/date/${LOG_DATE_START_CALORIES}/${LOG_DATE_END_CALORIES}`)
+                    .get(`/children/${defaultChild.id}/logs/${LogType.CALORIES}/date/${LOG_DATE_START_CALORIES}/${LOG_DATE_END_CALORIES}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -174,7 +175,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
             it('logs.get_resource005: should return status code 200 and the all logs registered for specific resource for family user', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}/date/${LOG_DATE_START_STEPS}/${LOG_DATE_END_STEPS}`)
+                    .get(`/children/${defaultChild.id}/logs/${LogType.STEPS}/date/${LOG_DATE_START_STEPS}/${LOG_DATE_END_STEPS}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -190,7 +191,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
             it('logs.get_resource006: should return status code 200 and the all logs registered for specific resource for application user', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.CALORIES}/date/${LOG_DATE_START_CALORIES}/${LOG_DATE_END_CALORIES}`)
+                    .get(`/children/${defaultChild.id}/logs/${LogType.CALORIES}/date/${LOG_DATE_START_CALORIES}/${LOG_DATE_END_CALORIES}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .expect(200)
@@ -210,7 +211,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                     const date_ed = '1975-05-05'
 
                     return request(URI)
-                        .get(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}/date/${date_star}/${date_ed}`)
+                        .get(`/children/${defaultChild.id}/logs/${LogType.STEPS}/date/${date_star}/${date_ed}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
                         .expect(200)
@@ -229,7 +230,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                 const date_end = '2019-08-08'
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.CALORIES}/date/${wrongYear}/${date_end}`)
+                    .get(`/children/${defaultChild.id}/logs/${LogType.CALORIES}/date/${wrongYear}/${date_end}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -246,7 +247,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                 const wrongMonth = '2019-13-05' // date with month wrong
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.CALORIES}/date/${date_start}/${wrongMonth}`)
+                    .get(`/children/${defaultChild.id}/logs/${LogType.CALORIES}/date/${date_start}/${wrongMonth}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -263,7 +264,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                 const date_end = '2019-05-07'
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}/date/${wrongDay}/${date_end}`)
+                    .get(`/children/${defaultChild.id}/logs/${LogType.STEPS}/date/${wrongDay}/${date_end}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -277,7 +278,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
             it('logs.get_resource011: should return status code 400 and info message from invalid child_id', () => {
 
                 return request(URI)
-                    .get(`/children/${acc.INVALID_ID}/physicalactivities/logs/${LogType.STEPS}/date/${LOG_DATE_START_STEPS}/${LOG_DATE_END_STEPS}`)
+                    .get(`/children/${acc.INVALID_ID}/logs/${LogType.STEPS}/date/${LOG_DATE_START_STEPS}/${LOG_DATE_END_STEPS}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -290,7 +291,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
             it('logs.get_resource012: should return status code 400 and info message from validation error, because child not exist', () => {
 
                 return request(URI)
-                    .get(`/children/${acc.NON_EXISTENT_ID}/physicalactivities/logs/${LogType.STEPS}/date/${LOG_DATE_START_STEPS}/${LOG_DATE_END_STEPS}`)
+                    .get(`/children/${acc.NON_EXISTENT_ID}/logs/${LogType.STEPS}/date/${LOG_DATE_START_STEPS}/${LOG_DATE_END_STEPS}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -303,7 +304,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                 const invalid_resource = 'WALKING-SKATE'
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/physicalactivities/logs/${invalid_resource}/date/${LOG_DATE_START_STEPS}/${LOG_DATE_END_STEPS}`)
+                    .get(`/children/${defaultChild.id}/logs/${invalid_resource}/date/${LOG_DATE_START_STEPS}/${LOG_DATE_END_STEPS}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -328,7 +329,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
                 anotherChildToken = await acc.auth(anotherChild.username!, anotherChild.password!)
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}/date/${LOG_DATE_START_STEPS}/${LOG_DATE_END_STEPS}`)
+                    .get(`/children/${defaultChild.id}/logs/${LogType.STEPS}/date/${LOG_DATE_START_STEPS}/${LOG_DATE_END_STEPS}`)
                     .set('Authorization', 'Bearer '.concat(anotherChildToken))
                     .set('Content-Type', 'application/json')
                     .expect(403)
@@ -344,7 +345,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
             it('logs.get_resource015: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/physicalactivities/logs/${LogType.STEPS}/date/${LOG_DATE_START_STEPS}/${LOG_DATE_END_STEPS}`)
+                    .get(`/children/${defaultChild.id}/logs/${LogType.STEPS}/date/${LOG_DATE_START_STEPS}/${LOG_DATE_END_STEPS}`)
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
                     .expect(401)
