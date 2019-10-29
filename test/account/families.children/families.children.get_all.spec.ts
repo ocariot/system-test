@@ -142,7 +142,7 @@ describe('Routes: families.children', () => {
                     })
             })
 
-            it.only('families.children.get_all003: should return status code 200 and all children associated with the family in ascending order by child username', () => {
+            it('families.children.get_all003: should return status code 200 and all children associated with the family in ascending order by child username', () => {
                 
                 const sortField = 'username'
 
@@ -196,9 +196,10 @@ describe('Routes: families.children', () => {
 
                 const page = 1
                 const limit = 1
+                const sortField = 'username'
 
                 return request(URI)
-                    .get(`/families/${defaultFamily.id}/children?page=${page}&limit=${limit}`)
+                    .get(`/families/${defaultFamily.id}/children?page=${page}&limit=${limit}&sort=${sortField}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
