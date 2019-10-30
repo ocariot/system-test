@@ -140,11 +140,15 @@ class TrackingDb {
     }
 
     public deletePhysicalActivitiesLogs(): Promise<boolean> {
-        return this._deleteCollection('physicalactivitieslogs')
+        return this._deleteCollection('logs')
     }
 
     public deleteSleepsRecords(): Promise<boolean> {
         return this._deleteCollection('sleeps')
+    }
+
+    public deleteMeasurements(): Promise<boolean> {
+        return this._deleteCollection('measurements')
     }
 
     public async removeCollections(): Promise<boolean> {
@@ -154,7 +158,8 @@ class TrackingDb {
                     $or: [
                         { name: 'environments' },
                         { name: 'physicalactivities' },
-                        { name: 'physicalactivitieslogs' },
+                        { name: 'logs' },
+                        { name: 'measurements' },
                         { name: 'sleeps' }
                     ]
                 })
