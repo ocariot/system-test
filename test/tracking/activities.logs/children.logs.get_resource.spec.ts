@@ -13,7 +13,7 @@ import { acc } from '../../utils/account.utils'
 import { trck } from '../../utils/tracking.utils'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 
-describe('Routes: users.children.physicalactivities.logs', () => {
+describe('Routes: children.logs', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -83,7 +83,7 @@ describe('Routes: users.children.physicalactivities.logs', () => {
             await trackingDB.dispose()
 
         } catch (err) {
-            console.log('Failure on Before from physicalactivities.logs.get_resource test: ', err)
+            console.log('Failure on Before from logs.get_resource test: ', err)
         }
     })
 
