@@ -45,65 +45,54 @@ describe('Routes: children.physicalactivities', () => {
     const defaultFamily: Family = new FamilyMock()
     const defaultApplication: Application = new ApplicationMock()
 
-    //Mock through JSON
-    const incorrectActivityJSON: any = {
-        start_time: new Date('2018-12-14T12:52:59Z').toISOString(),
-        end_time: new Date('2018-12-14T13:12:37Z').toISOString(),
-        duration: 1178000,
-        name: 'walk',
-        calories: 200,
-        steps: 1000,
-        levels: [
-            {
-                name: ActivityLevelType.SEDENTARY,
-                duration: Math.floor((Math.random() * 10) * 60000)
-            },
-            {
-                name: ActivityLevelType.LIGHTLY,
-                duration: Math.floor((Math.random() * 10) * 60000)
-            },
-            {
-                name: ActivityLevelType.FAIRLY,
-                duration: Math.floor((Math.random() * 10) * 60000)
-            },
-            {
-                name: ActivityLevelType.VERY,
-                duration: Math.floor((Math.random() * 10) * 60000)
-            }
-        ]
-    }
-
     const notAllowedLevelsName = 'sedentaries'
+    let incorrectActivityJSON: any
 
     let incorrectActivity1: PhysicalActivity = new PhysicalActivityMock() // The levels array has an item that contains empty fields
+    incorrectActivityJSON = getIncorrectActivityJSON()
     incorrectActivityJSON.levels[0].name = ''
     incorrectActivityJSON.levels[0].duration = undefined
     incorrectActivity1 = incorrectActivity1.fromJSON(incorrectActivityJSON)
 
     let incorrectActivity2: PhysicalActivity = new PhysicalActivityMock() // The levels array has an item that contains negative duration
-    incorrectActivityJSON.levels[0].name = ActivityLevelType.SEDENTARY
+    incorrectActivityJSON = getIncorrectActivityJSON()
     incorrectActivityJSON.levels[0].duration = -(Math.floor(Math.random() * 10 + 1) * 60000)
     incorrectActivity2 = incorrectActivity2.fromJSON(incorrectActivityJSON)
 
     let incorrectActivity3: PhysicalActivity = new PhysicalActivityMock() // The levels array has an item that contains ivalid name
+    incorrectActivityJSON = getIncorrectActivityJSON()
     incorrectActivityJSON.levels[0].name = notAllowedLevelsName
     incorrectActivity3 = incorrectActivity3.fromJSON(incorrectActivityJSON)
 
     // The PhysicalActivityHeartRate is invalid (the average parameter is undefined)
     let incorrectActivity4: PhysicalActivity = new PhysicalActivityMock()
-    incorrectActivity4.heart_rate!.average = undefined
+    incorrectActivityJSON = getIncorrectActivityJSON()
+    incorrectActivityJSON.heart_rate.average = undefined
+    incorrectActivity4 = incorrectActivity4.fromJSON(incorrectActivityJSON)
 
     // The PhysicalActivityHeartRate is invalid (the "out of range" min parameter is empty)
     let incorrectActivity5: PhysicalActivity = new PhysicalActivityMock()
-    delete incorrectActivity5.heart_rate!.out_of_range_zone!.min
+    incorrectActivityJSON = getIncorrectActivityJSON()
+    delete incorrectActivityJSON.heart_rate.out_of_range_zone.min
+    incorrectActivity5 = incorrectActivity5.fromJSON(incorrectActivityJSON)
 
     // The PhysicalActivityHeartRate is invalid (the "fat burn zone" duration parameter is negative)
     let incorrectActivity6: PhysicalActivity = new PhysicalActivityMock()
-    incorrectActivity6.heart_rate!.fat_burn_zone!.duration! *= -1
+    incorrectActivityJSON = getIncorrectActivityJSON()
+    incorrectActivityJSON.heart_rate.fat_burn_zone.duration *= -1
+    incorrectActivity6 = incorrectActivity6.fromJSON(incorrectActivityJSON)
 
+    const invalidMonthDate = '2018-13-19T14:40:00Z' //Date with invalid month
     let incorrectActivity7: PhysicalActivity = new PhysicalActivityMock()
-    incorrectActivityJSON.start_time = new Date('2018-13-19T14:40:00Z') // The start_time contains an invalid Date, because month is invalid (13)
-    incorrectActivity7 = incorrectActivity7.fromJSON(incorrectActivityJSON)
+    incorrectActivityJSON = getIncorrectActivityJSON()
+    incorrectActivityJSON.start_time = invalidMonthDate // The start_time contains an invalid Date, because month is invalid (13)
+    incorrectActivity7 = incorrectActivityJSON
+
+    const invalidLevelName = 'sedentaries'
+    let incorrectActivity8: PhysicalActivity = new PhysicalActivityMock()
+    incorrectActivityJSON = getIncorrectActivityJSON()
+    incorrectActivityJSON.levels[0].name = invalidLevelName
+    incorrectActivity8 = incorrectActivity8.fromJSON(incorrectActivityJSON)
 
     const AMOUNT_OF_CORRECT_ACTIVITIES = 3
     const correctActivities: Array<PhysicalActivity> = []
@@ -483,8 +472,8 @@ describe('Routes: children.physicalactivities', () => {
 
                                 // Error item
                                 expect(res.body.error[0].code).to.eql(400)
-                                expect(res.body.error[0].message).to.eql('Level are not in a format that is supported!')
-                                expect(res.body.error[0].description).to.eql('Must have values ​​for the following levels: sedentary, lightly, fairly, very.')
+                                expect(res.body.error[0].message).to.eql('One or more request fields are invalid...')
+                                expect(res.body.error[0].description).to.eql('The levels array must have values for the following levels: sedentary, lightly, fairly, very.')
                             })
                     })
                 })
@@ -520,20 +509,20 @@ describe('Routes: children.physicalactivities', () => {
                                 expect(res.body.error.length).to.eql(4)
 
                                 // incorrectActivity2
-                                expect(res.body.error[0].message).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_DURATION_IS_NEGATIVE.message)
-                                expect(res.body.error[0].description).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_DURATION_IS_NEGATIVE.description)
+                                expect(res.body.error[0].message).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_DURATION_ARE_NEGATIVE.message)
+                                expect(res.body.error[0].description).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_DURATION_ARE_NEGATIVE.description)
 
                                 // incorrectActivity4
-                                expect(res.body.error[1].message).to.eql('Required fields were not provided...')
-                                expect(res.body.error[1].description).to.eql('PhysicalActivityHeartRate validation failed: average is required!')
+                                expect(res.body.error[1].message).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_AVERAGE_ARE_REQUIRED.message)
+                                expect(res.body.error[1].description).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_AVERAGE_ARE_REQUIRED.description)
 
                                 // incorrectActivity5
-                                expect(res.body.error[2].message).to.eql('Required fields were not provided...')
-                                expect(res.body.error[2].description).to.eql('HeartRateZone validation failed: min is required!')
+                                expect(res.body.error[2].message).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_OUT_OF_RANGE_ZONE_ARE_REQUIRED.message)
+                                expect(res.body.error[2].description).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_OUT_OF_RANGE_ZONE_ARE_REQUIRED.description)
 
                                 // incorrectActivity6
-                                expect(res.body.error[3].message).to.eql('Duration field is invalid...')
-                                expect(res.body.error[3].description).to.eql('HeartRateZone validation failed: The value provided has a negative value!')
+                                expect(res.body.error[3].message).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_FAT_BURN_ZONE_NEGATIVE_DURATION.message)
+                                expect(res.body.error[3].description).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_FAT_BURN_ZONE_NEGATIVE_DURATION.description)
 
                                 for (let i = 0; i < wrongActivities.length; i++) {
                                     expect(res.body.error[0].code).to.eql(400)
@@ -683,7 +672,7 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_NAME_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_NAME_ARE_REQUIRED)
                     })
             })
 
@@ -698,7 +687,7 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_START_TIME_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_START_TIME_ARE_REQUIRED)
                     })
             })
 
@@ -713,7 +702,7 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_DURATION_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_DURATION_ARE_REQUIRED)
                     })
             })
 
@@ -728,7 +717,7 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_CALORIES_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_CALORIES_ARE_REQUIRED)
                     })
             })
 
@@ -743,7 +732,7 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_END_TIME_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_END_TIME_ARE_REQUIRED)
                     })
             })
 
@@ -759,7 +748,7 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_PARAMETERS_NAME_AND_DURATION_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_DURATION_AND_NAME_ARE_REQUIRED)
                     })
             })
 
@@ -778,7 +767,7 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_ALL_PARAMETERS_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_ALL_PARAMETERS_ARE_REQUIRED)
                     })
             })
 
@@ -791,7 +780,8 @@ describe('Routes: children.physicalactivities', () => {
                     .send(incorrectActivity7)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_DATE)
+                        expect(err.body.message).to.eql(`Datetime: ${invalidMonthDate}, is not in valid ISO 8601 format.`)
+                        expect(err.body.description).to.eql('Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ')
                     })
             })
 
@@ -878,29 +868,23 @@ describe('Routes: children.physicalactivities', () => {
                     .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .send(incorrectActivity1.toJSON())
+                    .send(incorrectActivity1)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_NAME_IS_INVALID)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_NAME_IN_INVALID_FORMAT)
                     })
             })
 
             it('physical.activities.post021: should return status code 400 and info message from validation error, because level:name is not supported', () => {
 
-                const invalidLevelName = 'sedentaries'
-                let incorrectActivity: PhysicalActivity = new PhysicalActivityMock()
-                incorrectActivityJSON.levels[0].name = invalidLevelName
-                incorrectActivity = incorrectActivity.fromJSON(incorrectActivityJSON)
-
                 return request(URI)
                     .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .send(incorrectActivity.toJSON())
+                    .send(incorrectActivity8)
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`The name of level provided \"${invalidLevelName}\" is not supported...`)
-                        expect(err.body.description).to.eql('The names of the allowed levels are: sedentary, lightly, fairly, very.')
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_NAME_NOT_ALLOWED)
                     })
             })
 
@@ -910,10 +894,10 @@ describe('Routes: children.physicalactivities', () => {
                     .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .send(incorrectActivity2.toJSON())
+                    .send(incorrectActivity2)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_DURATION_IS_NEGATIVE)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_DURATION_ARE_NEGATIVE)
                     })
             })
 
@@ -946,7 +930,7 @@ describe('Routes: children.physicalactivities', () => {
                     .expect(400)
                     .then(err => {
                         expect(err.body.message).to.eql('Required fields were not provided...')
-                        expect(err.body.description).to.eql('PhysicalActivityHeartRate validation failed: fat_burn_zone, peak_zone is required!')
+                        expect(err.body.description).to.eql('heart_rate.fat_burn_zone, heart_rate.peak_zone are required!')
                     })
             })
 
@@ -977,7 +961,7 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_NEGATIVE_MIN)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_FAT_BURN_ZONE_NEGATIVE_MIN)
                     })
             })
 
@@ -992,7 +976,7 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_NEGATIVE_DURATION)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_CARDIO_ZONE_NEGATIVE_DURATION)
                     })
             })
 
@@ -1007,7 +991,7 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_DURATION_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_PEAK_ZONE_DURATION_ARE_REQUIRED)
                     })
             })
 
@@ -1022,7 +1006,7 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_PEAK_ZONE_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_PEAK_ZONE_ARE_REQUIRED)
                     })
             })
             /* /HEART_RATE INVALID */
@@ -1063,14 +1047,12 @@ describe('Routes: children.physicalactivities', () => {
                     .post(`/children/${defaultChild.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .send(incorrectActivity3.toJSON())
+                    .send(incorrectActivity3)
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`The name of level provided \"${notAllowedLevelsName}\" is not supported...`)
-                        expect(err.body.description).to.eql('The names of the allowed levels are: sedentary, lightly, fairly, very.')
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_NAME_NOT_ALLOWED)
                     })
             })
-
         }) // validation error occurs
 
         context('when posting a new PhysicalActivity for another user that not to be a child', () => {
@@ -1242,3 +1224,58 @@ describe('Routes: children.physicalactivities', () => {
 })
 
 const sleep = (milliseconds) => { return new Promise(resolve => setTimeout(resolve, milliseconds)) }
+
+function getIncorrectActivityJSON() {
+
+    //Mock through JSON
+    const incorrectActivityJSON: any = {
+        start_time: new Date('2018-12-14T12:52:59Z').toISOString(),
+        end_time: new Date('2018-12-14T13:12:37Z').toISOString(),
+        duration: 1178000,
+        name: 'walk',
+        calories: 200,
+        steps: 1000,
+        levels: [
+            {
+                name: ActivityLevelType.SEDENTARY,
+                duration: Math.floor((Math.random() * 10) * 60000)
+            },
+            {
+                name: ActivityLevelType.LIGHTLY,
+                duration: Math.floor((Math.random() * 10) * 60000)
+            },
+            {
+                name: ActivityLevelType.FAIRLY,
+                duration: Math.floor((Math.random() * 10) * 60000)
+            },
+            {
+                name: ActivityLevelType.VERY,
+                duration: Math.floor((Math.random() * 10) * 60000)
+            }
+        ],
+        heart_rate: {
+            average: 107,
+            out_of_range_zone: {
+                min: 30,
+                max: 91,
+                duration: 360000
+            },
+            fat_burn_zone: {
+                min: 91,
+                max: 127,
+                duration: 600000
+            },
+            cardio_zone: {
+                min: 127,
+                max: 154,
+                duration: 200000
+            },
+            peak_zone: {
+                min: 154,
+                max: 220,
+                duration: 123000
+            }
+        }        
+    }
+    return incorrectActivityJSON
+}

@@ -464,9 +464,15 @@ describe('Routes: children.physicalactivities', () => {
 
         describe('when get all physical activities of a child that has been deleted', () => {
 
-            it('physical.activities.get_all012: should return status code 200 and empty list', async () => {
-
-                await acc.deleteUser(accessTokenAdmin, defaultChild.id)
+            before(async () =>{
+                try {
+                    await acc.deleteUser(accessTokenAdmin, defaultChild.id)
+                }catch (err) {
+                    console.log('Failure in physical.activities.get_all test: ', err.message)
+                }
+            })
+            
+            it('physical.activities.get_all012: should return status code 200 and empty list', () => {
 
                 return request(URI)
                 .get(`/children/${defaultChild.id}/physicalactivities`)
