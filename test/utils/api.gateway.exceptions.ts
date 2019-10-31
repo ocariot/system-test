@@ -148,25 +148,27 @@ export abstract class ApiGatewayException {
         ERROR_400_CHILD_NOT_FOUND: new ApiException(400, 'Child not found!', 'Child not found or already removed. A new operation for the same resource is not required.').toJson(),
     }
 
-
     public static readonly SLEEP: any = {
-        ERROR_400_START_TIME_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Sleep validation failed: start_time is required!').toJson(),
-        ERROR_400_END_TIME_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Sleep validation failed: end_time is required!').toJson(),
-        ERROR_400_START_TIME_IS_GREATER_THAN_END_TIME: new ApiException(400, 'Date field is invalid...', 'Date validation failed: The end_time parameter can not contain an older date than that the start_time parameter!').toJson(),
-        ERROR_400_NEGATIVE_DURATION: new ApiException(400, 'Duration field is invalid...', 'Activity validation failed: The value provided has a negative value!').toJson(),
-        ERROR_400_INVALID_DATE: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
-        ERROR_400_NEGATIVE_DURATION_OF_SLEEP_PATTERN_DATASET: new ApiException(400, 'Some (or several) duration field of sleep pattern is invalid...', 'Sleep Pattern dataset validation failed: The value provided has a negative value!').toJson(),
-        ERROR_400_DURATION_DOES_NOT_MATCH: new ApiException(400, 'Duration field is invalid...', 'Duration validation failed: Activity duration value does not match values passed in start_time and end_time parameters!').toJson(),
-        ERROR_400_DURATION_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Sleep validation failed: duration is required!').toJson(),
-        ERROR_400_DURATION_IS_INVALID: new ApiException(400, 'Duration field is invalid...', 'Activity validation failed: The value provided is not a valid number!').toJson(),
-        ERROR_400_PATTERN_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Sleep validation failed: pattern is required!').toJson(),
-        ERROR_400_INVALID_PATTERN_DATASET_NAME_IS_REQUIRED: new ApiException(400, 'Dataset are not in a format that is supported!', 'Validation of the sleep pattern dataset failed: data_set name is required!').toJson(),
-        ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_REQUIRED: new ApiException(400, 'Dataset are not in a format that is supported!', 'Validation of the sleep pattern dataset failed: data_set duration is required!').toJson(),
-        ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_INVALID: new ApiException(400, 'Some (or several) duration field of sleep pattern is invalid...', 'Sleep Pattern dataset validation failed: The value provided is not a valid number!').toJson(),
+        // Sleep
+        ERROR_400_START_TIME_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'start_time are required!').toJson(),
+        ERROR_400_END_TIME_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'end_time are required!').toJson(),
+        ERROR_400_DURATION_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'duration are required!').toJson(),
+        ERROR_400_START_TIME_IS_GREATER_THAN_END_TIME: new ApiException(400, 'One or more request fields are invalid...', 'The end_time parameter can not contain an older date than that the start_time parameter!').toJson(),
+        ERROR_400_NEGATIVE_DURATION: new ApiException(400, 'One or more request fields are invalid...', 'duration can\'t be negative!').toJson(),
+        ERROR_400_INVALID_DURATION: new ApiException(400, 'One or more request fields are invalid...', 'duration must be a valid number!').toJson(),
+        ERROR_400_DURATION_DOES_NOT_MATCH: new ApiException(400, 'One or more request fields are invalid...', 'duration value does not match values passed in start_time and end_time parameters!').toJson(),
         ERROR_400_INVALID_CHILD_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_400_INVALID_SLEEP_ID: new ApiException(400, 'Parameter {sleep_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
-        ERROR_404_SLEEP_NOT_FOUND: new ApiException(404, 'Sleep not found!', 'Sleep not found or already removed. A new operation for the same resource is not required!').toJson(),
+        ERROR_404_SLEEP_NOT_FOUND: new ApiException(404, 'Sleep not found!', 'Sleep not found or already removed. A new operation for the same resource is not required.').toJson(),
         ERROR_409_SLEEP_IS_ALREADY_REGISTERED: new ApiException(409, 'Sleep is already registered...').toJson(),
+
+        // sleep pattern.data_set
+        ERROR_400_PATTERN_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'pattern are required!').toJson(),
+        ERROR_400_PATTERN_NAME_NOT_ALLOWED: new ApiException(400, 'One or more request fields are invalid...', 'The names of the allowed data_set patterns are: asleep, restless, awake.').toJson(),
+        ERROR_400_NEGATIVE_DURATION_OF_SLEEP_PATTERN_DATASET: new ApiException(400, 'One or more request fields are invalid...', 'pattern.data_set.duration can\'t be negative!').toJson(),
+        ERROR_400_INVALID_PATTERN_DATASET_NAME_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'pattern.data_set.name are required!').toJson(),
+        ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'pattern.data_set.duration are required!').toJson(),
+        ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_INVALID: new ApiException(400, 'One or more request fields are invalid...', 'pattern.data_set.duration must be a valid number!').toJson(),
     }
 
     public static readonly ENVIRONMENT: any = {

@@ -228,7 +228,7 @@ describe('Routes: users.children.sleep', () => {
 
             const NON_EXISTENT_ID = '111111111111111111111111'
 
-            it('sleep.get_id007: should return status code 404 and info message from sleep not found', () => {
+            it('sleep.get_id007: should return status code 404 and info message from sleep not found, because the child_id provided not exist', () => {
 
                 return request(URI)
                     .get(`/children/${NON_EXISTENT_ID}/sleep/${defaultSleep.id}`)

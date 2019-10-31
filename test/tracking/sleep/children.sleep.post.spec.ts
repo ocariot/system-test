@@ -48,7 +48,6 @@ describe('Routes: children.sleep', () => {
     const defaultApplication: Application = new ApplicationMock()
 
     let incorrectSleepJSON: any
-    const notAllowedPatternName = 123456789
     const notSuportedName = 'awaki'
 
     // Sleep pattern data_set contains an item where name is empty
@@ -63,6 +62,7 @@ describe('Routes: children.sleep', () => {
     incorrectSleepJSON.duration = '4sT3xt'
     incorrectSleep1 = incorrectSleep1.fromJSON(incorrectSleepJSON)
 
+    const notAllowedPatternName = 123456789
     // Sleep pattern data_set contains an item that has the name as a number
     let incorrectSleep2: Sleep = new SleepMock()
     incorrectSleepJSON = getIncorrectSleepStagesJSON()
@@ -76,15 +76,16 @@ describe('Routes: children.sleep', () => {
     incorrectSleep3 = incorrectSleep3.fromJSON(incorrectSleepJSON)
 
     // Sleep pattern data_set contains an item that has an invalid start_time
+    let invalidDayDate = '2018-12-32T01:30:30Z'
     let incorrectSleep4: Sleep = new SleepMock()
     incorrectSleepJSON = getIncorrectSleepClassicJSON()
-    incorrectSleepJSON.pattern.data_set[0].start_time = new Date('2018-12-32T01:30:30Z')
-    incorrectSleep4 = incorrectSleep4.fromJSON(incorrectSleepJSON)
+    incorrectSleepJSON.pattern.data_set[0].start_time = invalidDayDate
+    incorrectSleep4 = incorrectSleepJSON
 
     // Sleep pattern data_set contains an item that has an invalid name
     let incorrectSleep5: Sleep = new SleepMock()
     incorrectSleepJSON = getIncorrectSleepClassicJSON()
-    incorrectSleepJSON.pattern.data_set[0].name = 'awaki'
+    incorrectSleepJSON.pattern.data_set[0].name = notSuportedName
     incorrectSleep5 = incorrectSleep5.fromJSON(incorrectSleepJSON)
 
     // Sleep pattern data_set contains an item that has an negative duration
@@ -322,7 +323,7 @@ describe('Routes: children.sleep', () => {
                     .send(sleepClassic.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_START_TIME_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_START_TIME_ARE_REQUIRED)
                     })
             })
 
@@ -354,7 +355,7 @@ describe('Routes: children.sleep', () => {
                     .send(sleepClassic.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_END_TIME_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_END_TIME_ARE_REQUIRED)
                     })
             })
 
@@ -369,7 +370,7 @@ describe('Routes: children.sleep', () => {
                     .send(sleepClassic.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_DURATION_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_DURATION_ARE_REQUIRED)
                     })
             })
 
@@ -397,7 +398,7 @@ describe('Routes: children.sleep', () => {
                     .send(incorrectSleep1)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_DURATION_IS_INVALID)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DURATION)
                     })
             })
 
@@ -427,7 +428,7 @@ describe('Routes: children.sleep', () => {
                     .send(sleepClassic.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_PATTERN_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_PATTERN_ARE_REQUIRED)
                     })
             })
 
@@ -440,8 +441,7 @@ describe('Routes: children.sleep', () => {
                     .send(incorrectSleep5)
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`The sleep pattern name provided "${notSuportedName}" is not supported...`)
-                        expect(err.body.description).to.eql('The names of the allowed patterns are: asleep, restless, awake.')
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_PATTERN_NAME_NOT_ALLOWED)
                     })
             })
 
@@ -454,7 +454,8 @@ describe('Routes: children.sleep', () => {
                     .send(incorrectSleep4)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DATE)
+                        expect(err.body.message).to.eql(`Datetime: ${invalidDayDate}, is not in valid ISO 8601 format.`)
+                        expect(err.body.description).to.eql('Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ')
                     })
             })
 
@@ -493,8 +494,7 @@ describe('Routes: children.sleep', () => {
                     .send(incorrectSleep2)
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`The sleep pattern name provided "${notAllowedPatternName}" is not supported...`)
-                        expect(err.body.description).to.eql('The names of the allowed patterns are: asleep, restless, awake.')
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_PATTERN_NAME_NOT_ALLOWED)
                     })
             })
 
@@ -507,8 +507,7 @@ describe('Routes: children.sleep', () => {
                     .send(incorrectSleep3)
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql('Some (or several) duration field of sleep pattern is invalid...')
-                        expect(err.body.description).to.eql('Sleep Pattern dataset validation failed: The value provided is not a valid number!')
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_INVALID)
                     })
             })
 
@@ -679,9 +678,9 @@ describe('Routes: children.sleep', () => {
                             expect(res.body.success[0].item.child_id).to.eql(defaultChild.id)
 
                             // Error
-                            expect(res.body.error[0].code).to.eql(ApiGatewayException.SLEEP.ERROR_400_DURATION_IS_INVALID.code)
-                            expect(res.body.error[0].message).to.eql(ApiGatewayException.SLEEP.ERROR_400_DURATION_IS_INVALID.message)
-                            expect(res.body.error[0].description).to.eql(ApiGatewayException.SLEEP.ERROR_400_DURATION_IS_INVALID.description)
+                            expect(res.body.error[0].code).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DURATION.code)
+                            expect(res.body.error[0].message).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DURATION.message)
+                            expect(res.body.error[0].description).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DURATION.description)
                         })
                 })
             })
@@ -717,8 +716,8 @@ describe('Routes: children.sleep', () => {
 
                             // incorrectSleep5
                             expect(res.body.error[1].code).to.eql(400)
-                            expect(res.body.error[1].message).to.eql(`The sleep pattern name provided "${notSuportedName}" is not supported...`)
-                            expect(res.body.error[1].description).to.eql('The names of the allowed patterns are: asleep, restless, awake.')
+                            expect(res.body.error[1].message).to.eql(ApiGatewayException.SLEEP.ERROR_400_PATTERN_NAME_NOT_ALLOWED.message)
+                            expect(res.body.error[1].description).to.eql(ApiGatewayException.SLEEP.ERROR_400_PATTERN_NAME_NOT_ALLOWED.description)
 
                             // incorrectSleep6
                             expect(res.body.error[2].code).to.eql(400)
