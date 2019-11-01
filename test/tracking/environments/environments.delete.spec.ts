@@ -122,7 +122,7 @@ describe('Routes: environments', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_INVALID_ID)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_INVALID_ID)
                     })
             })
         })

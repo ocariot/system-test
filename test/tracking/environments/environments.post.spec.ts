@@ -72,13 +72,13 @@ describe('Routes: environments', () => {
 
     const locationWithoutRoom: Location = new Location()
     locationWithoutRoom.local = 'indoor'
-    locationWithoutRoom.latitude = 0
-    locationWithoutRoom.longitude = 0
+    locationWithoutRoom.latitude = '0'
+    locationWithoutRoom.longitude = '0'
 
     const locationWithoutLocal: Location = new Location()
     locationWithoutLocal.room = 'room1'
-    locationWithoutLocal.latitude = 0
-    locationWithoutLocal.longitude = 0
+    locationWithoutLocal.latitude = '0'
+    locationWithoutLocal.longitude = '0'
 
     const measurementWithoutType: Measurement = new Measurement()
     measurementWithoutType.value = 35.6
@@ -309,8 +309,8 @@ describe('Routes: environments', () => {
 
                             //Error item
                             expect(res.body.error[0].code).to.eql(400)
-                            expect(res.body.error[0].message).to.eql('Measurement value field is invalid...')
-                            expect(res.body.error[0].description).to.eql('field type must be a string')
+                            expect(res.body.error[0].message).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_INVALID_MEASUREMENTS_TYPE.message)
+                            expect(res.body.error[0].description).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_INVALID_MEASUREMENTS_TYPE.description)
                         })
                 })
             })
@@ -340,12 +340,12 @@ describe('Routes: environments', () => {
 
                             expect(res.body.error.length).to.eql(2)
                             //incorrectEnvironment5
-                            expect(res.body.error[0].message).to.eql('Location room field is invalid...')
-                            expect(res.body.error[0].description).to.eql('field room must be a string')
+                            expect(res.body.error[0].message).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_INVALID_LOCATION_ROOM.message)
+                            expect(res.body.error[0].description).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_INVALID_LOCATION_ROOM.description)
 
                             //incorrectEnvironment6
-                            expect(res.body.error[1].message).to.eql('Measurement unit field is invalid...')
-                            expect(res.body.error[1].description).to.eql('field unit must be a string')
+                            expect(res.body.error[1].message).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_INVALID_MEASUREMENTS_UNIT.message)
+                            expect(res.body.error[1].description).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_INVALID_MEASUREMENTS_UNIT.description)
                         })
                 })
             })
@@ -377,7 +377,7 @@ describe('Routes: environments', () => {
                     .send(environment.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_INSTITUTION_ID_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_INSTITUTION_ID_ARE_REQUIRED)
                     })
             })
 
@@ -392,7 +392,7 @@ describe('Routes: environments', () => {
                     .send(environment.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_LOCATION_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_LOCATION_ARE_REQUIRED)
                     })
             })
 
@@ -407,7 +407,7 @@ describe('Routes: environments', () => {
                     .send(environment.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_MEASUREMENTS_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_MEASUREMENTS_ARE_REQUIRED)
                     })
             })
 
@@ -422,7 +422,7 @@ describe('Routes: environments', () => {
                     .send(environment.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_TIMESTAMP_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_TIMESTAMP_ARE_REQUIRED)
                     })
             })
 
@@ -438,7 +438,7 @@ describe('Routes: environments', () => {
                     .send(environment.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_INSTITUTION_ID_AND_MEASUREMENTS_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_INSTITUTION_ID_AND_MEASUREMENTS_ARE_REQUIRED)
                     })
             })
 
@@ -454,7 +454,7 @@ describe('Routes: environments', () => {
                     .send(environment.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_TIMESTAMP_AND_LOCATION_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_TIMESTAMP_AND_LOCATION_ARE_REQUIRED)
                     })
             })
 
@@ -472,7 +472,7 @@ describe('Routes: environments', () => {
                     .send(environment.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_ALL_PARAMETERS_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_ALL_PARAMETERS_IS_REQUIRED)
                     })
             })
 
@@ -517,7 +517,7 @@ describe('Routes: environments', () => {
                     .send(environment.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_LOCATION_ROOM_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_LOCATION_ROOM_ARE_REQUIRED)
                     })
             })
 
@@ -532,7 +532,7 @@ describe('Routes: environments', () => {
                     .send(environment.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_LOCATION_LOCAL_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_LOCATION_LOCAL_ARE_REQUIRED)
                     })
             })
 
@@ -547,7 +547,7 @@ describe('Routes: environments', () => {
                     .send(environment.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_MEASUREMENT_TYPE_IS_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_MEASUREMENT_TYPE_ARE_REQUIRED)
                     })
             })
 
@@ -562,7 +562,7 @@ describe('Routes: environments', () => {
                     .send(environment.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_INVALID_DATE)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_INVALID_DATE)
                     })
             })
 
@@ -575,8 +575,7 @@ describe('Routes: environments', () => {
                     .send(incorrectEnvironment1)
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql('Location local field is invalid...')
-                        expect(err.body.description).to.eql('field local must be a string!')
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_INVALID_LOCATION_LOCAL)
                     })
             })
 
@@ -589,7 +588,7 @@ describe('Routes: environments', () => {
                     .send(incorrectEnvironment2)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_400_MEASUREMENT_VALUE_FIELD_IS_INVALID)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_MEASUREMENT_VALUE_FIELD_IS_INVALID)
                     })
             })
 
@@ -602,8 +601,7 @@ describe('Routes: environments', () => {
                     .send(incorrectEnvironment3)
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql('Required fields were not provided!')
-                        expect(err.body.description).to.eql(`Environment validation failed: climatized: Cast to Boolean failed for value "${INVALID_CLIMATIZED}" at path "climatized"`)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_INVALID_CLIMATIZED)
                     })
             })
 
@@ -626,7 +624,7 @@ describe('Routes: environments', () => {
                     .send(defaultEnvironment.toJSON())
                     .expect(409)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENT.ERROR_409_ENVIRONMENT_MEASUREMENT_IS_ALREADY_REGISTERED)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_409_ENVIRONMENT_MEASUREMENT_IS_ALREADY_REGISTERED)
                     })
             })
         })
@@ -723,8 +721,8 @@ function getIncorrectEnvironmentJSON() {
         location: {
             local: 'indoor',
             room: 'Bloco H sala 01',
-            latitude: -7.2100766,
-            longitude: -35.9175756
+            latitude: '-7.2100766',
+            longitude: '-35.9175756'
         },
         measurements: [
             {
