@@ -994,21 +994,6 @@ describe('Routes: children.physicalactivities', () => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_PEAK_ZONE_DURATION_ARE_REQUIRED)
                     })
             })
-
-            it('physical.activities.post043: should return status code 400 and info message from validation error, because peak_zone duration is not provided', () => {
-
-                delete physicalActivity.heart_rate!.peak_zone
-
-                return request(URI)
-                    .post(`/children/${defaultChild.id}/physicalactivities`)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .send(physicalActivity.toJSON())
-                    .expect(400)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_PEAK_ZONE_ARE_REQUIRED)
-                    })
-            })
             /* /HEART_RATE INVALID */
 
             it('physical.activities.post023: should return status code 400 and info message from validation error, because child not exist', () => {

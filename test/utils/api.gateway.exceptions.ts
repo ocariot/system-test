@@ -171,6 +171,21 @@ export abstract class ApiGatewayException {
         ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_INVALID: new ApiException(400, 'One or more request fields are invalid...', 'pattern.data_set.duration must be a valid number!').toJson(),
     }
 
+    public static readonly WEIGHTS: any = {
+        ERROR_400_TIMESTAMP_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'timestamp are required!').toJson(),
+        ERROR_400_VALUE_AND_UNIT_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'value, unit are required!').toJson(),
+        ERROR_400_VALUE_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'value are required!').toJson(),
+        ERROR_400_UNIT_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'unit are required!').toJson(),
+        ERROR_400_INVALID_VALUE: new ApiException(400, 'One or more request fields are invalid...', 'value must be a valid number!').toJson(),
+        ERROR_400_INVALID_BODY_FAT_VALUE: new ApiException(400, 'One or more request fields are invalid...', 'body_fat.value must be a valid number!').toJson(),
+        ERROR_400_INVALID_CHILD_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
+        ERROR_400_NEGATIVE_VALUE: new ApiException(400, 'One or more request fields are invalid...', 'value can\'t be negative!').toJson(),
+        ERROR_400_BODY_FAT_VALUE_IS_NEGATIVE: new ApiException(400, 'One or more request fields are invalid...', 'body_fat.value can\'t be negative!').toJson(),
+        ERROR_400_EMPTY_UNIT: new ApiException(400, 'One or more request fields are invalid...', 'unit must have at least one character!').toJson(),
+        ERROR_409_WEIGHT_IS_ALREADY_REGISTERED: new ApiException(409, 'Weight is already registered...').toJson(),
+
+    }
+
     public static readonly ENVIRONMENTS: any = {
         // environments
         PARAM_ID_NOT_VALID_FORMAT: 'Parameter {environment_id} is not in valid format!',

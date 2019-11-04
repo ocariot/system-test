@@ -699,7 +699,7 @@ describe('Routes: environments', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('environments.post028: should return the status code 401 and the authentication failure informational message', async () => {
+            it('environments.post029: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .post('/environments')
