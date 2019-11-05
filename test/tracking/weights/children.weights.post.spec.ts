@@ -426,9 +426,9 @@ describe('Routes: children.sleep', () => {
                                 expect(res.body.success[0].item).to.have.property('child_id', defaultChild.id)
 
                                 // Error item
-                                expect(res.body.error[0].item.code).to.eql(400)
-                                expect(res.body.error[0].item.message).to.eql(`Datetime: , is not in valid ISO 8601 format.`) // timestamp is empty
-                                expect(res.body.error[0].item.description).to.eql(`Date must be in the format: yyyy-MM-dd\\'T\\'HH:mm:ssZ'`)
+                                expect(res.body.error[0].code).to.eql(400)
+                                expect(res.body.error[0].message).to.eql(`Datetime: , is not in valid ISO 8601 format.`) // timestamp is empty
+                                expect(res.body.error[0].description).to.eql(`Date must be in the format: yyyy-MM-dd\\'T\\'HH:mm:ssZ'`)
                             })
                     })
                 })

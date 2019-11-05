@@ -13,7 +13,7 @@ export class BodyFatMock extends BodyFat {
 
         bodyFat.id = this.generateObjectId()
         bodyFat.type = MeasurementType.BODY_FAT
-        bodyFat.timestamp = new Date(1560826800000 + Math.floor((Math.random() * 1000)))
+        bodyFat.timestamp = new Date(1560826800000 + Math.floor((Math.random() * 100000)))
         bodyFat.value = Math.random() * 10 + 20 // 20-29
         bodyFat.unit = '%'
         bodyFat.child_id = '5a62be07de34500146d9c544'

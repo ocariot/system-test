@@ -188,6 +188,19 @@ export abstract class ApiGatewayException {
 
     }
 
+    public static readonly BODYFATS: any = {
+        ERROR_400_TIMESTAMP_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'timestamp are required!').toJson(),
+        ERROR_400_TIMESTAMP_AND_VALUE_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'timestamp, value are required!').toJson(),
+        ERROR_400_VALUE_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'value are required!').toJson(),
+        ERROR_400_INVALID_VALUE: new ApiException(400, 'One or more request fields are invalid...', 'value must be a valid number!').toJson(),
+        ERROR_400_NEGATIVE_VALUE: new ApiException(400, 'One or more request fields are invalid...', 'value can\'t be negative!').toJson(),
+        ERROR_400_INVALID_CHILD_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
+        ERROR_400_INVALID_WEIGHT_ID: new ApiException(400, 'Parameter {weight_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
+        ERROR_400_DATE_IS_NULL: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
+        ERROR_409_BODYFATS_IS_ALREADY_REGISTERED: new ApiException(409, 'Body Fat is already registered...').toJson(),
+        ERROR_404_BODYFAT_NOT_FOUND: new ApiException(404, 'Body Fat not found!', 'Body Fat not found or already removed. A new operation for the same resource is not required.').toJson(),
+    }
+
     public static readonly ENVIRONMENTS: any = {
         // environments
         PARAM_ID_NOT_VALID_FORMAT: 'Parameter {environment_id} is not in valid format!',
