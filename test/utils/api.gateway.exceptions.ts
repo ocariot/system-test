@@ -179,9 +179,11 @@ export abstract class ApiGatewayException {
         ERROR_400_INVALID_VALUE: new ApiException(400, 'One or more request fields are invalid...', 'value must be a valid number!').toJson(),
         ERROR_400_INVALID_BODY_FAT_VALUE: new ApiException(400, 'One or more request fields are invalid...', 'body_fat.value must be a valid number!').toJson(),
         ERROR_400_INVALID_CHILD_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
+        ERROR_400_INVALID_WEIGHT_ID: new ApiException(400, 'Parameter {weight_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_400_NEGATIVE_VALUE: new ApiException(400, 'One or more request fields are invalid...', 'value can\'t be negative!').toJson(),
         ERROR_400_BODY_FAT_VALUE_IS_NEGATIVE: new ApiException(400, 'One or more request fields are invalid...', 'body_fat.value can\'t be negative!').toJson(),
         ERROR_400_EMPTY_UNIT: new ApiException(400, 'One or more request fields are invalid...', 'unit must have at least one character!').toJson(),
+        ERROR_404_WEIGHT_NOT_FOUND: new ApiException(404, 'Weight not found!', 'Weight not found or already removed. A new operation for the same resource is not required.').toJson(),
         ERROR_409_WEIGHT_IS_ALREADY_REGISTERED: new ApiException(409, 'Weight is already registered...').toJson(),
 
     }
