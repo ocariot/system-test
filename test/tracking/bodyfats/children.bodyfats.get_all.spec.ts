@@ -16,10 +16,10 @@ import { Family } from '../../../src/account-service/model/family'
 import { FamilyMock } from '../../mocks/account-service/family.mock'
 import { Application } from '../../../src/account-service/model/application'
 import { ApplicationMock } from '../../mocks/account-service/application.mock'
-import { Weight } from '../../../src/tracking-service/model/weight'
-import { WeightMock } from '../../mocks/tracking-service/weight.mock'
+import { BodyFatMock } from '../../mocks/tracking-service/body.fat.mock'
+import { BodyFat } from '../../../src/tracking-service/model/body.fat'
 
-describe('Routes: children.weights', () => {
+describe('Routes: children.bodyfats', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -43,7 +43,7 @@ describe('Routes: children.weights', () => {
     const defaultFamily: Family = new FamilyMock()
     const defaultApplication: Application = new ApplicationMock()
 
-    const WEIGHTS_ARRAY: Array<Weight> = new Array()
+    const BODY_FATS_ARRAY: Array<BodyFat> = new Array()
 
     before(async () => {
         try {
@@ -99,7 +99,7 @@ describe('Routes: children.weights', () => {
             }
 
         } catch (err) {
-            console.log('Failure on Before from weight.get_all test: ', err.message)
+            console.log('Failure on Before from bodyfats.get_all test: ', err.message)
         }
     })
     after(async () => {
@@ -113,215 +113,206 @@ describe('Routes: children.weights', () => {
         }
     })
 
-    describe('GET /children/:child_id/weights', () => {
+    describe('GET /children/:child_id/bodyfats', () => {
         let AMOUNT: number
 
         beforeEach(async () => {
             try {
-                WEIGHTS_ARRAY.length = 0 // clear WEIGHTS_ARRAY
-                AMOUNT = await Math.floor(Math.random() * 6 + 10) // 10-15 (the amount of weights can change for each test case)
+                BODY_FATS_ARRAY.length = 0 // clear BODY_FATS_ARRAY
+                AMOUNT = await Math.floor(Math.random() * 6 + 10) // 10-15 (the amount of bodyfats can change for each test case)
 
-                // The first weight saved is the last one returned
+                // The first bodyfat saved is the last one returned
                 for (let i = (AMOUNT - 1); i >= 0; i--) {
-                    WEIGHTS_ARRAY[i] = await trck.saveWeight(accessDefaultChildToken, new WeightMock(), defaultChild.id)
+                    BODY_FATS_ARRAY[i] = await trck.saveBodyFat(accessDefaultChildToken, new BodyFatMock(), defaultChild.id)
                 }
 
             } catch (err) {
-                console.log('Failure in weight.get_all test: ', err.message)
+                console.log('Failure in bodyfats.get_all test: ', err.message)
             }
         })
         afterEach(async () => {
             try {
                 await trackingDB.deleteMeasurements()
             } catch (err) {
-                console.log('Failure in weight.get_all test: ', err.message)
+                console.log('Failure in bodyfats.get_all test: ', err.message)
             }
         })
 
-        context('when the user get all weights of the child successfully', () => {
+        context('when the user get all bodyfats of the child successfully', () => {
 
-            it('weight.get_all001: should return status code 201 and a list with all weights of the child for admin user', () => {
+            it('bodyfats.get_all001: should return status code 201 and a list with all bodyfats of the child for admin user', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/weights`)
+                    .get(`/children/${defaultChild.id}/bodyfats`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .expect(200)
                     .then(res => {
                         expect(res.body.length).to.eql(AMOUNT)
-
-                        WEIGHTS_ARRAY.forEach(function (weight, index) {
-                            expect(res.body[index]).to.have.property('id', weight.id)
-                            expect(res.body[index]).to.have.property('timestamp', weight.timestamp)
-                            expect(res.body[index]).to.have.property('value', weight.value)
-                            expect(res.body[index]).to.have.property('unit', weight.unit)
-                            expect(res.body[index]).to.have.property('body_fat', weight.body_fat)
-                            expect(res.body[index]).to.have.property('child_id', weight.child_id)
+                        BODY_FATS_ARRAY.forEach(function (bodyfat, index) {
+                            expect(res.body[index]).to.have.property('id', bodyfat.id)
+                            expect(res.body[index]).to.have.property('timestamp', bodyfat.timestamp)
+                            expect(res.body[index]).to.have.property('value', bodyfat.value)
+                            expect(res.body[index]).to.have.property('unit', bodyfat.unit)
+                            expect(res.body[index]).to.have.property('child_id', bodyfat.child_id)
                         })
                     })
             })
 
-            it('weight.get_all002: should return status code 201 and a list with all weights of the child himself', () => {
+            it('bodyfats.get_all002: should return status code 201 and a list with all bodyfats of the child himself', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/weights`)
+                    .get(`/children/${defaultChild.id}/bodyfats`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .expect(200)
                     .then(res => {
                         expect(res.body.length).to.eql(AMOUNT)
 
-                        WEIGHTS_ARRAY.forEach(function (weight, index) {
-                            expect(res.body[index]).to.have.property('id', weight.id)
-                            expect(res.body[index]).to.have.property('timestamp', weight.timestamp)
-                            expect(res.body[index]).to.have.property('value', weight.value)
-                            expect(res.body[index]).to.have.property('unit', weight.unit)
-                            expect(res.body[index]).to.have.property('body_fat', weight.body_fat)
-                            expect(res.body[index]).to.have.property('child_id', weight.child_id)
+                        BODY_FATS_ARRAY.forEach(function (bodyfat, index) {
+                            expect(res.body[index]).to.have.property('id', bodyfat.id)
+                            expect(res.body[index]).to.have.property('timestamp', bodyfat.timestamp)
+                            expect(res.body[index]).to.have.property('value', bodyfat.value)
+                            expect(res.body[index]).to.have.property('unit', bodyfat.unit)
+                            expect(res.body[index]).to.have.property('child_id', bodyfat.child_id)
                         })
                     })
             })
 
-            it('weight.get_all003: should return status code 201 and a list with all weights of the child for educator user', () => {
+            it('bodyfats.get_all003: should return status code 201 and a list with all bodyfats of the child for educator user', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/weights`)
+                    .get(`/children/${defaultChild.id}/bodyfats`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(200)
                     .then(res => {
                         expect(res.body.length).to.eql(AMOUNT)
 
-                        WEIGHTS_ARRAY.forEach(function (weight, index) {
-                            expect(res.body[index]).to.have.property('id', weight.id)
-                            expect(res.body[index]).to.have.property('timestamp', weight.timestamp)
-                            expect(res.body[index]).to.have.property('value', weight.value)
-                            expect(res.body[index]).to.have.property('unit', weight.unit)
-                            expect(res.body[index]).to.have.property('body_fat', weight.body_fat)
-                            expect(res.body[index]).to.have.property('child_id', weight.child_id)
+                        BODY_FATS_ARRAY.forEach(function (bodyfat, index) {
+                            expect(res.body[index]).to.have.property('id', bodyfat.id)
+                            expect(res.body[index]).to.have.property('timestamp', bodyfat.timestamp)
+                            expect(res.body[index]).to.have.property('value', bodyfat.value)
+                            expect(res.body[index]).to.have.property('unit', bodyfat.unit)
+                            expect(res.body[index]).to.have.property('child_id', bodyfat.child_id)
                         })
                     })
             })
 
-            it('weight.get_all004: should return status code 201 and a list with all weights of the child for health professional user', () => {
+            it('bodyfats.get_all004: should return status code 201 and a list with all bodyfats of the child for health professional user', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/weights`)
+                    .get(`/children/${defaultChild.id}/bodyfats`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
                     .expect(200)
                     .then(res => {
                         expect(res.body.length).to.eql(AMOUNT)
 
-                        WEIGHTS_ARRAY.forEach(function (weight, index) {
-                            expect(res.body[index]).to.have.property('id', weight.id)
-                            expect(res.body[index]).to.have.property('timestamp', weight.timestamp)
-                            expect(res.body[index]).to.have.property('value', weight.value)
-                            expect(res.body[index]).to.have.property('unit', weight.unit)
-                            expect(res.body[index]).to.have.property('body_fat', weight.body_fat)
-                            expect(res.body[index]).to.have.property('child_id', weight.child_id)
+                        BODY_FATS_ARRAY.forEach(function (bodyfat, index) {
+                            expect(res.body[index]).to.have.property('id', bodyfat.id)
+                            expect(res.body[index]).to.have.property('timestamp', bodyfat.timestamp)
+                            expect(res.body[index]).to.have.property('value', bodyfat.value)
+                            expect(res.body[index]).to.have.property('unit', bodyfat.unit)
+                            expect(res.body[index]).to.have.property('child_id', bodyfat.child_id)
                         })
                     })
             })
 
-            it('weight.get_all005: should return status code 201 and a list with all weights of the child for family user', () => {
+            it('bodyfats.get_all005: should return status code 201 and a list with all bodyfats of the child for family user', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/weights`)
+                    .get(`/children/${defaultChild.id}/bodyfats`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .expect(200)
                     .then(res => {
                         expect(res.body.length).to.eql(AMOUNT)
 
-                        WEIGHTS_ARRAY.forEach(function (weight, index) {
-                            expect(res.body[index]).to.have.property('id', weight.id)
-                            expect(res.body[index]).to.have.property('timestamp', weight.timestamp)
-                            expect(res.body[index]).to.have.property('value', weight.value)
-                            expect(res.body[index]).to.have.property('unit', weight.unit)
-                            expect(res.body[index]).to.have.property('body_fat', weight.body_fat)
-                            expect(res.body[index]).to.have.property('child_id', weight.child_id)
+                        BODY_FATS_ARRAY.forEach(function (bodyfat, index) {
+                            expect(res.body[index]).to.have.property('id', bodyfat.id)
+                            expect(res.body[index]).to.have.property('timestamp', bodyfat.timestamp)
+                            expect(res.body[index]).to.have.property('value', bodyfat.value)
+                            expect(res.body[index]).to.have.property('unit', bodyfat.unit)
+                            expect(res.body[index]).to.have.property('child_id', bodyfat.child_id)
                         })
                     })
             })
 
-            it('weight.get_all006: should return status code 201 and a list with all weights of the child for application user', () => {
+            it('bodyfats.get_all006: should return status code 201 and a list with all bodyfats of the child for application user', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/weights`)
+                    .get(`/children/${defaultChild.id}/bodyfats`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .expect(200)
                     .then(res => {
                         expect(res.body.length).to.eql(AMOUNT)
 
-                        WEIGHTS_ARRAY.forEach(function (weight, index) {
-                            expect(res.body[index]).to.have.property('id', weight.id)
-                            expect(res.body[index]).to.have.property('timestamp', weight.timestamp)
-                            expect(res.body[index]).to.have.property('value', weight.value)
-                            expect(res.body[index]).to.have.property('unit', weight.unit)
-                            expect(res.body[index]).to.have.property('body_fat', weight.body_fat)
-                            expect(res.body[index]).to.have.property('child_id', weight.child_id)
+                        BODY_FATS_ARRAY.forEach(function (bodyfat, index) {
+                            expect(res.body[index]).to.have.property('id', bodyfat.id)
+                            expect(res.body[index]).to.have.property('timestamp', bodyfat.timestamp)
+                            expect(res.body[index]).to.have.property('value', bodyfat.value)
+                            expect(res.body[index]).to.have.property('unit', bodyfat.unit)
+                            expect(res.body[index]).to.have.property('child_id', bodyfat.child_id)
                         })
                     })
             })
 
-            context('when get all weights with some specification', () => {
+            context('when get all bodyfats with some specification', () => {
 
-                it('weight.get_all007: should return status code 200 and a list with the ten most recently registered weight', () => {
+                it('bodyfats.get_all007: should return status code 200 and a list with the ten most recently registered bodyfats', () => {
 
                     const PAGE = 1
                     const LIMIT = 10
 
                     return request(URI)
-                        .get(`/children/${defaultChild.id}/weights?page=${PAGE}&limit=${LIMIT}`)
+                        .get(`/children/${defaultChild.id}/bodyfats?page=${PAGE}&limit=${LIMIT}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                         .expect(200)
                         .then(res => {
                             expect(res.body.length).to.eql(LIMIT)
                             for (let i = 0; i < LIMIT; i++) {
-                                expect(res.body[i]).to.have.property('id', WEIGHTS_ARRAY[i].id)
-                                expect(res.body[i]).to.have.property('timestamp', WEIGHTS_ARRAY[i].timestamp)
-                                expect(res.body[i]).to.have.property('value', WEIGHTS_ARRAY[i].value)
-                                expect(res.body[i]).to.have.property('unit', WEIGHTS_ARRAY[i].unit)
-                                expect(res.body[i]).to.have.property('body_fat', WEIGHTS_ARRAY[i].body_fat)
-                                expect(res.body[i]).to.have.property('child_id', WEIGHTS_ARRAY[i].child_id)
+                                expect(res.body[i]).to.have.property('id', BODY_FATS_ARRAY[i].id)
+                                expect(res.body[i]).to.have.property('timestamp', BODY_FATS_ARRAY[i].timestamp)
+                                expect(res.body[i]).to.have.property('value', BODY_FATS_ARRAY[i].value)
+                                expect(res.body[i]).to.have.property('unit', BODY_FATS_ARRAY[i].unit)
+                                expect(res.body[i]).to.have.property('child_id', BODY_FATS_ARRAY[i].child_id)
                             }
                         })
                 })
 
-                it('weight.get_all008: should return status code 200 and a list with all weights sorted by least timestamp', () => {
+                it('bodyfats.get_all008: should return status code 200 and a list with all bodyfats sorted by least timestamp', () => {
 
-                    // Sort weights by great timestamp
-                    WEIGHTS_ARRAY.sort(function (w1, w2) {
+                    // Sort bodyfats by great timestamp
+                    BODY_FATS_ARRAY.sort(function (w1, w2) {
                         return w1.timestamp! < w2.timestamp! ? -1 : 1
                     })
 
                     const SORT = 'timestamp'
 
                     return request(URI)
-                        .get(`/children/${defaultChild.id}/weights?sort=${SORT}`)
+                        .get(`/children/${defaultChild.id}/bodyfats?sort=${SORT}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                         .expect(200)
                         .then(res => {
                             expect(res.body.length).to.eql(AMOUNT)
                             for (let i = 0; i < AMOUNT; i++) {
-                                expect(res.body[i]).to.have.property('id', WEIGHTS_ARRAY[i].id)
-                                expect(res.body[i]).to.have.property('timestamp', WEIGHTS_ARRAY[i].timestamp)
-                                expect(res.body[i]).to.have.property('value', WEIGHTS_ARRAY[i].value)
-                                expect(res.body[i]).to.have.property('unit', WEIGHTS_ARRAY[i].unit)
-                                expect(res.body[i]).to.have.property('body_fat', WEIGHTS_ARRAY[i].body_fat)
-                                expect(res.body[i]).to.have.property('child_id', WEIGHTS_ARRAY[i].child_id)
+                                expect(res.body[i]).to.have.property('id', BODY_FATS_ARRAY[i].id)
+                                expect(res.body[i]).to.have.property('timestamp', BODY_FATS_ARRAY[i].timestamp)
+                                expect(res.body[i]).to.have.property('value', BODY_FATS_ARRAY[i].value)
+                                expect(res.body[i]).to.have.property('unit', BODY_FATS_ARRAY[i].unit)
+                                expect(res.body[i]).to.have.property('child_id', BODY_FATS_ARRAY[i].child_id)
                             }
                         })
                 })
 
-                it('weight.get_all009: should return status code 200 and a list with five weights sorted by large value', () => {
+                it('bodyfats.get_all009: should return status code 200 and a list with five bodyfats sorted by large value', () => {
 
-                    // Sort weights by large value
-                    WEIGHTS_ARRAY.sort(function (w1, w2) {
+                    // Sort bodyfats by large value
+                    BODY_FATS_ARRAY.sort(function (w1, w2) {
                         return w1.value! > w2.value! ? -1 : 1
                     })
 
@@ -330,29 +321,28 @@ describe('Routes: children.weights', () => {
                     const SORT = 'value'
 
                     return request(URI)
-                        .get(`/children/${defaultChild.id}/weights?page=${PAGE}&limit=${LIMIT}&sort=-${SORT}`)
+                        .get(`/children/${defaultChild.id}/bodyfats?page=${PAGE}&limit=${LIMIT}&sort=-${SORT}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                         .expect(200)
                         .then(res => {
                             expect(res.body.length).to.eql(LIMIT)
                             for (let i = 0; i < LIMIT; i++) {
-                                expect(res.body[i]).to.have.property('id', WEIGHTS_ARRAY[i].id)
-                                expect(res.body[i]).to.have.property('timestamp', WEIGHTS_ARRAY[i].timestamp)
-                                expect(res.body[i]).to.have.property('value', WEIGHTS_ARRAY[i].value)
-                                expect(res.body[i]).to.have.property('unit', WEIGHTS_ARRAY[i].unit)
-                                expect(res.body[i]).to.have.property('body_fat', WEIGHTS_ARRAY[i].body_fat)
-                                expect(res.body[i]).to.have.property('child_id', WEIGHTS_ARRAY[i].child_id)
+                                expect(res.body[i]).to.have.property('id', BODY_FATS_ARRAY[i].id)
+                                expect(res.body[i]).to.have.property('timestamp', BODY_FATS_ARRAY[i].timestamp)
+                                expect(res.body[i]).to.have.property('value', BODY_FATS_ARRAY[i].value)
+                                expect(res.body[i]).to.have.property('unit', BODY_FATS_ARRAY[i].unit)
+                                expect(res.body[i]).to.have.property('child_id', BODY_FATS_ARRAY[i].child_id)
                             }
                         })
                 })
 
-                it('weight.get_all010: should return status code 200 and a empty list', async () => {
+                it('bodyfats.get_all010: should return status code 200 and a empty list', async () => {
 
                     await trackingDB.deleteMeasurements()
 
                     return request(URI)
-                        .get(`/children/${defaultChild.id}/weights`)
+                        .get(`/children/${defaultChild.id}/bodyfats`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                         .expect(200)
@@ -362,26 +352,26 @@ describe('Routes: children.weights', () => {
                 })
             })
 
-        }) //user get all weights of a child successfully
+        }) //user get all bodyfats of a child successfully
 
         context('when a validation error occurs', () => {
-            it('weight.get_all011: should return status code 400 and info message from child_id is invalid', () => {
+            it('bodyfats.get_all011: should return status code 400 and info message from child_id is invalid', () => {
 
                 const INVALID_ID = '123'
 
                 return request(URI)
-                    .get(`/children/${INVALID_ID}/weights`)
+                    .get(`/children/${INVALID_ID}/bodyfats`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_INVALID_CHILD_ID)
+                        expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_INVALID_CHILD_ID)
                     })
             })
         })
 
-        describe('when the child get all weights of another child', () => {
-            it('weight.get_all012: should return status code 400 and info message from error', async () => {
+        describe('when the child get all bodyfats of another child', () => {
+            it('bodyfats.get_all012: should return status code 400 and info message from error', async () => {
 
                 const anotherChild: Child = new ChildMock()
                 let anotherChildToken
@@ -394,7 +384,7 @@ describe('Routes: children.weights', () => {
                 }
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/weights`)
+                    .get(`/children/${defaultChild.id}/bodyfats`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(anotherChildToken))
                     .expect(400)
@@ -406,10 +396,10 @@ describe('Routes: children.weights', () => {
         })
 
         describe('when not informed the acess token', () => {
-            it('weight.get_all013: should return the status code 401 and the authentication failure informational message', () => {
+            it('bodyfats.get_all013: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/weights`)
+                    .get(`/children/${defaultChild.id}/bodyfats`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(401)
@@ -419,13 +409,13 @@ describe('Routes: children.weights', () => {
             })
         })
 
-        describe('when get all weights of a child that has been deleted', () => {
-            it('weight.get_all014: should return status code 200 and empty list', async () => {
+        describe('when get all bodyfats of a child that has been deleted', () => {
+            it('bodyfats.get_all014: should return status code 200 and empty list', async () => {
 
                 await acc.deleteUser(accessTokenAdmin, defaultChild.id)
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/weights`)
+                    .get(`/children/${defaultChild.id}/bodyfats`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .expect(200)
