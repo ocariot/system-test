@@ -103,29 +103,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.get_all002: should return status code 200 and a list of children and information when the child has already first logged in to the system for admin user', async () => {
-                await acc.auth(defaultChild.username!, defaultChild.password!)
-                await acc.auth(anotherChild.username!, anotherChild.password!)
-
-                return request(URI)
-                    .get('/children')
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        for (let i = 0; i < res.body.length; i++) {
-                            expect(res.body[i].id).to.eql(childArr[i].id)
-                            expect(res.body[i].username).to.eql(childArr[i].username)
-                            expect(res.body[i].gender).to.eql(childArr[i].gender)
-                            expect(res.body[i].age).to.eql(childArr[i].age)
-                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
-                            if (childArr[i].last_login)
-                                expect(res.body[i].last_login).to.eql(childArr[i].last_login)
-                        }
-                    })
-            })
-
-            it('children.get_all003: should return status code 200 and a child list with child information for the educator user', () => {
+            it('children.get_all002: should return status code 200 and a child list with child information for the educator user', () => {
 
                 return request(URI)
                     .get('/children')
@@ -145,7 +123,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.get_all004: should return status code 200 and a child list with child information for the health professional user', () => {
+            it('children.get_all003: should return status code 200 and a child list with child information for the health professional user', () => {
 
                 return request(URI)
                     .get('/children')
@@ -165,8 +143,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            // falta testar isso aqui ainda!!!!!!
-            it('children.get_all005: should return status code 200 and a list of children in ascending order by username', () => {
+            it('children.get_all004: should return status code 200 and a list of children in ascending order by username', () => {
                 const sort = 'username' // parameter for sort the result of the query by order ascending
                 const childrenSortedByUserNameArr = childArr.slice() // copy of the array of children that will be ordered
 
@@ -193,7 +170,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.get_all006: should return status code 200 and a list of children in ascending order by age', () => {
+            it('children.get_all005: should return status code 200 and a list of children in ascending order by age', () => {
                 const sort = 'age' // parameter for sort the result of the query by order ascending
                 const childSortedAgeArr = childArr.slice() // copy of the array of children that will be ordered
 
@@ -218,7 +195,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.get_all007: should return status code 200 and a list with only two most recent children registered in database', async () => {
+            it('children.get_all006: should return status code 200 and a list with only two most recent children registered in database', async () => {
                 const page = 1
                 const limit = 2
 
@@ -241,6 +218,45 @@ describe('Routes: children', () => {
             })
 
         }) // get all children in database successfull
+
+        describe('When the child already first logged in to the system', () => {
+            
+            before(async () => {
+                try {
+                    await acc.auth(defaultChild.username!, defaultChild.password!)
+                    await acc.auth(anotherChild.username!, anotherChild.password!)
+
+                    const resultGetChild = await acc.getChildById(accessTokenAdmin, defaultChild.id)
+                    defaultChild.last_login = resultGetChild.last_login
+
+                    const resultGetAnotherChild = await acc.getChildById(accessTokenAdmin, anotherChild.id)
+                    anotherChild.last_login = resultGetAnotherChild.last_login
+
+                } catch (err) {
+                    console.log('Failure on Before from field  verification: ', err)
+                }
+            })
+
+            it('children.get_all007: should return status code 200 and a list of children and information when the child has already first logged in to the system for admin user', async () => {
+                
+                return request(URI)
+                .get('/children')
+                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                .set('Content-Type', 'application/json')
+                .expect(200)
+                .then(res => {
+                        for (let i = 0; i < res.body.length; i++) {
+                            expect(res.body[i].id).to.eql(childArr[i].id)
+                            expect(res.body[i].username).to.eql(childArr[i].username)
+                            expect(res.body[i].gender).to.eql(childArr[i].gender)
+                            expect(res.body[i].age).to.eql(childArr[i].age)
+                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
+                            if (childArr[i].last_login)
+                            expect(res.body[i].last_login).to.eql(childArr[i].last_login)
+                        }
+                    })
+                })
+        })
 
         describe('when the user does not have permission to get all children in database', () => {
 

@@ -73,6 +73,9 @@ describe('Routes: children', () => {
                 defaultChildToken = await acc.auth(defaultChild.username, defaultChild.password)
             }
 
+            const resultGetChild = await acc.getChildById(accessTokenAdmin, defaultChild.id)
+            defaultChild.last_login = resultGetChild.last_login
+
         } catch (err) {
             console.log('Failure on Before from children.patch test: ', err)
         }
@@ -146,13 +149,6 @@ describe('Routes: children', () => {
             })
         })
 
-        /* TESTES - RESTRIÇÕES NOS CAMPOS USERNAME ... (CRIAR COM ESPAÇO ?)
-        context('when update the child username with spaces before and after the username', () => {
-            it('should return status code ?', () => {
-
-            })
-        })*/
-
         context('when a validation error occurs', () => {
 
             it('children.patch003: should return status code 400 and message about invalid gender', () => {
@@ -165,8 +161,7 @@ describe('Routes: children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`The gender provided \"${INVALID_GENDER}\" is not supported...`)
-                        expect(err.body.description).to.eql('The names of the allowed genders are: male, female.')
+                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_GENDER)
                     })
             })
 
@@ -194,28 +189,57 @@ describe('Routes: children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_NOT_REGISTERED)
+                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INSTITUTION_NOT_REGISTERED)
                     })
             })
 
             it('children.patch006: should return status code 400 and info message from invalid id', () => {
-                const INVALID_ID = '123' // invalid id of child
+                const INVALID_ID = '123' // invalid id of institution
 
                 return request(URI)
-                    .patch(`/children/${INVALID_ID}`)
-                    .send({ age: 15 })
+                    .patch(`/children/${defaultChild.id}`)
+                    .send({ institution_id : INVALID_ID })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_INSTITUTION_ID)
                     })
+            })
+
+            it('children.patch007: should return status code 400 and info message from null age', () => {
+                const NULL_AGE = null // invalid age because value is null
+
+                return request(URI)
+                .patch(`/children/${defaultChild.id}`)
+                .send({ age: NULL_AGE })
+                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                .set('Content-Type', 'application/json')
+                .expect(400)
+                .then(err => {
+                    expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_AGE_IS_NOT_A_NUMBER)
+                })
+            })
+
+            it('children.patch008: should return status code 400 and info message from null username', () => {
+                const NULL_USERNAME = null // invalid username because value is null
+
+                return request(URI)
+                .patch(`/children/${defaultChild.id}`)
+                .send({ username: NULL_USERNAME })
+                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                .set('Content-Type', 'application/json')
+                .expect(400)
+                .then(err => {
+                    expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_USERNAME)
+                })
             })
 
         }) // validation error occurs
 
-        describe('when the child is not found', () => {
-            it('children.patch007: should return status code 404 and info message from child not found', () => {
+        describe('when child is not found or past id is invalid', () => {   
+
+            it('children.patch009: should return status code 404 and info message from child not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // child id does not exist
 
                 return request(URI)
@@ -228,11 +252,25 @@ describe('Routes: children', () => {
                         expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_404_CHILD_NOT_FOUND)
                     })
             })
+
+            it('children.patch010: should return status code 404 and info message from child id is invalid', () => {
+                const INVALID_ID = '123' // invalid child id
+
+                return request(URI)
+                    .patch(`/children/${INVALID_ID}`)
+                    .send({ age: 10 })
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_CHILD_ID)
+                    })
+            })
         })
 
         context('when the user does not have permission to update the child', () => {
 
-            it('children.patch008: should return status code 403 and info message from insufficient permissions for own child user', () => {
+            it('children.patch011: should return status code 403 and info message from insufficient permissions for own child user', () => {
 
                 return request(URI)
                     .patch(`/children/${defaultChild.id}`)
@@ -245,7 +283,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.patch009: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('children.patch012: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
                     .patch(`/children/${defaultChild.id}`)
@@ -258,7 +296,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.patch010: should return status code 403 and info message from insufficient permissions for healh professional user', () => {
+            it('children.patch013: should return status code 403 and info message from insufficient permissions for healh professional user', () => {
 
                 return request(URI)
                     .patch(`/children/${defaultChild.id}`)
@@ -271,7 +309,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.patch011: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('children.patch014: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .patch(`/children/${defaultChild.id}`)
@@ -284,7 +322,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.patch012: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('children.patch015: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .patch(`/children/${defaultChild.id}`)
@@ -297,7 +335,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.patch013: should return status code 403 and info message from insufficient permissions for another child user', () => {
+            it('children.patch016: should return status code 403 and info message from insufficient permissions for another child user', () => {
 
                 return request(URI)
                     .patch(`/children/${defaultChild.id}`)
@@ -313,7 +351,7 @@ describe('Routes: children', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('children.patch014: should return the status code 401 and the authentication failure informational message', async () => {
+            it('children.patch017: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .patch(`/children/${defaultChild.id}`)
