@@ -201,6 +201,15 @@ class AccountUtil {
             .catch(err => Promise.reject(err))
     }
 
+    public getChildById(accessToken: string, userID?: string): Promise<any>{
+        return request(this.URI)
+            .get(`/children/${userID}`)
+            .set('Authorization', 'Bearer '.concat(accessToken))
+            .set('Content-Type', 'application/json')
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))        
+    }
+
     public async getAuths(): Promise<any> {
         const result: any = {
             institution: {},

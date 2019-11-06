@@ -155,7 +155,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.post005: should return status code 400 and message info about missing parameters, because institution was not provided', () => {
+            it('children.post005: should return status code 400 and message info about missing parameters, because institution was not provided', () =>     {
 
                 const body = {
                     username: defaultChild.username,
@@ -233,7 +233,7 @@ describe('Routes: children', () => {
                     .send(body)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_NOT_REGISTERED)
+                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INSTITUTION_NOT_REGISTERED)
                     })
             })
 
@@ -255,7 +255,7 @@ describe('Routes: children', () => {
                     .send(body)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_INSTITUTION_ID)
                     })
             })
 
@@ -277,8 +277,7 @@ describe('Routes: children', () => {
                     .send(body)
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`The gender provided \"${INVALID_GENDER}\" is not supported...`)
-                        expect(err.body.description).to.eql('The names of the allowed genders are: male, female.')
+                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_GENDER)
                     })
             })
 
@@ -304,11 +303,56 @@ describe('Routes: children', () => {
                     })
             })
 
+            it('children.post012: should return status code 400 and message about null age', () => {
+                const NULL_AGE = null // invalid age because value is null
+
+                const body = {
+                    username: 'child_with_null_age',
+                    password: defaultChild.password,
+                    institution_id: defaultInstitution.id,
+                    gender: defaultChild.gender,
+                    age: NULL_AGE
+                }
+
+                return request(URI)
+                    .post('/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_AGE_IS_NOT_A_NUMBER)
+                    })
+            })
+
+            it('children.post013: should return status code 400 and message about null username', () => {
+                const NULL_USERNAME = null // invalid username because value is null
+
+
+                const body = {
+                    username: NULL_USERNAME,
+                    password: defaultChild.password,
+                    institution_id: defaultInstitution.id,
+                    gender: defaultChild.gender,
+                    age: defaultChild.age
+                }
+
+                return request(URI)
+                    .post('/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_USERNAME)
+                    })
+            })
+
         }) // validation error occurs
 
         context('when the user does not have permission to register the child', () => {
 
-            it('children.post012: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('children.post014: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .post('/children')
@@ -321,7 +365,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.post013: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('children.post015: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
                     .post('/children')
@@ -334,7 +378,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.post014: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('children.post016: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .post('/children')
@@ -347,7 +391,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.post015: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('children.post017: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .post('/children')
@@ -360,7 +404,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.post016: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('children.post018: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .post('/children')
@@ -376,7 +420,7 @@ describe('Routes: children', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('children.post017: should return the status code 401 and the authentication failure informational message', async () => {
+            it('children.post019: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .post('/children')

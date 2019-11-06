@@ -5,6 +5,7 @@ import { acc } from '../../utils/account.utils'
 import { accountDB } from '../../../src/account-service/database/account.db'
 import { Child } from '../../../src/account-service/model/child'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
+import { before } from 'mocha'
 
 describe('Routes: children', () => {
 
@@ -53,8 +54,12 @@ describe('Routes: children', () => {
             const resultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
             defaultChild.id = resultChild.id
 
-            if (defaultChild.username && defaultChild.password)
+            if (defaultChild.username && defaultChild.password) {
                 defaultChildToken = await acc.auth(defaultChild.username, defaultChild.password)
+            }
+
+            const resultGetChild = await acc.getChildById(accessTokenAdmin, defaultChild.id)
+            defaultChild.last_login = resultGetChild.last_login
 
         } catch (err) {
             console.log('Failure on Before from children.get_id test: ', err)
@@ -166,8 +171,44 @@ describe('Routes: children', () => {
 
         }) // get a unique child successfully
 
+        describe('Last Login Field Verification', () => {
+            let lastDefaultChildLogin: Date
+
+            before(async () => {
+                try {
+                    await acc.auth(defaultChild.username!, defaultChild.password!)
+
+                    const resultGetChild = await acc.getChildById(accessTokenAdmin, defaultChild.id)
+                    defaultChild.last_login = resultGetChild.last_login
+
+                    lastDefaultChildLogin = new Date(defaultChild.last_login!)
+
+                } catch (err) {
+                    console.log('Failure on Before from field  verification: ', err)
+                }
+            })
+
+            it('children.get_id006: should return status code 200 and the child with last_login updated', async () => {
+
+                return request(URI)
+                    .get(`/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(200)
+                    .then(res => {
+                        expect(res.body.id).to.eql(defaultChild.id)
+                        expect(res.body.username).to.eql(defaultChild.username)
+                        expect(res.body.gender).to.eql(defaultChild.gender)
+                        expect(res.body.age).to.eql(defaultChild.age)
+                        expect(res.body.institution_id).to.eql(defaultInstitution.id)
+                        if (defaultChild.last_login)
+                            expect(res.body.last_login).to.eql(lastDefaultChildLogin.toISOString())
+                    })
+            })
+        })
+
         describe('when the child is not found', () => {
-            it('children.get_id006: should return status code 404 and info message from child not found', () => {
+            it('children.get_id007: should return status code 404 and info message from child not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // child id does not exist
 
                 return request(URI)
@@ -183,7 +224,7 @@ describe('Routes: children', () => {
 
         describe('when the child_id is invalid', () => {
 
-            it('children.get_id007: should return status code 400 and message info about invalid id', () => {
+            it('children.get_id008: should return status code 400 and message info about invalid id', () => {
                 const INVALID_ID = '123' // invalid id of child
 
                 return request(URI)
@@ -192,14 +233,14 @@ describe('Routes: children', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_CHILD_ID)
                     })
             })
         })
 
         context('when the user does not have permission to get a unique child in database', () => {
 
-            it('children.get_id008: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('children.get_id009: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}`)
@@ -211,7 +252,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.get_id009: should return status code 403 and info message from insufficient permissions for another child user', () => {
+            it('children.get_id010: should return status code 403 and info message from insufficient permissions for another child user', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}`)
@@ -226,7 +267,7 @@ describe('Routes: children', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('children.get_id010: should return the status code 401 and the authentication failure informational message', async () => {
+            it('children.get_id011: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}`)

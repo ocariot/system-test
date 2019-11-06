@@ -26,15 +26,20 @@ export abstract class ApiGatewayException {
     }
 
     public static readonly CHILD: any = {
-        ERROR_400_USERNAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Child validation: username is required!').toJson(),
-        ERROR_400_PASSWORD_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Child validation: password is required!').toJson(),
-        ERROR_400_INVALID_FORMAT_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
-        ERROR_400_INVALID_AGE: new ApiException(400, 'Age field is invalid...', 'Child validation: The age parameter can only contain a value greater than zero.').toJson(),
-        ERROR_400_INSTITUTION_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Child validation: institution is required!').toJson(),
-        ERROR_400_GENDER_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Child validation: gender is required!').toJson(),
-        ERROR_400_AGE_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Child validation: age is required!').toJson(),
+        ERROR_400_USERNAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'username are required!').toJson(),
+        ERROR_400_PASSWORD_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'password are required!').toJson(),
+        ERROR_400_INVALID_USERNAME: new ApiException(400, 'One or more request fields are invalid...', 'username must be a string!').toJson(),
+        ERROR_400_INVALID_CHILD_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
+        ERROR_400_INVALID_INSTITUTION_ID: new ApiException(400, 'Parameter {institution_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
+        ERROR_400_INVALID_GENDER: new ApiException(400, 'One or more request fields are invalid...', 'The names of the allowed genders are: male, female.').toJson(),
+        ERROR_400_INVALID_AGE: new ApiException(400, 'One or more request fields are invalid...', 'Age cannot be less than or equal to zero!').toJson(),
+        ERROR_400_INVALID_AGE_IS_NOT_A_NUMBER: new ApiException(400, 'One or more request fields are invalid...', 'Provided age is not a valid number!').toJson(),
+        ERROR_400_INSTITUTION_NOT_REGISTERED: new ApiException(400, 'The institution provided does not have a registration.', 'It is necessary that the institution be registered before trying again.').toJson(),
+        ERROR_400_INSTITUTION_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'institution are required!').toJson(),
+        ERROR_400_GENDER_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'gender are required!').toJson(),
+        ERROR_400_AGE_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'age are required!').toJson(),
         ERROR_404_CHILD_NOT_FOUND: new ApiException(404, 'Child not found!', 'Child not found or already removed. A new operation for the same resource is not required.').toJson(),
-        ERROR_409_DUPLICATE: new ApiException(409, 'Child is already registered!').toJson()
+        ERROR_409_DUPLICATE: new ApiException(409, 'Child is already registered...').toJson()
     }
 
     public static readonly EDUCATOR: any = {
