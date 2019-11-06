@@ -115,29 +115,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.get_all002: should return status code 200 and a list of educators when they are first logged in to the system for admin user', async () => {
-                await acc.auth(defaultEducator.username!, defaultEducator.password!)
-                await acc.auth(anotherEducator.username!, anotherEducator.password!)
-
-                return request(URI)
-                    .get('/educators')
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        for (let i = 0; i < res.body.length; i++) {
-                            expect(res.body[i].id).to.eql(educatorsArr[i].id)
-                            expect(res.body[i].username).to.eql(educatorsArr[i].username)
-                            expect(res.body[i].children_groups).to.eql(educatorsArr[i].children_groups)
-                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
-                            expect(res.body[i].children_groups.length).to.eql(0)
-                            if (educatorsArr[i].last_login)
-                                expect(res.body[i].last_login).to.eql(educatorsArr[i].last_login)
-                        }
-                    })
-            })
-
-            it('educators.get_all003: should return status code 200 and a list of educators in ascending order by username', () => {
+            it('educators.get_all002: should return status code 200 and a list of educators in ascending order by username', () => {
                 const sort = 'username' // parameter for sort the result of the query by order ascending
                 const educatorsSortedByUserNameArr = educatorsArr.slice() // copy of the array of educators that will be ordered
 
@@ -164,7 +142,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.get_all004: should return status code 200 and a list with only two most recent educators registered in database', () => {
+            it('educators.get_all003: should return status code 200 and a list with only two most recent educators registered in database', () => {
 
                 const page = 1
                 const limit = 2
@@ -195,7 +173,7 @@ describe('Routes: educators', () => {
                         console.log('DB ERROR', err)
                     }
                 })
-                it('educators.get_all005: should return status code 200 and empty array ', () => {
+                it('educators.get_all004: should return status code 200 and empty array ', () => {
 
                     return request(URI)
                         .get('/educators')
@@ -212,7 +190,7 @@ describe('Routes: educators', () => {
 
         context('when the user does not have permission to get all educators in database', () => {
 
-            it('educators.get_all006: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('educators.get_all005: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .get('/educators')
@@ -224,7 +202,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.get_all007: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('educators.get_all006: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
                     .get('/educators')
@@ -236,7 +214,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.get_all008: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('educators.get_all007: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .get('/educators')
@@ -248,7 +226,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.get_all009: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('educators.get_all008: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .get('/educators')
@@ -260,7 +238,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.get_all010: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('educators.get_all009: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .get('/educators')
@@ -275,7 +253,7 @@ describe('Routes: educators', () => {
         }) //user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('educators.get_all011: should return the status code 401 and the authentication failure informational message', async () => {
+            it('educators.get_all010: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .get('/educators')

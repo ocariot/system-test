@@ -65,8 +65,12 @@ describe('Routes: educators', () => {
             const resultDefaultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
             defaultEducator.id = resultDefaultEducator.id
 
-            if (defaultEducator.username && defaultEducator.password)
+            if (defaultEducator.username && defaultEducator.password){
                 defaultEducatorToken = await acc.auth(defaultEducator.username, defaultEducator.password)
+            }
+
+            const resultGetEducator = await acc.getEducatorById(accessTokenAdmin, defaultEducator.id)
+            defaultEducator.last_login = resultGetEducator.last_login
 
         } catch (err) {
             console.log('Failure on Before from educators.patch test: ', err)
@@ -195,7 +199,7 @@ describe('Routes: educators', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_ID_IS_INVALID)
                     })
             })
         })
@@ -211,16 +215,31 @@ describe('Routes: educators', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.EDUCATOR.ERROR_400_INVALID_FORMAT_ID)
+                    })
+            })
+        })
+
+        describe('when a validation error occurs', () => {
+            it('educators.patch008: should return status code 400 and message for null username', () => {
+                const NULL_USERNAME = null // invalid username of the educator
+
+                return request(URI)
+                    .patch(`/educators/${defaultEducator.id}`)
+                    .send({ username: NULL_USERNAME})
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.EDUCATOR.ERROR_400_INVALID_USERNAME)
                     })
             })
         })
 
 
-
         context('when the user does not have permission', () => {
 
-            it('educators.patch008: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('educators.patch009: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .patch(`/educators/${defaultEducator.id}`)
@@ -233,7 +252,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.patch009: should return status code 403 and info message from insufficient permissions for another educator user', () => {
+            it('educators.patch010: should return status code 403 and info message from insufficient permissions for another educator user', () => {
 
                 return request(URI)
                     .patch(`/educators/${defaultEducator.id}`)
@@ -246,7 +265,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.patch010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('educators.patch011: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .patch(`/educators/${defaultEducator.id}`)
@@ -259,7 +278,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.patch011: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('educators.patch012: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .patch(`/educators/${defaultEducator.id}`)
@@ -272,7 +291,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.patch012: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('educators.patch013: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .patch(`/educators/${defaultEducator.id}`)
@@ -287,7 +306,7 @@ describe('Routes: educators', () => {
         })
 
         describe('when not informed the acess token', () => {
-            it('educators.patch013: should return the status code 401 and the authentication failure informational message', () => {
+            it('educators.patch014: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .patch(`/educators/${defaultEducator.id}`)

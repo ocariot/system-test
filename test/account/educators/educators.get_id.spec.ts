@@ -70,8 +70,12 @@ describe('Routes: educators', () => {
             const resultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
             defaultEducator.id = resultEducator.id
 
-            if (defaultEducator.username && defaultEducator.password)
+            if (defaultEducator.username && defaultEducator.password) {
                 defaultEducatorToken = await acc.auth(defaultEducator.username, defaultEducator.password)
+            }
+
+            const resultGetEducator = await acc.getEducatorById(accessTokenAdmin, defaultEducator.id)
+            defaultEducator.last_login = resultGetEducator.last_login
 
         } catch (err) {
             console.log('Failure on Before from educators.get_id test: ', err)
@@ -132,6 +136,13 @@ describe('Routes: educators', () => {
                         console.log('Failure in educators.get_id test: ', err)
                     }
                 })
+                afterEach(async () => {
+                    try {
+                        await accountDB.deleteChildrenGroups()
+                    } catch (err) {
+                        console.log('Failure in educators.get)id test: ', err)
+                    }
+                })
 
                 it('educators.get_id003: should return status code 200 and the educator data obtained by himself, without child personal data', () => {
 
@@ -153,13 +164,46 @@ describe('Routes: educators', () => {
                                 expect(res.body.last_login).to.eql(defaultEducator.last_login)
                         })
                 })
-
             }) // educator who has a children group associated with him
-
         }) // get a unique educator in database successfully
 
+        describe('Last Login Field Verification', () => {
+            let lastDefaultEducatorLogin: Date
+
+            before(async () => {
+                try {
+                    await acc.auth(defaultEducator.username!, defaultEducator.password!)
+
+                    const resultGetEducator = await acc.getEducatorById(accessTokenAdmin, defaultEducator.id)
+                    defaultEducator.last_login = resultGetEducator.last_login
+
+                    lastDefaultEducatorLogin = new Date(defaultEducator.last_login!)
+
+                } catch (err) {
+                    console.log('Failure on Before from field  verification: ', err)
+                }
+            })
+
+            it('educators.get_id004: should return status code 200 and the educator with last_login updated', () => {
+
+                return request(URI)
+                    .get(`/educators/${defaultEducator.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(200)
+                    .then(res => {
+                        expect(res.body.id).to.eql(defaultEducator.id)
+                        expect(res.body.username).to.eql(defaultEducator.username)
+                        expect(res.body.institution_id).to.eql(defaultInstitution.id)
+                        expect(res.body.children_groups.length).to.eql(0)
+                        if (defaultEducator.last_login)
+                            expect(res.body.last_login).to.eql(lastDefaultEducatorLogin.toISOString())
+                    })
+            })
+        })
+
         describe('when the educator is not found', () => {
-            it('educators.get_id004: should return status code 404 and info message from educator not found', () => {
+            it('educators.get_id005: should return status code 404 and info message from educator not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the educator
 
                 return request(URI)
@@ -174,7 +218,7 @@ describe('Routes: educators', () => {
         })
 
         describe('when the educator_id is invalid', () => {
-            it('educators.get_id005: should return status code 400 and message info about invalid id', () => {
+            it('educators.get_id006: should return status code 400 and message info about invalid id', () => {
                 const INVALID_ID = '123' // invalid id of the educator
 
                 return request(URI)
@@ -190,7 +234,7 @@ describe('Routes: educators', () => {
 
         context('when the user does not have permission to get a unique educator in database', () => {
 
-            it('educators.get_id006: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('educators.get_id007: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .get(`/educators/${defaultEducator.id}`)
@@ -202,7 +246,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.get_id007: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('educators.get_id008: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .get(`/educators/${defaultEducator.id}`)
@@ -214,7 +258,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.get_id008: should return status code 403 and info message from insufficient permissions family user', () => {
+            it('educators.get_id009: should return status code 403 and info message from insufficient permissions family user', () => {
 
                 return request(URI)
                     .get(`/educators/${defaultEducator.id}`)
@@ -226,7 +270,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.get_id009: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('educators.get_id010: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .get(`/educators/${defaultEducator.id}`)
@@ -238,7 +282,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.get_id010: should return status code 403 and info message from insufficient permissions for another educator user', () => {
+            it('educators.get_id011: should return status code 403 and info message from insufficient permissions for another educator user', () => {
 
                 return request(URI)
                     .get(`/educators/${defaultEducator.id}`)
@@ -253,7 +297,7 @@ describe('Routes: educators', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('educators.get_id011: should return the status code 401 and the authentication failure informational message', async () => {
+            it('educators.get_id012: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .get(`/educators/${defaultEducator.id}`)

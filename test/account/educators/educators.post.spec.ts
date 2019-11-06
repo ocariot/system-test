@@ -89,19 +89,6 @@ describe('Routes: educators', () => {
             })
         })
 
-        //  TESTES - RESTRIÇÕES NOS CAMPOS USERNAME/PASSWORD ... (CRIAR COM ESPAÇO ?)
-        // context('when the username is a blank space', () => {
-        //     it('should return status code ? and message info about ...', () => {
-
-        //         return request(URI)
-        //             .post('/educators')
-        //             .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-        //             .set('Content-Type', 'application/json')
-        //             .send(body)
-        //             .expect(409)
-        //     })
-        // })
-
         describe('when a duplicate error occurs', () => {
             before(async () => {
                 try {
@@ -216,7 +203,47 @@ describe('Routes: educators', () => {
                     .send(body)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_ID_IS_INVALID)
+                    })
+            })
+
+            it('educators.post008: should return status code 400 and message for null username', () => {
+                const NULL_USERNAME = null // invalid username of the educator
+
+                const body = {
+                    username: NULL_USERNAME,
+                    password: defaultEducator.password,
+                    institution_id: defaultInstitution.id
+                }
+
+                return request(URI)
+                    .post('/educators')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.EDUCATOR.ERROR_400_INVALID_USERNAME)
+                    })
+            })
+
+            it('educators.post009: should return status code 400 and message for null password', () => {
+                const NULL_PASSSWORD = null // invalid password of the educator
+
+                const body = {
+                    username: defaultEducator.username,
+                    password: NULL_PASSSWORD,
+                    institution_id: defaultInstitution.id
+                }
+
+                return request(URI)
+                    .post('/educators')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.EDUCATOR.ERROR_400_INVALID_PASSWORD)
                     })
             })
 
@@ -224,7 +251,7 @@ describe('Routes: educators', () => {
 
         context('when the user does not have permission to register the educator', () => {
 
-            it('educators.post008: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('educators.post010: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .post('/educators')
@@ -237,7 +264,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.post009: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('educators.post011: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
                     .post('/educators')
@@ -250,7 +277,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.post010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('educators.post012: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .post('/educators')
@@ -263,7 +290,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.post011: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('educators.post013: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .post('/educators')
@@ -276,7 +303,7 @@ describe('Routes: educators', () => {
                     })
             })
 
-            it('educators.post012: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('educators.post014: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .post('/educators')
@@ -292,7 +319,7 @@ describe('Routes: educators', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('educators.post013: should return the status code 401 and the authentication failure informational message', async () => {
+            it('educators.post015: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .post('/educators')

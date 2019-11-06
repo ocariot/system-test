@@ -72,6 +72,9 @@ describe('Routes: applications', () => {
             const resultAnotherInstitution = await acc.saveInstitution(accessTokenAdmin, anotherInstitution)
             anotherInstitution.id = resultAnotherInstitution.id
 
+            const resultGetApplication = await acc.getApplicationById(accessTokenAdmin, defaultApplication.id)
+            defaultApplication.last_login = resultGetApplication.last_login
+
         } catch (err) {
             console.log('Failure on Before from applications.patch test: ', err)
         }
