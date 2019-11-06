@@ -188,7 +188,7 @@ describe('Routes: children', () => {
                 }
             })
 
-            it('children.get_id006: should return status code 200 and the child with last_login updated', async () => {
+            it('children.get_id006: should return status code 200 and the child with last_login updated', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}`)

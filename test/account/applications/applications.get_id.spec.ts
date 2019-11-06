@@ -52,8 +52,12 @@ describe('Routes: applications', () => {
             const resultApplication = await acc.saveApplication(accessTokenAdmin, defaultApplication)
             defaultApplication.id = resultApplication.id
 
-            if (defaultApplication.username && defaultApplication.password)
+            if (defaultApplication.username && defaultApplication.password){
                 defaultApplicationToken = await acc.auth(defaultApplication.username, defaultApplication.password)
+            }
+
+            const resultGetApplication = await acc.getApplicationById(accessTokenAdmin, defaultApplication.id)
+            defaultApplication.last_login = resultGetApplication.last_login
 
         } catch (err) {
             console.log('Failure on Before from applications.get_id test: ', err)
@@ -111,8 +115,43 @@ describe('Routes: applications', () => {
 
         }) // get a unique application successfully
 
+        describe('Last Login Field Verification', () => {
+            let lastDefaultApplicationLogin: Date
+
+            before(async () => {
+                try {
+                    await acc.auth(defaultApplication.username!, defaultApplication.password!)
+
+                    const resultGetApplication = await acc.getApplicationById(accessTokenAdmin, defaultApplication.id)
+                    defaultApplication.last_login = resultGetApplication.last_login
+
+                    lastDefaultApplicationLogin = new Date(defaultApplication.last_login!)
+
+                } catch (err) {
+                    console.log('Failure on Before from field  verification: ', err)
+                }
+            })
+
+            it('applications.get_id003: should return status code 200 and the application with last_login updated', () => {
+
+                return request(URI)
+                    .get(`/applications/${defaultApplication.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(200)
+                    .then(res => {
+                        expect(res.body.id).to.eql(defaultApplication.id)
+                        expect(res.body.username).to.eql(defaultApplication.username)
+                        expect(res.body.application_name).to.eql(defaultApplication.application_name)
+                        expect(res.body.institution_id).to.eql(defaultInstitution.id)
+                        if (defaultApplication.last_login)
+                            expect(res.body.last_login).to.eql(lastDefaultApplicationLogin.toISOString())
+                    })
+            })
+        })
+
         describe('when the application is not found', () => {
-            it('applications.get_id003: should return status code 404 and info message about application not found', () => {
+            it('applications.get_id004: should return status code 404 and info message about application not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the application
 
                 return request(URI)
@@ -127,7 +166,7 @@ describe('Routes: applications', () => {
         })
 
         describe('when the application_id provided is invalid', () => {
-            it('applications.get_id004: should return status code 400 and info message from invalid application_id', () => {
+            it('applications.get_id005: should return status code 400 and info message from invalid application_id', () => {
                 const INVALID_ID = '123' // invalid id of the application
 
                 return request(URI)
@@ -143,7 +182,7 @@ describe('Routes: applications', () => {
 
         context('when the user does not have permission to get a unique application', () => {
 
-            it('applications.get_id005: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('applications.get_id006: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
                     .get(`/applications/${defaultApplication.id}`)
@@ -155,7 +194,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.get_id006: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('applications.get_id007: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .get(`/applications/${defaultApplication.id}`)
@@ -167,7 +206,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.get_id007: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('applications.get_id008: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .get(`/applications/${defaultApplication.id}`)
@@ -179,7 +218,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.get_id008: should return status code 403 and info message from insufficient permissions for another application user', () => {
+            it('applications.get_id009: should return status code 403 and info message from insufficient permissions for another application user', () => {
 
                 return request(URI)
                     .get(`/applications/${defaultApplication.id}`)
@@ -191,7 +230,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.get_id009: should return status code 403 and info message from insufficient permissions for another child user', () => {
+            it('applications.get_id010: should return status code 403 and info message from insufficient permissions for another child user', () => {
 
                 return request(URI)
                     .get(`/applications/${defaultApplication.id}`)
@@ -206,7 +245,7 @@ describe('Routes: applications', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('applications.get_id010: should return the status code 401 and the authentication failure informational message', async () => {
+            it('applications.get_id011: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .get(`/applications/${defaultApplication.id}`)

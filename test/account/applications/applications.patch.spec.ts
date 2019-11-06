@@ -162,7 +162,6 @@ describe('Routes: applications', () => {
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_NOT_REGISTERED)
                     })
-
             })
 
             it('applications.patch004: should return status code 400 and message info about invalid parameter, because the institution_id provided is invalid', () => {
@@ -177,7 +176,7 @@ describe('Routes: applications', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.APPLICATION.ERROR_400_INVALID_INSTITUTION_ID)
                     })
             })
 
@@ -193,14 +192,45 @@ describe('Routes: applications', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.APPLICATION.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
 
+            it('applications.patch006: should return status code 400 and message info about null username', () => {
+                const NULL_USERNAME = null // invalid username of the application
+
+                return request(URI)
+                    .patch(`/applications/${defaultApplication.id}`)
+                    .send(
+                        { username: NULL_USERNAME }
+                    )
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.APPLICATION.ERROR_400_INVALID_USERNAME)
+                    })
+            })
+
+            it('applications.patch007: should return status code 400 and message info about null application_name', () => {
+                const NULL_NAME = null // invalid name of the application
+
+                return request(URI)
+                    .patch(`/applications/${defaultApplication.id}`)
+                    .send(
+                        { application_name: NULL_NAME }
+                    )
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.APPLICATION.ERROR_400_INVALID_APPLICATION_NAME)
+                    })
+            })
         }) // validation error occurs
 
         describe('when the applications is not found', () => {
-            it('applications.patch006: should return status code 404 and message info from application not found', () => {
+            it('applications.patch008: should return status code 404 and message info from application not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the application
 
                 return request(URI)
@@ -219,7 +249,7 @@ describe('Routes: applications', () => {
 
         context('when the user does not have permission to update the application', () => {
 
-            it('applications.patch007: should return status code 403 and info message from insufficient permissions for own application user', () => {
+            it('applications.patch009: should return status code 403 and info message from insufficient permissions for own application user', () => {
 
                 return request(URI)
                     .patch(`/applications/${defaultApplication.id}`)
@@ -232,7 +262,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.patch008: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('applications.patch010: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
                     .patch(`/applications/${defaultApplication.id}`)
@@ -245,7 +275,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.patch009: should return status code 403 and info message from insufficient permissions for healh professional user', () => {
+            it('applications.patch011: should return status code 403 and info message from insufficient permissions for healh professional user', () => {
 
                 return request(URI)
                     .patch(`/applications/${defaultApplication.id}`)
@@ -258,7 +288,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.patch010: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('applications.patch012: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .patch(`/applications/${defaultApplication.id}`)
@@ -271,7 +301,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.patch011: should return status code 403 and info message from insufficient permissions for another application user', () => {
+            it('applications.patch013: should return status code 403 and info message from insufficient permissions for another application user', () => {
 
                 return request(URI)
                     .patch(`/applications/${defaultApplication.id}`)
@@ -284,7 +314,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.patch012: should return status code 403 and info message from insufficient permissions for another child user', () => {
+            it('applications.patch014: should return status code 403 and info message from insufficient permissions for another child user', () => {
 
                 return request(URI)
                     .patch(`/applications/${defaultApplication.id}`)
@@ -300,7 +330,7 @@ describe('Routes: applications', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('applications.patch013: should return the status code 401 and the authentication failure informational message', async () => {
+            it('applications.patch015: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .patch(`/applications/${defaultApplication.id}`)

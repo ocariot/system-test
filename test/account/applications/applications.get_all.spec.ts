@@ -99,29 +99,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.get_all002: should return status code 200 and a list of applications and information when the application has already first logged in to the system for admin user', async () => {
-                await acc.auth(defaultApplication.username!, defaultApplication.password!)
-                await acc.auth(anotherApplication.username!, anotherApplication.password!)
-
-                return request(URI)
-                    .get('/children')
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        for (let i = 0; i < res.body.length; i++) {
-                            expect(res.body[i].username).to.eql(applicationArr[i].username)
-                            expect(res.body[i].id).to.eql(applicationArr[i].id)
-                            expect(res.body[i].application_name).to.eql(applicationArr[i].application_name)
-                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
-                            if (defaultApplication.last_login) {
-                                expect(res.body.last_login).to.eql(applicationArr[i].last_login)
-                            }
-                        }
-                    })
-            })
-
-            it('applications.get_all003: should return status code 200 and a list of applications in descending order by username ', () => {
+            it('applications.get_all002: should return status code 200 and a list of applications in descending order by username ', () => {
                 const sort = 'username' // parameter for sort the result of the query by order descending
                 const appSortedByUserNameArr = applicationArr.slice() // copy of the array of application that will be ordered
 
@@ -148,7 +126,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.get_all004: should return status code 200 and a list of applications in ascending order by application name ', () => {
+            it('applications.get_all003: should return status code 200 and a list of applications in ascending order by application name ', () => {
                 const sort = 'application_name' // parameter for sort the result of the query by order ascending
                 const appSortedByAppNameArr = applicationArr.slice() // copy of the array of application that will be ordered
 
@@ -175,7 +153,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.get_all005: should return status code 200 and only the most recently registered application', () => {
+            it('applications.get_all004: should return status code 200 and only the most recently registered application', () => {
 
                 const page = 1
                 const limit = 1
@@ -202,7 +180,7 @@ describe('Routes: applications', () => {
 
         describe('when the user does not have permission to get all applications', () => {
 
-            it('applications.get_all006: should return status code 403 and info message from insufficient permissions for user child', () => {
+            it('applications.get_all005: should return status code 403 and info message from insufficient permissions for user child', () => {
 
                 return request(URI)
                     .get('/applications')
@@ -214,7 +192,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.get_all007: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('applications.get_all006: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
                     .get('/applications')
@@ -226,7 +204,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.get_all008: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('applications.get_all007: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .get('/applications')
@@ -238,7 +216,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.get_all09: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('applications.get_all08: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .get('/applications')
@@ -250,7 +228,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.get_all010: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('applications.get_all009: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .get('/applications')
@@ -264,7 +242,7 @@ describe('Routes: applications', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('applications.get_all011: should return the status code 401 and the authentication failure informational message', async () => {
+            it('applications.get_all010: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .get('/applications')
@@ -285,7 +263,7 @@ describe('Routes: applications', () => {
                     console.log('DB ERROR', err)
                 }
             })
-            it('applications.get_all012: should return status code 200 and empty list ', () => {
+            it('applications.get_all011: should return status code 200 and empty list ', () => {
 
                 return request(URI)
                     .get('/applications')

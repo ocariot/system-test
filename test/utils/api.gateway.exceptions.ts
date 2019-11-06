@@ -74,12 +74,16 @@ export abstract class ApiGatewayException {
     }
 
     public static readonly APPLICATION: any = {
-        ERROR_400_USERNAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Application validation: username is required!').toJson(),
-        ERROR_400_PASSWORD_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Application validation: password is required!').toJson(),
+        ERROR_400_USERNAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'username are required!').toJson(),
+        ERROR_400_PASSWORD_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'password are required!').toJson(),
+        ERROR_400_INVALID_INSTITUTION_ID: new ApiException(400, 'Parameter {institution_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_400_INVALID_FORMAT_ID: new ApiException(400, 'Parameter {application_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
-        ERROR_400_APPLICATION_NAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Application validation: application_name is required!').toJson(),
+        ERROR_400_INVALID_USERNAME: new ApiException(400, 'One or more request fields are invalid...', 'username must be a string!').toJson(),
+        ERROR_400_INVALID_APPLICATION_NAME: new ApiException(400, 'One or more request fields are invalid...', 'application_name must be a string!').toJson(),
+        ERROR_400_INVALID_PASSWORD: new ApiException(400, 'One or more request fields are invalid...', 'password must be a string!').toJson(),
+        ERROR_400_APPLICATION_NAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'application_name are required!').toJson(),
         ERROR_404_APPLICATION_NOT_FOUND: new ApiException(404, 'Application not found!', 'Application not found or already removed. A new operation for the same resource is not required.').toJson(),
-        ERROR_409_DUPLICATE: new ApiException(409, 'Application is already registered!').toJson()
+        ERROR_409_DUPLICATE: new ApiException(409, 'Application is already registered...').toJson()
     }
 
     public static readonly CHILDREN_GROUPS: any = {

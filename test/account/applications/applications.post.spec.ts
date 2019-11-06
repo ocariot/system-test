@@ -111,7 +111,6 @@ describe('Routes: applications', () => {
                         })
                 })
             })
-
         }) // post successfull
 
         describe('when a duplicate error occurs', () => {
@@ -233,15 +232,35 @@ describe('Routes: applications', () => {
                     .send(body)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.APPLICATION.ERROR_400_INVALID_INSTITUTION_ID)
                     })
             })
 
+            it('applications.post009: should return status code 400 and message info about invalid parameters, because password is null', () => {
+                const NULL_PASSWORD = null // invalid password of the application
+
+                const body = {
+                    username: defaultApplication.username,
+                    password: NULL_PASSWORD,
+                    application_name: defaultApplication.application_name,
+                    institution_id: defaultInstitution.id
+                }
+
+                return request(URI)
+                    .post('/applications')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.APPLICATION.ERROR_400_INVALID_PASSWORD)
+                    })
+            })
         }) // validation error occurs
 
         context('when the user does not have permission to register the application', () => {
 
-            it('applications.post009: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('applications.post010: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .post('/applications')
@@ -254,7 +273,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.post010: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('applications.post011: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
                     .post('/applications')
@@ -267,7 +286,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.post011: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('applications.post012: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .post('/applications')
@@ -280,7 +299,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.post012: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('applications.post013: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .post('/applications')
@@ -293,7 +312,7 @@ describe('Routes: applications', () => {
                     })
             })
 
-            it('applications.post013: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('applications.post014: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .post('/applications')
@@ -305,11 +324,10 @@ describe('Routes: applications', () => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
-
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('applications.post014: should return the status code 401 and the authentication failure informational message', async () => {
+            it('applications.post015: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .post('/applications')
