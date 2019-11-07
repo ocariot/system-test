@@ -88,7 +88,7 @@ describe('Routes: Institution', () => {
                     .expect(201)
                     .then(res => {
                         expect(res.body).to.have.property('id')
-                        expect(res.body.type).to.eql(defaultInstitution.type)
+                        expect(res.body.type).to.eql(defaultInstitution.type)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
                         expect(res.body.name).to.eql(defaultInstitution.name)
                         expect(res.body.address).to.eql(defaultInstitution.address)
                         expect(res.body.latitude).to.eql(defaultInstitution.latitude)
@@ -288,11 +288,52 @@ describe('Routes: Institution', () => {
                     })
             })
 
+            it('institutions.post011: should return status code 400 and info message from invalid parameters, because null type', () => {
+                const NULL_TYPE = null // invalid type of the institution
+
+                const body = {
+                    type: NULL_TYPE,
+                    name: 'Longitude like a text',
+                    longitude: 0
+                }
+
+                return request(URI)
+                    .post('/institutions')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INVALID_TYPE)
+                    })
+            })
+
+            it('institutions.post012: should return status code 400 and info message from invalid parameters, because null longitude', () => {
+                const NULL_LONGITUDE = null // invalid longitude of the institution
+
+                const body = {
+                    type: defaultInstitution.type,
+                    name: defaultInstitution.name,
+                    latitude: 0,
+                    longitude: NULL_LONGITUDE
+                }
+
+                return request(URI)
+                    .post('/institutions')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_FAILED_CAST_LONGITUDE)
+                    })
+            })
+
         }) // validation error occurs
 
         context('when the user does not have permission to register the institution', () => {
 
-            it('institutions.post011: should return status code 403 and info message from insufficient permissions to the child', async () => {
+            it('institutions.post013: should return status code 403 and info message from insufficient permissions to the child', async () => {
 
                 return request(URI)
                     .post('/institutions')
@@ -305,7 +346,7 @@ describe('Routes: Institution', () => {
                     })
             })
 
-            it('institutions.post012: should return status code 403 and info message from insufficient permissions to the educator', async () => {
+            it('institutions.post014: should return status code 403 and info message from insufficient permissions to the educator', async () => {
 
                 return request(URI)
                     .post('/institutions')
@@ -318,7 +359,7 @@ describe('Routes: Institution', () => {
                     })
             })
 
-            it('institutions.post013: should return status code 403 and info message from insufficient permissions to the health professional', async () => {
+            it('institutions.post015: should return status code 403 and info message from insufficient permissions to the health professional', async () => {
 
                 return request(URI)
                     .post('/institutions')
@@ -331,7 +372,7 @@ describe('Routes: Institution', () => {
                     })
             })
 
-            it('institutions.post014: should return status code 403 and info message from insufficient permissions to the family', async () => {
+            it('institutions.post016: should return status code 403 and info message from insufficient permissions to the family', async () => {
 
                 return request(URI)
                     .post('/institutions')
@@ -344,7 +385,7 @@ describe('Routes: Institution', () => {
                     })
             })
 
-            it('institutions.post015: should return status code 403 and info message from insufficient permissions to the application', async () => {
+            it('institutions.post017: should return status code 403 and info message from insufficient permissions to the application', async () => {
 
                 return request(URI)
                     .post('/institutions')
@@ -360,7 +401,7 @@ describe('Routes: Institution', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('institutions.post016: should return the status code 401 and the authentication failure informational message', async () => {
+            it('institutions.post018: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .post('/institutions')

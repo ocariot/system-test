@@ -177,9 +177,10 @@ describe('Routes: Institution', () => {
 
         describe('when the institution_id is invalid', () => {
             it('institutions.delete008: should return status code 400 and info message from invalid id', () => {
+                const INVALID_ID = '123' // invalid id of the institution
 
                 return request(URI)
-                    .delete(`/institutions/${acc.INVALID_ID}`)
+                    .delete(`/institutions/${INVALID_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -191,9 +192,10 @@ describe('Routes: Institution', () => {
 
         describe('when the institution is not found', () => {
             it('institutions.delete009: should return status code 204 and no content, even the institution was not founded', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the institution
 
                 return request(URI)
-                    .delete(`/institutions/${acc.NON_EXISTENT_ID}`)
+                    .delete(`/institutions/${NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(204)
