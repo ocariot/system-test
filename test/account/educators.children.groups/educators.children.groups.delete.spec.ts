@@ -79,6 +79,9 @@ describe('Routes: educators.children.groups', () => {
             if (defaultEducator.username && defaultEducator.password) {
                 defaultEducatorToken = await acc.auth(defaultEducator.username, defaultEducator.password)
             }
+        
+            const resultGetDefaultEducator = await acc.getEducatorById(accessTokenAdmin, defaultEducator.id)
+            defaultEducator.last_login = resultGetDefaultEducator.last_login
 
         } catch (err) {
             console.log('Failure on Before from educators.children.groups.delete test: ', err)

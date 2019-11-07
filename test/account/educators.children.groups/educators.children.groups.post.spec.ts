@@ -95,6 +95,12 @@ describe('Routes: educators.children.groups', () => {
                     auth(anotherEducator.username, anotherEducator.password)
             }
 
+            const resultGetDefaultEducator = await acc.getEducatorById(accessTokenAdmin, defaultEducator.id)
+            defaultEducator.last_login = resultGetDefaultEducator.last_login
+
+            const resultGetAnotherEducator = await acc.getEducatorById(accessTokenAdmin, anotherEducator.id)
+            anotherEducator.last_login = resultGetAnotherEducator.last_login
+
         } catch (err) {
             console.log('Failure on Before from educator.children.groups.post test: : ', err)
         }
@@ -278,9 +284,8 @@ describe('Routes: educators.children.groups', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql('A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.')
-                        expect(err.body.description).to.eql('Children Group validation: ' +
-                            `Invalid children attribute. The following set of IDs is not in valid format: ${INVALID_ID}`)
+                        expect(err.body.message).to.eql('One or more request fields are invalid...')
+                        expect(err.body.description).to.eql(`The following IDs from children attribute are not in valid format: ${INVALID_ID}`)
                     })
             })
 
@@ -304,10 +309,52 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
+            it('educators.children.group.post009: should return status code 400 and info message, because name is null', () => {
+                const NULL_NAME = null // invalid name of the children.group
+
+                const body = {
+                    name: NULL_NAME,
+                    children: new Array<string | undefined>(defaultChild.id),
+                    school_class: defaultChildrenGroup.school_class
+                }
+
+
+                return request(URI)
+                    .post(`/educators/${defaultEducator.id}/children/groups`)
+                    .send(body)
+                    .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_INVALID_NAME)
+                    })
+            })
+
+            it('educators.children.group.post010: should return status code 400 and info message, because name is a number', () => {
+                const NUMBER_NAME = 123 // invalid name of the children.group
+
+                const body = {
+                    name: NUMBER_NAME,
+                    children: new Array<string | undefined>(defaultChild.id),
+                    school_class: defaultChildrenGroup.school_class
+                }
+
+
+                return request(URI)
+                    .post(`/educators/${defaultEducator.id}/children/groups`)
+                    .send(body)
+                    .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_INVALID_NAME)
+                    })
+            })
+
         }) //validation erros occurs
 
         describe('when the educator is not found', () => {
-            it('educators.children.group.post009: should return status code 400 and info message about educator not found', () => {
+            it('educators.children.group.post011: should return status code 400 and info message about educator not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the educator
 
                 return request(URI)
@@ -324,7 +371,7 @@ describe('Routes: educators.children.groups', () => {
 
         context('when the user does not have permission to register a children group for the educator', () => {
 
-            it('educators.children.group.post010: should return status code 403 and info message from insufficient permissions for admin user', () => {
+            it('educators.children.group.post012: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
                     .post(`/educators/${defaultEducator.id}/children/groups`)
@@ -337,7 +384,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.group.post011: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('educators.children.group.post013: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .post(`/educators/${defaultEducator.id}/children/groups`)
@@ -350,7 +397,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.group.post012: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('educators.children.group.post014: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .post(`/educators/${defaultEducator.id}/children/groups`)
@@ -363,7 +410,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.group.post013: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('educators.children.group.post015: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .post(`/educators/${defaultEducator.id}/children/groups`)
@@ -376,7 +423,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.group.post014: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('educators.children.group.post016: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .post(`/educators/${defaultEducator.id}/children/groups`)
@@ -389,7 +436,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.group.post015: should return status code 403 and info message from insufficient permissions for another educator user', () => {
+            it('educators.children.group.post017: should return status code 403 and info message from insufficient permissions for another educator user', () => {
 
                 return request(URI)
                     .post(`/educators/${defaultEducator.id}/children/groups`)
@@ -404,7 +451,7 @@ describe('Routes: educators.children.groups', () => {
         })
 
         describe('when not informed the acess token', () => {
-            it('educators.children.group.post016: should return the status code 401 and the authentication failure informational message', async () => {
+            it('educators.children.group.post018: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .post(`/educators/${defaultEducator.id}/children/groups`)

@@ -98,6 +98,12 @@ describe('Routes: educators.children.groups', () => {
                 anotherEducatorToken = await acc.auth(anotherEducator.username, anotherEducator.password)
             }
 
+            const resultGetDefaultEducator = await acc.getEducatorById(accessTokenAdmin, defaultEducator.id)
+            defaultEducator.last_login = resultGetDefaultEducator.last_login
+
+            const resultGetAnotherEducator = await acc.getEducatorById(accessTokenAdmin, anotherEducator.id)
+            anotherEducator.last_login = resultGetAnotherEducator.last_login
+
             defaultChildrenGroup.children = new Array<Child>(resultDefaultChild)
             anotherChildGroup.children = new Array<Child>(resultAnotherChild)
 
@@ -289,9 +295,8 @@ describe('Routes: educators.children.groups', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql('A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.')
-                        expect(err.body.description).to.eql('Children Group validation: ' +
-                            `Invalid children attribute. The following set of IDs is not in valid format: ${INVALID_ID}`)
+                        expect(err.body.message).to.eql('One or more request fields are invalid...')
+                        expect(err.body.description).to.eql(`The following IDs from children attribute are not in valid format: ${INVALID_ID}`)
                     })
 
             })
@@ -310,7 +315,21 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.patch009: should return status code 400 and info message from invalid ID, because children group_id is invalid', () => {
+            it('educators.children.groups.patch009: should return status code 400 and info message from invalid ID, because educator_id is invalid', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the educator
+
+                return request(URI)
+                    .patch(`/educators/${NON_EXISTENT_ID}/children/groups/${defaultChildrenGroup.id}`)
+                    .send({ children: [defaultChild.id] })
+                    .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_EDUCATOR_NOT_FOUND)
+                    })
+            })
+
+            it('educators.children.groups.patch010: should return status code 400 and info message from invalid ID, because children group_id is invalid', () => {
                 const INVALID_ID = '123'
 
                 return request(URI)
@@ -324,11 +343,40 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
+
+            it('educators.children.groups.patch011: should return status code 400 and info message, because name is null', () => {
+                const NULL_NAME = null // invalid name of the children.group
+
+                return request(URI)
+                    .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .send({ name:  NULL_NAME })
+                    .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_INVALID_NAME)
+                    })
+            })
+
+            it('educators.children.groups.patch012: should return status code 400 and info message, because name is a number', () => {
+                const NUMBER_NAME = 123 // invalid name of the children.group
+
+                return request(URI)
+                    .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .send({ name:  NUMBER_NAME })
+                    .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_INVALID_NAME)
+                    })
+            })
+
         }) // validation error occurs
 
         describe('when the user does not have permission for update a children group of the educator', () => {
 
-            it('educators.children.groups.patch010: should return status code 403 and info message from insufficient permissions for admin user', () => {
+            it('educators.children.groups.patch013: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
                     .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -341,7 +389,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.patch011: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('educators.children.groups.patch014: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -354,7 +402,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.patch012: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('educators.children.groups.patch015: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -367,7 +415,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.patch013: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('educators.children.groups.patch016: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -380,7 +428,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.patch014: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('educators.children.groups.patch017: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -393,7 +441,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.patch015: should return status code 403 and info message from insufficient permissions for another educator user', () => {
+            it('educators.children.groups.patch018: should return status code 403 and info message from insufficient permissions for another educator user', () => {
 
                 return request(URI)
                     .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -408,7 +456,7 @@ describe('Routes: educators.children.groups', () => {
         }) //user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('educators.children.groups.patch016: should return the status code 401 and the authentication failure informational message', async () => {
+            it('educators.children.groups.patch019: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .patch(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)

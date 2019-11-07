@@ -90,6 +90,9 @@ describe('Routes: educators.children.groups', () => {
                     auth(defaultEducator.username, defaultEducator.password)
             }
 
+            const resultGetDefaultEducator = await acc.getEducatorById(accessTokenAdmin, defaultEducator.id)
+            defaultEducator.last_login = resultGetDefaultEducator.last_login
+
             const resultDefaultChildrenGroup = await acc.saveChildrenGroupsForEducator(defaultEducatorToken, defaultEducator, defaultChildrenGroup)
             defaultChildrenGroup.id = resultDefaultChildrenGroup.id
 
@@ -114,7 +117,7 @@ describe('Routes: educators.children.groups', () => {
 
         context('when the educator get all yours children groups successfully', () => {
 
-            it('educators.children.groups.get_all001: should return status code 200 and a list of children groups whitout child personal data (username, age and gender)', () => {
+            it('educators.children.groups.get_all001: should return status code 200 and a list of children groups', () => {
 
                 return request(URI)
                     .get(`/educators/${defaultEducator.id}/children/groups`)
@@ -248,6 +251,9 @@ describe('Routes: educators.children.groups', () => {
                         })
                 })
             })
+        }) // get all children groups successfully
+        
+        describe('when the educator not found', () => {
 
             it('educators.children.groups.get_all005: should return status code 200 and empty array, because the educator was not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the educator
@@ -256,13 +262,12 @@ describe('Routes: educators.children.groups', () => {
                     .get(`/educators/${NON_EXISTENT_ID}/children/groups`)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
-                    .expect(200)
+                    .expect(400)
                     .then(res => {
-                        expect(res.body).to.eql([])
+                        expect(res.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_EDUCATOR_NOT_FOUND)
                     })
             })
-
-        }) // get all children groups successfully
+        })    
 
         describe('when the educator_id is invalid', () => {
             it('educators.children.groups.get_all006: should return status code 400 and message info about invalid id', () => {

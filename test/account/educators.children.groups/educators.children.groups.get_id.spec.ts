@@ -83,6 +83,9 @@ describe('Routes: educators.children.groups', () => {
                     auth(defaultEducator.username, defaultEducator.password)
             }
 
+            const resultGetDefaultEducator = await acc.getEducatorById(accessTokenAdmin, defaultEducator.id)
+            defaultEducator.last_login = resultGetDefaultEducator.last_login
+
             defaultChildrenGroup.children = new Array<Child>(resultDefaultChild, resultAnotherChild)
 
             const resultChildrenGroup = await acc.saveChildrenGroupsForEducator(defaultEducatorToken, defaultEducator, defaultChildrenGroup)
@@ -106,7 +109,7 @@ describe('Routes: educators.children.groups', () => {
 
         context('when the educator get your unique children group successfully', () => {
 
-            it('educators.children.groups.get_id001: should return status code 200 and a children group', () => {
+            it  ('educators.children.groups.get_id001: should return status code 200 and a children group', () => {
 
                 return request(URI)
                     .get(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
