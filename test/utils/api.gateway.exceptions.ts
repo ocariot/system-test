@@ -10,13 +10,13 @@ export abstract class ApiGatewayException {
     }
 
     public static readonly INSTITUTION: any = {
-        ERROR_400_TYPE: new ApiException(400, 'Required fields were not provided...', 'Institution validation: type is required!').toJson(),
-        ERROR_400_NAME: new ApiException(400, 'Required fields were not provided...', 'Institution validation: name is required!').toJson(),
-        ERROR_400_FAILED_CAST_LATITUDE: new ApiException(400, 'Required fields were not provided!', "Institution validation failed: latitude: Cast to Number failed for value \"TEXT\" at path \"latitude\"").toJson(),
-        ERROR_400_FAILED_CAST_LONGITUDE: new ApiException(400, 'Required fields were not provided!', "Institution validation failed: longitude: Cast to Number failed for value \"TEXT\" at path \"longitude\"").toJson(),
-        ERROR_400_INVALID_NAME: new ApiException(400, 'Field {name} must be a string!').toJson(),
-        ERROR_400_INVALID_TYPE: new ApiException(400, 'Field {type} must be a string!').toJson(),
-        ERROR_400_INVALID_ADDRESS: new ApiException(400, 'Field {address} must be a string!').toJson(),
+        ERROR_400_TYPE: new ApiException(400, 'Required fields were not provided...', 'type are required!').toJson(),
+        ERROR_400_NAME: new ApiException(400, 'Required fields were not provided...', 'name are required!').toJson(),
+        ERROR_400_FAILED_CAST_LATITUDE: new ApiException(400, 'One or more request fields are invalid...', 'latitude must be a string!').toJson(),
+        ERROR_400_FAILED_CAST_LONGITUDE: new ApiException(400, 'One or more request fields are invalid...', 'longitude must be a string!').toJson(),
+        ERROR_400_INVALID_NAME: new ApiException(400, 'One or more request fields are invalid...', 'name must be a string!').toJson(),
+        ERROR_400_INVALID_TYPE: new ApiException(400, 'One or more request fields are invalid...', 'type must be a string!').toJson(),
+        ERROR_400_INVALID_ADDRESS: new ApiException(400, 'One or more request fields are invalid...', 'address must be a string!').toJson(),
         ERROR_400_INVALID_FORMAT_ID: new ApiException(400, 'Some ID provided does not have a valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_400_HAS_ASSOCIATION: new ApiException(400, 'The institution is associated with one or more users.').toJson(),
         ERROR_400_INSTITUTION_NOT_REGISTERED: new ApiException(400, 'The institution provided does not have a registration.', 'It is necessary that the institution be registered before trying again.').toJson(),
