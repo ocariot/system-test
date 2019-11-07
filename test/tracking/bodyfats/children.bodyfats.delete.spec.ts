@@ -16,10 +16,10 @@ import { Family } from '../../../src/account-service/model/family'
 import { FamilyMock } from '../../mocks/account-service/family.mock'
 import { Application } from '../../../src/account-service/model/application'
 import { ApplicationMock } from '../../mocks/account-service/application.mock'
-import { Weight } from '../../../src/tracking-service/model/weight'
-import { WeightMock } from '../../mocks/tracking-service/weight.mock'
+import { BodyFat } from '../../../src/tracking-service/model/body.fat'
+import { BodyFatMock } from '../../mocks/tracking-service/body.fat.mock'
 
-describe('Routes: children.weights', () => {
+describe('Routes: children.bodyfats', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -43,7 +43,7 @@ describe('Routes: children.weights', () => {
     const defaultFamily: Family = new FamilyMock()
     const defaultApplication: Application = new ApplicationMock()
 
-    const defaultWeight: Weight = new WeightMock()
+    const defaultBodyFat: BodyFat = new BodyFatMock()
 
     before(async () => {
         try {
@@ -99,7 +99,7 @@ describe('Routes: children.weights', () => {
             }
 
         } catch (err) {
-            console.log('Failure on Before from weight.delete test: ', err.message)
+            console.log('Failure on Before from bodyfats.delete test: ', err.message)
         }
     })
     after(async () => {
@@ -113,31 +113,31 @@ describe('Routes: children.weights', () => {
         }
     })
 
-    describe('DELETE /children/:child_id/weights/:weight_id', () => {
+    describe('DELETE /children/:child_id/bodyfats/:weight_id', () => {
 
         beforeEach(async () => {
             try {
-                const resultWeight = await trck.saveWeight(accessDefaultChildToken, defaultWeight, defaultChild.id)
-                defaultWeight.id = resultWeight.id
-                defaultWeight.child_id = defaultChild.id
+                const resultWeight = await trck.saveWeight(accessDefaultChildToken, defaultBodyFat, defaultChild.id)
+                defaultBodyFat.id = resultWeight.id
+                defaultBodyFat.child_id = defaultChild.id
             } catch (err) {
-                console.log('Failure in weight.delete test: ', err.message)
+                console.log('Failure in bodyfats.delete test: ', err.message)
             }
         })
         afterEach(async () => {
             try {
                 await trackingDB.deleteMeasurements()
             } catch (err) {
-                console.log('Failure in weight.delete test: ', err.message)
+                console.log('Failure in bodyfats.delete test: ', err.message)
             }
         })
 
-        context('when the user delete the weight of the child successfully', () => {
+        context('when the user delete the body fat of the child successfully', () => {
 
-            it('weight.delete001: should return status code 204 and no content for weight, for educator user', () => {
+            it('bodyfats.delete001: should return status code 204 and no content for body fat, for educator user', () => {
 
                 return request(URI)
-                    .delete(`/children/${defaultChild.id}/weights/${defaultWeight.id}`)
+                    .delete(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(204)
@@ -146,10 +146,10 @@ describe('Routes: children.weights', () => {
                     })
             })
 
-            it('weight.delete002: should return status code 204 and no content for weight, for family user', () => {
+            it('bodyfats.delete002: should return status code 204 and no content for body fat, for family user', () => {
 
                 return request(URI)
-                    .delete(`/children/${defaultChild.id}/weights/${defaultWeight.id}`)
+                    .delete(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .expect(204)
@@ -158,10 +158,10 @@ describe('Routes: children.weights', () => {
                     })
             })
 
-            it('weight.delete003: should return status code 204 and no content for weight, for application user', () => {
+            it('bodyfats.delete003: should return status code 204 and no content for body fat, for application user', () => {
 
                 return request(URI)
-                    .delete(`/children/${defaultChild.id}/weights/${defaultWeight.id}`)
+                    .delete(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .expect(204)
@@ -175,39 +175,39 @@ describe('Routes: children.weights', () => {
         context('when a validation error occurs', () => {
             const INVALID_ID = '123'
 
-            it('weight.delete004: should return status code 400 and info message from child_id is invalid', () => {
+            it('bodyfats.delete004: should return status code 400 and info message from child_id is invalid', () => {
 
 
                 return request(URI)
-                    .delete(`/children/${INVALID_ID}/weights/${defaultWeight.id}`)
+                    .delete(`/children/${INVALID_ID}/bodyfats/${defaultBodyFat.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_INVALID_CHILD_ID)
+                        expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_INVALID_CHILD_ID)
                     })
             })
 
-            it('weight.delete005: should return status code 400 and info message from weight_id is invalid', () => {
+            it('bodyfats.delete005: should return status code 400 and info message from weight_id is invalid', () => {
 
                 return request(URI)
-                    .delete(`/children/${defaultChild.id}/weights/${INVALID_ID}`)
+                    .delete(`/children/${defaultChild.id}/bodyfats/${INVALID_ID}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_INVALID_WEIGHT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_INVALID_BODYFAT_ID)
                     })
             })
         }) // when a validation error occurs
 
-        context('when the weight is not found', () => {
+        context('when the body fat is not found', () => {
             const NON_EXISTENT_ID = '111111111111111111111111'
 
-            it('weight.delete006: should return status code 204 and no content for weight, when the child not exist', () => {
+            it('bodyfats.delete006: should return status code 204 and no content for body fat, when the child not exist', () => {
 
                 return request(URI)
-                    .delete(`/children/${NON_EXISTENT_ID}/weights/${defaultWeight.id}`)
+                    .delete(`/children/${NON_EXISTENT_ID}/bodyfats/${defaultBodyFat.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(204)
@@ -216,10 +216,10 @@ describe('Routes: children.weights', () => {
                     })
             })
 
-            it('weight.delete007: should return status code 204 and no content for weight, when the weight not exist', () => {
+            it('bodyfats.delete007: should return status code 204 and no content for body fat, when the body fat not exist', () => {
 
                 return request(URI)
-                    .delete(`/children/${defaultChild.id}/weights/${NON_EXISTENT_ID}`)
+                    .delete(`/children/${defaultChild.id}/bodyfats/${NON_EXISTENT_ID}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(204)
@@ -227,13 +227,13 @@ describe('Routes: children.weights', () => {
                         expect(res.body).to.eql({})
                     })
             })
-        }) // when the weight is not found
+        }) // when the bodyfats is not found
 
-        context('when the user does not have permission for delete weight', () => {
-            it('weight.delete008: should return status code 403 and info message from insufficient permissions for admin user', () => {
+        context('when the user does not have permission for delete body fat', () => {
+            it('bodyfats.delete008: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
-                    .delete(`/children/${defaultChild.id}/weights/${defaultWeight.id}`)
+                    .delete(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .expect(403)
@@ -242,10 +242,10 @@ describe('Routes: children.weights', () => {
                     })
             })
 
-            it('weight.delete009: should return status code 403 and info message from insufficient permissions for the child', () => {
+            it('bodyfats.delete009: should return status code 403 and info message from insufficient permissions for the child', () => {
 
                 return request(URI)
-                    .delete(`/children/${defaultChild.id}/weights/${defaultWeight.id}`)
+                    .delete(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .expect(403)
@@ -254,10 +254,10 @@ describe('Routes: children.weights', () => {
                     })
             })
 
-            it('weight.delete010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('bodyfats.delete010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .delete(`/children/${defaultChild.id}/weights/${defaultWeight.id}`)
+                    .delete(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
                     .expect(403)
@@ -265,13 +265,13 @@ describe('Routes: children.weights', () => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
-        }) // when the user does not have permission for delete weight
+        }) // when the user does not have permission for delete bodyfats
 
         describe('when not informed the acess token', () => {
-            it('weight.delete011: should return the status code 401 and the authentication failure informational message', () => {
+            it('bodyfats.delete011: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .delete(`/children/${defaultChild.id}/weights/${defaultWeight.id}`)
+                    .delete(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(401)
@@ -281,13 +281,13 @@ describe('Routes: children.weights', () => {
             })
         })
 
-        describe('when delete the weight of a child that has been deleted', () => {
-            it('weight.delete012: should return status code 204 and no content for weight, when the child not exist', async () => {
+        describe('when delete the body fat of a child that has been deleted', () => {
+            it('bodyfats.delete012: should return status code 204 and no content for body fat, when the child not exist', async () => {
 
                 await acc.deleteUser(accessTokenAdmin, defaultChild.id)
 
                 return request(URI)
-                    .delete(`/children/${defaultChild.id}/weights/${defaultWeight.id}`)
+                    .delete(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(204)

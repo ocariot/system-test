@@ -132,9 +132,9 @@ describe('Routes: children.bodyfats', () => {
             }
         })
 
-        context('when the user get the bodyfat of the child successfully', () => {
+        context('when the user get the body fat of the child successfully', () => {
 
-            it('bodyfats.get_id001: should return status code 201 and the bodyfat of the child for admin user', () => {
+            it('bodyfats.get_id001: should return status code 201 and the body fat of the child for admin user', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
@@ -150,7 +150,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.get_id002: should return status code 201 and the bodyfat of the child himself', () => {
+            it('bodyfats.get_id002: should return status code 201 and the body fat of the child himself', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
@@ -166,7 +166,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.get_id003: should return status code 201 and the bodyfat of the child for educator user', () => {
+            it('bodyfats.get_id003: should return status code 201 and the body fat of the child for educator user', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
@@ -182,7 +182,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.get_id004: should return status code 201 and the bodyfat of the child for health professional user', () => {
+            it('bodyfats.get_id004: should return status code 201 and the body fat of the child for health professional user', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
@@ -198,7 +198,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.get_id005: should return status code 201 and the bodyfat of the child for family user', () => {
+            it('bodyfats.get_id005: should return status code 201 and the body fat of the child for family user', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
@@ -214,7 +214,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.get_id006: should return status code 201 and the bodyfat of the child for application user', () => {
+            it('bodyfats.get_id006: should return status code 201 and the body fat of the child for application user', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
@@ -261,10 +261,10 @@ describe('Routes: children.bodyfats', () => {
             })
         })
 
-        context('when the bodyfat is not found', () => {
+        context('when the body fat is not found', () => {
             const NON_EXISTENT_ID = '111111111111111111111111'
 
-            it('bodyfats.get_id009: should return status code 404 and info message from bodyfat not found, because the child not exist', () => {
+            it('bodyfats.get_id009: should return status code 404 and info message from body fat not found, because the child not exist', () => {
 
                 return request(URI)
                     .get(`/children/${NON_EXISTENT_ID}/bodyfats/${defaultBodyFat.id}`)
@@ -276,7 +276,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.get_id010: should return status code 404 and info message from bodyfat not found. because the bodyfat not exist', () => {
+            it('bodyfats.get_id010: should return status code 404 and info message from body fat not found. because the body fat not exist', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/bodyfats/${NON_EXISTENT_ID}`)
@@ -290,7 +290,7 @@ describe('Routes: children.bodyfats', () => {
 
         })
 
-        describe('when the child get the bodyfat of another child', () => {
+        describe('when the child get the body fat of another child', () => {
             it('bodyfats.get_id011: should return status code 400 and info message from error', async () => {
 
                 const anotherChild: Child = new ChildMock()
@@ -329,8 +329,8 @@ describe('Routes: children.bodyfats', () => {
             })
         })
 
-        describe('when get the bodyfat of a child that has been deleted', () => {
-            it('bodyfats.get_id013: should return status code 404 and info message from bodyfat not found, because the child not exist', async () => {
+        describe('when get the body fat of a child that has been deleted', () => {
+            it('bodyfats.get_id013: should return status code 404 and info message from body fat not found, because the child not exist', async () => {
 
                 await acc.deleteUser(accessTokenAdmin, defaultChild.id)
 

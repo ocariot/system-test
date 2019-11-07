@@ -119,7 +119,7 @@ describe('Routes: children.bodyfats', () => {
         beforeEach(async () => {
             try {
                 BODY_FATS_ARRAY.length = 0 // clear BODY_FATS_ARRAY
-                AMOUNT = await Math.floor(Math.random() * 6 + 10) // 10-15 (the amount of bodyfats can change for each test case)
+                AMOUNT = await Math.floor(Math.random() * 6 + 10) // 10-15 (the amount of body fats can change for each test case)
 
                 // The first bodyfat saved is the last one returned
                 for (let i = (AMOUNT - 1); i >= 0; i--) {
@@ -138,9 +138,9 @@ describe('Routes: children.bodyfats', () => {
             }
         })
 
-        context('when the user get all bodyfats of the child successfully', () => {
+        context('when the user get all body fats of the child successfully', () => {
 
-            it('bodyfats.get_all001: should return status code 201 and a list with all bodyfats of the child for admin user', () => {
+            it('bodyfats.get_all001: should return status code 201 and a list with all body fats of the child for admin user', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/bodyfats`)
@@ -159,7 +159,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.get_all002: should return status code 201 and a list with all bodyfats of the child himself', () => {
+            it('bodyfats.get_all002: should return status code 201 and a list with all body fats of the child himself', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/bodyfats`)
@@ -179,7 +179,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.get_all003: should return status code 201 and a list with all bodyfats of the child for educator user', () => {
+            it('bodyfats.get_all003: should return status code 201 and a list with all body fats of the child for educator user', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/bodyfats`)
@@ -199,7 +199,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.get_all004: should return status code 201 and a list with all bodyfats of the child for health professional user', () => {
+            it('bodyfats.get_all004: should return status code 201 and a list with all body fats of the child for health professional user', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/bodyfats`)
@@ -219,7 +219,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.get_all005: should return status code 201 and a list with all bodyfats of the child for family user', () => {
+            it('bodyfats.get_all005: should return status code 201 and a list with all body fats of the child for family user', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/bodyfats`)
@@ -239,7 +239,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.get_all006: should return status code 201 and a list with all bodyfats of the child for application user', () => {
+            it('bodyfats.get_all006: should return status code 201 and a list with all body fats of the child for application user', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/bodyfats`)
@@ -259,9 +259,9 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            context('when get all bodyfats with some specification', () => {
+            context('when get all body fats with some specification', () => {
 
-                it('bodyfats.get_all007: should return status code 200 and a list with the ten most recently registered bodyfats', () => {
+                it('bodyfats.get_all007: should return status code 200 and a list with the ten most recently registered body fats', () => {
 
                     const PAGE = 1
                     const LIMIT = 10
@@ -283,9 +283,9 @@ describe('Routes: children.bodyfats', () => {
                         })
                 })
 
-                it('bodyfats.get_all008: should return status code 200 and a list with all bodyfats sorted by least timestamp', () => {
+                it('bodyfats.get_all008: should return status code 200 and a list with all body fats sorted by least timestamp', () => {
 
-                    // Sort bodyfats by great timestamp
+                    // Sort body fats by great timestamp
                     BODY_FATS_ARRAY.sort(function (w1, w2) {
                         return w1.timestamp! < w2.timestamp! ? -1 : 1
                     })
@@ -309,9 +309,9 @@ describe('Routes: children.bodyfats', () => {
                         })
                 })
 
-                it('bodyfats.get_all009: should return status code 200 and a list with five bodyfats sorted by large value', () => {
+                it('bodyfats.get_all009: should return status code 200 and a list with five body fats sorted by large value', () => {
 
-                    // Sort bodyfats by large value
+                    // Sort body fats by large value
                     BODY_FATS_ARRAY.sort(function (w1, w2) {
                         return w1.value! > w2.value! ? -1 : 1
                     })
@@ -352,7 +352,7 @@ describe('Routes: children.bodyfats', () => {
                 })
             })
 
-        }) //user get all bodyfats of a child successfully
+        }) //user get all body fats of a child successfully
 
         context('when a validation error occurs', () => {
             it('bodyfats.get_all011: should return status code 400 and info message from child_id is invalid', () => {
@@ -370,7 +370,7 @@ describe('Routes: children.bodyfats', () => {
             })
         })
 
-        describe('when the child get all bodyfats of another child', () => {
+        describe('when the child get all body fats of another child', () => {
             it('bodyfats.get_all012: should return status code 400 and info message from error', async () => {
 
                 const anotherChild: Child = new ChildMock()
@@ -409,7 +409,7 @@ describe('Routes: children.bodyfats', () => {
             })
         })
 
-        describe('when get all bodyfats of a child that has been deleted', () => {
+        describe('when get all body fats of a child that has been deleted', () => {
             it('bodyfats.get_all014: should return status code 200 and empty list', async () => {
 
                 await acc.deleteUser(accessTokenAdmin, defaultChild.id)
