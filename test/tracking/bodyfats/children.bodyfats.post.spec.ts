@@ -268,7 +268,7 @@ describe('Routes: children.bodyfats', () => {
             context('when saved an list of Body Fats', () => {
 
                 describe('when all the Body Fats are correct and still do not saved', () => {
-                    it('bodyfats.post005: should return status code 207, create each Body Fat and return a response with description of sucess each bodyfat', () => {
+                    it('bodyfats.post005: should return status code 207, create each Body Fat and return a response with description of sucess each body fat', () => {
 
                         const body: any = []
 
@@ -312,7 +312,7 @@ describe('Routes: children.bodyfats', () => {
                             console.log('Failure in BodyFats.post : ', err.message)
                         }
                     })
-                    it('bodyfats.post006: should return status code 207 and return a response with description of conflict in each bodyfat', () => {
+                    it('bodyfats.post006: should return status code 207 and return a response with description of conflict in each body fat', () => {
 
                         const body: any = []
 
@@ -346,7 +346,7 @@ describe('Routes: children.bodyfats', () => {
                 })
 
                 describe('when there are correct and incorrect Body Fats in the body', () => {
-                    it('bodyfats.post007: should return status code 207, and return a response with description of sucess and error in each bodyfat', () => {
+                    it('bodyfats.post007: should return status code 207, and return a response with description of sucess and error in each body fat', () => {
 
                         const body: any = []
 
@@ -541,7 +541,7 @@ describe('Routes: children.bodyfats', () => {
 
         context('when posting a new Body Fat for another user that not to be a child', () => {
 
-            it('bodyfats.post017: should return 400 and info message from error, when try create a bodyfat for admin', async () => {
+            it('bodyfats.post017: should return 400 and info message from error, when try create a body fat for admin', async () => {
 
                 const ADMIN_ID = await acc.getAdminID()
 
@@ -556,7 +556,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.post018: should return 400 and info message from error, when try create a bodyfat for educator', () => {
+            it('bodyfats.post018: should return 400 and info message from error, when try create a body fat for educator', () => {
 
                 return request(URI)
                     .post(`/children/${defaultEducator.id}/bodyfats`)
@@ -569,7 +569,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.post019: should return 400 and info message from error, when try create a bodyfat for health professional', () => {
+            it('bodyfats.post019: should return 400 and info message from error, when try create a body fat for health professional', () => {
 
                 return request(URI)
                     .post(`/children/${defaultHealthProfessional.id}/bodyfats`)
@@ -582,7 +582,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.post020: should return 400 and info message from error, when try create a bodyfat for family', () => {
+            it('bodyfats.post020: should return 400 and info message from error, when try create a body fat for family', () => {
 
                 return request(URI)
                     .post(`/children/${defaultFamily.id}/bodyfats`)
@@ -595,7 +595,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.post021: should return 400 and info message from error, when try create a bodyfat for application', () => {
+            it('bodyfats.post021: should return 400 and info message from error, when try create a body fat for application', () => {
 
                 return request(URI)
                     .post(`/children/${defaultApplication.id}/bodyfats`)
