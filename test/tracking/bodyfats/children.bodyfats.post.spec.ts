@@ -449,7 +449,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.post011: should return status code 400 and info message from error, because timestamp monht is invalid', () => {
+            it('bodyfats.post011: should return status code 400 and info message from error, because timestamp month is invalid', () => {
 
                 return request(URI)
                     .post(`/children/${defaultChild.id}/bodyfats`)
