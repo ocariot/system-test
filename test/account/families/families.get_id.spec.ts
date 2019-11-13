@@ -64,8 +64,12 @@ describe('Routes: families', () => {
             const resultFamily = await acc.saveFamily(accessTokenAdmin, defaultFamily)
             defaultFamily.id = resultFamily.id
 
-            if (defaultFamily.username && defaultFamily.password)
+            if (defaultFamily.username && defaultFamily.password){
                 defaultFamilyToken = await acc.auth(defaultFamily.username, defaultFamily.password)
+            }
+
+            const resultGetDefaultFamily = await acc.getFamilyById(accessTokenAdmin, defaultFamily.id)
+            defaultFamily.last_login = resultGetDefaultFamily.last_login
 
         } catch (err) {
             console.log('Failure on Before from families.get_id test: ', err)
@@ -101,8 +105,7 @@ describe('Routes: families', () => {
                         expect(res.body.children[0].gender).to.eql(defaultChild.gender)
                         expect(res.body.children[0].age).to.eql(defaultChild.age)
                         expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
-                        if(defaultFamily.last_login)
-                            expect(res.body.last_login).to.eql(defaultFamily.last_login)
+                        expect(res.body.last_login).to.eql(defaultFamily.last_login)
                     })
             })
 
@@ -122,8 +125,7 @@ describe('Routes: families', () => {
                         expect(res.body.children[0].gender).to.eql(defaultChild.gender)
                         expect(res.body.children[0].age).to.eql(defaultChild.age)
                         expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
-                        if(defaultFamily.last_login)
-                            expect(res.body.last_login).to.eql(defaultFamily.last_login)
+                        expect(res.body.last_login).to.eql(defaultFamily.last_login)
                     })
             })
 
@@ -143,13 +145,11 @@ describe('Routes: families', () => {
                         .set('Content-Type', 'application/json')
                         .expect(200)
                         .then(res => {
-                            // console.log('RES', res.body)
                             expect(res.body.id).to.eql(defaultFamily.id)
                             expect(res.body.username).to.eql(defaultFamily.username)
                             expect(res.body.institution_id).to.eql(defaultInstitution.id)
                             expect(res.body.children.length).to.be.eql(0)
-                            if(defaultFamily.last_login)
-                                expect(res.body.last_login).to.eql(defaultFamily.last_login)
+                            expect(res.body.last_login).to.eql(defaultFamily.last_login)
                         })
                 })
             })

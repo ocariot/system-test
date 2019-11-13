@@ -220,7 +220,7 @@ describe('Routes: educators.children.groups', () => {
         })
 
         describe('when the children group is not found', () => {
-            it('educators.children.groups.get_id006: should return status code 404 and info message from children group not found', () => {
+            it('educators.children.groups.get_id005: should return status code 404 and info message from children group not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the child group
 
                 return request(URI)
@@ -236,7 +236,7 @@ describe('Routes: educators.children.groups', () => {
 
         context('when a validation error occurs', () => {
 
-            it('educators.children.groups.get_id007: should return status code 400 and message info about invalid educator_id', () => {
+            it('educators.children.groups.get_id006: should return status code 400 and message info about invalid educator_id', () => {
                 const INVALID_ID = '123' // invalid id of the educator
 
                 return request(URI)
@@ -249,7 +249,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.get_id008: should return status code 400 and message info about invalid children_groups_id', () => {
+            it('educators.children.groups.get_id007: should return status code 400 and message info about invalid children_groups_id', () => {
                 const INVALID_ID = '123' // invalid id of the child group
 
                 return request(URI)
@@ -266,7 +266,7 @@ describe('Routes: educators.children.groups', () => {
 
         context('when the user does not have permission', () => {
 
-            it('educators.children.groups.get_id009: should return status code 403 and info message from insufficient permissions for admin user', () => {
+            it('educators.children.groups.get_id008: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
                     .get(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -278,7 +278,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.get_id010: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('educators.children.groups.get_id009: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .get(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -290,7 +290,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.get_id011: should return status code 403 and info message from insufficient permissions for health professioanl user', () => {
+            it('educators.children.groups.get_id010: should return status code 403 and info message from insufficient permissions for health professioanl user', () => {
 
                 return request(URI)
                     .get(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -302,7 +302,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.get_id012: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('educators.children.groups.get_id011: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .get(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -314,7 +314,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.get_id013: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('educators.children.groups.get_id012: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .get(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -326,7 +326,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.get_id014: should return status code 403 and info message from insufficient permissions for another educator user', () => {
+            it('educators.children.groups.get_id013: should return status code 403 and info message from insufficient permissions for another educator user', () => {
 
                 return request(URI)
                     .get(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -341,7 +341,7 @@ describe('Routes: educators.children.groups', () => {
         }) // user does not have permission 
 
         describe('when not informed the acess token', () => {
-            it('educators.children.groups.get_id015: should return the status code 401 and the authentication failure informational message', async () => {
+            it('educators.children.groups.get_id014: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .get(`/educators/${defaultEducator.id}/children/groups/${defaultChildrenGroup.id}`)

@@ -201,9 +201,8 @@ describe('Routes: families', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        const EXPECTED_RESPONSE = ApiGatewayException.FAMILY.ERROR_400_CHILDREN_NOT_REGISTERED
-                        EXPECTED_RESPONSE.description += ' '.concat(NON_EXISTENT_CHILD_ID)
-                        expect(err.body).to.eql(EXPECTED_RESPONSE)
+                        expect(err.body.message).to.eql('It is necessary for children to be registered before proceeding.')
+                        expect(err.body.description).to.eql(`The following IDs were verified without registration: ${NON_EXISTENT_CHILD_ID}`)
                     })
             })
 
@@ -224,7 +223,8 @@ describe('Routes: families', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body.message).to.eql('One or more request fields are invalid...')
+                        expect(err.body.description).to.eql(`The following IDs from children attribute are not in valid format: ${INVALID_ID}`)
                     })
             })
 
@@ -285,15 +285,59 @@ describe('Routes: families', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_ID_IS_INVALID)
                     })
+            })
+
+            it('families.post011: should return status code 400 and message, because username is null', () => {
+                const NULL_USERNAME = null // invalid username of the family
+
+                const body = {
+                    username: NULL_USERNAME,
+                    children: new Array<string | undefined>(defaultChild.id),
+                    password: defaultFamily.password,
+                    institution_id: defaultInstitution.id
+                }
+
+                return request(URI)
+                .post('/families')
+                .send(body)
+                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                .set('Content-Type', 'application/json')
+                .expect(400)
+                .then(err => {
+                    expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_USERNAME)
+                })
+
+            })
+
+            it('families.post012: should return status code 400 and message, because password is null', () => {
+                const NULL_PASSWORD = null // invalid password of the family
+
+                const body = {
+                    username: defaultFamily.username,
+                    children: new Array<string | undefined>(defaultChild.id),
+                    password: NULL_PASSWORD,
+                    institution_id: defaultInstitution.id
+                }
+
+                return request(URI)
+                .post('/families')
+                .send(body)
+                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                .set('Content-Type', 'application/json')
+                .expect(400)
+                .then(err => {
+                    expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_PASSWORD)
+                })
+
             })
 
         }) // validation error occurs
 
         context('when the user does not have permission to register the family', () => {
 
-            it('families.post011: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('families.post013: should return status code 403 and info message from insufficient permissions for child user', () => {
                 return request(URI)
                     .post('/families')
                     .send(defaultFamily.toJSON())
@@ -305,7 +349,7 @@ describe('Routes: families', () => {
                     })
             })
 
-            it('families.post012: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('families.post014: should return status code 403 and info message from insufficient permissions for educator user', () => {
                 return request(URI)
                     .post('/families')
                     .send(defaultFamily.toJSON())
@@ -317,7 +361,7 @@ describe('Routes: families', () => {
                     })
             })
 
-            it('families.post013: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('families.post015: should return status code 403 and info message from insufficient permissions for health professional user', () => {
                 return request(URI)
                     .post('/families')
                     .send(defaultFamily.toJSON())
@@ -329,7 +373,7 @@ describe('Routes: families', () => {
                     })
             })
 
-            it('families.post014: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('families.post016: should return status code 403 and info message from insufficient permissions for family user', () => {
                 return request(URI)
                     .post('/families')
                     .send(defaultFamily.toJSON())
@@ -341,7 +385,7 @@ describe('Routes: families', () => {
                     })
             })
 
-            it('families.post015: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('families.post017: should return status code 403 and info message from insufficient permissions for application user', () => {
                 return request(URI)
                     .post('/families')
                     .send(defaultFamily.toJSON())
@@ -356,7 +400,7 @@ describe('Routes: families', () => {
         }) // user does not have permission 
 
         describe('when not informed the acess token', () => {
-            it('families.post016: should return the status code 401 and the authentication failure informational message', () => {
+            it('families.post018: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .post('/families')
