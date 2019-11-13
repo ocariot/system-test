@@ -78,6 +78,9 @@ describe('Routes: families.children', () => {
                 defaultFamilyToken = await acc.auth(defaultFamily.username, defaultFamily.password)
             }
 
+            const resultGetDefaultFamily = await acc.getFamilyById(accessTokenAdmin, defaultFamily.id)
+            defaultFamily.last_login = resultGetDefaultFamily.last_login
+
         } catch (err) {
             console.log('Failure on Before from families.children.get_all test: ', err)
         }
@@ -228,9 +231,52 @@ describe('Routes: families.children', () => {
             })
         })
 
+        context('when a duplicate error occurs', () => {
+
+            it('families.children.get_all007: should return status code 400 and message info message from invalid parameter, because family does not exist', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the family
+
+                return request(URI)
+                .get(`/families/${NON_EXISTENT_ID}/children`)
+                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                .set('Content-Type', 'application/json')
+                .expect(404)
+                .then(err => {
+                    expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_404_FAMILY_NOT_FOUND)
+                })
+            })
+
+            it('families.children.get_all008: should return status code 400 and message info message from invalid parameter, because family does not exist', () => {
+                const INVALID_ID = '123' // invalid id of the family
+
+                return request(URI)
+                .get(`/families/${INVALID_ID}/children`)
+                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                .set('Content-Type', 'application/json')
+                .expect(400)
+                .then(err => {
+                    expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_FORMAT_ID)
+                })
+            })
+
+            it('families.children.get_all009: should return status code 400 and message info message from invalid parameter, because family does not exist', () => {
+                const NULL_ID = null // invalid id of the family
+
+                return request(URI)
+                .get(`/families/${NULL_ID}/children`)
+                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                .set('Content-Type', 'application/json')
+                .expect(400)
+                .then(err => {
+                    expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_FORMAT_ID)
+                })
+            })
+
+        })
+
         context('when the user does not have permission to get all children associated with a family', () => {
 
-            it('families.children.get_all007: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('families.children.get_all010: should return status code 403 and info message from insufficient permissions for child user', () => {
                 return request(URI)
                     .get(`/families/${defaultFamily.id}/children`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
@@ -241,7 +287,7 @@ describe('Routes: families.children', () => {
                     })
             })
 
-            it('families.children.get_all008: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('families.children.get_all011: should return status code 403 and info message from insufficient permissions for educator user', () => {
                 return request(URI)
                     .get(`/families/${defaultFamily.id}/children`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -252,7 +298,7 @@ describe('Routes: families.children', () => {
                     })
             })
 
-            it('families.children.get_all009: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('families.children.get_all012: should return status code 403 and info message from insufficient permissions for health professional user', () => {
                 return request(URI)
                     .get(`/families/${defaultFamily.id}/children`)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
@@ -263,7 +309,7 @@ describe('Routes: families.children', () => {
                     })
             })
 
-            it('families.children.get_all010: should return status code 403 and info message from insufficient permissions for another family user', () => {
+            it('families.children.get_all013: should return status code 403 and info message from insufficient permissions for another family user', () => {
                 return request(URI)
                     .get(`/families/${defaultFamily.id}/children`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
@@ -274,7 +320,7 @@ describe('Routes: families.children', () => {
                     })
             })
 
-            it('families.children.get_all011: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('families.children.get_all014: should return status code 403 and info message from insufficient permissions for application user', () => {
                 return request(URI)
                     .get(`/families/${defaultFamily.id}/children`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
@@ -288,7 +334,7 @@ describe('Routes: families.children', () => {
         }) // user does not have permission 
 
         describe('when not informed the acess token', () => {
-            it('families.children.get_all012: should return the status code 401 and the authentication failure informational message', () => {
+            it('families.children.get_all015: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .get(`/families/${defaultFamily.id}/children`)

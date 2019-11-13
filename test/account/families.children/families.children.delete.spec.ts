@@ -149,11 +149,37 @@ describe('Routes: users.families.children', () => {
                     })
             })
 
+            it('families.children.delete006: should return status code 400 and info message from invalid family_id, because is null', () => {
+                const NULL_ID = null // invalid id of the family
+
+                return request(URI)
+                    .delete(`/families/${NULL_ID}/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_FORMAT_ID)
+                    })
+            })
+
+            it('families.children.delete007: should return status code 400 and info message from invalid child_id, because is null', () => {
+                const NULL_ID = null // invalid id of the child
+
+                return request(URI)
+                    .delete(`/families/${defaultFamily.id}/children/${NULL_ID}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_FORMAT_ID_CHILD)
+                    })
+            })
+
         }) // validation error occurs
 
         context('when the user does not have permission to dissociate a child from the family', () => {
 
-            it('families.children.delete006: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('families.children.delete008: should return status code 403 and info message from insufficient permissions for child user', () => {
                 return request(URI)
                     .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
@@ -164,7 +190,7 @@ describe('Routes: users.families.children', () => {
                     })
             })
 
-            it('families.children.delete007: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('families.children.delete009: should return status code 403 and info message from insufficient permissions for educator user', () => {
                 return request(URI)
                     .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -175,7 +201,7 @@ describe('Routes: users.families.children', () => {
                     })
             })
 
-            it('families.children.delete008: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('families.children.delete010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
                 return request(URI)
                     .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
@@ -186,7 +212,7 @@ describe('Routes: users.families.children', () => {
                     })
             })
 
-            it('families.children.delete009: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('families.children.delete011: should return status code 403 and info message from insufficient permissions for family user', () => {
                 return request(URI)
                     .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
@@ -197,7 +223,7 @@ describe('Routes: users.families.children', () => {
                     })
             })
 
-            it('families.children.delete010: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('families.children.delete012: should return status code 403 and info message from insufficient permissions for application user', () => {
                 return request(URI)
                     .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
@@ -211,7 +237,7 @@ describe('Routes: users.families.children', () => {
         }) // user does not have permission 
 
         describe('when not informed the acess token', () => {
-            it('families.children.delete011: should return the status code 401 and the authentication failure informational message', () => {
+            it('families.children.delete013: should return the status code 401 and the authentication failure informational message', () => {
                 return request(URI)
                     .delete(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer ')

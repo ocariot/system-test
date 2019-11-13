@@ -215,12 +215,39 @@ describe('Routes: families.children', () => {
                         expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
+
+            it('families.children.post007: should return status code 400 and info message from invalid family ID, because ID is null', () => {
+                const NULL_ID = null // invalid id of the family
+
+                return request(URI)
+                    .post(`/families/${NULL_ID}/children/${defaultChild.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_FORMAT_ID)
+                    })
+            })
+
+            it('families.children.post008: should return status code 400 and info message from invalid child ID, because ID is null', () => {
+                const NULL_ID = null // invalid id of the child
+
+                return request(URI)
+                    .post(`/families/${defaultFamily.id}/children/${NULL_ID}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_FORMAT_ID_CHILD)
+                    })
+            })
+
         }) //validation error occurs 
 
 
         context('when the user does not have permission to associate a child with a family', () => {
 
-            it('families.children.post007: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('families.children.post009: should return status code 403 and info message from insufficient permissions for child user', () => {
                 return request(URI)
                     .post(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
@@ -231,7 +258,7 @@ describe('Routes: families.children', () => {
                     })
             })
 
-            it('families.children.post008: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('families.children.post010: should return status code 403 and info message from insufficient permissions for educator user', () => {
                 return request(URI)
                     .post(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -242,7 +269,7 @@ describe('Routes: families.children', () => {
                     })
             })
 
-            it('families.children.post009: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('families.children.post011: should return status code 403 and info message from insufficient permissions for health professional user', () => {
                 return request(URI)
                     .post(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
@@ -253,7 +280,7 @@ describe('Routes: families.children', () => {
                     })
             })
 
-            it('families.children.post010: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('families.children.post012: should return status code 403 and info message from insufficient permissions for family user', () => {
                 return request(URI)
                     .post(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
@@ -264,7 +291,7 @@ describe('Routes: families.children', () => {
                     })
             })
 
-            it('families.children.post011: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('families.children.post013: should return status code 403 and info message from insufficient permissions for application user', () => {
                 return request(URI)
                     .post(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
@@ -278,7 +305,7 @@ describe('Routes: families.children', () => {
         }) // user does not have permission 
 
         describe('when not informed the acess token', () => {
-            it('families.children.post012: should return the status code 401 and the authentication failure informational message', () => {
+            it('families.children.post014: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .post(`/families/${defaultFamily.id}/children/${defaultChild.id}`)
