@@ -188,7 +188,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.delete005: should return status code 400 and info message from weight_id is invalid', () => {
+            it('bodyfats.delete005: should return status code 400 and info message from bodyfat_id is invalid', () => {
 
                 return request(URI)
                     .delete(`/children/${defaultChild.id}/bodyfats/${INVALID_ID}`)
