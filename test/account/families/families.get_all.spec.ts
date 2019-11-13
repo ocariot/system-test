@@ -115,29 +115,7 @@ describe('Routes: families', () => {
                     })
             })
 
-            it('families.get_all002: should return status code 200 and a list of families when they are first logged in to the system for admin user', async () => {
-                await acc.auth(defaultFamily.username!, defaultFamily.password!)
-                await acc.auth(anotherFamily.username!, anotherFamily.password!)
-
-                return request(URI)
-                    .get('/educators')
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        for (let i = 0; i < res.body.length; i++) {
-                            expect(res.body[i].id).to.eql(familiesArr[i].id)
-                            expect(res.body[i].username).to.eql(familiesArr[i].username)
-                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
-                            expect(res.body[i].children).to.eql(familiesArr[i].children)
-                            expect(res.body[i].children.length).to.eql(1)
-                            if (familiesArr[i].last_login)
-                                expect(res.body[i].last_login).to.eql(familiesArr[i].last_login)
-                        }
-                    })
-            })
-
-            it('families.get_all003: should return status code 200 and a list of families in descending order by username', () => {
+            it('families.get_all002: should return status code 200 and a list of families in descending order by username', () => {
                 const sort = 'username' // parameter for sort the result of the query by order descending
                 const familiesSortedByUserNameArr = familiesArr.slice() // copy of the array of families that will be ordered
 
@@ -165,7 +143,7 @@ describe('Routes: families', () => {
                     })
             })
 
-            it('families.get_all004: should return status code 200 and a list with only the most recent family registered', () => {
+            it('families.get_all003: should return status code 200 and a list with only the most recent family registered', () => {
 
                 const page = 1
                 const limit = 1
@@ -193,7 +171,7 @@ describe('Routes: families', () => {
 
         context('when the user does not have permission to get all families', () => {
 
-            it('families.get_all005: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('families.get_all004: should return status code 403 and info message from insufficient permissions for child user', () => {
                 return request(URI)
                     .get('/families')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
@@ -204,7 +182,7 @@ describe('Routes: families', () => {
                     })
             })
 
-            it('families.get_all006: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('families.get_all005: should return status code 403 and info message from insufficient permissions for educator user', () => {
                 return request(URI)
                     .get('/families')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
@@ -215,7 +193,7 @@ describe('Routes: families', () => {
                     })
             })
 
-            it('families.get_all007: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('families.get_all006: should return status code 403 and info message from insufficient permissions for health professional user', () => {
                 return request(URI)
                     .get('/families')
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
@@ -226,7 +204,7 @@ describe('Routes: families', () => {
                     })
             })
 
-            it('families.get_all008: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('families.get_all007: should return status code 403 and info message from insufficient permissions for family user', () => {
                 return request(URI)
                     .get('/families')
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
@@ -237,7 +215,7 @@ describe('Routes: families', () => {
                     })
             })
 
-            it('families.get_all009: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('families.get_all008: should return status code 403 and info message from insufficient permissions for application user', () => {
                 return request(URI)
                     .get('/families')
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
@@ -251,7 +229,7 @@ describe('Routes: families', () => {
         }) // user does not have permission 
 
         describe('when not informed the acess token', () => {
-            it('families.get_all010: should return the status code 401 and the authentication failure informational message', () => {
+            it('families.get_all009: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .get('/families')
@@ -272,7 +250,7 @@ describe('Routes: families', () => {
                     console.log('DB ERROR', err)
                 }
             })
-            it('families.get_all011: should return status code 200 and empty list ', () => {
+            it('families.get_all010: should return status code 200 and empty list ', () => {
 
                 return request(URI)
                     .get('/families')
