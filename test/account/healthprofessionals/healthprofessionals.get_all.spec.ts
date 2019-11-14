@@ -115,29 +115,7 @@ describe('Routes: healthprofessionals', () => {
                     })
             })
 
-            it('healthprofessionals.get_all002: should return status code 200 and a list of health professionals when they are first logged in to the system for admin user', async () => {
-                await acc.auth(defaultHealthProfessional.username!, defaultHealthProfessional.password!)
-                await acc.auth(anotherHealthProfessional.username!, anotherHealthProfessional.password!)
-
-                return request(URI)
-                    .get('/healthprofessionals')
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        for (let i = 0; i < res.body.length; i++) {
-                            expect(res.body[i].id).to.eql(healthProfessionalsArr[i].id)
-                            expect(res.body[i].username).to.eql(healthProfessionalsArr[i].username)
-                            expect(res.body[i].children_groups).to.eql(healthProfessionalsArr[i].children_groups)
-                            expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
-                            expect(res.body[i].children_groups.length).to.eql(0)
-                            if (healthProfessionalsArr[i].last_login)
-                                expect(res.body[i].last_login).to.eql(healthProfessionalsArr[i].last_login)
-                        }
-                    })
-            })
-
-            it('healthprofessionals.get_all003: should return status code 200 and a list of health professionals in ascending order by username', () => {
+            it('healthprofessionals.get_all002: should return status code 200 and a list of health professionals in ascending order by username', () => {
                 const sort = 'username' // parameter for sort the result of the query by order ascending
                 const healthSortedByUserNameArr = healthProfessionalsArr.slice() // copy of the array of health professionals that will be ordered
 
@@ -158,13 +136,11 @@ describe('Routes: healthprofessionals', () => {
                             expect(res.body[i].children_groups).to.eql(healthSortedByUserNameArr[i].children_groups)
                             expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
                             expect(res.body[i].children_groups.length).to.eql(0)
-                            if (healthSortedByUserNameArr[i].last_login)
-                                expect(res.body[i].last_login).to.eql(healthSortedByUserNameArr[i].last_login)
                         }
                     })
             })
 
-            it('healthprofessionals.get_all004: should return status code 200 and a list with only two most recent health professionals registered in database', () => {
+            it('healthprofessionals.get_all003: should return status code 200 and a list with only two most recent health professionals registered in database', () => {
 
                 const page = 1
                 const limit = 2
@@ -181,8 +157,6 @@ describe('Routes: healthprofessionals', () => {
                             expect(res.body[i].children_groups).to.eql(healthProfessionalsArr[i].children_groups)
                             expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
                             expect(res.body[i].children_groups.length).to.eql(0)
-                            if (healthProfessionalsArr[i].last_login)
-                                expect(res.body[i].last_login).to.eql(healthProfessionalsArr[i].last_login)
                         }
                     })
             })
@@ -195,7 +169,7 @@ describe('Routes: healthprofessionals', () => {
                         console.log('DB ERROR', err)
                     }
                 })
-                it('healthprofessionals.get_all005: should return status code 200 and empty array ', () => {
+                it('healthprofessionals.get_all004: should return status code 200 and empty array ', () => {
 
                     return request(URI)
                         .get('/healthprofessionals')
@@ -212,7 +186,7 @@ describe('Routes: healthprofessionals', () => {
 
         context('when the user does not have permission to get all health professionals in database', () => {
 
-            it('healthprofessionals.get_all006: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('healthprofessionals.get_all005: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .get('/healthprofessionals')
@@ -224,7 +198,7 @@ describe('Routes: healthprofessionals', () => {
                     })
             })
 
-            it('healthprofessionals.get_all007: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('healthprofessionals.get_all006: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
                     .get('/healthprofessionals')
@@ -236,7 +210,7 @@ describe('Routes: healthprofessionals', () => {
                     })
             })
 
-            it('healthprofessionals.get_all008: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('healthprofessionals.get_all007: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .get('/healthprofessionals')
@@ -248,7 +222,7 @@ describe('Routes: healthprofessionals', () => {
                     })
             })
 
-            it('healthprofessionals.get_all009: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('healthprofessionals.get_all008: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .get('/healthprofessionals')
@@ -260,7 +234,7 @@ describe('Routes: healthprofessionals', () => {
                     })
             })
 
-            it('healthprofessionals.get_all010: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('healthprofessionals.get_all009: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .get('/healthprofessionals')
@@ -275,7 +249,7 @@ describe('Routes: healthprofessionals', () => {
         }) //user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('healthprofessionals.get_all011: should return the status code 401 and the authentication failure informational message', async () => {
+            it('healthprofessionals.get_all010: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .get('/healthprofessionals')

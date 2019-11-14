@@ -70,8 +70,12 @@ describe('Routes: healthprofessionals', () => {
             const resultHealthProfessional = await acc.saveHealthProfessional(accessTokenAdmin, defaultHealthProfessional)
             defaultHealthProfessional.id = resultHealthProfessional.id
 
-            if (defaultHealthProfessional.username && defaultHealthProfessional.password)
+            if (defaultHealthProfessional.username && defaultHealthProfessional.password){
                 defaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
+            }
+
+            const resultGetDefaultHealthProfessional = await acc.getHealthProfessionalById(accessTokenAdmin, defaultHealthProfessional.id)
+            defaultHealthProfessional.last_login = resultGetDefaultHealthProfessional.last_login
 
         } catch (err) {
             console.log('Failure on Before from healthprofessionals.get_id test: ', err)
@@ -102,8 +106,7 @@ describe('Routes: healthprofessionals', () => {
                         expect(res.body.username).to.eql(defaultHealthProfessional.username)
                         expect(res.body.institution_id).to.eql(defaultInstitution.id)
                         expect(res.body.children_groups.length).to.eql(0)
-                        if (defaultHealthProfessional.last_login)
-                            expect(res.body.last_login).to.eql(defaultHealthProfessional.last_login)
+                        expect(res.body.last_login).to.eql(defaultHealthProfessional.last_login)
                     })
             })
 
@@ -119,8 +122,7 @@ describe('Routes: healthprofessionals', () => {
                         expect(res.body.username).to.eql(defaultHealthProfessional.username)
                         expect(res.body.institution_id).to.eql(defaultInstitution.id)
                         expect(res.body.children_groups.length).to.eql(0)
-                        if (defaultHealthProfessional.last_login)
-                            expect(res.body.last_login).to.eql(defaultHealthProfessional.last_login)
+                        expect(res.body.last_login).to.eql(defaultHealthProfessional.last_login)
                     })
             })
 
@@ -149,8 +151,7 @@ describe('Routes: healthprofessionals', () => {
                             expect(res.body.children_groups[0].name).to.eql(defaultChildrenGroup.name)
                             expect(res.body.children_groups[0].school_class).to.eql(defaultChildrenGroup.school_class)
                             expect(res.body.children_groups[0].children).to.be.an.instanceof(Array)
-                            if (defaultHealthProfessional.last_login)
-                                expect(res.body.last_login).to.eql(defaultHealthProfessional.last_login)
+                            expect(res.body.last_login).to.eql(defaultHealthProfessional.last_login)
                         })
                 })
 

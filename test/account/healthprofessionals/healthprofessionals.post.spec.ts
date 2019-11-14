@@ -88,19 +88,6 @@ describe('Routes: healthprofessionals', () => {
             })
         })
 
-        //  TESTES - RESTRIÇÕES NOS CAMPOS USERNAME/PASSWORD ... (CRIAR COM ESPAÇO ?)
-        // context('when the username is a blank space', () => {
-        //     it('should return status code ? and message info about ...', () => {
-
-        //         return request(URI)
-        //             .post('/healthprofessionals')
-        //             .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-        //             .set('Content-Type', 'application/json')
-        //             .send(body)
-        //             .expect(409)
-        //     })
-        // })
-
         describe('when a duplicate error occurs', () => {
             before(async () => {
                 try {
@@ -215,7 +202,67 @@ describe('Routes: healthprofessionals', () => {
                     .send(body)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_ID_IS_INVALID)
+                    })
+            })
+
+            it('healthprofessionals.post008: should return status code 400 and message for invalid username, because is null', () => {
+                const NULL_USERNAME = null // invalid username of the health professional
+
+                const body = {
+                    username: NULL_USERNAME,
+                    password: defaultHealthProfessional.password,
+                    institution_id: defaultInstitution.id
+                }
+
+                return request(URI)
+                    .post('/healthprofessionals')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.HEALTH_PROFESSIONAL.ERROR_400_INVALID_USERNAME)
+                    })
+            })
+
+            it('healthprofessionals.post009: should return status code 400 and message for invalid password, because is null', () => {
+                const NULL_PASSWORD = null // invalid password of the health professional
+
+                const body = {
+                    username: defaultHealthProfessional.username,
+                    password: NULL_PASSWORD,
+                    institution_id: defaultInstitution.id
+                }
+
+                return request(URI)
+                    .post('/healthprofessionals')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.HEALTH_PROFESSIONAL.ERROR_400_INVALID_PASSWORD)
+                    })
+            })
+
+            it('healthprofessionals.post010: should return status code 400 and message for invalid institution_id, because is null', () => {
+                const NULL_ID_INSTITUTION = null // invalid id of the institution
+
+                const body = {
+                    username: defaultHealthProfessional.username,
+                    password: defaultHealthProfessional.password,
+                    institution_id: NULL_ID_INSTITUTION
+                }
+
+                return request(URI)
+                    .post('/healthprofessionals')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_ID_IS_INVALID)
                     })
             })
 
@@ -223,7 +270,7 @@ describe('Routes: healthprofessionals', () => {
 
         context('when the user does not have permission to register the health professional', () => {
 
-            it('healthprofessionals.post008: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('healthprofessionals.post011: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .post('/healthprofessionals')
@@ -236,7 +283,7 @@ describe('Routes: healthprofessionals', () => {
                     })
             })
 
-            it('healthprofessionals.post009: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('healthprofessionals.post012: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
                     .post('/healthprofessionals')
@@ -249,7 +296,7 @@ describe('Routes: healthprofessionals', () => {
                     })
             })
 
-            it('healthprofessionals.post010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('healthprofessionals.post013: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .post('/healthprofessionals')
@@ -262,7 +309,7 @@ describe('Routes: healthprofessionals', () => {
                     })
             })
 
-            it('healthprofessionals.post011: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('healthprofessionals.post014: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .post('/healthprofessionals')
@@ -275,7 +322,7 @@ describe('Routes: healthprofessionals', () => {
                     })
             })
 
-            it('healthprofessionals.post012: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('healthprofessionals.post015: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .post('/healthprofessionals')
@@ -291,7 +338,7 @@ describe('Routes: healthprofessionals', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('healthprofessionals.post013: should return the status code 401 and the authentication failure informational message', async () => {
+            it('healthprofessionals.post016: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .post('/healthprofessionals')

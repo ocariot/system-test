@@ -217,10 +217,10 @@ describe('Routes: families.children', () => {
             })
 
             it('families.children.post007: should return status code 400 and info message from invalid family ID, because ID is null', () => {
-                const NULL_ID = null // invalid id of the family
+                const NULL_ID_FAMILY = null // invalid id of the family
 
                 return request(URI)
-                    .post(`/families/${NULL_ID}/children/${defaultChild.id}`)
+                    .post(`/families/${NULL_ID_FAMILY}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -230,10 +230,10 @@ describe('Routes: families.children', () => {
             })
 
             it('families.children.post008: should return status code 400 and info message from invalid child ID, because ID is null', () => {
-                const NULL_ID = null // invalid id of the child
+                const NULL_ID_CHILD = null // invalid id of the child
 
                 return request(URI)
-                    .post(`/families/${defaultFamily.id}/children/${NULL_ID}`)
+                    .post(`/families/${defaultFamily.id}/children/${NULL_ID_CHILD}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)

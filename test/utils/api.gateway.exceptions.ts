@@ -54,12 +54,14 @@ export abstract class ApiGatewayException {
     }
 
     public static readonly HEALTH_PROFESSIONAL: any = {
-        ERROR_400_USERNAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Health Professional validation: username is required!').toJson(),
-        ERROR_400_PASSWORD_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Health Professional validation: password is required!').toJson(),
+        ERROR_400_USERNAME_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'username are required!').toJson(),
+        ERROR_400_PASSWORD_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'password are required!').toJson(),
         ERROR_400_INVALID_FORMAT_ID: new ApiException(400, 'Parameter {healthprofessional_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
-        ERROR_400_INSTITUTION_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'Health Professional validation: institution is required!').toJson(),
+        ERROR_400_INVALID_USERNAME: new ApiException(400, 'One or more request fields are invalid...', 'username must be a string!').toJson(),
+        ERROR_400_INVALID_PASSWORD: new ApiException(400, 'One or more request fields are invalid...', 'password must be a string!').toJson(),
+        ERROR_400_INSTITUTION_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'institution are required!').toJson(),
         ERROR_404_HEALTHPROFESSIONAL_NOT_FOUND: new ApiException(404, 'Health Professional not found!', 'Health Professional not found or already removed. A new operation for the same resource is not required.').toJson(),
-        ERROR_409_DUPLICATE: new ApiException(409, 'Health Professional is already registered!').toJson()
+        ERROR_409_DUPLICATE: new ApiException(409, 'Health Professional is already registered...').toJson()
     }
 
     public static readonly FAMILY: any = {

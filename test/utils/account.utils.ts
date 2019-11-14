@@ -237,6 +237,15 @@ class AccountUtil {
             .catch(err => Promise.reject(err))        
     }
 
+    public getHealthProfessionalById(accessToken: string, userID?: string): Promise<any>{
+        return request(this.URI)
+            .get(`/healthprofessionals/${userID}`)
+            .set('Authorization', 'Bearer '.concat(accessToken))
+            .set('Content-Type', 'application/json')
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))        
+    }
+
     public async getAuths(): Promise<any> {
         const result: any = {
             institution: {},

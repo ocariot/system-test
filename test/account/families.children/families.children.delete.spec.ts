@@ -150,10 +150,10 @@ describe('Routes: users.families.children', () => {
             })
 
             it('families.children.delete006: should return status code 400 and info message from invalid family_id, because is null', () => {
-                const NULL_ID = null // invalid id of the family
+                const NULL_ID_FAMILY = null // invalid id of the family
 
                 return request(URI)
-                    .delete(`/families/${NULL_ID}/children/${defaultChild.id}`)
+                    .delete(`/families/${NULL_ID_FAMILY}/children/${defaultChild.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -163,10 +163,10 @@ describe('Routes: users.families.children', () => {
             })
 
             it('families.children.delete007: should return status code 400 and info message from invalid child_id, because is null', () => {
-                const NULL_ID = null // invalid id of the child
+                const NULL_ID_CHILD = null // invalid id of the child
 
                 return request(URI)
-                    .delete(`/families/${defaultFamily.id}/children/${NULL_ID}`)
+                    .delete(`/families/${defaultFamily.id}/children/${NULL_ID_CHILD}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)

@@ -65,8 +65,12 @@ describe('Routes: healthprofessionals', () => {
             const resultDefaultHealthProfessional = await acc.saveHealthProfessional(accessTokenAdmin, defaultHealthProfessional)
             defaultHealthProfessional.id = resultDefaultHealthProfessional.id
 
-            if (defaultHealthProfessional.username && defaultHealthProfessional.password)
+            if (defaultHealthProfessional.username && defaultHealthProfessional.password) {
                 defaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
+            }
+
+            const resultGetDefaultHealthProfessional = await acc.getHealthProfessionalById(accessTokenAdmin, defaultHealthProfessional.id)
+            defaultHealthProfessional.last_login = resultGetDefaultHealthProfessional.last_login
 
         } catch (err) {
             console.log('Failure on Before from healthprofessionals.patch test: ', err)
@@ -102,8 +106,7 @@ describe('Routes: healthprofessionals', () => {
                         expect(res.body.username).to.eql(defaultHealthProfessional.username)
                         expect(res.body.institution_id).to.eql(anotherInstitution.id)
                         expect(res.body.children_groups.length).to.eql(0)
-                        if (defaultHealthProfessional.last_login)
-                            expect(res.body.last_login).to.eql(defaultHealthProfessional.last_login)
+                        expect(res.body.last_login).to.eql(defaultHealthProfessional.last_login)
                     })
             })
 
@@ -123,8 +126,7 @@ describe('Routes: healthprofessionals', () => {
                         expect(res.body.username).to.eql(defaultHealthProfessional.username)
                         expect(res.body.institution_id).to.eql(defaultInstitution.id)
                         expect(res.body.children_groups.length).to.eql(0)
-                        if (defaultHealthProfessional.last_login)
-                            expect(res.body.last_login).to.eql(defaultHealthProfessional.last_login)
+                        expect(res.body.last_login).to.eql(defaultHealthProfessional.last_login)
                     })
             })
 
@@ -153,7 +155,8 @@ describe('Routes: healthprofessionals', () => {
             })
         })
 
-        describe('when the health professional is not found', () => {
+        describe('when a validation error occurs', () => {
+
             it('healthprofessionals.patch004: should return status code 404 and info message from health professional not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the health professional
 
@@ -167,9 +170,7 @@ describe('Routes: healthprofessionals', () => {
                         expect(err.body).to.eql(ApiGatewayException.HEALTH_PROFESSIONAL.ERROR_404_HEALTHPROFESSIONAL_NOT_FOUND)
                     })
             })
-        })
 
-        describe('when the institution provided does not exists', () => {
             it('healthprofessionals.patch005: should return status code 400 and message for institution not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the istitution
 
@@ -183,9 +184,7 @@ describe('Routes: healthprofessionals', () => {
                         expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_NOT_REGISTERED)
                     })
             })
-        })
 
-        describe('when the institution id provided was invalid', () => {
             it('healthprofessionals.patch006: should return status code 400 and message for invalid institution id', () => {
                 const INVALID_ID = '123' // invalid id of the institution
 
@@ -196,12 +195,10 @@ describe('Routes: healthprofessionals', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_ID_IS_INVALID)
                     })
             })
-        })
 
-        describe('when the healthprofessional_id was invalid', () => {
             it('healthprofessionals.patch007: should return status code 400 and message for invalid id', () => {
                 const INVALID_ID = '123' // invalid id of the health professional
 
@@ -212,14 +209,44 @@ describe('Routes: healthprofessionals', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.HEALTH_PROFESSIONAL.ERROR_400_INVALID_FORMAT_ID)
                     })
             })
-        })
+
+            it('healthprofessionals.patch008: should return status code 400 and message for invalid username, because is null', () => {
+                const NULL_USERNAME = null // invalid username of the health professional
+
+                return request(URI)
+                    .patch(`/healthprofessionals/${defaultHealthProfessional.id}`)
+                    .send({ username: NULL_USERNAME})
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.HEALTH_PROFESSIONAL.ERROR_400_INVALID_USERNAME)
+                    })
+            })
+
+            it('healthprofessionals.patch009: should return status code 400 and message for invalid institution_id, because is null', () => {
+                const NULL_ID_INSTITUTION = null // invalid id of the institution
+
+                return request(URI)
+                    .patch(`/healthprofessionals/${defaultHealthProfessional.id}`)
+                    .send({ institution_id: NULL_ID_INSTITUTION})
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_ID_IS_INVALID)
+                    })
+            })
+        }) // validantion error occurs
+
+
 
         context('when the user does not have permission', () => {
 
-            it('healthprofessionals.patch008: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('healthprofessionals.patch010: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .patch(`/healthprofessionals/${defaultHealthProfessional.id}`)
@@ -233,7 +260,7 @@ describe('Routes: healthprofessionals', () => {
             })
 
 
-            it('healthprofessionals.patch009: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('healthprofessionals.patch011: should return status code 403 and info message from insufficient permissions for educator user', () => {
                 return request(URI)
                     .patch(`/healthprofessionals/${defaultHealthProfessional.id}`)
                     .send({ username: 'anothercoolusername' })
@@ -245,7 +272,7 @@ describe('Routes: healthprofessionals', () => {
                     })
             })
 
-            it('healthprofessionals.patch010: should return status code 403 and info message from insufficient permissions for another health professional user', () => {
+            it('healthprofessionals.patch012: should return status code 403 and info message from insufficient permissions for another health professional user', () => {
 
                 return request(URI)
                     .patch(`/healthprofessionals/${defaultHealthProfessional.id}`)
@@ -258,7 +285,7 @@ describe('Routes: healthprofessionals', () => {
                     })
             })
 
-            it('healthprofessionals.patch011: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('healthprofessionals.patch013: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .patch(`/healthprofessionals/${defaultHealthProfessional.id}`)
@@ -271,7 +298,7 @@ describe('Routes: healthprofessionals', () => {
                     })
             })
 
-            it('healthprofessionals.patch012: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('healthprofessionals.patch014: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .patch(`/healthprofessionals/${defaultHealthProfessional.id}`)
@@ -287,7 +314,7 @@ describe('Routes: healthprofessionals', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('healthprofessionals.patch013: should return the status code 401 and the authentication failure informational message', () => {
+            it('healthprofessionals.patch015: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .patch(`/healthprofessionals/${defaultHealthProfessional.id}`)

@@ -145,27 +145,27 @@ describe('Routes: families.children', () => {
                     })
             })
 
-            it('families.children.get_all003: should return status code 200 and all children associated with the family in ascending order by child username', () => {
+            it('families.children.get_all003: should return status code 200 and all children associated with the family in descending order by child username', () => {
                 
                 const sortField = 'username'
 
                 return request(URI)
-                    .get(`/families/${defaultFamily.id}/children?sort=${sortField}`)
+                    .get(`/families/${defaultFamily.id}/children?sort=-${sortField}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
                         expect(res.body).is.an.instanceOf(Array)
                         expect(res.body.length).to.eql(2)
-                        expect(res.body[0].username).to.eql(anotherChild.username)
-                        expect(res.body[0].id).to.eql(anotherChild.id)
-                        expect(res.body[0].gender).to.eql(anotherChild.gender)
-                        expect(res.body[0].age).to.eql(anotherChild.age)
+                        expect(res.body[0].username).to.eql(defaultChild.username)
+                        expect(res.body[0].id).to.eql(defaultChild.id)
+                        expect(res.body[0].gender).to.eql(defaultChild.gender)
+                        expect(res.body[0].age).to.eql(defaultChild.age)
                         expect(res.body[0].institution_id).to.eql(defaultInstitution.id)
-                        expect(res.body[1].username).to.eql(defaultChild.username)
-                        expect(res.body[1].id).to.eql(defaultChild.id)
-                        expect(res.body[1].gender).to.eql(defaultChild.gender)
-                        expect(res.body[1].age).to.eql(defaultChild.age)
+                        expect(res.body[1].username).to.eql(anotherChild.username)
+                        expect(res.body[1].id).to.eql(anotherChild.id)
+                        expect(res.body[1].gender).to.eql(anotherChild.gender)
+                        expect(res.body[1].age).to.eql(anotherChild.age)
                         expect(res.body[1].institution_id).to.eql(defaultInstitution.id)
                     })
             })
@@ -260,10 +260,10 @@ describe('Routes: families.children', () => {
             })
 
             it('families.children.get_all009: should return status code 400 and message info message from invalid parameter, because family does not exist', () => {
-                const NULL_ID = null // invalid id of the family
+                const NULL_ID_FAMILY = null // invalid id of the family
 
                 return request(URI)
-                .get(`/families/${NULL_ID}/children`)
+                .get(`/families/${NULL_ID_FAMILY}/children`)
                 .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                 .set('Content-Type', 'application/json')
                 .expect(400)
