@@ -198,7 +198,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.delete008: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
-                    .patch(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .delete(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .expect(403)
@@ -210,7 +210,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.delete009: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .patch(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .delete(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .expect(403)
@@ -222,7 +222,7 @@ describe('Routes: users.children.sleep', () => {
             it('sleep.delete010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .patch(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
+                    .delete(`/children/${defaultChild.id}/sleep/${defaultSleep.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .expect(403)

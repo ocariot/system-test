@@ -132,11 +132,12 @@ services:
       - ISSUER=ocariot
       - API_GATEWAY_SERVICE=https://api-gateway:${AG_PORT_HTTPS}
       - ACCOUNT_SERVICE=https://account:3001
-      - ACTIVITY_SERVICE=https://activity-tracking:4001
+      - IOT_TRACKING_SERVICE=https://iot-tracking:4001
       - DS_AGENT_SERVICE=https://ds-agent:5001
       - QUESTIONNAIRE_SERVICE=https://quest:6001
-      - GAMIFICATION_SERVICE=https://quest:6001
-      - MISSION_SERVICE=https://quest:6001
+      - GAMIFICATION_SERVICE=https://gamification:7001
+      - MISSION_SERVICE=https://gamification:7001
+      - FOOD_SERVICE=https://food:8001
       - EMULATE_REDIS=false
       - PORT_REDIS=6379
       - HOST_REDIS=redis-api-gateway
@@ -187,9 +188,9 @@ services:
       options:
         max-size: 100m
 
-  activity-tracking: # Container for OCARIoT Activity Tracking service
+  iot-tracking: # Container for OCARIoT Activity Tracking service
     image: ocariot/iot-tracking
-    container_name: ocariot-activity-tracking
+    container_name: ocariot-iot-tracking
     restart: always
     environment:
       - NODE_ENV=${NODE_ENV}

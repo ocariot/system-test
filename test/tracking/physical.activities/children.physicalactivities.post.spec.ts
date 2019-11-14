@@ -20,10 +20,14 @@ import { PhysicalActivity } from '../../../src/tracking-service/model/physical.a
 import { ActivityLevelType, PhysicalActivityLevel } from '../../../src/tracking-service/model/physical.activity.level'
 import { PhysicalActivityMock, ActivityTypeMock } from '../../mocks/tracking-service/physical.activity.mock'
 import { HeartRateZone } from '../../../src/tracking-service/model/heart.rate.zone'
+import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 
 describe('Routes: children.physicalactivities', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
+
+    let accessTokenAnotherEducator: string
+    let accessTokenAnotherFamily: string
 
     let accessTokenAdmin: string
     let accessDefaultChildToken: string
@@ -38,6 +42,10 @@ describe('Routes: children.physicalactivities', () => {
     defaultInstitution.address = 'default address'
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
+
+    const defaultChildrenGroup: ChildrenGroup = new ChildrenGroup()
+    defaultChildrenGroup.name = 'Default children group'
+    defaultChildrenGroup.school_class = '4th grade'
 
     const defaultChild: Child = new ChildMock()
     const defaultEducator: Educator = new EducatorMock()
@@ -106,6 +114,8 @@ describe('Routes: children.physicalactivities', () => {
 
             const tokens = await acc.getAuths()
             accessTokenAdmin = tokens.admin.access_token
+            accessTokenAnotherEducator = tokens.educator.access_token
+            accessTokenAnotherFamily = tokens.family.access_token
 
             const resultDefaultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = resultDefaultInstitution.id
@@ -121,6 +131,8 @@ describe('Routes: children.physicalactivities', () => {
 
             const resultDefaultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
             defaultEducator.id = resultDefaultEducator.id
+
+            defaultChildrenGroup.children = new Array<Child>(resultDefaultChild)
 
             const resultDefaultHealthProfessional = await acc.saveHealthProfessional(accessTokenAdmin, defaultHealthProfessional)
             defaultHealthProfessional.id = resultDefaultHealthProfessional.id
@@ -151,6 +163,10 @@ describe('Routes: children.physicalactivities', () => {
             if (defaultHealthProfessional.username && defaultHealthProfessional.password) {
                 accessDefaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
             }
+
+            // Associating defaultChildrenGroup with educator
+            const resultChildrenGroup = await acc.saveChildrenGroupsForEducator(accessDefaultEducatorToken, defaultEducator, defaultChildrenGroup)
+            defaultChildrenGroup.id = resultChildrenGroup.id
 
             /* populating the activity arrays (correctActivities and mixedActivities) */
             for (let i = 0; i < AMOUNT_OF_CORRECT_ACTIVITIES; i++) {
@@ -419,7 +435,6 @@ describe('Routes: children.physicalactivities', () => {
                 })
 
                 describe('when there are correct and incorrect activities in the body', () => {
-
                     it('physical.activities.post047: should return status code 207, and return a response with description of sucess and error in each activity', () => {
 
                         const body: any = []
@@ -479,7 +494,6 @@ describe('Routes: children.physicalactivities', () => {
                 })
 
                 describe('when all the activities are incorrect', () => {
-
                     it('physical.activities.post048: should return status code 207, and return a response with description of error in each activity', () => {
 
                         const body: any = []
@@ -1007,7 +1021,8 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`ID ${NON_EXISTENT_ID} is not associated with a child!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${NON_EXISTENT_ID} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -1038,6 +1053,121 @@ describe('Routes: children.physicalactivities', () => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_NAME_NOT_ALLOWED)
                     })
             })
+
+            // SOME FIELDS HAVE NULL VALUE
+            it('physical.activities.post050: should return status code 400 and info message from validation error, because activity name is null', () => {
+
+                const incorrectActivity = getIncorrectActivityJSON()
+                incorrectActivity.name = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(incorrectActivity)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_NAME)
+                    })
+            })
+
+            it('physical.activities.post051: should return status code 400 and info message from validation error, because end_time is null', () => {
+
+                const incorrectActivity = getIncorrectActivityJSON()
+                incorrectActivity.end_time = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(incorrectActivity)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_DATE_TIME_IS_NULL)
+                    })
+            })
+
+            it('physical.activities.post052: should return status code 400 and info message from validation error, because distance is null', () => {
+
+                const incorrectActivity = getIncorrectActivityJSON()
+                incorrectActivity.distance = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(incorrectActivity)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_DISTANCE)
+                    })
+            })
+
+            it('physical.activities.post053: should return status code 400 and info message from validation error, because level:name is null', () => {
+
+                const incorrectActivity = getIncorrectActivityJSON()
+                incorrectActivity.levels[2].name = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(incorrectActivity)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_NAME_IN_INVALID_FORMAT)
+                    })
+            })
+
+            it('physical.activities.post054: should return status code 400 and info message from validation error, because level:duration is null', () => {
+
+                const incorrectActivity = getIncorrectActivityJSON()
+                incorrectActivity.levels[2].duration = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(incorrectActivity)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_DURATION_INVALID)
+                    })
+            })
+
+            it('physical.activities.post055: should return status code 400 and info message from validation error, because average of heart_rate is null', () => {
+
+                const incorrectActivity = getIncorrectActivityJSON()
+                incorrectActivity.heart_rate.average = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(incorrectActivity)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_INVALID_AVERAGE)
+                    })
+            })
+
+            it('physical.activities.post056: should return status code 400 and info message from validation error, because fat_burn_zone.min is null', () => {
+
+                const incorrectActivity = getIncorrectActivityJSON()
+                incorrectActivity.heart_rate.fat_burn_zone.min = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/physicalactivities`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(incorrectActivity)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_FAT_BURN_ZONE_INVALID_MIN)
+                    })
+            })
+            // SOME FIELDS HAS NULL VALUE
+
         }) // validation error occurs
 
         context('when posting a new PhysicalActivity for another user that not to be a child', () => {
@@ -1053,7 +1183,8 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${ADMIN_ID} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${ADMIN_ID} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -1066,7 +1197,8 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${defaultEducator.id} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultEducator.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -1079,7 +1211,8 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${defaultHealthProfessional.id} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultHealthProfessional.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -1092,7 +1225,8 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${defaultFamily.id} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultFamily.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -1105,15 +1239,16 @@ describe('Routes: children.physicalactivities', () => {
                     .send(physicalActivity.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${defaultApplication.id} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultApplication.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
         }) // another user that not to be a child
 
-        describe('when the child posting a new PhysicalActivity for another child', () => {
+        context('when the user does not have permission for register PhysicalActivity', () => {
 
-            it('physical.activities.post031: should return status code 400 and info message from error', async () => {
+            it('physical.activities.post031: should return status code 403 and info message from insufficient permissions for another child user', async () => {
 
                 const anotherChild: Child = new ChildMock()
                 let anotherChildToken
@@ -1130,14 +1265,11 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(anotherChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(403)
                     .then(err => {
-                        // expect(err.body).to.eql(ApiGatewayException.???)
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
-        })
-
-        context('when the user does not have permission for register PhysicalActivity', () => {
 
             it('physical.activities.post032: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
@@ -1166,10 +1298,40 @@ describe('Routes: children.physicalactivities', () => {
                     })
 
             })
+
+            describe('when the child does not belong to any of the groups associated with the educator', () => {
+                it('physical.activities.post036: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', async () => {
+
+                    return request(URI)
+                        .post(`/children/${defaultChild.id}/physicalactivities`)
+                        .set('Content-Type', 'application/json')
+                        .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
+                        .send(physicalActivity.toJSON())
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })
+
+            describe('when the child is not associated with the family', () => {
+                it('physical.activities.post049: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', async () => {
+
+                    return request(URI)
+                        .post(`/children/${defaultChild.id}/physicalactivities`)
+                        .set('Content-Type', 'application/json')
+                        .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
+                        .send(physicalActivity.toJSON())
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })
+
         }) // does not have permission
 
         describe('when not informed the acess token', () => {
-
             it('physical.activities.post034: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
@@ -1185,7 +1347,6 @@ describe('Routes: children.physicalactivities', () => {
         })
 
         describe('when a duplicate error occurs', () => {
-
             it('physical.activities.post035: should return status code 409 and info message about duplicate itens', async () => {
 
                 try {
@@ -1208,7 +1369,9 @@ describe('Routes: children.physicalactivities', () => {
     })
 })
 
-const sleep = (milliseconds) => { return new Promise(resolve => setTimeout(resolve, milliseconds)) }
+const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
 
 function getIncorrectActivityJSON() {
 
@@ -1220,6 +1383,7 @@ function getIncorrectActivityJSON() {
         name: 'walk',
         calories: 200,
         steps: 1000,
+        ditance: 800,
         levels: [
             {
                 name: ActivityLevelType.SEDENTARY,
@@ -1260,7 +1424,7 @@ function getIncorrectActivityJSON() {
                 max: 220,
                 duration: 123000
             }
-        }        
+        }
     }
     return incorrectActivityJSON
 }

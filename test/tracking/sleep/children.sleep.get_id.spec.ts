@@ -300,7 +300,6 @@ describe('Routes: users.children.sleep', () => {
         })
 
         describe('when get a specific sleep of a child that has been deleted', () => {
-
             it('sleep.get_id012: should return status code 404 and info message from sleep not found', async () => {
 
                 await acc.deleteUser(accessTokenAdmin, defaultChild.id)

@@ -11,6 +11,14 @@ import { ChildMock } from '../../mocks/account-service/child.mock'
 import { PhysicalActivity } from '../../../src/tracking-service/model/physical.activity'
 import { PhysicalActivityMock } from '../../mocks/tracking-service/physical.activity.mock'
 import { PhysicalActivityLevel } from '../../../src/tracking-service/model/physical.activity.level'
+import { Educator } from '../../../src/account-service/model/educator'
+import { EducatorMock } from '../../mocks/account-service/educator.mock'
+import { HealthProfessionalMock } from '../../mocks/account-service/healthprofessional.mock'
+import { HealthProfessional } from '../../../src/account-service/model/health.professional'
+import { Family } from '../../../src/account-service/model/family'
+import { FamilyMock } from '../../mocks/account-service/family.mock'
+import { ChildrenGroup } from '../../../src/account-service/model/children.group'
+import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
 
 describe('Routes: children.physicalactivities', () => {
 
@@ -31,8 +39,16 @@ describe('Routes: children.physicalactivities', () => {
     defaultInstitution.longitude = 0
 
     const defaultChild: Child = new ChildMock()
+    const defaultEducator: Educator = new EducatorMock()
+    const defaultHealthProfessional: HealthProfessional = new HealthProfessionalMock()
+    const defaultFamily: Family = new FamilyMock()
+
+    const defaultChildrenGroup: ChildrenGroup = new ChildrenGroupMock()
 
     let accessDefaultChildToken: string
+    let accessDefaultEducatorToken: string
+    let accessDefaultHealthProfessionalToken: string
+    let accessDefaultFamilyToken: string
 
     const defaultActivity: PhysicalActivity = new PhysicalActivityMock()
 
@@ -52,14 +68,47 @@ describe('Routes: children.physicalactivities', () => {
             const resultDefaultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = resultDefaultInstitution.id
             defaultChild.institution = resultDefaultInstitution
+            defaultEducator.institution = resultDefaultInstitution
+            defaultHealthProfessional.institution = resultDefaultInstitution
+            defaultFamily.institution = resultDefaultInstitution
 
             const resultDefaultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
             defaultChild.id = resultDefaultChild.id
 
-            // getting default child token
+            // Associating the child
+            defaultChildrenGroup.children = new Array<Child>(resultDefaultChild)
+            defaultFamily.children = new Array<Child>(resultDefaultChild)
+
+            // registering default users
+            const resultDefaultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
+            defaultEducator.id = resultDefaultEducator.id
+
+            const resultDefaultHealthProfessional = await acc.saveHealthProfessional(accessTokenAdmin, defaultHealthProfessional)
+            defaultHealthProfessional.id = resultDefaultHealthProfessional.id
+
+            const resultDefaultFamily = await acc.saveFamily(accessTokenAdmin, defaultFamily)
+            defaultFamily.id = resultDefaultFamily.id
+
+            // getting default users token
             if (defaultChild.username && defaultChild.password) {
                 accessDefaultChildToken = await acc.auth(defaultChild.username, defaultChild.password)
             }
+
+            if (defaultEducator.username && defaultEducator.password) {
+                accessDefaultEducatorToken = await acc.auth(defaultEducator.username, defaultEducator.password)
+            }
+
+            if (defaultHealthProfessional.username && defaultHealthProfessional.password) {
+                accessDefaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
+            }
+
+            if (defaultFamily.username && defaultFamily.password) {
+                accessDefaultFamilyToken = await acc.auth(defaultFamily.username, defaultFamily.password)
+            }
+
+            // associate children groups
+            await acc.saveChildrenGroupsForEducator(accessDefaultEducatorToken, defaultEducator, defaultChildrenGroup)
+            await acc.saveChildrenGroupsForHealthProfessional(accessDefaultHealthProfessionalToken, defaultHealthProfessional, defaultChildrenGroup)
 
             // save default physical activity for default child
             const resultDefaultActivity = await trck.savePhysicalActivitiy(accessDefaultChildToken, defaultActivity, defaultChild.id)
@@ -147,7 +196,7 @@ describe('Routes: children.physicalactivities', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
@@ -176,7 +225,7 @@ describe('Routes: children.physicalactivities', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
@@ -205,7 +254,7 @@ describe('Routes: children.physicalactivities', () => {
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
@@ -262,22 +311,8 @@ describe('Routes: children.physicalactivities', () => {
         }) // get physical activity successfully
 
         describe('when physical activity is not found', () => {
-
-            const NON_EXISTENT_ID = '111111111111111111111111'
-
-            it('physical.activities.get_id007: should return status code 404 and info message from physical activity not found', () => {
-
-                return request(URI)
-                    .get(`/children/${NON_EXISTENT_ID}/physicalactivities/${defaultActivity.id}`)
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .set('Content-Type', 'application/json')
-                    .expect(404)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_404_PHYSICAL_ACTIVITY_NOT_FOUND)
-                    })
-            })
-
             it('physical.activities.get_id008: should return status code 404 and info message from physical activity not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111'
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/physicalactivities/${NON_EXISTENT_ID}`)
@@ -288,12 +323,25 @@ describe('Routes: children.physicalactivities', () => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_404_PHYSICAL_ACTIVITY_NOT_FOUND)
                     })
             })
-
-        }) // activity not found
+        })
 
         describe('when a validation error occurs', () => {
 
             const INVALID_ID = '123'
+
+            it('physical.activities.get_id007: should return status code 400 and info message from child not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111'
+
+                return request(URI)
+                    .get(`/children/${NON_EXISTENT_ID}/physicalactivities/${defaultActivity.id}`)
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${NON_EXISTENT_ID} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                    })
+            })
 
             it('physical.activities.get_id009: should return status code 400 and info message from invalid child_id', () => {
 
@@ -336,23 +384,65 @@ describe('Routes: children.physicalactivities', () => {
             })
         })
 
-        describe('when a child get the physical activity of other child', () => {
+        describe('when the user does not have permission for get PhysicalActivity', () => {
+            describe('when a child get the physical activity of other child', () => {
+                it('physical.activities.get_id012: should return the status code 403 and info message from insufficient permissions', () => {
 
-            it('physical.activities.get_id012: should return the status code 403 and info message from insufficient permissions', () => {
+                    return request(URI)
+                        .get(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                        .set('Content-Type', 'application/json')
+                        .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })
 
-                return request(URI)
-                    .get(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessTokenChild))
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
+            describe('when the child does not belong to any of the groups associated with the educator', () => {
+                it('physical.activities.get_id014: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
+
+                    return request(URI)
+                        .get(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                        .set('Content-Type', 'application/json')
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })
+
+            describe('when the child does not belong to any of the groups associated with the health professional', () => {
+                it('physical.activities.get_id015: should return status code 403 and info message from insufficient permissions for health professional user who is not associated with the child', () => {
+
+                    return request(URI)
+                        .get(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                        .set('Content-Type', 'application/json')
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })
+
+            describe('when the child is not associated with the family', () => {
+                it('physical.activities.get_id016: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
+
+                    return request(URI)
+                        .get(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                        .set('Content-Type', 'application/json')
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
             })
         })
 
         describe('when get a specific physical activity of a child that has been deleted', () => {
-
             it('physical.activities.get_id013: should return status code 404 and info message from physical activity not found', async () => {
 
                 await acc.deleteUser(accessTokenAdmin, defaultChild.id)
@@ -361,9 +451,10 @@ describe('Routes: children.physicalactivities', () => {
                     .get(`/children/${defaultChild.id}/physicalactivities/${defaultActivity.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
-                    .expect(404)
+                    .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_404_PHYSICAL_ACTIVITY_NOT_FOUND)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultChild.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
         })
