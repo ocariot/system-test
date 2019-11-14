@@ -110,6 +110,8 @@ export abstract class ApiGatewayException {
     public static readonly PHYSICAL_ACTIVITY: any = {
         // Physical Activity
         ERROR_400_NAME_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'name are required!').toJson(),
+        ERROR_400_INVALID_NAME: new ApiException(400, 'One or more request fields are invalid...', 'name must be a string!').toJson(),
+        ERROR_400_DATE_TIME_IS_NULL: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
         ERROR_400_START_TIME_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'start_time are required!').toJson(),
         ERROR_400_END_TIME_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'end_time are required!').toJson(),
         ERROR_400_DURATION_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'duration are required!').toJson(),
@@ -120,6 +122,7 @@ export abstract class ApiGatewayException {
         ERROR_400_NEGATIVE_DURATION: new ApiException(400, 'One or more request fields are invalid...', 'duration can\'t be negative!').toJson(),
         ERROR_400_NEGATIVE_CALORIES: new ApiException(400, 'One or more request fields are invalid...', 'calories can\'t be negative!').toJson(),
         ERROR_400_NEGATIVE_STEPS: new ApiException(400, 'One or more request fields are invalid...', 'steps can\'t be negative!').toJson(),
+        ERROR_400_INVALID_DISTANCE: new ApiException(400, 'One or more request fields are invalid...', 'distance must be a valid number!').toJson(),
         ERROR_400_DURATION_DOES_NOT_MATCH: new ApiException(400, 'One or more request fields are invalid...', 'duration value does not match values passed in start_time and end_time parameters!').toJson(),
         ERROR_404_PHYSICAL_ACTIVITY_NOT_FOUND: new ApiException(404, 'Physical Activity not found!', 'Physical Activity not found or already removed. A new operation for the same resource is not required.').toJson(),
         ERROR_409_PHYSICAL_ACTIVITY_IS_ALREADY_REGISTERED: new ApiException(409, 'Physical Activity is already registered...').toJson(),
@@ -132,6 +135,7 @@ export abstract class ApiGatewayException {
         ERROR_400_LEVEL_NAME_IN_INVALID_FORMAT: new ApiException(400, 'One or more request fields are invalid...', 'The levels array must have values for the following levels: sedentary, lightly, fairly, very.').toJson(),
         ERROR_400_LEVEL_NAME_NOT_ALLOWED: new ApiException(400, 'One or more request fields are invalid...', 'The names of the allowed levels are: sedentary, lightly, fairly, very.').toJson(),
         ERROR_400_LEVEL_DURATION_ARE_NEGATIVE: new ApiException(400, 'One or more request fields are invalid...', 'levels.duration can\'t be negative!').toJson(),
+        ERROR_400_LEVEL_DURATION_INVALID: new ApiException(400, 'One or more request fields are invalid...', 'levels.duration must be a valid number!').toJson(),
 
         // heart_rate
         ERROR_400_ALL_PARAMETERS_OF_HEART_RATE_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'heart_rate.average, heart_rate.out_of_range_zone, heart_rate.fat_burn_zone, heart_rate.cardio_zone, heart_rate.peak_zone are required!').toJson(),
@@ -139,16 +143,17 @@ export abstract class ApiGatewayException {
         ERROR_400_HEART_RATE_NEGATIVE_AVERAGE: new ApiException(400, 'One or more request fields are invalid...', 'heart_rate.average can\'t be negative!').toJson(),
         ERROR_400_HEART_RATE_CARDIO_ZONE_NEGATIVE_DURATION: new ApiException(400, 'One or more request fields are invalid...', 'heart_rate.cardio_zone.duration can\'t be negative!').toJson(),
         ERROR_400_HEART_RATE_FAT_BURN_ZONE_NEGATIVE_MIN: new ApiException(400, 'One or more request fields are invalid...', 'heart_rate.fat_burn_zone.min can\'t be negative!').toJson(),
+        ERROR_400_HEART_RATE_FAT_BURN_ZONE_INVALID_MIN: new ApiException(400, 'One or more request fields are invalid...', 'heart_rate.fat_burn_zone.min must be a valid number!').toJson(),
         ERROR_400_HEART_RATE_FAT_BURN_ZONE_NEGATIVE_DURATION: new ApiException(400, 'One or more request fields are invalid...', 'heart_rate.fat_burn_zone.duration can\'t be negative!').toJson(),
         ERROR_400_HEART_RATE_OUT_OF_RANGE_ZONE_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'heart_rate.out_of_range_zone.min are required!').toJson(),
         ERROR_400_HEART_RATE_PEAK_ZONE_DURATION_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'heart_rate.peak_zone.duration are required!').toJson(),
         ERROR_400_HEART_RATE_PEAK_ZONE_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'heart_rate.peak_zone are required!').toJson(),
+        ERROR_400_HEART_RATE_INVALID_AVERAGE: new ApiException(400, 'One or more request fields are invalid...', 'heart_rate.average must be a valid number!').toJson(),
 
         // Activity.update has been deprecated
         // ERROR_400_ATTRIBUTES_NOT_UPDATEABLE: new ApiException(400, 'Unable to update this attribute.', 'Updateable attributes are: name, calories, steps, distance, levels (only if the update is from an empty array) and heart_rate.').toJson(),
         // ERROR_400_NEGATIVE_DISTANCE: new ApiException(400, 'One or more request fields are invalid...', 'distance can\'t be negative!').toJson(),
         // ERROR_400_NEGATIVE_AVERAGE: new ApiException(400, 'One or more request fields are invalid...', 'average can\'t be negative!').toJson(),
-        // ERROR_400_INVALID_DISTANCE: new ApiException(400, 'One or more request fields are invalid...', 'distance must be a valid number!').toJson(),
         // ERROR_400_INVALID_AVERAGE: new ApiException(400, 'One or more request fields are invalid...', 'average calories must be a valid number!').toJson(),
         // ERROR_400_HEART_RATE_DURATION_IS_INVALID: new ApiException(400, 'Duration field is invalid...', 'HeartRateZone validation failed: The value provided is not a valid number!').toJson(),
         // ERROR_400_HEART_RATE_MAX_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'HeartRateZone validation failed: max is required!').toJson(),
