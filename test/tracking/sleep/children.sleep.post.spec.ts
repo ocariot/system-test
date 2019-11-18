@@ -22,6 +22,8 @@ import {
     PhasesPatternType,
     StagesPatternType
 } from '../../../src/tracking-service/model/sleep.pattern.data.set'
+import { ChildrenGroup } from '../../../src/account-service/model/children.group'
+import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
 
 describe('Routes: children.sleep', () => {
 
@@ -47,14 +49,10 @@ describe('Routes: children.sleep', () => {
     const defaultFamily: Family = new FamilyMock()
     const defaultApplication: Application = new ApplicationMock()
 
+    const defaultChildrenGroup: ChildrenGroup = new ChildrenGroupMock()
+
     let incorrectSleepJSON: any
     const notSuportedName = 'awaki'
-
-    // Sleep pattern data_set contains an item where name is empty
-    let incorrectSleep7: Sleep = new SleepMock()
-    incorrectSleepJSON = getIncorrectSleepClassicJSON()
-    delete incorrectSleepJSON.pattern.data_set[0].name
-    incorrectSleep7 = incorrectSleep7.fromJSON(incorrectSleepJSON)
 
     // Sleep duration is a text
     let incorrectSleep1: Sleep = new SleepMock()
@@ -94,6 +92,13 @@ describe('Routes: children.sleep', () => {
     incorrectSleepJSON.pattern.data_set[0].duration = -60000
     incorrectSleep6 = incorrectSleep6.fromJSON(incorrectSleepJSON)
 
+    // Sleep pattern data_set contains an item where name is empty
+    let incorrectSleep7: Sleep = new SleepMock()
+    incorrectSleepJSON = getIncorrectSleepClassicJSON()
+    delete incorrectSleepJSON.pattern.data_set[0].name
+    incorrectSleep7 = incorrectSleep7.fromJSON(incorrectSleepJSON)
+
+
     const AMOUNT_OF_CORRECT_SLEEPS = 3
     const correctSleeps: Array<Sleep> = []
     const correctSleepsSummary: Array<any> = []
@@ -120,6 +125,7 @@ describe('Routes: children.sleep', () => {
             const resultDefaultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
             defaultChild.id = resultDefaultChild.id
             defaultFamily.children = new Array<Child>(resultDefaultChild)
+            defaultChildrenGroup.children = new Array<Child>(resultDefaultChild)
 
             const resultDefaultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
             defaultEducator.id = resultDefaultEducator.id
@@ -153,6 +159,10 @@ describe('Routes: children.sleep', () => {
             if (defaultHealthProfessional.username && defaultHealthProfessional.password) {
                 accessDefaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
             }
+
+            // Associating defaultChildrenGroup with educator
+            const resultChildrenGroup = await acc.saveChildrenGroupsForEducator(accessDefaultEducatorToken, defaultEducator, defaultChildrenGroup)
+            defaultChildrenGroup.id = resultChildrenGroup.id
 
             /* populating the sleep arrays */
             for (let i = 0; i < AMOUNT_OF_CORRECT_SLEEPS; i++) {
@@ -441,7 +451,7 @@ describe('Routes: children.sleep', () => {
                     .send(incorrectSleep5)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_PATTERN_NAME_NOT_ALLOWED)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_SLEEP_CLASSIC_PATTERN_NAME_NOT_ALLOWED)
                     })
             })
 
@@ -494,7 +504,7 @@ describe('Routes: children.sleep', () => {
                     .send(incorrectSleep2)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_PATTERN_NAME_NOT_ALLOWED)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_SLEEP_STAGES_PATTERN_NAME_NOT_ALLOWED)
                     })
             })
 
@@ -522,7 +532,8 @@ describe('Routes: children.sleep', () => {
                     .send(sleepClassic.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(`Child with ID ${NON_EXISTENT_ID} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${NON_EXISTENT_ID} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -540,6 +551,89 @@ describe('Routes: children.sleep', () => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_CHILD_ID)
                     })
             })
+
+            // SOME FIELDS HAVE NULL VALUE
+            it('sleep.post035: should return status code 400 and info message from validation error, because sleep start_time is null', () => {
+
+                const sleep = getIncorrectSleepStagesJSON()
+                sleep.start_time = null
+
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/sleep`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(sleep)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_DATE_TIME_IS_NULL)
+                    })
+            })
+
+            it('sleep.post035: should return status code 400 and info message from validation error, because sleep duration is null', () => {
+
+                const sleep = getIncorrectSleepStagesJSON()
+                sleep.duration = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/sleep`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(sleep)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DURATION)
+                    })
+            })
+
+            it('sleep.post036: should return status code 400 and info message from validation error, because sleep pattern data_set.name is null', () => {
+
+                const sleep = getIncorrectSleepStagesJSON()
+                sleep.pattern.data_set[0].name = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/sleep`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(sleep)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_SLEEP_STAGES_PATTERN_NAME_NOT_ALLOWED)
+                    })
+            })
+
+            it('sleep.post037: should return status code 400 and info message from validation error, because sleep pattern data_set.duration is null', () => {
+
+                const sleep = getIncorrectSleepStagesJSON()
+                sleep.pattern.data_set[0].duration = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/sleep`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(sleep)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_INVALID)
+                    })
+            })
+
+            it('sleep.post038: should return status code 400 and info message from validation error, because sleep type is null', () => {
+
+                const sleep = getIncorrectSleepStagesJSON()
+                sleep.type = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/sleep`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(sleep)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_SLEEP_TYPE)
+                    })
+            })
+            // SOME FIELDS HAVE NULL VALUE
 
         }) // validation error occurs
 
@@ -716,8 +810,8 @@ describe('Routes: children.sleep', () => {
 
                             // incorrectSleep5
                             expect(res.body.error[1].code).to.eql(400)
-                            expect(res.body.error[1].message).to.eql(ApiGatewayException.SLEEP.ERROR_400_PATTERN_NAME_NOT_ALLOWED.message)
-                            expect(res.body.error[1].description).to.eql(ApiGatewayException.SLEEP.ERROR_400_PATTERN_NAME_NOT_ALLOWED.description)
+                            expect(res.body.error[1].message).to.eql(ApiGatewayException.SLEEP.ERROR_400_SLEEP_CLASSIC_PATTERN_NAME_NOT_ALLOWED.message)
+                            expect(res.body.error[1].description).to.eql(ApiGatewayException.SLEEP.ERROR_400_SLEEP_CLASSIC_PATTERN_NAME_NOT_ALLOWED.description)
 
                             // incorrectSleep6
                             expect(res.body.error[2].code).to.eql(400)
@@ -747,7 +841,8 @@ describe('Routes: children.sleep', () => {
                     .send(sleepClassic.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${ADMIN_ID} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${ADMIN_ID} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -760,7 +855,8 @@ describe('Routes: children.sleep', () => {
                     .send(sleepClassic.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${defaultEducator.id} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultEducator.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -773,7 +869,8 @@ describe('Routes: children.sleep', () => {
                     .send(sleepClassic.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${defaultHealthProfessional.id} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultHealthProfessional.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -786,7 +883,8 @@ describe('Routes: children.sleep', () => {
                     .send(sleepClassic.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${defaultFamily.id} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultFamily.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -799,40 +897,39 @@ describe('Routes: children.sleep', () => {
                     .send(sleepClassic.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${defaultApplication.id} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultApplication.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
         }) // create sleep for another user that not to be a child
 
-        describe('when the child posting a new Sleep for another child', () => {
-
-            it('sleep.post030: should return status code 400 and info message from error', async () => {
-
-                const anotherChild: Child = new ChildMock()
-                let anotherChildToken
-
-                anotherChild.institution = defaultInstitution
-                await acc.saveChild(accessTokenAdmin, anotherChild)
-
-                if (anotherChild.username && anotherChild.password) {
-                    anotherChildToken = await acc.auth(anotherChild.username, anotherChild.password)
-                }
-
-                return request(URI)
-                    .post(`/children/${defaultChild.id}/sleep`)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(anotherChildToken))
-                    .send(sleepClassic.toJSON())
-                    .expect(400)
-                    .then(err => {
-                        // expect(err.body).to.eql(ApiGatewayException.???)
-                    })
-
-            })
-        })
-
         context('when the user does not have permission for register Sleep', () => {
+
+            describe('when the child posting a new Sleep for another child', () => {
+                it('sleep.post030: should return status code 403 and info message from insufficient permissions for another child', async () => {
+
+                    const anotherChild: Child = new ChildMock()
+                    let anotherChildToken
+
+                    anotherChild.institution = defaultInstitution
+                    await acc.saveChild(accessTokenAdmin, anotherChild)
+
+                    if (anotherChild.username && anotherChild.password) {
+                        anotherChildToken = await acc.auth(anotherChild.username, anotherChild.password)
+                    }
+
+                    return request(URI)
+                        .post(`/children/${defaultChild.id}/sleep`)
+                        .set('Content-Type', 'application/json')
+                        .set('Authorization', 'Bearer '.concat(anotherChildToken))
+                        .send(sleepClassic.toJSON())
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })
 
             it('sleep.post031: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
@@ -1081,7 +1178,7 @@ function getIncorrectSleepStagesJSON() {
                 }
             ]
         },
-        type: 'classic'
+        type: 'stages'
     }
 
     return incorrectSleepJSON
