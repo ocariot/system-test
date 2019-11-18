@@ -15,6 +15,7 @@ import { EducatorMock } from '../../mocks/account-service/educator.mock'
 import { FamilyMock } from '../../mocks/account-service/family.mock'
 import { Family } from '../../../src/account-service/model/family'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
+import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
 
 describe('Routes: children.physicalactivities', () => {
 
@@ -36,7 +37,7 @@ describe('Routes: children.physicalactivities', () => {
     const defaultChild: Child = new ChildMock()
     const defaultEducator: Educator = new EducatorMock()
     const defaultFamily: Family = new FamilyMock()
-    const defaultChildrenGroup: ChildrenGroup = new ChildrenGroup()
+    const defaultChildrenGroup: ChildrenGroup = new ChildrenGroupMock()
 
     let accessDefaultChildToken: string
     let accessDefaultEducatorToken: string
@@ -187,7 +188,7 @@ describe('Routes: children.physicalactivities', () => {
                 return request(URI)
                     .delete(`/children/${defaultChild.id}/physicalactivities/${INVALID_ID}`)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(400)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_PHYSICAL_ACTIVY_ID)
@@ -210,14 +211,13 @@ describe('Routes: children.physicalactivities', () => {
 
         })
 
-        context('when the child or the activity does not exist', () => {
-
+        context('when the activity does not exist', () => {
             it('physical.activities.delete007: should return status code 204 and no content for physical activity, when the activity not exist', () => {
                 const NON_EXISTENT_ID = '123789456111888777222333'
 
                 return request(URI)
                     .delete(`/children/${defaultChild.id}/physicalactivities/${NON_EXISTENT_ID}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .set('Content-Type', 'application/json')
                     .expect(204)
                     .then(res => {
