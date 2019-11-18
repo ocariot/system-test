@@ -69,7 +69,6 @@ describe('Routes: environments', () => {
     incorrectEnvironmentJSON.measurements[0].unit = 1000000
     incorrectEnvironment6 = incorrectEnvironment6.fromJSON(incorrectEnvironmentJSON)
 
-
     const locationWithoutRoom: Location = new Location()
     locationWithoutRoom.local = 'indoor'
     locationWithoutRoom.latitude = '0'
@@ -107,6 +106,14 @@ describe('Routes: environments', () => {
             const resultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = resultInstitution.id
             defaultEnvironment.institution_id = resultInstitution.id
+
+            // defining the institution of the incorrect environments
+            incorrectEnvironment1.institution_id = defaultInstitution.id
+            incorrectEnvironment2.institution_id = defaultInstitution.id
+            incorrectEnvironment3.institution_id = defaultInstitution.id
+            incorrectEnvironment4.institution_id = defaultInstitution.id
+            incorrectEnvironment5.institution_id = defaultInstitution.id
+            incorrectEnvironment6.institution_id = defaultInstitution.id
 
             // Populates the environments arrays
             for (let i = 0; i < AMOUNT_OF_CORRECT_ENVIRONMENTS; i++) {
@@ -216,7 +223,6 @@ describe('Routes: environments', () => {
                         .send(body)
                         .expect(207)
                         .then(res => {
-                            expect(res.body.success.length).to.eql(3)
                             for (let i = 0; i < res.body.success.length; i++) {
                                 expect(res.body.success[i].code).to.eql(201)
                                 expect(res.body.success[i].item).to.have.property('id')
@@ -226,6 +232,7 @@ describe('Routes: environments', () => {
                                 expect(res.body.success[i].item).to.have.property('climatized', correctEnvironments[i].climatized)
                                 expect(res.body.success[i].item).to.have.property('timestamp', correctEnvironments[i].timestamp.toISOString())
                             }
+                            expect(res.body.success.length).to.eql(AMOUNT_OF_CORRECT_ENVIRONMENTS)
                             expect(res.body.error.length).to.eql(0)
                         })
                 })
@@ -478,7 +485,8 @@ describe('Routes: environments', () => {
 
             it('environments.post014: should return status code 400 and info message from invalid parameters, because institution does not exist', () => {
 
-                environment.institution_id = '111111111111111111111111' // non-existent ID
+                const NON_EXISTENT_INSTITUTION_ID = '111111111111111111111111'
+                environment.institution_id = NON_EXISTENT_INSTITUTION_ID
 
                 return request(URI)
                     .post('/environments')
@@ -487,7 +495,8 @@ describe('Routes: environments', () => {
                     .send(environment.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_NOT_REGISTERED)
+                        expect(err.body.message).to.eql(`There is no registered Institution with ID: ${NON_EXISTENT_INSTITUTION_ID} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Institution and try again...')
                     })
             })
 
