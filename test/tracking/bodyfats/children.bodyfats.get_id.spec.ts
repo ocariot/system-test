@@ -14,21 +14,26 @@ import { HealthProfessional } from '../../../src/account-service/model/health.pr
 import { HealthProfessionalMock } from '../../mocks/account-service/healthprofessional.mock'
 import { Family } from '../../../src/account-service/model/family'
 import { FamilyMock } from '../../mocks/account-service/family.mock'
-import { Application } from '../../../src/account-service/model/application'
-import { ApplicationMock } from '../../mocks/account-service/application.mock'
 import { BodyFat } from '../../../src/tracking-service/model/body.fat'
 import { BodyFatMock } from '../../mocks/tracking-service/body.fat.mock'
+import { ChildrenGroup } from '../../../src/account-service/model/children.group'
+import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
 
 describe('Routes: children.bodyfats', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
     let accessTokenAdmin: string
+    let accessTokenChild
+    let accessTokenEducator: string
+    let accessTokenHealthProfessional: string
+    let accessTokenFamily: string
+    let accessTokenApplication: string
+
     let accessDefaultChildToken: string
     let accessDefaultEducatorToken: string
     let accessDefaultHealthProfessionalToken: string
     let accessDefaultFamilyToken: string
-    let accessDefaultApplicationToken: string
 
     const defaultInstitution: Institution = new Institution()
     defaultInstitution.type = 'default type'
@@ -41,7 +46,8 @@ describe('Routes: children.bodyfats', () => {
     const defaultEducator: Educator = new EducatorMock()
     const defaultHealthProfessional: HealthProfessional = new HealthProfessionalMock()
     const defaultFamily: Family = new FamilyMock()
-    const defaultApplication: Application = new ApplicationMock()
+
+    const defaultChildrenGroup: ChildrenGroup = new ChildrenGroupMock()
 
     const defaultBodyFat: BodyFat = new BodyFatMock()
 
@@ -52,6 +58,11 @@ describe('Routes: children.bodyfats', () => {
 
             const tokens = await acc.getAuths()
             accessTokenAdmin = tokens.admin.access_token
+            accessTokenChild = tokens.child.access_token
+            accessTokenEducator = tokens.educator.access_token
+            accessTokenHealthProfessional = tokens.health_professional.access_token
+            accessTokenFamily = tokens.family.access_token
+            accessTokenApplication = tokens.application.access_token
 
             const resultDefaultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = resultDefaultInstitution.id
@@ -59,12 +70,15 @@ describe('Routes: children.bodyfats', () => {
             defaultEducator.institution = resultDefaultInstitution
             defaultHealthProfessional.institution = resultDefaultInstitution
             defaultFamily.institution = resultDefaultInstitution
-            defaultApplication.institution = resultDefaultInstitution
 
             const resultDefaultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
             defaultChild.id = resultDefaultChild.id
+
+            // Associating the child
+            defaultChildrenGroup.children = new Array<Child>(resultDefaultChild)
             defaultFamily.children = new Array<Child>(resultDefaultChild)
 
+            // registering default users
             const resultDefaultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
             defaultEducator.id = resultDefaultEducator.id
 
@@ -74,10 +88,7 @@ describe('Routes: children.bodyfats', () => {
             const resultDefaultFamily = await acc.saveFamily(accessTokenAdmin, defaultFamily)
             defaultFamily.id = resultDefaultFamily.id
 
-            const resultDefaultApplication = await acc.saveApplication(accessTokenAdmin, defaultApplication)
-            defaultApplication.id = resultDefaultApplication.id
-
-            //getting tokens for each 'default user'
+            // getting default users token
             if (defaultChild.username && defaultChild.password) {
                 accessDefaultChildToken = await acc.auth(defaultChild.username, defaultChild.password)
             }
@@ -86,17 +97,17 @@ describe('Routes: children.bodyfats', () => {
                 accessDefaultEducatorToken = await acc.auth(defaultEducator.username, defaultEducator.password)
             }
 
+            if (defaultHealthProfessional.username && defaultHealthProfessional.password) {
+                accessDefaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
+            }
+
             if (defaultFamily.username && defaultFamily.password) {
                 accessDefaultFamilyToken = await acc.auth(defaultFamily.username, defaultFamily.password)
             }
 
-            if (defaultApplication.username && defaultApplication.password) {
-                accessDefaultApplicationToken = await acc.auth(defaultApplication.username, defaultApplication.password)
-            }
-
-            if (defaultHealthProfessional.username && defaultHealthProfessional.password) {
-                accessDefaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
-            }
+            // associate children groups
+            await acc.saveChildrenGroupsForEducator(accessDefaultEducatorToken, defaultEducator, defaultChildrenGroup)
+            await acc.saveChildrenGroupsForHealthProfessional(accessDefaultHealthProfessionalToken, defaultHealthProfessional, defaultChildrenGroup)
 
         } catch (err) {
             console.log('Failure on Before from bodyfats.get_id test: ', err.message)
@@ -219,7 +230,7 @@ describe('Routes: children.bodyfats', () => {
                 return request(URI)
                     .get(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
+                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('id', defaultBodyFat.id)
@@ -259,24 +270,25 @@ describe('Routes: children.bodyfats', () => {
                         expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_INVALID_BODYFAT_ID)
                     })
             })
-        })
-
-        context('when the body fat is not found', () => {
-            const NON_EXISTENT_ID = '111111111111111111111111'
 
             it('bodyfats.get_id009: should return status code 404 and info message from body fat not found, because the child not exist', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111'
 
                 return request(URI)
                     .get(`/children/${NON_EXISTENT_ID}/bodyfats/${defaultBodyFat.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .expect(404)
+                    .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_404_BODYFAT_NOT_FOUND)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${NON_EXISTENT_ID} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
+        })
 
+        describe('when the body fat is not found', () => {
             it('bodyfats.get_id010: should return status code 404 and info message from body fat not found. because the body fat not exist', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111'
 
                 return request(URI)
                     .get(`/children/${defaultChild.id}/bodyfats/${NON_EXISTENT_ID}`)
@@ -286,32 +298,6 @@ describe('Routes: children.bodyfats', () => {
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_404_BODYFAT_NOT_FOUND)
                     })
-            })
-
-        })
-
-        describe('when the child get the body fat of another child', () => {
-            it('bodyfats.get_id011: should return status code 400 and info message from error', async () => {
-
-                const anotherChild: Child = new ChildMock()
-                let anotherChildToken
-
-                anotherChild.institution = defaultInstitution
-                await acc.saveChild(accessTokenAdmin, anotherChild)
-
-                if (anotherChild.username && anotherChild.password) {
-                    anotherChildToken = await acc.auth(anotherChild.username, anotherChild.password)
-                }
-
-                return request(URI)
-                    .get(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(anotherChildToken))
-                    .expect(400)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
-
             })
         })
 
@@ -329,6 +315,63 @@ describe('Routes: children.bodyfats', () => {
             })
         })
 
+        describe('when the user does not have permission for get Body fat', () => {
+            describe('when a child get the body fat of other child', () => {
+                it('bodyfats.get_id011: should return the status code 403 and info message from insufficient permissions', () => {
+
+                    return request(URI)
+                        .get(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
+                        .set('Content-Type', 'application/json')
+                        .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })
+
+            describe('when the child does not belong to any of the groups associated with the educator', () => {
+                it('bodyfats.get_id015: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
+
+                    return request(URI)
+                        .get(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                        .set('Content-Type', 'application/json')
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })
+
+            describe('when the child does not belong to any of the groups associated with the health professional', () => {
+                it('bodyfats.get_id016: should return status code 403 and info message from insufficient permissions for health professional user who is not associated with the child', () => {
+
+                    return request(URI)
+                        .get(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                        .set('Content-Type', 'application/json')
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })
+
+            describe('when the child is not associated with the family', () => {
+                it('bodyfats.get_id017: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
+
+                    return request(URI)
+                        .get(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                        .set('Content-Type', 'application/json')
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })
+        })
         describe('when get the body fat of a child that has been deleted', () => {
             it('bodyfats.get_id013: should return status code 404 and info message from body fat not found, because the child not exist', async () => {
 
@@ -338,9 +381,10 @@ describe('Routes: children.bodyfats', () => {
                     .get(`/children/${defaultChild.id}/bodyfats/${defaultBodyFat.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .expect(404)
+                    .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_404_BODYFAT_NOT_FOUND)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultChild.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
         })

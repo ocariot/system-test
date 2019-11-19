@@ -18,6 +18,7 @@ import { Application } from '../../../src/account-service/model/application'
 import { ApplicationMock } from '../../mocks/account-service/application.mock'
 import { BodyFat } from '../../../src/tracking-service/model/body.fat'
 import { BodyFatMock } from '../../mocks/tracking-service/body.fat.mock'
+import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 
 describe('Routes: children.bodyfats', () => {
 
@@ -42,6 +43,10 @@ describe('Routes: children.bodyfats', () => {
     const defaultHealthProfessional: HealthProfessional = new HealthProfessionalMock()
     const defaultFamily: Family = new FamilyMock()
     const defaultApplication: Application = new ApplicationMock()
+
+    const defaultChildrenGroup: ChildrenGroup = new ChildrenGroup()
+    defaultChildrenGroup.name = 'Default children group'
+    defaultChildrenGroup.school_class = '4th grade'
 
     let incorrectBodyFatJSON: any
 
@@ -116,6 +121,7 @@ describe('Routes: children.bodyfats', () => {
             const resultDefaultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
             defaultChild.id = resultDefaultChild.id
             defaultFamily.children = new Array<Child>(resultDefaultChild)
+            defaultChildrenGroup.children = new Array<Child>(resultDefaultChild)
 
             const resultDefaultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
             defaultEducator.id = resultDefaultEducator.id
@@ -149,6 +155,10 @@ describe('Routes: children.bodyfats', () => {
             if (defaultHealthProfessional.username && defaultHealthProfessional.password) {
                 accessDefaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
             }
+
+            // Associating defaultChildrenGroup with educator
+            const resultChildrenGroup = await acc.saveChildrenGroupsForEducator(accessDefaultEducatorToken, defaultEducator, defaultChildrenGroup)
+            defaultChildrenGroup.id = resultChildrenGroup.id
 
             /* populating the BodyFat arrays */
             for (let i = 0; i < AMOUNT_OF_CORRECT_BODYFATS; i++) {
@@ -501,7 +511,8 @@ describe('Routes: children.bodyfats', () => {
                     .send(bodyfat.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`ID ${NON_EXISTENT_ID} is not associated with a child!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${NON_EXISTENT_ID} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -520,8 +531,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.post016: should return status code 400 and info message from error, because timestamp and value are required', () =>
-            {
+            it('bodyfats.post016: should return status code 400 and info message from error, because timestamp and value are required', () => {
 
                 delete bodyfat.timestamp
                 delete bodyfat.value
@@ -536,6 +546,40 @@ describe('Routes: children.bodyfats', () => {
                         expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_TIMESTAMP_AND_VALUE_ARE_REQUIRED)
                     })
             })
+
+            //SOME FIELDS HAVE NULL VALUE
+            it('bodyfats.post027: should return status code 400 and info message from error, because timestamp is null', () => {
+
+                const incorrectBodyFat = getIncorrectBodyFatJSON()
+                incorrectBodyFat.timestamp = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/bodyfats`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(incorrectBodyFat)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_DATE_IS_NULL)
+                    })
+            })
+
+            it('bodyfats.post028: should return status code 400 and info message from error, because value is null', () => {
+
+                const incorrectBodyFat = getIncorrectBodyFatJSON()
+                incorrectBodyFat.value = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/bodyfats`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(incorrectBodyFat)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_INVALID_VALUE)
+                    })
+            })
+            //SOME FIELDS HAVE NULL VALUE
 
         }) // validation error occurs
 
@@ -552,7 +596,8 @@ describe('Routes: children.bodyfats', () => {
                     .send(bodyfat.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${ADMIN_ID} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${ADMIN_ID} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -565,7 +610,8 @@ describe('Routes: children.bodyfats', () => {
                     .send(bodyfat.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${defaultEducator.id} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultEducator.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -578,7 +624,8 @@ describe('Routes: children.bodyfats', () => {
                     .send(bodyfat.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${defaultHealthProfessional.id} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultHealthProfessional.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -591,11 +638,13 @@ describe('Routes: children.bodyfats', () => {
                     .send(bodyfat.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${defaultFamily.id} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultFamily.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
-            it('bodyfats.post021: should return 400 and info message from error, when try create a body fat for application', () => {
+            it('bodyfats.post021: should return 400 and info message from error, when try create a body fat for applic' +
+                'ation', () => {
 
                 return request(URI)
                     .post(`/children/${defaultApplication.id}/bodyfats`)
@@ -604,39 +653,40 @@ describe('Routes: children.bodyfats', () => {
                     .send(bodyfat.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${defaultApplication.id} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultApplication.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
         }) // create bodyfats for another user that not to be a child
 
-        describe('when the child posting a new Body Fat for another child', () => {
-            it('bodyfats.post022: should return status code 400 and info message from error', async () => {
-
-                const anotherChild: Child = new ChildMock()
-                let anotherChildToken
-
-                anotherChild.institution = defaultInstitution
-                await acc.saveChild(accessTokenAdmin, anotherChild)
-
-                if (anotherChild.username && anotherChild.password) {
-                    anotherChildToken = await acc.auth(anotherChild.username, anotherChild.password)
-                }
-
-                return request(URI)
-                    .post(`/children/${defaultChild.id}/bodyfats`)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(anotherChildToken))
-                    .send(bodyfat.toJSON())
-                    .expect(400)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
-
-            })
-        })
-
         context('when the user does not have permission for register Body Fat', () => {
+
+            describe('when the child posting a new Body Fat for another child', () => {
+                it('bodyfats.post022: should return status code 403 and info message from insufficient permissions for another child', async () => {
+
+                    const anotherChild: Child = new ChildMock()
+                    let anotherChildToken
+
+                    anotherChild.institution = defaultInstitution
+                    await acc.saveChild(accessTokenAdmin, anotherChild)
+
+                    if (anotherChild.username && anotherChild.password) {
+                        anotherChildToken = await acc.auth(anotherChild.username, anotherChild.password)
+                    }
+
+                    return request(URI)
+                        .post(`/children/${defaultChild.id}/bodyfats`)
+                        .set('Content-Type', 'application/json')
+                        .set('Authorization', 'Bearer '.concat(anotherChildToken))
+                        .send(bodyfat.toJSON())
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+
+                })
+            })
 
             it('bodyfats.post023: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
