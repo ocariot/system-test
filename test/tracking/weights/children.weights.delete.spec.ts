@@ -14,21 +14,24 @@ import { HealthProfessional } from '../../../src/account-service/model/health.pr
 import { HealthProfessionalMock } from '../../mocks/account-service/healthprofessional.mock'
 import { Family } from '../../../src/account-service/model/family'
 import { FamilyMock } from '../../mocks/account-service/family.mock'
-import { Application } from '../../../src/account-service/model/application'
-import { ApplicationMock } from '../../mocks/account-service/application.mock'
 import { Weight } from '../../../src/tracking-service/model/weight'
 import { WeightMock } from '../../mocks/tracking-service/weight.mock'
+import { ChildrenGroup } from '../../../src/account-service/model/children.group'
+import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
 
 describe('Routes: children.weights', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
     let accessTokenAdmin: string
+    let accessTokenEducator: string
+    let accessTokenFamily: string
+    let accessTokenApplication: string
+
     let accessDefaultChildToken: string
     let accessDefaultEducatorToken: string
     let accessDefaultHealthProfessionalToken: string
     let accessDefaultFamilyToken: string
-    let accessDefaultApplicationToken: string
 
     const defaultInstitution: Institution = new Institution()
     defaultInstitution.type = 'default type'
@@ -39,9 +42,9 @@ describe('Routes: children.weights', () => {
 
     const defaultChild: Child = new ChildMock()
     const defaultEducator: Educator = new EducatorMock()
-    const defaultHealthProfessional: HealthProfessional = new HealthProfessionalMock()
     const defaultFamily: Family = new FamilyMock()
-    const defaultApplication: Application = new ApplicationMock()
+    const defaultHealthProfessional: HealthProfessional = new HealthProfessionalMock()
+    const defaultChildrenGroup: ChildrenGroup = new ChildrenGroupMock()
 
     const defaultWeight: Weight = new WeightMock()
 
@@ -52,6 +55,9 @@ describe('Routes: children.weights', () => {
 
             const tokens = await acc.getAuths()
             accessTokenAdmin = tokens.admin.access_token
+            accessTokenEducator = tokens.educator.access_token
+            accessTokenFamily = tokens.family.access_token
+            accessTokenApplication = tokens.application.access_token
 
             const resultDefaultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = resultDefaultInstitution.id
@@ -59,11 +65,11 @@ describe('Routes: children.weights', () => {
             defaultEducator.institution = resultDefaultInstitution
             defaultHealthProfessional.institution = resultDefaultInstitution
             defaultFamily.institution = resultDefaultInstitution
-            defaultApplication.institution = resultDefaultInstitution
 
             const resultDefaultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
             defaultChild.id = resultDefaultChild.id
             defaultFamily.children = new Array<Child>(resultDefaultChild)
+            defaultChildrenGroup.children = new Array<Child>(resultDefaultChild)
 
             const resultDefaultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
             defaultEducator.id = resultDefaultEducator.id
@@ -74,10 +80,7 @@ describe('Routes: children.weights', () => {
             const resultDefaultFamily = await acc.saveFamily(accessTokenAdmin, defaultFamily)
             defaultFamily.id = resultDefaultFamily.id
 
-            const resultDefaultApplication = await acc.saveApplication(accessTokenAdmin, defaultApplication)
-            defaultApplication.id = resultDefaultApplication.id
-
-            //getting tokens for each 'default user'
+            // getting default child token
             if (defaultChild.username && defaultChild.password) {
                 accessDefaultChildToken = await acc.auth(defaultChild.username, defaultChild.password)
             }
@@ -86,17 +89,16 @@ describe('Routes: children.weights', () => {
                 accessDefaultEducatorToken = await acc.auth(defaultEducator.username, defaultEducator.password)
             }
 
+            if (defaultHealthProfessional.username && defaultHealthProfessional.password) {
+                accessDefaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
+            }
+
             if (defaultFamily.username && defaultFamily.password) {
                 accessDefaultFamilyToken = await acc.auth(defaultFamily.username, defaultFamily.password)
             }
 
-            if (defaultApplication.username && defaultApplication.password) {
-                accessDefaultApplicationToken = await acc.auth(defaultApplication.username, defaultApplication.password)
-            }
-
-            if (defaultHealthProfessional.username && defaultHealthProfessional.password) {
-                accessDefaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
-            }
+            const resultChildrenGroup = await acc.saveChildrenGroupsForEducator(accessDefaultEducatorToken, defaultEducator, defaultChildrenGroup)
+            defaultChildrenGroup.id = resultChildrenGroup.id
 
         } catch (err) {
             console.log('Failure on Before from weight.delete test: ', err.message)
@@ -163,7 +165,7 @@ describe('Routes: children.weights', () => {
                 return request(URI)
                     .delete(`/children/${defaultChild.id}/weights/${defaultWeight.id}`)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
+                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .expect(204)
                     .then(res => {
                         expect(res.body).to.eql({})
@@ -199,24 +201,26 @@ describe('Routes: children.weights', () => {
                         expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_INVALID_WEIGHT_ID)
                     })
             })
-        }) // when a validation error occurs
 
-        context('when the weight is not found', () => {
-            const NON_EXISTENT_ID = '111111111111111111111111'
-
-            it('weight.delete006: should return status code 204 and no content for weight, when the child not exist', () => {
+            it('weight.delete006: should return status code 400 and info message from child not exist', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111'
 
                 return request(URI)
                     .delete(`/children/${NON_EXISTENT_ID}/weights/${defaultWeight.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(204)
-                    .then(res => {
-                        expect(res.body).to.eql({})
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${NON_EXISTENT_ID} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
+        }) // when a validation error occurs
+
+        describe('when the weight is not found', () => {
             it('weight.delete007: should return status code 204 and no content for weight, when the weight not exist', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111'
 
                 return request(URI)
                     .delete(`/children/${defaultChild.id}/weights/${NON_EXISTENT_ID}`)
@@ -230,7 +234,7 @@ describe('Routes: children.weights', () => {
         }) // when the weight is not found
 
         context('when the user does not have permission for delete weight', () => {
-            it('weight.delete008: should return status code 403 and info message from insufficient permissions for admin user', () => {
+            it('bodyfats.delete008: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
                     .delete(`/children/${defaultChild.id}/weights/${defaultWeight.id}`)
@@ -242,7 +246,7 @@ describe('Routes: children.weights', () => {
                     })
             })
 
-            it('weight.delete009: should return status code 403 and info message from insufficient permissions for the child', () => {
+            it('weights.delete009: should return status code 403 and info message from insufficient permissions for the child', () => {
 
                 return request(URI)
                     .delete(`/children/${defaultChild.id}/weights/${defaultWeight.id}`)
@@ -254,7 +258,7 @@ describe('Routes: children.weights', () => {
                     })
             })
 
-            it('weight.delete010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('weights.delete010: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
                     .delete(`/children/${defaultChild.id}/weights/${defaultWeight.id}`)
@@ -265,7 +269,36 @@ describe('Routes: children.weights', () => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
-        }) // when the user does not have permission for delete weight
+
+            describe('when the child does not belong to any of the groups associated with the educator', () => {
+                it('physical.activities.delete013: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
+
+                    return request(URI)
+                        .delete(`/children/${defaultChild.id}/weights/${defaultWeight.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                        .set('Content-Type', 'application/json')
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })
+
+            describe('when the child is not associated with the family', () => {
+                it('physical.activities.delete014: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
+
+                    return request(URI)
+                        .delete(`/children/${defaultChild.id}/weights/${defaultWeight.id}`)
+                        .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                        .set('Content-Type', 'application/json')
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
+            })
+
+        }) // when the user does not have permission for delete weights
 
         describe('when not informed the acess token', () => {
             it('weight.delete011: should return the status code 401 and the authentication failure informational message', () => {
@@ -282,7 +315,7 @@ describe('Routes: children.weights', () => {
         })
 
         describe('when delete the weight of a child that has been deleted', () => {
-            it('weight.delete012: should return status code 204 and no content for weight, when the child not exist', async () => {
+            it('weight.delete012: should return status code 204 and no content for body fat, when the child not exist', async () => {
 
                 await acc.deleteUser(accessTokenAdmin, defaultChild.id)
 
@@ -290,9 +323,10 @@ describe('Routes: children.weights', () => {
                     .delete(`/children/${defaultChild.id}/weights/${defaultWeight.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(204)
+                    .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql({})
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultChild.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
         })

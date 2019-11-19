@@ -24,6 +24,9 @@ describe('Routes: children.bodyfats', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
+    let accessTokenAnotherEducator: string
+    let accessTokenAnotherFamily: string
+
     let accessTokenAdmin: string
     let accessDefaultChildToken: string
     let accessDefaultEducatorToken: string
@@ -109,6 +112,8 @@ describe('Routes: children.bodyfats', () => {
 
             const tokens = await acc.getAuths()
             accessTokenAdmin = tokens.admin.access_token
+            accessTokenAnotherEducator = tokens.educator.access_token
+            accessTokenAnotherFamily = tokens.family.access_token
 
             const resultDefaultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = resultDefaultInstitution.id
@@ -714,6 +719,37 @@ describe('Routes: children.bodyfats', () => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
 
+            })
+
+            describe('when the child does not belong to any of the groups associated with the educator', () => {
+                it('bodyfats.post027: should return status code 403 and info message from insufficient permissions for health professional user', async () => {
+
+                    return request(URI)
+                        .post(`/children/${defaultChild.id}/bodyfats`)
+                        .set('Content-Type', 'application/json')
+                        .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
+                        .send(bodyfat.toJSON())
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+
+                })
+            })
+
+            describe('when the child is not associated with the family', () => {
+                it('bodyfats.post028: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', async () => {
+
+                    return request(URI)
+                        .post(`/children/${defaultChild.id}/bodyfats`)
+                        .set('Content-Type', 'application/json')
+                        .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
+                        .send(bodyfat.toJSON())
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
             })
 
         }) // user does not have permission for register bodyfats

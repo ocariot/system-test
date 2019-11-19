@@ -18,17 +18,23 @@ import { Application } from '../../../src/account-service/model/application'
 import { ApplicationMock } from '../../mocks/account-service/application.mock'
 import { Weight } from '../../../src/tracking-service/model/weight'
 import { WeightMock } from '../../mocks/tracking-service/weight.mock'
+import { ChildrenGroup } from '../../../src/account-service/model/children.group'
+import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
 
 describe('Routes: children.sleep', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
+
+    let accessAnotherChildToken: string
+    let accessAnotherEducatorToken: string
+    let accessAnotherFamilyToken: string
+    let accessAnotherApplicationToken: string
 
     let accessTokenAdmin: string
     let accessDefaultChildToken: string
     let accessDefaultEducatorToken: string
     let accessDefaultHealthProfessionalToken: string
     let accessDefaultFamilyToken: string
-    let accessDefaultApplicationToken: string
 
     const defaultInstitution: Institution = new Institution()
     defaultInstitution.type = 'default type'
@@ -42,6 +48,8 @@ describe('Routes: children.sleep', () => {
     const defaultHealthProfessional: HealthProfessional = new HealthProfessionalMock()
     const defaultFamily: Family = new FamilyMock()
     const defaultApplication: Application = new ApplicationMock()
+
+    const defaultChildrenGroup: ChildrenGroup = new ChildrenGroupMock()
 
     let incorrectWeightJSON: any
 
@@ -115,6 +123,10 @@ describe('Routes: children.sleep', () => {
 
             const tokens = await acc.getAuths()
             accessTokenAdmin = tokens.admin.access_token
+            accessAnotherChildToken = tokens.child.access_token
+            accessAnotherEducatorToken = tokens.educator.access_token
+            accessAnotherFamilyToken = tokens.family.access_token
+            accessAnotherApplicationToken = tokens.application.access_token
 
             const resultDefaultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = resultDefaultInstitution.id
@@ -127,6 +139,7 @@ describe('Routes: children.sleep', () => {
             const resultDefaultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
             defaultChild.id = resultDefaultChild.id
             defaultFamily.children = new Array<Child>(resultDefaultChild)
+            defaultChildrenGroup.children = new Array<Child>(resultDefaultChild)
 
             const resultDefaultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
             defaultEducator.id = resultDefaultEducator.id
@@ -137,9 +150,6 @@ describe('Routes: children.sleep', () => {
             const resultDefaultFamily = await acc.saveFamily(accessTokenAdmin, defaultFamily)
             defaultFamily.id = resultDefaultFamily.id
 
-            const resultDefaultApplication = await acc.saveApplication(accessTokenAdmin, defaultApplication)
-            defaultApplication.id = resultDefaultApplication.id
-
             //getting tokens for each 'default user'
             if (defaultChild.username && defaultChild.password) {
                 accessDefaultChildToken = await acc.auth(defaultChild.username, defaultChild.password)
@@ -149,17 +159,17 @@ describe('Routes: children.sleep', () => {
                 accessDefaultEducatorToken = await acc.auth(defaultEducator.username, defaultEducator.password)
             }
 
+            if (defaultHealthProfessional.username && defaultHealthProfessional.password) {
+                accessDefaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
+            }
+
             if (defaultFamily.username && defaultFamily.password) {
                 accessDefaultFamilyToken = await acc.auth(defaultFamily.username, defaultFamily.password)
             }
 
-            if (defaultApplication.username && defaultApplication.password) {
-                accessDefaultApplicationToken = await acc.auth(defaultApplication.username, defaultApplication.password)
-            }
-
-            if (defaultHealthProfessional.username && defaultHealthProfessional.password) {
-                accessDefaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
-            }
+            // Associating defaultChildrenGroup with educator
+            const resultChildrenGroup = await acc.saveChildrenGroupsForEducator(accessDefaultEducatorToken, defaultEducator, defaultChildrenGroup)
+            defaultChildrenGroup.id = resultChildrenGroup.id
 
             /* populating the weight arrays */
             for (let i = 0; i < AMOUNT_OF_CORRECT_WEIGHTS; i++) {
@@ -250,7 +260,7 @@ describe('Routes: children.sleep', () => {
                 return request(URI)
                     .post(`/children/${defaultChild.id}/weights`)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
+                    .set('Authorization', 'Bearer '.concat(accessAnotherApplicationToken))
                     .send(weight.toJSON())
                     .expect(201)
                     .then(res => {
@@ -413,8 +423,9 @@ describe('Routes: children.sleep', () => {
                             .send(body)
                             .expect(207)
                             .then(res => {
+
                                 // Success item
-                                expect(res.body.success.length).to.eql(AMOUNT_OF_CORRECT_WEIGHTS)
+                                expect(res.body.success.length).to.eql(1)
                                 expect(res.body.success[0].code).to.eql(201)
                                 expect(res.body.success[0].item).to.have.property('id')
                                 expect(res.body.success[0].item).to.have.property('timestamp', mixedWeights[0].timestamp!.toISOString())
@@ -428,7 +439,7 @@ describe('Routes: children.sleep', () => {
                                 // Error item
                                 expect(res.body.error[0].code).to.eql(400)
                                 expect(res.body.error[0].message).to.eql(`Datetime: , is not in valid ISO 8601 format.`) // timestamp is empty
-                                expect(res.body.error[0].description).to.eql(`Date must be in the format: yyyy-MM-dd\\'T\\'HH:mm:ssZ'`)
+                                expect(res.body.error[0].description).to.eql(`Date must be in the format: yyyy-MM-dd'T'HH:mm:ssZ`)
                             })
                     })
                 })
@@ -570,7 +581,8 @@ describe('Routes: children.sleep', () => {
                     .send(weight.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`ID ${NON_EXISTENT_ID} is not associated with a child!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${NON_EXISTENT_ID} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -605,6 +617,72 @@ describe('Routes: children.sleep', () => {
                     })
             })
 
+            //SOME FIELDS HAVE NULL VALUE
+            it('weight.post031: should return status code 400 and info message from error, timestamp is null', () => {
+
+                const weight = getIncorrectWeightJSON()
+                weight.timestamp = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/weights`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(weight)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_DATE_IS_NULL)
+                    })
+            })
+
+            it('weight.post032: should return status code 400 and info message from error, value is null', () => {
+
+                const weight = getIncorrectWeightJSON()
+                weight.value = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/weights`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(weight)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_INVALID_VALUE)
+                    })
+            })
+
+            it('weight.post033: should return status code 400 and info message from error, unit is null', () => {
+
+                const weight = getIncorrectWeightJSON()
+                weight.unit = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/weights`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(weight)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_INVALID_UNIT)
+                    })
+            })
+
+            it('weight.post034: should return status code 400 and info message from error, body_fat is null', () => {
+
+                const weight = getIncorrectWeightJSON()
+                weight.body_fat = null
+
+                return request(URI)
+                    .post(`/children/${defaultChild.id}/weights`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(weight)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_INVALID_BODY_FAT_VALUE)
+                    })
+            })
+            //SOME FIELDS HAVE NULL VALUE
+
         }) // validation error occurs
 
         context('when posting a new Weight for another user that not to be a child', () => {
@@ -620,7 +698,8 @@ describe('Routes: children.sleep', () => {
                     .send(weight.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${ADMIN_ID} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${ADMIN_ID} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -633,7 +712,8 @@ describe('Routes: children.sleep', () => {
                     .send(weight.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${defaultEducator.id} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultEducator.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -646,7 +726,8 @@ describe('Routes: children.sleep', () => {
                     .send(weight.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${defaultHealthProfessional.id} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultHealthProfessional.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -659,7 +740,8 @@ describe('Routes: children.sleep', () => {
                     .send(weight.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${defaultFamily.id} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultFamily.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -672,39 +754,30 @@ describe('Routes: children.sleep', () => {
                     .send(weight.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Child with ID ${defaultApplication.id} is not registered on the platform!`)
+                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultApplication.id} on the platform!`)
+                        expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
         }) // create weight for another user that not to be a child
 
-        describe('when the child posting a new Weight for another child', () => {
-            it('weight.post024: should return status code 400 and info message from error', async () => {
-
-                const anotherChild: Child = new ChildMock()
-                let anotherChildToken
-
-                anotherChild.institution = defaultInstitution
-                await acc.saveChild(accessTokenAdmin, anotherChild)
-
-                if (anotherChild.username && anotherChild.password) {
-                    anotherChildToken = await acc.auth(anotherChild.username, anotherChild.password)
-                }
-
-                return request(URI)
-                    .post(`/children/${defaultChild.id}/weights`)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(anotherChildToken))
-                    .send(weight.toJSON())
-                    .expect(400)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
-
-            })
-        })
-
         context('when the user does not have permission for register Weight', () => {
+
+            describe('when the child posting a new Weight for another child', () => {
+                it('weight.post024: should return status code 403 and info message from insufficient permissions for another child', async () => {
+
+                    return request(URI)
+                        .post(`/children/${defaultChild.id}/weights`)
+                        .set('Content-Type', 'application/json')
+                        .set('Authorization', 'Bearer '.concat(accessAnotherChildToken))
+                        .send(weight.toJSON())
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+
+                })
+            })
 
             it('weight.post025: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
@@ -732,6 +805,37 @@ describe('Routes: children.sleep', () => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
 
+            })
+
+            describe('when the child does not belong to any of the groups associated with the educator', () => {
+                it('bodyfats.post029: should return status code 403 and info message from insufficient permissions for health professional user', async () => {
+
+                    return request(URI)
+                        .post(`/children/${defaultChild.id}/weights`)
+                        .set('Content-Type', 'application/json')
+                        .set('Authorization', 'Bearer '.concat(accessAnotherEducatorToken))
+                        .send(weight.toJSON())
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+
+                })
+            })
+
+            describe('when the child is not associated with the family', () => {
+                it('bodyfats.post030: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', async () => {
+
+                    return request(URI)
+                        .post(`/children/${defaultChild.id}/weights`)
+                        .set('Content-Type', 'application/json')
+                        .set('Authorization', 'Bearer '.concat(accessAnotherFamilyToken))
+                        .send(weight.toJSON())
+                        .expect(403)
+                        .then(err => {
+                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        })
+                })
             })
 
         }) // user does not have permission for register weight

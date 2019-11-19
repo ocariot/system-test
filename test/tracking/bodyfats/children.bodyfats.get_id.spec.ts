@@ -372,6 +372,7 @@ describe('Routes: children.bodyfats', () => {
                 })
             })
         })
+
         describe('when get the body fat of a child that has been deleted', () => {
             it('bodyfats.get_id013: should return status code 404 and info message from body fat not found, because the child not exist', async () => {
 

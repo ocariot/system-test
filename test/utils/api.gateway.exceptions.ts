@@ -202,14 +202,16 @@ export abstract class ApiGatewayException {
         ERROR_400_VALUE_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'value are required!').toJson(),
         ERROR_400_UNIT_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'unit are required!').toJson(),
         ERROR_400_INVALID_VALUE: new ApiException(400, 'One or more request fields are invalid...', 'value must be a valid number!').toJson(),
-        ERROR_400_INVALID_BODY_FAT_VALUE: new ApiException(400, 'One or more request fields are invalid...', 'body_fat.value must be a valid number!').toJson(),
+        ERROR_400_INVALID_BODY_FAT_VALUE: new ApiException(400, 'One or more request fields are invalid...', 'body_fat must be a valid number!').toJson(),
         ERROR_400_INVALID_CHILD_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_400_INVALID_WEIGHT_ID: new ApiException(400, 'Parameter {weight_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
+        ERROR_400_INVALID_UNIT: new ApiException(400, 'One or more request fields are invalid...', 'unit must be a string!').toJson(),
         ERROR_400_NEGATIVE_VALUE: new ApiException(400, 'One or more request fields are invalid...', 'value can\'t be negative!').toJson(),
-        ERROR_400_BODY_FAT_VALUE_IS_NEGATIVE: new ApiException(400, 'One or more request fields are invalid...', 'body_fat.value can\'t be negative!').toJson(),
+        ERROR_400_BODY_FAT_VALUE_IS_NEGATIVE: new ApiException(400, 'One or more request fields are invalid...', 'body_fat can\'t be negative!').toJson(),
         ERROR_400_EMPTY_UNIT: new ApiException(400, 'One or more request fields are invalid...', 'unit must have at least one character!').toJson(),
         ERROR_404_WEIGHT_NOT_FOUND: new ApiException(404, 'Weight not found!', 'Weight not found or already removed. A new operation for the same resource is not required.').toJson(),
         ERROR_409_WEIGHT_IS_ALREADY_REGISTERED: new ApiException(409, 'Weight is already registered...').toJson(),
+        ERROR_400_DATE_IS_NULL: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
 
     }
 
