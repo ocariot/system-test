@@ -134,6 +134,10 @@ class QuestDb {
         return this._deleteCollection('Q1SociodemographicModel')
     }
 
+    public deleteQFoodTracking(): Promise<boolean> {
+        return this._deleteCollection('Qfoodtracking')
+    }
+
     public async removeCollections(): Promise<boolean> {
         if (this._connection) {
             const result = await this._connection.db
@@ -154,4 +158,4 @@ class QuestDb {
     }
 }
 
-export const questDB = new QuestDb()
+export const questionnaireDB = new QuestDb()
