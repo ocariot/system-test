@@ -11,7 +11,7 @@ import { EnvironmentMock } from '../../mocks/tracking-service/environment.mock'
 import { Location } from '../../../src/tracking-service/model/location'
 import { Measurement } from '../../../src/tracking-service/model/measurement'
 
-describe('Routes: environments', () => {
+describe('Routes: institutions.environments', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -107,7 +107,7 @@ describe('Routes: environments', () => {
             defaultInstitution.id = resultInstitution.id
             defaultEnvironment.institution_id = resultInstitution.id
 
-            // defining the institution of the incorrect environments
+            // defining the institution of the incorrect institutions.environments
             incorrectEnvironment1.institution_id = defaultInstitution.id
             incorrectEnvironment2.institution_id = defaultInstitution.id
             incorrectEnvironment3.institution_id = defaultInstitution.id
@@ -115,7 +115,7 @@ describe('Routes: environments', () => {
             incorrectEnvironment5.institution_id = defaultInstitution.id
             incorrectEnvironment6.institution_id = defaultInstitution.id
 
-            // Populates the environments arrays
+            // Populates the institutions.environments arrays
             for (let i = 0; i < AMOUNT_OF_CORRECT_ENVIRONMENTS; i++) {
                 const newEnvironment = new EnvironmentMock()
                 newEnvironment.institution_id = defaultInstitution.id
@@ -128,10 +128,10 @@ describe('Routes: environments', () => {
 
             wrongEnvironments.push(incorrectEnvironment5)
             wrongEnvironments.push(incorrectEnvironment6)
-            // Populates the environments arrays
+            // Populates the institutions.environments arrays
 
         } catch (err) {
-            console.log('Failure on Before from environments.post test: ', err)
+            console.log('Failure on Before from institutions.environments.post test: ', err)
         }
     })
     after(async () => {
@@ -145,22 +145,22 @@ describe('Routes: environments', () => {
         }
     })
 
-    describe('POST /environments', () => {
+    describe('POST /institutions/:institution_id/environments', () => {
 
         afterEach(async () => {
             try {
                 await trackingDB.deleteEnviroments()
             } catch (err) {
-                console.log('Failure in environments test: ', err)
+                console.log('Failure in institutions.environments test: ', err)
             }
         })
 
         context('when the application posting a new environment successfully', () => {
 
-            it('environments.post001: should return status code 201 and the saved environment', () => {
+            it('institutions.environments.post001: should return status code 201 and the saved environment', () => {
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(defaultEnvironment.toJSON())
@@ -175,14 +175,14 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post002: should return status code 201 and the saved environment without climatized parameter', () => {
+            it('institutions.environments.post002: should return status code 201 and the saved environment without climatized parameter', () => {
 
                 const environment: Environment = new EnvironmentMock()
                 environment.institution_id = defaultInstitution.id
                 delete environment.climatized
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(environment.toJSON())
@@ -202,7 +202,7 @@ describe('Routes: environments', () => {
         context('when saved an list of environments', () => {
 
             describe('when all the environments are correct and still do not saved', () => {
-                it('environments.post003: should return status code 207, create each Environment and return a response with description of sucess each environment', () => {
+                it('institutions.environments.post003: should return status code 207, create each Environment and return a response with description of sucess each environment', () => {
 
                     const body: any = []
                     correctEnvironments.forEach(environment => {
@@ -217,7 +217,7 @@ describe('Routes: environments', () => {
                     })
 
                     return request(URI)
-                        .post('/environments')
+                        .post(`/institutions/${defaultInstitution.id}/environments`)
                         .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                         .set('Content-Type', 'application/json')
                         .send(body)
@@ -242,13 +242,13 @@ describe('Routes: environments', () => {
                 before(async () => {
                     try {
                         for (let i = 0; i < correctEnvironments.length; i++) {
-                            await trck.saveEnvironment(accessTokenApplication, correctEnvironments[i])
+                            await trck.saveEnvironment(accessTokenApplication, defaultInstitution, correctEnvironments[i])
                         }
                     } catch (err) {
-                        console.log('Failure in environments.post : ', err.message)
+                        console.log('Failure in institutions.environments.post : ', err.message)
                     }
                 })
-                it('environments.post004: should return status code 207, and return a response with description of conflict in each environment', () => {
+                it('institutions.environments.post004: should return status code 207, and return a response with description of conflict in each environment', () => {
 
                     const body: any = []
                     correctEnvironments.forEach(environment => {
@@ -263,7 +263,7 @@ describe('Routes: environments', () => {
                     })
 
                     return request(URI)
-                        .post('/environments')
+                        .post(`/institutions/${defaultInstitution.id}/environments`)
                         .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                         .set('Content-Type', 'application/json')
                         .send(body)
@@ -284,7 +284,7 @@ describe('Routes: environments', () => {
             })
 
             describe('when there are correct and incorrect environments in the body', () => {
-                it('environments.post005: should return status code 207, and return a response with description of sucess or error according to each environment', () => {
+                it('institutions.environments.post005: should return status code 207, and return a response with description of sucess or error according to each environment', () => {
 
                     const body: any = []
                     mixedEnvironments.forEach(environment => {
@@ -299,7 +299,7 @@ describe('Routes: environments', () => {
                     })
 
                     return request(URI)
-                        .post('/environments')
+                        .post(`/institutions/${defaultInstitution.id}/environments`)
                         .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                         .set('Content-Type', 'application/json')
                         .send(body)
@@ -323,7 +323,7 @@ describe('Routes: environments', () => {
             })
 
             describe('when all the environments are incorrect', () => {
-                it('environments.post006: should return status code 207, and return a response with description of error in each environment', () => {
+                it('institutions.environments.post006: should return status code 207, and return a response with description of error in each environment', () => {
 
                     const body: any = []
                     wrongEnvironments.forEach(environment => {
@@ -338,7 +338,7 @@ describe('Routes: environments', () => {
                     })
 
                     return request(URI)
-                        .post('/environments')
+                        .post(`/institutions/${defaultInstitution.id}/environments`)
                         .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                         .set('Content-Type', 'application/json')
                         .send(body)
@@ -369,31 +369,16 @@ describe('Routes: environments', () => {
                 try {
                     await trackingDB.deleteEnviroments()
                 } catch (err) {
-                    console.log('Failure in environments test: ', err)
+                    console.log('Failure in institutions.environments test: ', err)
                 }
             })
 
-            it('environments.post007: should return status code 400 and info message from missing parameters, because institution_id is not provided', () => {
-
-                delete environment.institution_id
-
-                return request(URI)
-                    .post('/environments')
-                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
-                    .set('Content-Type', 'application/json')
-                    .send(environment.toJSON())
-                    .expect(400)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_INSTITUTION_ID_ARE_REQUIRED)
-                    })
-            })
-
-            it('environments.post008: should return status code 400 and info message from missing parameters, because location is not provided', () => {
+            it('institutions.environments.post008: should return status code 400 and info message from missing parameters, because location is not provided', () => {
 
                 delete environment.location
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(environment.toJSON())
@@ -403,12 +388,12 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post009: should return status code 400 and info message from missing parameters, because measurements is not provided', () => {
+            it('institutions.environments.post009: should return status code 400 and info message from missing parameters, because measurements is not provided', () => {
 
                 delete environment.measurements
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(environment.toJSON())
@@ -418,12 +403,12 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post010: should return status code 400 and info message from missing parameters, because timestamp is not provided', () => {
+            it('institutions.environments.post010: should return status code 400 and info message from missing parameters, because timestamp is not provided', () => {
 
                 delete environment.timestamp
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(environment.toJSON())
@@ -433,29 +418,29 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post011: should return status code 400 and info message from missing parameters, because institution_id and measurements are not provided', () => {
+            it('institutions.environments.post011: should return status code 400 and info message from missing parameters, because timestamp and measurements are not provided', () => {
 
-                delete environment.institution_id
+                delete environment.timestamp
                 delete environment.measurements
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(environment.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_INSTITUTION_ID_AND_MEASUREMENTS_ARE_REQUIRED)
+                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_TIMESTAMP_AND_MEASUREMENTS_ARE_REQUIRED)
                     })
             })
 
-            it('environments.post012: should return status code 400 and info message from missing parameters, because location and timestamp are not provided', () => {
+            it('institutions.environments.post012: should return status code 400 and info message from missing parameters, because location and timestamp are not provided', () => {
 
                 delete environment.location
                 delete environment.timestamp
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(environment.toJSON())
@@ -465,15 +450,14 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post013: should return status code 400 and info message from missing parameters, because all required parameters are not provided', () => {
+            it('institutions.environments.post013: should return status code 400 and info message from missing parameters, because all required parameters are not provided', () => {
 
-                delete environment.institution_id
                 delete environment.location
                 delete environment.measurements
                 delete environment.timestamp
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(environment.toJSON())
@@ -483,13 +467,12 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post014: should return status code 400 and info message from invalid parameters, because institution does not exist', () => {
+            it('institutions.environments.post014: should return status code 400 and info message from invalid parameters, because institution does not exist', () => {
 
                 const NON_EXISTENT_INSTITUTION_ID = '111111111111111111111111'
-                environment.institution_id = NON_EXISTENT_INSTITUTION_ID
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${NON_EXISTENT_INSTITUTION_ID}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(environment.toJSON())
@@ -500,12 +483,12 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post015: should return status code 400 and info message from invalid parameters, because institution_id is invalid', () => {
+            it('institutions.environments.post015: should return status code 400 and info message from invalid parameters, because institution_id is invalid', () => {
 
-                environment.institution_id = '123'
+                const INVALID_INSTITUTION_ID = '123'
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${INVALID_INSTITUTION_ID}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(environment.toJSON())
@@ -515,12 +498,12 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post016: should return status code 400 and info message from invalid location, because room is required', () => {
+            it('institutions.environments.post016: should return status code 400 and info message from invalid location, because room is required', () => {
 
                 environment.location = locationWithoutRoom
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(environment.toJSON())
@@ -530,12 +513,12 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post017: should return status code 400 and info message from invalid location, because local is required', () => {
+            it('institutions.environments.post017: should return status code 400 and info message from invalid location, because local is required', () => {
 
                 environment.location = locationWithoutLocal
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(environment.toJSON())
@@ -545,12 +528,12 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post018: should return status code 400 and info message from invalid measurements, because type is required', () => {
+            it('institutions.environments.post018: should return status code 400 and info message from invalid measurements, because type is required', () => {
 
                 environment.measurements = new Array<Measurement>(measurementWithoutType)
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(environment.toJSON())
@@ -560,12 +543,12 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post019: should return status code 400 and info message from invalid timestamp, because date is invalid', () => {
+            it('institutions.environments.post019: should return status code 400 and info message from invalid timestamp, because date is invalid', () => {
 
                 environment.timestamp = new Date('2018-13-19T14:40:00Z')
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(environment.toJSON())
@@ -575,10 +558,10 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post020: should return status code 400 and info message from invalid location, because local is a number', () => {
+            it('institutions.environments.post020: should return status code 400 and info message from invalid location, because local is a number', () => {
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(incorrectEnvironment1)
@@ -588,10 +571,10 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post021: should return status code 400 and info message from invalid measurement, because value is not a valid number', () => {
+            it('institutions.environments.post021: should return status code 400 and info message from invalid measurement, because value is not a valid number', () => {
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(incorrectEnvironment2)
@@ -601,10 +584,10 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post022: should return status code 400 and info message from invalid climatized', () => {
+            it('institutions.environments.post022: should return status code 400 and info message from invalid climatized', () => {
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(incorrectEnvironment3)
@@ -619,15 +602,15 @@ describe('Routes: environments', () => {
         describe('when a duplicate error occurs', () => {
             before(async () => {
                 try {
-                    await trck.saveEnvironment(accessTokenApplication, defaultEnvironment)
+                    await trck.saveEnvironment(accessTokenApplication, defaultInstitution, defaultEnvironment)
                 } catch (err) {
-                    console.log('Failure in environments.post test: ', err)
+                    console.log('Failure in institutions.environments.post test: ', err)
                 }
             })
-            it('environments.post023: should return status code 409 and info message about environment is already registered', () => {
+            it('institutions.environments.post023: should return status code 409 and info message about environment is already registered', () => {
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(defaultEnvironment.toJSON())
@@ -640,10 +623,10 @@ describe('Routes: environments', () => {
 
         context('when the user does not have permission to register the environment', () => {
 
-            it('environments.post024: should return status code 403 and info message from insufficient permissions for admin user', () => {
+            it('institutions.environments.post024: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(defaultEnvironment.toJSON())
@@ -653,10 +636,10 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post025: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('institutions.environments.post025: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .send(defaultEnvironment.toJSON())
@@ -666,10 +649,10 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post026: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('institutions.environments.post026: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .send(defaultEnvironment.toJSON())
@@ -679,10 +662,10 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post027: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('institutions.environments.post027: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
                     .send(defaultEnvironment.toJSON())
@@ -692,10 +675,10 @@ describe('Routes: environments', () => {
                     })
             })
 
-            it('environments.post028: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('institutions.environments.post028: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .send(defaultEnvironment.toJSON())
@@ -708,10 +691,10 @@ describe('Routes: environments', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('environments.post029: should return the status code 401 and the authentication failure informational message', async () => {
+            it('institutions.environments.post029: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
-                    .post('/environments')
+                    .post(`/institutions/${defaultInstitution.id}/environments`)
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
                     .send(defaultEnvironment.toJSON())

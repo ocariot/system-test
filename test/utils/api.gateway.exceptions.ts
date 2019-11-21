@@ -229,12 +229,11 @@ export abstract class ApiGatewayException {
     }
 
     public static readonly ENVIRONMENTS: any = {
-        // environments
+        // institutions.environments
         PARAM_ID_NOT_VALID_FORMAT: 'Parameter {environment_id} is not in valid format!',
-        ERROR_400_ALL_PARAMETERS_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'timestamp, institution_id, location, measurements are required!').toJson(),
+        ERROR_400_ALL_PARAMETERS_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'timestamp, location, measurements are required!').toJson(),
         ERROR_400_TIMESTAMP_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'timestamp are required!').toJson(),
-        ERROR_400_INSTITUTION_ID_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'institution_id are required!').toJson(),
-        ERROR_400_INSTITUTION_ID_AND_MEASUREMENTS_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'institution_id, measurements are required!').toJson(),
+        ERROR_400_TIMESTAMP_AND_MEASUREMENTS_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'timestamp, measurements are required!').toJson(),
         ERROR_400_TIMESTAMP_AND_LOCATION_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'timestamp, location are required!').toJson(),
         ERROR_400_INVALID_CLIMATIZED: new ApiException(400, 'One or more request fields are invalid...', 'climatized must be a boolean!').toJson(),
         ERROR_400_INVALID_DATE: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),

@@ -1,4 +1,4 @@
-import { Location} from '../../../src/tracking-service/model/location'
+import { Location } from '../../../src/tracking-service/model/location'
 import { Environment } from '../../../src/tracking-service/model/environment'
 import { Measurement, MeasurementType } from '../../../src/tracking-service/model/measurement'
 
