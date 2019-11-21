@@ -2,7 +2,7 @@ import request from 'supertest'
 import { expect } from 'chai'
 import { acc } from '../utils/account.utils'
 import { accountDB } from '../../src/account-service/database/account.db'
-import { questDB } from '../../src/quizzes/database/quests.db'
+import { questionnaireDB } from '../../src/quizzes/database/quests.db'
 import { Institution } from '../../src/account-service/model/institution'
 import { Child } from '../../src/account-service/model/child'
 import { ChildMock } from '../mocks/account-service/child.mock'
@@ -46,7 +46,7 @@ describe('Routes: Q1Sociodemographic', () => {
     before(async () => {
         try {
             await accountDB.connect()
-            await questDB.connect()
+            await questionnaireDB.connect()
 
             const tokens = await acc.getAuths()
             accessTokenAdmin = tokens.admin.access_token
@@ -105,9 +105,9 @@ describe('Routes: Q1Sociodemographic', () => {
     after(async () => {
         try {
             await accountDB.removeCollections()
-            await questDB.removeCollections()
+            await questionnaireDB.removeCollections()
             await accountDB.dispose()
-            await questDB.dispose()
+            await questionnaireDB.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
         }
@@ -117,7 +117,7 @@ describe('Routes: Q1Sociodemographic', () => {
 
         afterEach(async () => {
             try {
-                await questDB.deleteQ1Sociodemographic()
+                await questionnaireDB.deleteQ1Sociodemographic()
             } catch (err) {
                 console.log('Failure in q1sociodemographics.post test: ', err.message)
             }
