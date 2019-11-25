@@ -289,7 +289,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.group.post008: should return status code 400 and info message from educator_id is invalid', () => {
+            it.only('educators.children.group.post008: should return status code 400 and info message from educator_id is invalid', () => {
                 const INVALID_ID = '123' // invalid id of the educator
 
                 const body = {

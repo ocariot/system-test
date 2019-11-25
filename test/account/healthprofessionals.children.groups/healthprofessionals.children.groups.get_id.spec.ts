@@ -107,7 +107,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
         // is not allowed to view data from children?
         context('when the health professional get your unique children group successfully', () => {
 
-            it('healthprofessionals.children.groups.get_id001: should return status code 200 and a children group, without child personal data', () => {
+            it('healthprofessionals.children.groups.get_id001: should return status code 200 and a children group', () => {
 
                 return request(URI)
                     .get(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -275,7 +275,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
                     })
             })
 
-            it('healthprofessionals.children.groups.get_id010: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('healthprofessionals.children.groups.get_id009: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .get(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -287,7 +287,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
                     })
             })
 
-            it('healthprofessionals.children.groups.get_id011: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('healthprofessionals.children.groups.get_id010: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
                     .get(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -299,7 +299,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
                     })
             })
 
-            it('healthprofessionals.children.groups.get_id012: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('healthprofessionals.children.groups.get_id011: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .get(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -311,7 +311,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
                     })
             })
 
-            it('healthprofessionals.children.groups.get_id013: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('healthprofessionals.children.groups.get_id012: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .get(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -323,7 +323,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
                     })
             })
 
-            it('healthprofessionals.children.groups.get_id014: should return status code 403 and info message from insufficient permissions for another health professional user', () => {
+            it('healthprofessionals.children.groups.get_id013: should return status code 403 and info message from insufficient permissions for another health professional user', () => {
 
                 return request(URI)
                     .get(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -338,7 +338,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
         }) // user does not have permission 
 
         describe('when not informed the acess token', () => {
-            it('healthprofessionals.children.groups.get_id015: should return the status code 401 and the authentication failure informational message', async () => {
+            it('healthprofessionals.children.groups.get_id014: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .get(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)

@@ -249,24 +249,24 @@ describe('Routes: healthprofessionals.children.groups', () => {
                         })
                 })
             })
-
-            it('healthprofessionals.children.groups.get_all005: should return status code 200 and empty array, because the health professional was not found', () => {
+        }) // get all children groups successfully
+        
+        describe('when a validation error occurs', () => {
+            
+            it('healthprofessionals.children.groups.get_all005: should return status code 400 and info message, because health professional was not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the health professional
-
+    
                 return request(URI)
                     .get(`/healthprofessionals/${NON_EXISTENT_ID}/children/groups`)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).to.eql([])
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_HEALTHPROFESSIONAL_NOT_FOUND)
                     })
             })
-
-        }) // get all children groups successfully
-
-        describe('when the healthprofessional_id is invalid', () => {
-            it('healthprofessionals.children.groups.get_all006: should return status code 400 and message info about invalid id', () => {
+            
+            it('healthprofessionals.children.groups.get_all006: should return status code 400 and message info about invalid id of the health professional', () => {
                 const INVALID_ID = '123' // invalid id of the health professional
 
                 return request(URI)
