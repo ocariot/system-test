@@ -361,8 +361,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql('One or more request fields are invalid...')
-                        expect(err.body.description).to.eql(`The following IDs from children attribute are not in valid format: ${ID_CHILD}`)
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_NULL_CHILDREN_ID)
                     })
             })
 

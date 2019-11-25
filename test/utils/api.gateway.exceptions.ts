@@ -100,6 +100,7 @@ export abstract class ApiGatewayException {
         ERROR_400_CHILDREN_GROUPS_EDUCATOR_INVALID_FORMAT_ID: new ApiException(400, 'Parameter {educator_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_400_INVALID_NAME: new ApiException(400, 'One or more request fields are invalid...', 'name must be a string!').toJson(),
         ERROR_400_INVALID_SCHOOL_CLASS: new ApiException(400, 'One or more request fields are invalid...', 'school_class must be a string!').toJson(),
+        ERROR_400_NULL_CHILDREN_ID: new ApiException(400, 'One or more request fields are invalid...', 'Children field contains invalid IDs. It is expected that each item in the array is a 24-byte hex string like this: 507f191e810c19729de860ea').toJson(),
         ERROR_400_CHILDREN_NOT_REGISTERED: new ApiException(400, 'It is necessary for children to be registered before proceeding.', 'The following IDs were verified without registration:').toJson(),
         ERROR_400_CHILDREN_GROUPS_EDUCATOR_NOT_FOUND: new ApiException(400, 'Educator not found!', 'Educator not found or already removed. A new operation for the same resource is not required.').toJson(),
         ERROR_400_CHILDREN_GROUPS_HEALTHPROFESSIONAL_NOT_FOUND: new ApiException(400, 'Health Professional not found!', 'Health Professional not found or already removed. A new operation for the same resource is not required.').toJson(),
