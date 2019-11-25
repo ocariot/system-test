@@ -116,10 +116,10 @@ describe('Routes: QFoodtracking', () => {
 
             // Associating defaultChildrenGroup with educator and health professional
             await acc.saveChildrenGroupsForEducator(accessDefaultEducatorToken, defaultEducator, defaultChildrenGroup)
-            await acc.saveChildrenGroupsForEducator(accessDefaultHealthProfessionalToken, defaultHealthProfessional, defaultChildrenGroup)
+            await acc.saveChildrenGroupsForHealthProfessional(accessDefaultHealthProfessionalToken, defaultHealthProfessional, defaultChildrenGroup)
 
         } catch (err) {
-            console.log('Failure on Before from weight.delete test: ', err.message)
+            console.log('Failure on Before from qfoodtracking.post test: ', err.message)
         }
     })
     after(async () => {
@@ -326,9 +326,23 @@ describe('Routes: QFoodtracking', () => {
             })
             // WITHOUT ENTERING ALL FIELDS
 
-            it('qfoodtracking.post011: should return status code ?, because date is null', () => {
+            it('qfoodtracking.post011: should return status code ?, because date child_id is invalid', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
-                incorrectQFoodTracking.date = null
+                incorrectQFoodTracking.child_id = '123'
+
+                return request(URI)
+                    .post('/qfoodtrackings')
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(incorrectQFoodTracking)
+                    // .expect(422)
+                    .then(err => {
+                    })
+            })
+
+            it('qfoodtracking.post012: should return status code ?, when provided a invalid id for the QFoodTracking', () => {
+                const incorrectQFoodTracking = getQFoodTrackingJSON()
+                incorrectQFoodTracking.id = '123'
 
                 return request(URI)
                     .post('/qfoodtrackings')
@@ -341,7 +355,7 @@ describe('Routes: QFoodtracking', () => {
             })
 
             // SOME FIELD HAS NULL VALUE
-            it('qfoodtracking.post012: should return status code ?, because date is null', () => {
+            it('qfoodtracking.post013: should return status code ?, because date is null', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.date = null
 
@@ -355,7 +369,7 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.post013: should return status code ?, because type is null', () => {
+            it('qfoodtracking.post014: should return status code ?, because type is null', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.type = null
 
@@ -369,7 +383,7 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.post014: should return status code ?, because categories_array is null', () => {
+            it('qfoodtracking.post015: should return status code ?, because categories_array is null', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.categories_array = null
 
@@ -385,7 +399,7 @@ describe('Routes: QFoodtracking', () => {
             // SOME FIELD HAS NULL VALUE
 
             // SOME FIELD HAS INVALID
-            it('qfoodtracking.post015: should return status code ?, because date is a number', () => {
+            it('qfoodtracking.post016: should return status code ?, because date is a number', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.date = 20191120174931219
 
@@ -399,7 +413,7 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.post016: should return status code ?, because type is a number', () => {
+            it('qfoodtracking.post017: should return status code ?, because type is a number', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.type = 12345
 
@@ -413,7 +427,7 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.post017: should return status code ?, because categories_array is a number', () => {
+            it('qfoodtracking.post018: should return status code ?, because categories_array is a number', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.categories_array = null
 
@@ -428,7 +442,7 @@ describe('Routes: QFoodtracking', () => {
             })
             // SOME FIELD HAS INVALID
 
-            it('qfoodtracking.post018: should return status code ?, because month is invalid', () => {
+            it('qfoodtracking.post019: should return status code ?, because month is invalid', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.date = '2019-13-01T19:40:45.124Z' // invalid month(13)
 
@@ -441,12 +455,11 @@ describe('Routes: QFoodtracking', () => {
                     .then(err => {
                     })
             })
-
         })
 
         context('when the user does not have permission for register QFoodTracking', () => {
 
-            it('qfoodtracking.post019: should return status code 403 and info message from insufficient permissions for admin', () => {
+            it('qfoodtracking.post020: should return status code 403 and info message from insufficient permissions for admin', () => {
 
                 return request(URI)
                     .post('/qfoodtrackings')
@@ -459,7 +472,7 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.post020: should return status code 403 and info message from insufficient permissions for Health Professional', () => {
+            it('qfoodtracking.post021: should return status code 403 and info message from insufficient permissions for Health Professional', () => {
 
                 return request(URI)
                     .post('/qfoodtrackings')
@@ -472,7 +485,7 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.post021: should return status code 403 and info message from insufficient permissions for another child', () => {
+            it('qfoodtracking.post022: should return status code 403 and info message from insufficient permissions for another child', () => {
 
                 return request(URI)
                     .post('/qfoodtrackings')
@@ -486,7 +499,7 @@ describe('Routes: QFoodtracking', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the educator', () => {
-                it('qfoodtracking.post022: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
+                it('qfoodtracking.post023: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
 
                     return request(URI)
                         .post('/qfoodtrackings')
@@ -501,7 +514,7 @@ describe('Routes: QFoodtracking', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the family', () => {
-                it('qfoodtracking.post023: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
+                it('qfoodtracking.post024: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
 
                     return request(URI)
                         .post('/qfoodtrackings')
@@ -518,7 +531,7 @@ describe('Routes: QFoodtracking', () => {
 
         context('when posting a new QFoodtracking for another user that not to be a child', () => {
 
-            it('qfoodtracking.post024: should return ???, when try create a qfoodtracking for admin', async () => {
+            it('qfoodtracking.post025: should return ???, when try create a qfoodtracking for admin', async () => {
 
                 const ADMIN_ID = await acc.getAdminID()
                 defaultQfoodtracking.child_id = ADMIN_ID
@@ -533,7 +546,7 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.post025: should return ???, when try create a qfoodtracking for educator', () => {
+            it('qfoodtracking.post026: should return ???, when try create a qfoodtracking for educator', () => {
 
                 defaultQfoodtracking.child_id = defaultEducator.id
 
@@ -547,7 +560,7 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.post026: should return ???, when try create a qfoodtracking for health professional', () => {
+            it('qfoodtracking.post027: should return ???, when try create a qfoodtracking for health professional', () => {
 
                 defaultQfoodtracking.child_id = defaultHealthProfessional.id
 
@@ -561,7 +574,7 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.post027: should return ???, when try create a qfoodtracking for family', () => {
+            it('qfoodtracking.post028: should return ???, when try create a qfoodtracking for family', () => {
 
                 defaultQfoodtracking.child_id = defaultFamily.id
 
@@ -575,7 +588,7 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.post028: should return ???, when try create a qfoodtracking for application', () => {
+            it('qfoodtracking.post030: should return ???, when try create a qfoodtracking for application', () => {
 
                 defaultQfoodtracking.child_id = defaultApplication.id
 
@@ -592,7 +605,7 @@ describe('Routes: QFoodtracking', () => {
         }) // another user that not to be a child
 
         describe('should return status code ???, because child not exist', () => {
-            it('qfoodtracking.post029: should return ???, when try create a qfoodtracking for application', () => {
+            it('qfoodtracking.post031: should return ???, when try create a qfoodtracking for application', () => {
 
                 const NON_EXISTENT_CHILD = '1a23be45de6789123d4c567'
                 defaultQfoodtracking.child_id = NON_EXISTENT_CHILD
@@ -609,7 +622,7 @@ describe('Routes: QFoodtracking', () => {
         })
 
         describe('when not informed the acess token', () => {
-            it('qfoodtracking.post030: should return the status code 401 and the authentication failure informational message', () => {
+            it('qfoodtracking.post032: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .post('/qfoodtrackings')
@@ -624,7 +637,7 @@ describe('Routes: QFoodtracking', () => {
         })
 
         describe('when the child has been deleted', () => {
-            it('qfoodtracking.post031: should return ???', async () => {
+            it('qfoodtracking.post033: should return ???', async () => {
 
                 defaultQfoodtracking.child_id = defaultChild.id
                 await acc.deleteUser(accessTokenAdmin, defaultChild.id)
