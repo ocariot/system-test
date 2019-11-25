@@ -1,12 +1,12 @@
-import { ApiException } from "../../src/exceptions/api.exception";
+import { ApiException } from '../../src/exceptions/api.exception';
 
 export abstract class ApiGatewayException {
 
     public static readonly AUTH: any = {
-        ERROR_400_USERNAME: new ApiException(400, 'Required fields were not provided...', 'Authentication validation: username is required!').toJson(),
-        ERROR_400_PASSWORD: new ApiException(400, 'Required fields were not provided...', 'Authentication validation: password is required!').toJson(),
+        ERROR_400_USERNAME: new ApiException(400, 'One or more request fields are invalid...', 'username must have at least one character!').toJson(),
+        ERROR_400_PASSWORD: new ApiException(400, 'One or more request fields are invalid...', 'password must have at least one character!').toJson(),
         ERROR_401_INVALID_VALUE: new ApiException(401, 'Invalid username or password!').toJson(),
-        ERROR_401_UNAUTHORIZED: new ApiException(401, 'UNAUTHORIZED', 'Authentication failed for lack of authentication credentials.', '/auth').toJson(),
+        ERROR_401_UNAUTHORIZED: new ApiException(401, 'UNAUTHORIZED', 'Authentication failed for lack of authentication credentials.', '/auth').toJson()
     }
 
     public static readonly INSTITUTION: any = {
@@ -132,7 +132,7 @@ export abstract class ApiGatewayException {
         ERROR_400_INVALID_PHYSICAL_ACTIVY_ID: new ApiException(400, 'Parameter {physicalactivity_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
 
         // Levels Array
-        ERROR_400_LEVEL_NAME_IN_INVALID_FORMAT: new ApiException(400, 'One or more request fields are invalid...', 'The levels array must have values for the following levels: sedentary, lightly, fairly, very.').toJson(),
+        ERROR_400_LEVEL_NAME_IN_INVALID_FORMAT: new ApiException(400, 'One or more request fields are invalid...', 'The names of the allowed levels are: sedentary, lightly, fairly, very.').toJson(),
         ERROR_400_LEVEL_NAME_NOT_ALLOWED: new ApiException(400, 'One or more request fields are invalid...', 'The names of the allowed levels are: sedentary, lightly, fairly, very.').toJson(),
         ERROR_400_LEVEL_DURATION_ARE_NEGATIVE: new ApiException(400, 'One or more request fields are invalid...', 'levels.duration can\'t be negative!').toJson(),
         ERROR_400_LEVEL_DURATION_INVALID: new ApiException(400, 'One or more request fields are invalid...', 'levels.duration must be a valid number!').toJson(),
@@ -148,7 +148,7 @@ export abstract class ApiGatewayException {
         ERROR_400_HEART_RATE_OUT_OF_RANGE_ZONE_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'heart_rate.out_of_range_zone.min are required!').toJson(),
         ERROR_400_HEART_RATE_PEAK_ZONE_DURATION_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'heart_rate.peak_zone.duration are required!').toJson(),
         ERROR_400_HEART_RATE_PEAK_ZONE_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'heart_rate.peak_zone are required!').toJson(),
-        ERROR_400_HEART_RATE_INVALID_AVERAGE: new ApiException(400, 'One or more request fields are invalid...', 'heart_rate.average must be a valid number!').toJson(),
+        ERROR_400_HEART_RATE_INVALID_AVERAGE: new ApiException(400, 'One or more request fields are invalid...', 'heart_rate.average must be a valid number!').toJson()
 
         // Activity.update has been deprecated
         // ERROR_400_ATTRIBUTES_NOT_UPDATEABLE: new ApiException(400, 'Unable to update this attribute.', 'Updateable attributes are: name, calories, steps, distance, levels (only if the update is from an empty array) and heart_rate.').toJson(),
@@ -167,7 +167,7 @@ export abstract class ApiGatewayException {
         ERROR_400_VALUE_NEGATIVE: new ApiException(400, 'Value field is invalid...', 'Child log validation failed: The value provided has a negative value!').toJson(),
         ERROR_400_VALUE_IS_NOT_A_NUMBER: new ApiException(400, 'Value field is invalid...', 'Child log validation failed: The value provided is not a valid number!').toJson(),
         ERROR_400_INVALID_CHILD_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
-        ERROR_400_CHILD_NOT_FOUND: new ApiException(400, 'Child not found!', 'Child not found or already removed. A new operation for the same resource is not required.').toJson(),
+        ERROR_400_CHILD_NOT_FOUND: new ApiException(400, 'Child not found!', 'Child not found or already removed. A new operation for the same resource is not required.').toJson()
     }
 
     public static readonly SLEEP: any = {
@@ -193,7 +193,7 @@ export abstract class ApiGatewayException {
         ERROR_400_NEGATIVE_DURATION_OF_SLEEP_PATTERN_DATASET: new ApiException(400, 'One or more request fields are invalid...', 'pattern.data_set.duration can\'t be negative!').toJson(),
         ERROR_400_INVALID_PATTERN_DATASET_NAME_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'pattern.data_set.name are required!').toJson(),
         ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'pattern.data_set.duration are required!').toJson(),
-        ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_INVALID: new ApiException(400, 'One or more request fields are invalid...', 'pattern.data_set.duration must be a valid number!').toJson(),
+        ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_INVALID: new ApiException(400, 'One or more request fields are invalid...', 'pattern.data_set.duration must be a valid number!').toJson()
     }
 
     public static readonly WEIGHTS: any = {
@@ -211,7 +211,7 @@ export abstract class ApiGatewayException {
         ERROR_400_EMPTY_UNIT: new ApiException(400, 'One or more request fields are invalid...', 'unit must have at least one character!').toJson(),
         ERROR_404_WEIGHT_NOT_FOUND: new ApiException(404, 'Weight not found!', 'Weight not found or already removed. A new operation for the same resource is not required.').toJson(),
         ERROR_409_WEIGHT_IS_ALREADY_REGISTERED: new ApiException(409, 'Weight is already registered...').toJson(),
-        ERROR_400_DATE_IS_NULL: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
+        ERROR_400_DATE_IS_NULL: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson()
 
     }
 
@@ -225,7 +225,7 @@ export abstract class ApiGatewayException {
         ERROR_400_INVALID_BODYFAT_ID: new ApiException(400, 'Parameter {bodyfat_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_400_DATE_IS_NULL: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
         ERROR_409_BODYFATS_IS_ALREADY_REGISTERED: new ApiException(409, 'Body Fat is already registered...').toJson(),
-        ERROR_404_BODYFAT_NOT_FOUND: new ApiException(404, 'Body Fat not found!', 'Body Fat not found or already removed. A new operation for the same resource is not required.').toJson(),
+        ERROR_404_BODYFAT_NOT_FOUND: new ApiException(404, 'Body Fat not found!', 'Body Fat not found or already removed. A new operation for the same resource is not required.').toJson()
     }
 
     public static readonly ENVIRONMENTS: any = {
@@ -253,7 +253,7 @@ export abstract class ApiGatewayException {
         ERROR_400_INVALID_MEASUREMENTS_TYPE: new ApiException(400, 'One or more request fields are invalid...', 'measurements.type must be a string!').toJson(),
         ERROR_400_MEASUREMENT_VALUE_FIELD_IS_INVALID: new ApiException(400, 'One or more request fields are invalid...', 'measurements.value must be a valid number!').toJson(),
         ERROR_400_MEASUREMENTS_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'measurements are required!').toJson(),
-        ERROR_400_MEASUREMENT_TYPE_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'measurements.type are required!').toJson(),
+        ERROR_400_MEASUREMENT_TYPE_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'measurements.type are required!').toJson()
     }
 
     public static readonly APP: any = {
@@ -266,7 +266,7 @@ export abstract class ApiGatewayException {
         ERROR_400_INVALID_FORMAT_ID: new ApiException(400, 'Parameter {user_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_400_NEW_PASSWORD_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'new_password are required!').toJson(),
         ERROR_400_PASSWORD_NOT_MATCH: new ApiException(400, 'Password does not match!', 'The old password parameter does not match with the actual user password.').toJson(),
-        ERROR_404_USER_NOT_FOUND: new ApiException(404, 'User not found!', 'User not found or already removed. A new operation for the same resource is not required.').toJson(),
+        ERROR_404_USER_NOT_FOUND: new ApiException(404, 'User not found!', 'User not found or already removed. A new operation for the same resource is not required.').toJson()
     }
 
     public static readonly ERROR_MESSAGE: any = {
@@ -276,6 +276,6 @@ export abstract class ApiGatewayException {
         UUID_NOT_VALID_FORMAT_DESC: 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea, is expected.', // not used yet
         ERROR_400_INVALID_FORMAT_ID: new ApiException(400, 'Some ID provided does not have a valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_403_FORBIDDEN: new ApiException(403, 'FORBIDDEN', 'Authorization failed due to insufficient permissions.').toJson(),
-        ERROR_404_USER_NOT_FOUND: new ApiException(404, 'User not found!', 'User not found or already removed. A new operation for the same resource is not required.').toJson(), // user
+        ERROR_404_USER_NOT_FOUND: new ApiException(404, 'User not found!', 'User not found or already removed. A new operation for the same resource is not required.').toJson() // user
     }
 }

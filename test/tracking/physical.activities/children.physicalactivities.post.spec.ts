@@ -488,7 +488,7 @@ describe('Routes: children.physicalactivities', () => {
                                 // Error item
                                 expect(res.body.error[0].code).to.eql(400)
                                 expect(res.body.error[0].message).to.eql('One or more request fields are invalid...')
-                                expect(res.body.error[0].description).to.eql('The levels array must have values for the following levels: sedentary, lightly, fairly, very.')
+                                expect(res.body.error[0].description).to.eql('The names of the allowed levels are: sedentary, lightly, fairly, very.')
                             })
                     })
                 })

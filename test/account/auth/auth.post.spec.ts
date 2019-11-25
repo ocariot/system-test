@@ -50,7 +50,7 @@ describe('Routes: Auth', () => {
         try {
             await accountDB.connect()
             await accountDB.removeCollections()
-                
+
             accessTokenAdmin = await acc.getAdminToken()
 
             const resultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
@@ -138,7 +138,10 @@ describe('Routes: Auth', () => {
                 return request(URI)
                     .post('/auth')
                     .set('Content-Type', 'application/json')
-                    .send({ 'username': defaultHealthProfessional.username, 'password': defaultHealthProfessional.password })
+                    .send({
+                        'username': defaultHealthProfessional.username,
+                        'password': defaultHealthProfessional.password
+                    })
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('access_token')
