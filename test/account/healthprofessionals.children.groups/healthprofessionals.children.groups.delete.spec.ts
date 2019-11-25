@@ -126,16 +126,16 @@ describe('Routes: healthprofessionals.children.groups', () => {
         })
 
         describe('when the health professional is not found', () => {
-            it('healthprofessionals.children.groups.delete002: should return status code 204 and no content', () => {
+            it('healthprofessionals.children.groups.delete002: should return status code 400 and info message for health professional not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the health professional
 
                 return request(URI)
                     .delete(`/healthprofessionals/${NON_EXISTENT_ID}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
-                    .expect(204)
-                    .then(res => {
-                        expect(res.body).to.eql({})
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_HEALTHPROFESSIONAL_NOT_FOUND)
                     })
             })
         })
@@ -178,9 +178,9 @@ describe('Routes: healthprofessionals.children.groups', () => {
                     .delete(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
-                    .expect(204)
-                    .then(res => {
-                        expect(res.body).to.eql({})
+                    .expect(404)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_404_CHILDREN_GROUP_NOT_FOUND)
                     })
             })
         })

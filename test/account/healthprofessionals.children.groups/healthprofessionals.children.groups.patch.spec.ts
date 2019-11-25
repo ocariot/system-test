@@ -289,9 +289,8 @@ describe('Routes: healthprofessionals.children.groups', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql('A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.')
-                        expect(err.body.description).to.eql('Children Group validation: ' +
-                            `Invalid children attribute. The following set of IDs is not in valid format: ${INVALID_ID}`)
+                        expect(err.body.message).to.eql('One or more request fields are invalid...')
+                        expect(err.body.description).to.eql(`The following IDs from children attribute are not in valid format: ${INVALID_ID}`)
                     })
 
             })
@@ -324,11 +323,54 @@ describe('Routes: healthprofessionals.children.groups', () => {
                     })
             })
 
+            it('healthprofessionals.children.groups.patch010: should return status code 400 and info message from invalid name, because is null', () => {
+                const NULL_NAME = null // invalid name of the children.group
+
+                return request(URI)
+                    .patch(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .send({ name: NULL_NAME })
+                    .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_INVALID_NAME)
+                    })
+            })
+
+            it('healthprofessionals.children.groups.patch011: should return status code 400 and info message from invalid school_class, because is null', () => {
+                const NULL_SCHOOL_CLASS = null // invalid school_class of the children.group
+
+                return request(URI)
+                    .patch(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .send({ school_class: NULL_SCHOOL_CLASS })
+                    .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_INVALID_SCHOOL_CLASS)
+                    })
+            })
+
+            it('healthprofessionals.children.groups.patch012: should return status code 400 and info message from invalid children, because is null', () => {
+                const ID_CHILD = null // invalid child id
+
+                return request(URI)
+                    .patch(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)
+                    .send({ children: [ID_CHILD] })
+                    .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body.message).to.eql('One or more request fields are invalid...')
+                        expect(err.body.description).to.eql(`The following IDs from children attribute are not in valid format: ${ID_CHILD}`)
+                    })
+            })
+
         }) // validation error occurs
 
         describe('when the user does not have permission for update a children group of the health professional', () => {
 
-            it('healthprofessionals.children.groups.patch010: should return status code 403 and info message from insufficient permissions for admin user', () => {
+            it('healthprofessionals.children.groups.patch013: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
                     .patch(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -341,7 +383,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
                     })
             })
 
-            it('healthprofessionals.children.groups.patch011: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('healthprofessionals.children.groups.patch014: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .patch(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -354,7 +396,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
                     })
             })
 
-            it('healthprofessionals.children.groups.patch012: should return status code 403 and info message from insufficient permissions for educator user', () => {
+            it('healthprofessionals.children.groups.patch015: should return status code 403 and info message from insufficient permissions for educator user', () => {
 
                 return request(URI)
                     .patch(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -367,7 +409,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
                     })
             })
 
-            it('healthprofessionals.children.groups.patch013: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('healthprofessionals.children.groups.patch016: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .patch(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -380,7 +422,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
                     })
             })
 
-            it('healthprofessionals.children.groups.patch014: should return status code 403 and info message from insufficient permissions for application user', () => {
+            it('healthprofessionals.children.groups.patch017: should return status code 403 and info message from insufficient permissions for application user', () => {
 
                 return request(URI)
                     .patch(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -393,7 +435,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
                     })
             })
 
-            it('healthprofessionals.children.groups.patch015: should return status code 403 and info message from insufficient permissions for another health professional user', () => {
+            it('healthprofessionals.children.groups.patch018: should return status code 403 and info message from insufficient permissions for another health professional user', () => {
 
                 return request(URI)
                     .patch(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)
@@ -408,7 +450,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
         }) //user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('healthprofessionals.children.groups.patch016: should return the status code 401 and the authentication failure informational message', async () => {
+            it('healthprofessionals.children.groups.patch019: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .patch(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${defaultChildrenGroup.id}`)
