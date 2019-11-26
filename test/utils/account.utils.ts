@@ -11,14 +11,12 @@ import { ChildrenGroup } from 'account-service/model/children.group';
 
 class AccountUtil {
 
-    public readonly URI: string = process.env.AG_URL || 'https://localhost:8081' 
-    
-    /* Retirar */
+    public readonly URI: string = process.env.AG_URL || 'https://localhost:8081'
+
+    // Retirar
     public readonly NON_EXISTENT_ID: string = '111111111111111111111111'
     public readonly INVALID_ID: string = '123'
-    public readonly NON_EXISTENT_PASSWORD: string = 'non_existent_password'
-    /* /Retirar */
-    
+
     public async auth(username: string, password: string): Promise<any> {
 
         return request(this.URI)
@@ -117,7 +115,7 @@ class AccountUtil {
             .set('Content-Type', 'application/json')
             .then(res => Promise.resolve(res.body))
             .catch(err => Promise.reject(err))
-    }    
+    }
 
     public saveHealthProfessional(accessToken: string, healthprofessional: HealthProfessional): Promise<any> {
 
@@ -201,49 +199,49 @@ class AccountUtil {
             .catch(err => Promise.reject(err))
     }
 
-    public getChildById(accessToken: string, userID?: string): Promise<any>{
+    public getChildById(accessToken: string, userID?: string): Promise<any> {
         return request(this.URI)
             .get(`/children/${userID}`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .then(res => Promise.resolve(res.body))
-            .catch(err => Promise.reject(err))        
+            .catch(err => Promise.reject(err))
     }
 
-    public getApplicationById(accessToken: string, userID?: string): Promise<any>{
+    public getApplicationById(accessToken: string, userID?: string): Promise<any> {
         return request(this.URI)
             .get(`/applications/${userID}`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .then(res => Promise.resolve(res.body))
-            .catch(err => Promise.reject(err))        
+            .catch(err => Promise.reject(err))
     }
 
-    public getEducatorById(accessToken: string, userID?: string): Promise<any>{
+    public getEducatorById(accessToken: string, userID?: string): Promise<any> {
         return request(this.URI)
             .get(`/educators/${userID}`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .then(res => Promise.resolve(res.body))
-            .catch(err => Promise.reject(err))        
+            .catch(err => Promise.reject(err))
     }
 
-    public getFamilyById(accessToken: string, userID?: string): Promise<any>{
+    public getFamilyById(accessToken: string, userID?: string): Promise<any> {
         return request(this.URI)
             .get(`/families/${userID}`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .then(res => Promise.resolve(res.body))
-            .catch(err => Promise.reject(err))        
+            .catch(err => Promise.reject(err))
     }
 
-    public getHealthProfessionalById(accessToken: string, userID?: string): Promise<any>{
+    public getHealthProfessionalById(accessToken: string, userID?: string): Promise<any> {
         return request(this.URI)
             .get(`/healthprofessionals/${userID}`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .then(res => Promise.resolve(res.body))
-            .catch(err => Promise.reject(err))        
+            .catch(err => Promise.reject(err))
     }
 
     public async getAuths(): Promise<any> {

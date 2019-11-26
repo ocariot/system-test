@@ -52,41 +52,40 @@ export class QfoodtrackingMock {
     private generateType(): string {
         switch (Math.floor((Math.random() * 6))) { // 0-5
             case 0:
-                return QfoodtrackingTypeMock.BREAKFAST
+                return QFoodTrackingTypeMock.BREAKFAST
             case 1:
-                return QfoodtrackingTypeMock.SNACK
+                return QFoodTrackingTypeMock.SNACK
             case 2:
-                return QfoodtrackingTypeMock.LUNCH
+                return QFoodTrackingTypeMock.LUNCH
             case 3:
-                return QfoodtrackingTypeMock.AFTERNOON_SNACK
+                return QFoodTrackingTypeMock.AFTERNOON_SNACK
             case 4:
-                return QfoodtrackingTypeMock.DINNER
+                return QFoodTrackingTypeMock.DINNER
             case 5:
-                return QfoodtrackingTypeMock.CEIA
+                return QFoodTrackingTypeMock.CEIA
             default:
-                return QfoodtrackingTypeMock.BREAKFAST
+                return QFoodTrackingTypeMock.BREAKFAST
         }
     }
 
     private getCategoriesArray(type: string): Array<string> {
         switch (type) {
-            case QfoodtrackingTypeMock.BREAKFAST:
+            case QFoodTrackingTypeMock.BREAKFAST:
                 return this.getBreakFastFoods()
-            case QfoodtrackingTypeMock.SNACK:
+            case QFoodTrackingTypeMock.SNACK:
                 return this.getSnackFoods()
-            case QfoodtrackingTypeMock.LUNCH:
+            case QFoodTrackingTypeMock.LUNCH:
                 return this.getMealFoods()
-            case QfoodtrackingTypeMock.AFTERNOON_SNACK:
+            case QFoodTrackingTypeMock.AFTERNOON_SNACK:
                 return this.getSnackFoods()
-            case QfoodtrackingTypeMock.DINNER:
+            case QFoodTrackingTypeMock.DINNER:
                 return this.getMealFoods()
-            case QfoodtrackingTypeMock.CEIA:
+            case QFoodTrackingTypeMock.CEIA:
                 return this.getMealFoods()
             default:
                 return this.getBreakFastFoods()
         }
     }
-
 
     private getBreakFastFoods(): Array<string> {
         const amountBread = Math.floor((Math.random() * 11))// 0-10
@@ -99,9 +98,16 @@ export class QfoodtrackingMock {
         const amountBiscuits = Math.floor((Math.random() * 11))// 0-10
         const amountInd_Pastry = Math.floor((Math.random() * 11))// 0-10
 
-        return ['Bread', amountBread.toString(), 'Cheese', amountCheese.toString(), 'Eggs', amountEggs.toString()
-            , 'Yogurt', amountYogurt.toString(), 'Fruit', amountFruit.toString(), 'vegetable_milk', amountVegetable_Milk.toString()
-            , 'ind_juice', amountInd_Juice.toString(), 'biscuits', amountBiscuits.toString(), 'ind_pastry', amountInd_Pastry.toString()
+        return [
+            QFoodTrackingBreakFastFoodsMock.BREAD, amountBread.toString(),
+            QFoodTrackingBreakFastFoodsMock.CHEESE, amountCheese.toString(),
+            QFoodTrackingBreakFastFoodsMock.EGGS, amountEggs.toString(),
+            QFoodTrackingBreakFastFoodsMock.YOGURT, amountYogurt.toString(),
+            QFoodTrackingBreakFastFoodsMock.FRUIT, amountFruit.toString(),
+            QFoodTrackingBreakFastFoodsMock.VEGETABLE_MILK, amountVegetable_Milk.toString(),
+            QFoodTrackingBreakFastFoodsMock.IND_JUICE, amountInd_Juice.toString(),
+            QFoodTrackingBreakFastFoodsMock.BISCUITS, amountBiscuits.toString(),
+            QFoodTrackingBreakFastFoodsMock.IND_PASTRY, amountInd_Pastry.toString()
         ]
     }
 
@@ -111,8 +117,11 @@ export class QfoodtrackingMock {
         const amountHamburguer = Math.floor((Math.random() * 11))// 0-10
         const amountSugar_Sodas = Math.floor((Math.random() * 11))// 0-10
 
-        return ['Pizza', amountPizza.toString(), 'Sandwich', amountSandwich.toString(), 'Hamburguer'
-            , amountHamburguer.toString(), 'Sugar_sodas', amountSugar_Sodas.toString()
+        return [
+            QFoodTrackingSnackFoodsMock.PIZZA, amountPizza.toString(),
+            QFoodTrackingSnackFoodsMock.SANDWICH, amountSandwich.toString(),
+            QFoodTrackingSnackFoodsMock.HAMBURGUER, amountHamburguer.toString(),
+            QFoodTrackingSnackFoodsMock.SUGAR_SODAS, amountSugar_Sodas.toString()
         ]
     }
 
@@ -123,13 +132,36 @@ export class QfoodtrackingMock {
         const amountLegumes = Math.floor((Math.random() * 11))// 0-10
         const amountFish = Math.floor((Math.random() * 11))// 0-10
 
-        return ['Rice', amountRice.toString(), 'Pasta', amountPasta.toString(), 'Meat', amountMeat.toString(),
-            'legumes', amountLegumes.toString(), 'Fish', amountFish.toString()
+        return [
+            QFoodTrackingMealFoodsMock.RICE, amountRice.toString(),
+            QFoodTrackingMealFoodsMock.PASTA, amountPasta.toString(),
+            QFoodTrackingMealFoodsMock.MEAT, amountMeat.toString(),
+            QFoodTrackingMealFoodsMock.LEGUMES, amountLegumes.toString(),
+            QFoodTrackingMealFoodsMock.FISH, amountFish.toString()
         ]
     }
 }
 
-export enum QfoodtrackingTypeMock {
+export enum QFoodTrackingSnackFoodsMock {
+    PIZZA = 'pizza',
+    SANDWICH = 'sandwich',
+    HAMBURGUER = 'hamburguer',
+    SUGAR_SODAS = 'sugar_sodas'
+}
+
+export enum QFoodTrackingBreakFastFoodsMock {
+    BREAD = 'bread',
+    CHEESE = 'cheese',
+    EGGS = 'eggs',
+    YOGURT = 'yogurt',
+    FRUIT = 'fruits',
+    VEGETABLE_MILK = 'vegetable_milk',
+    IND_JUICE = 'ind_juice',
+    BISCUITS = 'biscuits',
+    IND_PASTRY = 'ind_pastry'
+}
+
+export enum QFoodTrackingTypeMock {
     BREAKFAST = 'Breakfast',
     SNACK = 'Snack',
     AFTERNOON_SNACK = 'afternoon_snack',
@@ -138,3 +170,10 @@ export enum QfoodtrackingTypeMock {
     CEIA = 'Ceia'
 }
 
+export enum QFoodTrackingMealFoodsMock {
+    RICE = 'rice',
+    PASTA = 'pasta',
+    MEAT = 'meat',
+    LEGUMES = 'legumes',
+    FISH = 'fish'
+}

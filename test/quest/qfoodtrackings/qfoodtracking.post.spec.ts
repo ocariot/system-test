@@ -16,7 +16,7 @@ import { FamilyMock } from '../../mocks/account-service/family.mock'
 import { Application } from '../../../src/account-service/model/application'
 import { ApplicationMock } from '../../mocks/account-service/application.mock'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
-import { QfoodtrackingMock, QfoodtrackingTypeMock } from '../../mocks/quest-service/qfoodtracking.mock'
+import { QfoodtrackingMock, QFoodTrackingTypeMock } from '../../mocks/quest-service/qfoodtracking.mock'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
 
@@ -147,7 +147,7 @@ describe('Routes: QFoodtracking', () => {
 
             it('qfoodtracking.post001: should return status code 200 and the saved QFoodtracking by own child', () => {
 
-                const qFoodBreakFast = new QfoodtrackingMock(QfoodtrackingTypeMock.BREAKFAST)
+                const qFoodBreakFast = new QfoodtrackingMock(QFoodTrackingTypeMock.BREAKFAST)
                 qFoodBreakFast.child_id = defaultChild.id
 
                 return request(URI)
@@ -167,7 +167,7 @@ describe('Routes: QFoodtracking', () => {
 
             it('qfoodtracking.post002: should return status code 200 and the saved QFoodtracking by the educator', () => {
 
-                const qFoodSnack = new QfoodtrackingMock(QfoodtrackingTypeMock.SNACK)
+                const qFoodSnack = new QfoodtrackingMock(QFoodTrackingTypeMock.SNACK)
                 qFoodSnack.child_id = defaultChild.id
 
                 return request(URI)
@@ -187,7 +187,7 @@ describe('Routes: QFoodtracking', () => {
 
             it('qfoodtracking.post003: should return status code 200 and the saved QFoodtracking by the family', () => {
 
-                const qFoodLunch = new QfoodtrackingMock(QfoodtrackingTypeMock.LUNCH)
+                const qFoodLunch = new QfoodtrackingMock(QFoodTrackingTypeMock.LUNCH)
                 qFoodLunch.child_id = defaultChild.id
 
                 return request(URI)
@@ -207,7 +207,7 @@ describe('Routes: QFoodtracking', () => {
 
             it('qfoodtracking.post004: should return status code 200 and the saved QFoodtracking by the application', () => {
 
-                const qFoodDinner = new QfoodtrackingMock(QfoodtrackingTypeMock.DINNER)
+                const qFoodDinner = new QfoodtrackingMock(QFoodTrackingTypeMock.DINNER)
                 qFoodDinner.child_id = defaultChild.id
 
                 return request(URI)
@@ -228,7 +228,7 @@ describe('Routes: QFoodtracking', () => {
         }) // posting a QFoodtracking successfully
 
         describe('when the child posting a empty Object to himself', () => {
-            it('qfoodtracking.post005: should return status code ?', () => {
+            it('qfoodtracking.post005: should return status code 200 and the saved a QFoodTracking only with auto-generated id and date fields', () => {
 
                 const body = {}
 
@@ -237,13 +237,14 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(body)
-                    // .expect(200)
+                    .expect(200)
                     .then(res => {
+                        console.log(res.body)
                     })
             })
         })
 
-        describe('when the child posting a empty Object twice for the same child', () => {
+        describe('when posting a empty Object twice for the same child', () => {
             it('qfoodtracking.post006: should return status code ?', async () => {
 
                 const body = { child_id: defaultChild.id }

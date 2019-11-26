@@ -14,7 +14,7 @@ class QuestionnairesUtil {
             .catch(err => Promise.reject(err.body))
     }
 
-    public getQFoodTracking(accessToken: string, questionnaire_id: string): Promise<any> {
+    public getQFoodTrackingByID(accessToken: string, questionnaire_id: string): Promise<any> {
 
         return request(this.URI)
             .get(`/qfoodtrackings/${questionnaire_id}`)
