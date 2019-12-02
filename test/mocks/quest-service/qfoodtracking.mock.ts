@@ -13,13 +13,22 @@ export class QfoodtrackingMock {
 
         if (!type) type = this.generateType()
 
-        this.id = '5dd572e805560300431b1004'
+        this.id = this.generateObjectId()
         this.child_id = '5a62be07de34500146d9c544'
         this.date = this.generateDate()
         this.type = type
         this.categories_array = this.getCategoriesArray(this.type)
 
         return this
+    }
+
+    private generateObjectId(): string {
+        const chars = 'abcdef0123456789'
+        let randS = ''
+        for (let i = 0; i < 24; i++) {
+            randS += chars.charAt(Math.floor(Math.random() * chars.length))
+        }
+        return randS
     }
 
     private generateDate(): Date {
