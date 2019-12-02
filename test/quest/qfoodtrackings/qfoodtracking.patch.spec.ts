@@ -25,8 +25,6 @@ describe('Routes: QFoodtracking', () => {
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
     let accessTokenAdmin: string
-    let accessAnotherChildToken: string
-    let accessTokenAnotherHealthProfessional: string
     let accessTokenAnotherEducator: string
     let accessTokenAnotherFamily: string
 
@@ -53,8 +51,8 @@ describe('Routes: QFoodtracking', () => {
     const defaultChildrenGroup: ChildrenGroup = new ChildrenGroupMock()
 
     const QFoodTracking1: QfoodtrackingMock = new QfoodtrackingMock(QFoodTrackingTypeMock.BREAKFAST)
-    const QFoodTracking2: QfoodtrackingMock = new QfoodtrackingMock(QFoodTrackingTypeMock.LUNCH)
-    const QFoodTracking3: QfoodtrackingMock = new QfoodtrackingMock(QFoodTrackingTypeMock.DINNER)
+    // const QFoodTracking2: QfoodtrackingMock = new QfoodtrackingMock(QFoodTrackingTypeMock.LUNCH)
+    // const QFoodTracking3: QfoodtrackingMock = new QfoodtrackingMock(QFoodTrackingTypeMock.DINNER)
 
     before(async () => {
         try {
@@ -63,10 +61,9 @@ describe('Routes: QFoodtracking', () => {
 
             const tokens = await acc.getAuths()
             accessTokenAdmin = tokens.admin.access_token
-            accessAnotherChildToken = tokens.child.access_token
             accessTokenAnotherEducator = tokens.educator.access_token
-            accessTokenAnotherHealthProfessional = tokens.health_professional.access_token
             accessTokenAnotherFamily = tokens.family.access_token
+            accessDefaultApplicationToken = tokens.application.access_token
 
             // Save institution and associating all user for her
             const resultDefaultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
@@ -113,10 +110,6 @@ describe('Routes: QFoodtracking', () => {
                 accessDefaultFamilyToken = await acc.auth(defaultFamily.username, defaultFamily.password)
             }
 
-            if (defaultApplication.username && defaultApplication.password) {
-                accessDefaultApplicationToken = await acc.auth(defaultApplication.username, defaultApplication.password)
-            }
-
             if (defaultHealthProfessional.username && defaultHealthProfessional.password) {
                 accessDefaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
             }
@@ -126,13 +119,13 @@ describe('Routes: QFoodtracking', () => {
             await acc.saveChildrenGroupsForHealthProfessional(accessDefaultHealthProfessionalToken, defaultHealthProfessional, defaultChildrenGroup)
 
         } catch (err) {
-            console.log('Failure on Before from qfoodtracking.get_id test: ', err.message)
+            console.log('Failure on Before from qfoodtracking.patch test: ', err.message)
         }
     })
     after(async () => {
         try {
             await accountDB.removeCollections()
-            await questionnaireDB.removeCollections()
+            // await questionnaireDB.removeCollections()
             await accountDB.dispose()
             await questionnaireDB.dispose()
         } catch (err) {
@@ -140,143 +133,177 @@ describe('Routes: QFoodtracking', () => {
         }
     })
 
-    describe('GET /qfoodtrackings/:qfoodtracking.id', () => {
+    describe('PATCH /qfoodtrackings/:qfoodtracking.id', () => {
 
         beforeEach(async () => {
             try {
                 const resultQFoodTracking1 = await quest.saveQFoodTracking(accessDefaultChildToken, QFoodTracking1)
                 QFoodTracking1.id = resultQFoodTracking1.id
 
-                const resultQFoodTracking2 = await quest.saveQFoodTracking(accessDefaultChildToken, QFoodTracking2)
-                QFoodTracking2.id = resultQFoodTracking2.id
-
-                const resultQFoodTracking3 = await quest.saveQFoodTracking(accessDefaultChildToken, QFoodTracking3)
-                QFoodTracking3.id = resultQFoodTracking3.id
+                // const resultQFoodTracking2 = await quest.saveQFoodTracking(accessDefaultChildToken, QFoodTracking2)
+                // QFoodTracking2.id = resultQFoodTracking2.id
+                //
+                // const resultQFoodTracking3 = await quest.saveQFoodTracking(accessDefaultChildToken, QFoodTracking3)
+                // QFoodTracking3.id = resultQFoodTracking3.id
 
             } catch (err) {
-                console.log('Failure in before from qfoodtracking.get_id test: ', err.message)
+                console.log('Failure in before from qfoodtracking.patch test: ', err.message)
             }
         })
         afterEach(async () => {
             try {
                 await questionnaireDB.deleteQFoodTracking()
             } catch (err) {
-                console.log('Failure in after from qfoodtracking.get_id test: ', err.message)
+                console.log('Failure in after from qfoodtracking.patch test: ', err.message)
             }
         })
 
-        context('when get QFoodtracking successfully', () => {
+        context('when update QFoodtracking successfully', () => {
 
-            it('qfoodtracking.get_id001: should return status code 200 and the QFoodTracking for admin user', async () => {
+            it('qfoodtracking.patch001: should return status code 200 and the updated QFoodTracking for educator user', async () => {
 
                 const questionnaire: any = fromJSON(QFoodTracking1)
+                const newDate = new Date()
+                questionnaire.date = newDate.toISOString()
 
                 return request(URI)
-                    .get(`/qfoodtrackings/${QFoodTracking1.id}`)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).to.deep.eql(questionnaire)
-                    })
-            })
-
-            it('qfoodtracking.get_id002: should return status code 200 and the QFoodTracking for own child', async () => {
-
-                const questionnaire: any = fromJSON(QFoodTracking2)
-
-                return request(URI)
-                    .get(`/qfoodtrackings/${QFoodTracking2.id}`)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).to.deep.eql(questionnaire)
-                    })
-            })
-
-            it('qfoodtracking.get_id003: should return status code 200 and the QFoodTracking for educator', async () => {
-
-                const questionnaire: any = fromJSON(QFoodTracking2)
-
-                return request(URI)
-                    .get(`/qfoodtrackings/${QFoodTracking2.id}`)
+                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(200)
+                    .expect(204)
                     .then(res => {
-                        expect(res.body).to.deep.eql(questionnaire)
+                        expect(res.body).to.deep.eql({})
                     })
             })
 
-            it('qfoodtracking.get_id004: should return status code 200 and the QFoodTracking for health professional', async () => {
-
-                const questionnaire: any = fromJSON(QFoodTracking3)
-
-                return request(URI)
-                    .get(`/qfoodtrackings/${QFoodTracking3.id}`)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).to.deep.eql(questionnaire)
-                    })
-            })
-
-            it('qfoodtracking.get_id005: should return status code 200 and the QFoodTracking for family', async () => {
-
-                const questionnaire: any = fromJSON(QFoodTracking3)
-
-                return request(URI)
-                    .get(`/qfoodtrackings/${QFoodTracking3.id}`)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).to.deep.eql(questionnaire)
-                    })
-            })
-
-            it('qfoodtracking.get_id006: should return status code 200 and the QFoodTracking for application', async () => {
+            it('qfoodtracking.patch002: should return status code 200 and the updated QFoodTracking for family', async () => {
 
                 const questionnaire: any = fromJSON(QFoodTracking1)
+                questionnaire.id = 'questionario_id' // even though it was passed in the request, the id of the kept questionnaire is what was originally saved
+                questionnaire.type = QFoodTrackingTypeMock.CEIA
+                questionnaire.categories_array = ['rice', '1', 'fish', '2']
 
                 return request(URI)
-                    .get(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .send(questionnaire)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .expect(200)
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
+                    .expect(204)
                     .then(res => {
-                        expect(res.body).to.deep.eql(questionnaire)
+                        expect(res.body).to.deep.eql({})
                     })
             })
 
         }) // getting a QFoodtracking successfully
 
-        context('when the QFoodTracking not exist', () => {
+        context('when a error occurs', () => {
+            it('qfoodtracking.patch003: should return status code ? when the object is empty ', async () => {
 
-            it('qfoodtracking.get_id007: should return status code 404, because QFoodTracking.id is invalid', async () => {
+                return request(URI)
+                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .send({})
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
+                    // .expect(500)
+                    .then(res => {
+                        // expect(res.body).to.deep.eql({})
+                    })
+            })
 
+            it('qfoodtracking.patch004: should return status code ? because the date format is invalid', async () => {
+
+                const questionnaire: any = fromJSON(QFoodTracking1)
+                questionnaire.date = '02/12/2019'
+
+                return request(URI)
+                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .send(questionnaire)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
+                    // .expect(422)
+                    .then(err => {
+                        // expect(res.body).to.deep.eql({})
+                    })
+            })
+
+            it('qfoodtracking.patch005: should return status code ? because type is a number', async () => {
+
+                const questionnaire: any = fromJSON(QFoodTracking1)
+                questionnaire.type = 1
+
+                return request(URI)
+                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .send(questionnaire)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
+                    // .expect(422)
+                    .then(err => {
+                        // expect(res.body).to.deep.eql({})
+                    })
+            })
+
+            it('qfoodtracking.patch006: should return status code ? because categories_array is a text', async () => {
+
+                const questionnaire: any = fromJSON(QFoodTracking1)
+                questionnaire.categories_array = 'two breads'
+
+                return request(URI)
+                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .send(questionnaire)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
+                    // .expect(422)
+                    .then(err => {
+                        // expect(res.body).to.deep.eql({})
+                    })
+            })
+
+            it('qfoodtracking.patch007: should return status code ? because child id is empty', async () => {
+
+                const questionnaire: any = fromJSON(QFoodTracking1)
+                questionnaire.child_id = ''
+
+                return request(URI)
+                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .send(questionnaire)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
+                    // .expect(422)
+                    .then(err => {
+                        // expect(res.body).to.deep.eql({})
+                    })
+            })
+        })
+
+        context('when the updated QFoodTracking not exist', () => {
+
+            it('qfoodtracking.patch008: should return status code 404, because QFoodTracking.id is invalid', async () => {
+
+                const questionnaire: any = fromJSON(QFoodTracking1)
                 const INVALID_ID = '123'
 
                 return request(URI)
-                    .get(`/qfoodtrackings/${INVALID_ID}`)
+                    .patch(`/qfoodtrackings/${INVALID_ID}`)
+                    .send(questionnaire)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(404)
                     .then(err => {
                         expect(err.body.error.message).to.eql(`Entity not found: Qfoodtracking with id "${INVALID_ID}"`)
                     })
             })
 
-            it('qfoodtracking.get_id008: should return status code 404, because QFoodTracking not found', async () => {
+            it('qfoodtracking.patch009: should return status code 404, because QFoodTracking not found', async () => {
 
+                const questionnaire: any = fromJSON(QFoodTracking1)
                 const NON_EXISTENT_ID = '1dd572e805560300431b1004'
 
                 return request(URI)
-                    .get(`/qfoodtrackings/${NON_EXISTENT_ID}`)
+                    .patch(`/qfoodtrackings/${NON_EXISTENT_ID}`)
+                    .send(questionnaire)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(404)
                     .then(err => {
                         expect(err.body.error.message).to.eql(`Entity not found: Qfoodtracking with id "${NON_EXISTENT_ID}"`)
@@ -286,37 +313,74 @@ describe('Routes: QFoodtracking', () => {
 
         context('when the user does not have permission for get QFoodTracking of a specific child', () => {
 
-            it('qfoodtracking.get_id011: should return status code 403 and info message from insufficient permissions for another child', () => {
+            it('qfoodtracking.patch010: should return status code 403 and info message from insufficient permissions for admin', () => {
+
+                const questionnaire: any = fromJSON(QFoodTracking1)
 
                 return request(URI)
-                    .get(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .send(questionnaire)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessAnotherChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .expect(403)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            describe('when the child does not belong to any of the groups associated with the health professional', () => {
-                it('qfoodtracking.get_id012: should return status code 403 and info message from insufficient permissions for health professional user who is not associated with the child', () => {
+            it('qfoodtracking.patch011: should return status code 403 and info message from insufficient permissions for child', () => {
 
-                    return request(URI)
-                        .get(`/qfoodtrackings/${QFoodTracking1.id}`)
-                        .set('Content-Type', 'application/json')
-                        .set('Authorization', 'Bearer '.concat(accessTokenAnotherHealthProfessional))
-                        .expect(403)
-                        .then(err => {
-                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
+                const questionnaire: any = fromJSON(QFoodTracking1)
+
+                return request(URI)
+                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .send(questionnaire)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
+            })
+
+            it('qfoodtracking.patch012: should return status code 403 and info message from insufficient permissions for health professional', () => {
+
+                const questionnaire: any = fromJSON(QFoodTracking1)
+
+                return request(URI)
+                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .send(questionnaire)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
+            })
+
+            it('qfoodtracking.patch013: should return status code 403 and info message from insufficient permissions for application', () => {
+
+                const questionnaire: any = fromJSON(QFoodTracking1)
+
+                return request(URI)
+                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .send(questionnaire)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
             })
 
             describe('when the child does not belong to any of the groups associated with the educator', () => {
-                it('qfoodtracking.get_id013: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
+                it('qfoodtracking.patch014: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
+
+                    const questionnaire: any = fromJSON(QFoodTracking1)
 
                     return request(URI)
-                        .get(`/qfoodtrackings/${QFoodTracking2.id}`)
+                        .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                        .send(questionnaire)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
                         .expect(403)
@@ -327,10 +391,13 @@ describe('Routes: QFoodtracking', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the family', () => {
-                it('qfoodtracking.get_id014: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
+                it('qfoodtracking.patch015: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
+
+                    const questionnaire: any = fromJSON(QFoodTracking1)
 
                     return request(URI)
-                        .get(`/qfoodtrackings/${QFoodTracking2.id}`)
+                        .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                        .send(questionnaire)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
                         .expect(403)
@@ -344,10 +411,10 @@ describe('Routes: QFoodtracking', () => {
 
         describe('when not informed the acess token', () => {
 
-            it('qfoodtracking.get_id015: should return the status code 401 and the authentication failure informational message', () => {
+            it('qfoodtracking.patch015: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .get(`/qfoodtrackings/${QFoodTracking3.id}`)
+                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(401)
@@ -374,18 +441,17 @@ describe('Routes: QFoodtracking', () => {
                     await acc.deleteUser(accessTokenAdmin, child.id)
 
                 } catch (err) {
-                    console.log('Failure in Before from qfoodtracking.get_id test: ', err.message)
+                    console.log('Failure in Before from qfoodtracking.patch test: ', err.message)
                 }
             })
-            it('qfoodtracking.post016: should return status code 200 and empty list', async () => {
+            it('qfoodtracking.post016: should return status code ?', async () => {
 
                 return request(URI)
-                    .get(`/qfoodtrackings/${questionnaire.id}`)
+                    .patch(`/qfoodtrackings/${questionnaire.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(200)
+                    // .expect(404)
                     .then(res => {
-                        expect(res.body).to.eql([])
                     })
             })
         })
