@@ -14,6 +14,17 @@ class QuestionnairesUtil {
             .catch(err => Promise.reject(err.body))
     }
 
+    public saveQ503SleepingHabits(accessToken: string, q503sleepinghabits: any): Promise<any> {
+
+        return request(this.URI)
+            .post('/q503sleepinghabits')
+            .set('Content-Type', 'application/json')
+            .set('Authorization', 'Bearer '.concat(accessToken))
+            .send(q503sleepinghabits)
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err.body))
+    }
+
     public getQFoodTrackingByID(accessToken: string, questionnaire_id: string): Promise<any> {
 
         return request(this.URI)

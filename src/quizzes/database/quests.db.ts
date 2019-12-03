@@ -138,6 +138,10 @@ class QuestDb {
         return this._deleteCollection('Qfoodtracking')
     }
 
+    public deleteQ503Sleepinghabits(): Promise<boolean> {
+        return this._deleteCollection('Q503SleepingHabitsModel')
+    }
+
     public async removeCollections(): Promise<boolean> {
         if (this._connection) {
             const result = await this._connection.db

@@ -239,7 +239,6 @@ describe('Routes: QFoodtracking', () => {
                     .send(body)
                     .expect(200)
                     .then(res => {
-                        console.log(res.body)
                     })
             })
         })
@@ -594,7 +593,7 @@ describe('Routes: QFoodtracking', () => {
                 defaultQfoodtracking.child_id = defaultApplication.id
 
                 return request(URI)
-                    .post(`/children/${defaultApplication.id}/physicalactivities`)
+                    .post('/qfoodtrackings')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(defaultQfoodtracking)
