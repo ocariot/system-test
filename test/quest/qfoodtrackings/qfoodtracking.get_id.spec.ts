@@ -170,7 +170,7 @@ describe('Routes: QFoodtracking', () => {
 
             it('qfoodtracking.get_id001: should return status code 200 and the QFoodTracking for admin user', async () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking1)
+                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
 
                 return request(URI)
                     .get(`/qfoodtrackings/${QFoodTracking1.id}`)
@@ -184,7 +184,7 @@ describe('Routes: QFoodtracking', () => {
 
             it('qfoodtracking.get_id002: should return status code 200 and the QFoodTracking for own child', async () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking2)
+                const questionnaire: any = QFoodTracking2.fromJSON(QFoodTracking2)
 
                 return request(URI)
                     .get(`/qfoodtrackings/${QFoodTracking2.id}`)
@@ -198,7 +198,7 @@ describe('Routes: QFoodtracking', () => {
 
             it('qfoodtracking.get_id003: should return status code 200 and the QFoodTracking for educator', async () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking2)
+                const questionnaire: any = QFoodTracking2.fromJSON(QFoodTracking2)
 
                 return request(URI)
                     .get(`/qfoodtrackings/${QFoodTracking2.id}`)
@@ -212,7 +212,7 @@ describe('Routes: QFoodtracking', () => {
 
             it('qfoodtracking.get_id004: should return status code 200 and the QFoodTracking for health professional', async () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking3)
+                const questionnaire: any = QFoodTracking3.fromJSON(QFoodTracking3)
 
                 return request(URI)
                     .get(`/qfoodtrackings/${QFoodTracking3.id}`)
@@ -226,7 +226,7 @@ describe('Routes: QFoodtracking', () => {
 
             it('qfoodtracking.get_id005: should return status code 200 and the QFoodTracking for family', async () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking3)
+                const questionnaire: any = QFoodTracking3.fromJSON(QFoodTracking3)
 
                 return request(URI)
                     .get(`/qfoodtrackings/${QFoodTracking3.id}`)
@@ -240,7 +240,7 @@ describe('Routes: QFoodtracking', () => {
 
             it('qfoodtracking.get_id006: should return status code 200 and the QFoodTracking for application', async () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking1)
+                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
 
                 return request(URI)
                     .get(`/qfoodtrackings/${QFoodTracking1.id}`)
@@ -388,14 +388,3 @@ describe('Routes: QFoodtracking', () => {
         })
     })
 })
-
-function fromJSON(questionnaire: QfoodtrackingMock) {
-    const JSON = {
-        id: questionnaire.id,
-        child_id: questionnaire.child_id,
-        date: questionnaire.date!.toISOString(),
-        type: questionnaire.type,
-        categories_array: questionnaire.categories_array
-    }
-    return JSON
-}

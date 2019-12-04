@@ -19,6 +19,7 @@ import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { QfoodtrackingMock, QFoodTrackingTypeMock } from '../../mocks/quest-service/qfoodtracking.mock'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
+import * as HttpStatus from 'http-status-codes'
 
 describe('Routes: QFoodtracking', () => {
 
@@ -243,24 +244,7 @@ describe('Routes: QFoodtracking', () => {
             })
         })
 
-        describe('when posting a empty Object twice for the same child', () => {
-            it('qfoodtracking.post006: should return status code ?', async () => {
-
-                const body = { child_id: defaultChild.id }
-                await quest.saveQFoodTracking(accessDefaultChildToken, body)
-
-                return request(URI)
-                    .post('/qfoodtrackings')
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .send(body)
-                    // .expect(200)
-                    .then(res => {
-                    })
-            })
-        })
-
-        describe('when the child posting the same QFoodTracking twice for the same child', () => {
+        describe('when posting the same QFoodTracking twice for the same child', () => {
             before(async () => {
                 try {
                     await quest.saveQFoodTracking(accessDefaultChildToken, defaultQfoodtracking)
@@ -268,22 +252,22 @@ describe('Routes: QFoodtracking', () => {
                     console.log('Failure in qfoodtracking.post test: ', err.message)
                 }
             })
-            it('qfoodtracking.post007: should return status code ?', () => {
+            it('qfoodtracking.post006: should return an error, because the same QFoodtracking is already registered for the child', () => {
 
                 return request(URI)
                     .post('/qfoodtrackings')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(defaultQfoodtracking)
-                    // .expect(500)
-                    .then(res => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
         })
 
         context('when a validation error occurs', () => {
 
-            it('qfoodtracking.post008: should return status code ?, because the amount of a given food is negative', () => {
+            it('qfoodtracking.post007: should return an error, because the amount of a given food is negative', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.categories_array[1] = '-1' //indicates that the child ate a negative amount of a particular food
 
@@ -292,12 +276,12 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectQFoodTracking)
-                    // .expect(200)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('qfoodtracking.post009: should return status code ?, because the food is not in any category', () => {
+            it('qfoodtracking.post008: should return an error, because the food is not in any category', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.categories_array[0] = 'Toy' //indicates that the child ate a Toy
 
@@ -306,13 +290,13 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectQFoodTracking)
-                    // .expect(200)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
             // WITHOUT ENTERING ALL FIELDS
-            it('qfoodtracking.post010: should return status code ?, because child_id is not provided', () => {
+            it('qfoodtracking.post009: should return an error, because child_id is not provided', () => {
                 delete defaultQfoodtracking.child_id
 
                 return request(URI)
@@ -320,13 +304,27 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(defaultQfoodtracking)
-                    // .expect(200)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
             // WITHOUT ENTERING ALL FIELDS
+            it('qfoodtracking.post010: should return an error, because child not exist', () => {
 
-            it('qfoodtracking.post011: should return status code ?, because date child_id is invalid', () => {
+                const NON_EXISTENT_CHILD = '1a23be45de6789123d4c567'
+                defaultQfoodtracking.child_id = NON_EXISTENT_CHILD
+
+                return request(URI)
+                    .post('/qfoodtrackings')
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(defaultQfoodtracking)
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
+                    })
+            })
+
+            it('qfoodtracking.post011: should return an error, because child_id is invalid', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.child_id = '123'
 
@@ -335,12 +333,12 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectQFoodTracking)
-                    // .expect(422)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('qfoodtracking.post012: should return status code ?, when provided a invalid id for the QFoodTracking', () => {
+            it('qfoodtracking.post012: should return an error, when provided a invalid id for the QFoodTracking', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.id = '123'
 
@@ -349,13 +347,13 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectQFoodTracking)
-                    // .expect(422)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
             // SOME FIELD HAS NULL VALUE
-            it('qfoodtracking.post013: should return status code ?, because date is null', () => {
+            it('qfoodtracking.post013: should return an error, because date is null', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.date = null
 
@@ -364,12 +362,12 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectQFoodTracking)
-                    // .expect(422)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('qfoodtracking.post014: should return status code ?, because type is null', () => {
+            it('qfoodtracking.post014: should return an error, because type is null', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.type = null
 
@@ -378,12 +376,12 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectQFoodTracking)
-                    // .expect(422)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('qfoodtracking.post015: should return status code ?, because categories_array is null', () => {
+            it('qfoodtracking.post015: should return an error, because categories_array is null', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.categories_array = null
 
@@ -392,14 +390,14 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectQFoodTracking)
-                    // .expect(422)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
             // SOME FIELD HAS NULL VALUE
 
             // SOME FIELD HAS INVALID
-            it('qfoodtracking.post016: should return status code ?, because date is a number', () => {
+            it('qfoodtracking.post016: should return an error, because date is a number', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.date = 20191120174931219
 
@@ -408,12 +406,12 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectQFoodTracking)
-                    // .expect(422)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('qfoodtracking.post017: should return status code ?, because type is a number', () => {
+            it('qfoodtracking.post017: should return an error, because type is a number', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.type = 12345
 
@@ -422,12 +420,12 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectQFoodTracking)
-                    // .expect(422)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('qfoodtracking.post018: should return status code ?, because categories_array is a number', () => {
+            it('qfoodtracking.post018: should return an error, because categories_array is a number', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.categories_array = null
 
@@ -436,13 +434,13 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectQFoodTracking)
-                    // .expect(422)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
             // SOME FIELD HAS INVALID
 
-            it('qfoodtracking.post019: should return status code ?, because month is invalid', () => {
+            it('qfoodtracking.post019: should return an error, because month is invalid', () => {
                 const incorrectQFoodTracking = getQFoodTrackingJSON()
                 incorrectQFoodTracking.date = '2019-13-01T19:40:45.124Z' // invalid month(13)
 
@@ -451,8 +449,8 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectQFoodTracking)
-                    // .expect(422)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
         })
@@ -531,7 +529,7 @@ describe('Routes: QFoodtracking', () => {
 
         context('when posting a new QFoodtracking for another user that not to be a child', () => {
 
-            it('qfoodtracking.post025: should return ???, when try create a qfoodtracking for admin', async () => {
+            it('qfoodtracking.post025: should return an error, when try create a qfoodtracking for admin', async () => {
 
                 const ADMIN_ID = await acc.getAdminID()
                 defaultQfoodtracking.child_id = ADMIN_ID
@@ -541,12 +539,12 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(defaultQfoodtracking)
-                    // .expect(400)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('qfoodtracking.post026: should return ???, when try create a qfoodtracking for educator', () => {
+            it('qfoodtracking.post026: should return an error, when try create a qfoodtracking for educator', () => {
 
                 defaultQfoodtracking.child_id = defaultEducator.id
 
@@ -555,12 +553,12 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(defaultQfoodtracking)
-                    // .expect(400)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('qfoodtracking.post027: should return ???, when try create a qfoodtracking for health professional', () => {
+            it('qfoodtracking.post027: should return an error, when try create a qfoodtracking for health professional', () => {
 
                 defaultQfoodtracking.child_id = defaultHealthProfessional.id
 
@@ -569,12 +567,12 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(defaultQfoodtracking)
-                    // .expect(400)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('qfoodtracking.post028: should return ???, when try create a qfoodtracking for family', () => {
+            it('qfoodtracking.post028: should return an error, when try create a qfoodtracking for family', () => {
 
                 defaultQfoodtracking.child_id = defaultFamily.id
 
@@ -583,12 +581,12 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(defaultQfoodtracking)
-                    // .expect(400)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('qfoodtracking.post030: should return ???, when try create a qfoodtracking for application', () => {
+            it('qfoodtracking.post030: should return an error, when try create a qfoodtracking for application', () => {
 
                 defaultQfoodtracking.child_id = defaultApplication.id
 
@@ -597,32 +595,15 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(defaultQfoodtracking)
-                    // .expect(400)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
         }) // another user that not to be a child
 
-        describe('should return status code ???, because child not exist', () => {
-            it('qfoodtracking.post031: should return ???, when try create a qfoodtracking for application', () => {
-
-                const NON_EXISTENT_CHILD = '1a23be45de6789123d4c567'
-                defaultQfoodtracking.child_id = NON_EXISTENT_CHILD
-
-                return request(URI)
-                    .post('/qfoodtrackings')
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .send(defaultQfoodtracking)
-                    // .expect(400)
-                    .then(err => {
-                    })
-            })
-        })
-
         describe('when not informed the acess token', () => {
-            it('qfoodtracking.post032: should return the status code 401 and the authentication failure informational message', () => {
+            it('qfoodtracking.post031: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .post('/qfoodtrackings')
@@ -637,7 +618,7 @@ describe('Routes: QFoodtracking', () => {
         })
 
         describe('when the child has been deleted', () => {
-            it('qfoodtracking.post033: should return ???', async () => {
+            it('qfoodtracking.post032: should return an error, because child not exist', async () => {
 
                 defaultQfoodtracking.child_id = defaultChild.id
                 await acc.deleteUser(accessTokenAdmin, defaultChild.id)
@@ -647,8 +628,8 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(defaultQfoodtracking)
-                    // .expect(400)
-                    .then(err => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
         })

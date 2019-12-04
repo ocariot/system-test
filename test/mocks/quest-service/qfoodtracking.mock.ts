@@ -149,6 +149,18 @@ export class QfoodtrackingMock {
             QFoodTrackingMealFoodsMock.FISH, amountFish.toString()
         ]
     }
+
+    public fromJSON(questionnaire: QfoodtrackingMock) {
+        const JSON = {
+            id: questionnaire.id,
+            child_id: questionnaire.child_id,
+            date: questionnaire.date!.toISOString(),
+            type: questionnaire.type,
+            categories_array: questionnaire.categories_array
+        }
+        return JSON
+    }
+
 }
 
 export enum QFoodTrackingSnackFoodsMock {

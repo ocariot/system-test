@@ -23,6 +23,7 @@ import {
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
+import * as HttpStatus from 'http-status-codes'
 
 describe('Routes: QFoodtracking', () => {
 
@@ -326,13 +327,15 @@ describe('Routes: QFoodtracking', () => {
         }) // getting a QFoodtracking successfully
 
         context('when a error occurs', () => {
-            it('qfoodtracking.get_all010: should return status code 400, because the querystring is invalid', () => {
+            it('qfoodtracking.get_all010: should return an error, because the querystring is invalid', () => {
 
                 return request(URI)
                     .get(`/qfoodtrackings?filter[where]`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .expect(400)
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
+                    })
             })
         }) // error occurs
 
@@ -408,7 +411,7 @@ describe('Routes: QFoodtracking', () => {
             })
         })
 
-        describe('when the child has been updated', () => {
+        describe('when the child has been deleted', () => {
             const child: Child = new ChildMock()
             const questionnaire: QfoodtrackingMock = new QfoodtrackingMock()
 
@@ -427,15 +430,14 @@ describe('Routes: QFoodtracking', () => {
                     console.log('Failure in Before from qfoodtracking.get_all test: ', err.message)
                 }
             })
-            it('qfoodtracking.post016: should return status code 200 and empty list', async () => {
+            it('qfoodtracking.post016: should return an error, because child not exist', async () => {
 
                 return request(URI)
                     .get(`/qfoodtrackings?filter[where][child_id]=${child.username}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).to.eql([])
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
         })

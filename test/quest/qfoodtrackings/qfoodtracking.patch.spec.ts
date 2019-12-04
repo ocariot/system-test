@@ -19,6 +19,7 @@ import { QfoodtrackingMock, QFoodTrackingTypeMock } from '../../mocks/quest-serv
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
+import * as HttpStatus from 'http-status-codes'
 
 describe('Routes: QFoodtracking', () => {
 
@@ -51,8 +52,6 @@ describe('Routes: QFoodtracking', () => {
     const defaultChildrenGroup: ChildrenGroup = new ChildrenGroupMock()
 
     const QFoodTracking1: QfoodtrackingMock = new QfoodtrackingMock(QFoodTrackingTypeMock.BREAKFAST)
-    // const QFoodTracking2: QfoodtrackingMock = new QfoodtrackingMock(QFoodTrackingTypeMock.LUNCH)
-    // const QFoodTracking3: QfoodtrackingMock = new QfoodtrackingMock(QFoodTrackingTypeMock.DINNER)
 
     before(async () => {
         try {
@@ -125,7 +124,7 @@ describe('Routes: QFoodtracking', () => {
     after(async () => {
         try {
             await accountDB.removeCollections()
-            // await questionnaireDB.removeCollections()
+            await questionnaireDB.removeCollections()
             await accountDB.dispose()
             await questionnaireDB.dispose()
         } catch (err) {
@@ -139,12 +138,6 @@ describe('Routes: QFoodtracking', () => {
             try {
                 const resultQFoodTracking1 = await quest.saveQFoodTracking(accessDefaultChildToken, QFoodTracking1)
                 QFoodTracking1.id = resultQFoodTracking1.id
-
-                // const resultQFoodTracking2 = await quest.saveQFoodTracking(accessDefaultChildToken, QFoodTracking2)
-                // QFoodTracking2.id = resultQFoodTracking2.id
-                //
-                // const resultQFoodTracking3 = await quest.saveQFoodTracking(accessDefaultChildToken, QFoodTracking3)
-                // QFoodTracking3.id = resultQFoodTracking3.id
 
             } catch (err) {
                 console.log('Failure in before from qfoodtracking.patch test: ', err.message)
@@ -162,7 +155,7 @@ describe('Routes: QFoodtracking', () => {
 
             it('qfoodtracking.patch001: should return status code 200 and the updated QFoodTracking for educator user', async () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking1)
+                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
                 const newDate = new Date()
                 questionnaire.date = newDate.toISOString()
 
@@ -179,7 +172,7 @@ describe('Routes: QFoodtracking', () => {
 
             it('qfoodtracking.patch002: should return status code 200 and the updated QFoodTracking for family', async () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking1)
+                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
                 questionnaire.id = 'questionario_id' // even though it was passed in the request, the id of the kept questionnaire is what was originally saved
                 questionnaire.type = QFoodTrackingTypeMock.CEIA
                 questionnaire.categories_array = ['rice', '1', 'fish', '2']
@@ -198,22 +191,21 @@ describe('Routes: QFoodtracking', () => {
         }) // getting a QFoodtracking successfully
 
         context('when a error occurs', () => {
-            it('qfoodtracking.patch003: should return status code ? when the object is empty ', async () => {
+            it('qfoodtracking.patch003: should return an error, because the object is empty ', async () => {
 
                 return request(URI)
                     .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
                     .send({})
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
-                    // .expect(500)
-                    .then(res => {
-                        // expect(res.body).to.deep.eql({})
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('qfoodtracking.patch004: should return status code ? because the date format is invalid', async () => {
+            it('qfoodtracking.patch004: should return an error, because the date format is invalid', async () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking1)
+                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
                 questionnaire.date = '02/12/2019'
 
                 return request(URI)
@@ -221,15 +213,14 @@ describe('Routes: QFoodtracking', () => {
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
-                    // .expect(422)
-                    .then(err => {
-                        // expect(res.body).to.deep.eql({})
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('qfoodtracking.patch005: should return status code ? because type is a number', async () => {
+            it('qfoodtracking.patch005: should return an error, because type is a number', async () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking1)
+                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
                 questionnaire.type = 1
 
                 return request(URI)
@@ -237,15 +228,14 @@ describe('Routes: QFoodtracking', () => {
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
-                    // .expect(422)
-                    .then(err => {
-                        // expect(res.body).to.deep.eql({})
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('qfoodtracking.patch006: should return status code ? because categories_array is a text', async () => {
+            it('qfoodtracking.patch006: should return an error, because categories_array is a text', async () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking1)
+                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
                 questionnaire.categories_array = 'two breads'
 
                 return request(URI)
@@ -253,15 +243,14 @@ describe('Routes: QFoodtracking', () => {
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
-                    // .expect(422)
-                    .then(err => {
-                        // expect(res.body).to.deep.eql({})
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('qfoodtracking.patch007: should return status code ? because child id is empty', async () => {
+            it('qfoodtracking.patch007: should return an error, because child id is empty', async () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking1)
+                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
                 questionnaire.child_id = ''
 
                 return request(URI)
@@ -269,18 +258,17 @@ describe('Routes: QFoodtracking', () => {
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
-                    // .expect(422)
-                    .then(err => {
-                        // expect(res.body).to.deep.eql({})
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
         })
 
         context('when the updated QFoodTracking not exist', () => {
 
-            it('qfoodtracking.patch008: should return status code 404, because QFoodTracking.id is invalid', async () => {
+            it('qfoodtracking.patch008: should return an error, because QFoodTracking.id is invalid', async () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking1)
+                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
                 const INVALID_ID = '123'
 
                 return request(URI)
@@ -288,15 +276,14 @@ describe('Routes: QFoodtracking', () => {
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(404)
-                    .then(err => {
-                        expect(err.body.error.message).to.eql(`Entity not found: Qfoodtracking with id "${INVALID_ID}"`)
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('qfoodtracking.patch009: should return status code 404, because QFoodTracking not found', async () => {
+            it('qfoodtracking.patch009: should return an error, because QFoodTracking not found', async () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking1)
+                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
                 const NON_EXISTENT_ID = '1dd572e805560300431b1004'
 
                 return request(URI)
@@ -304,9 +291,8 @@ describe('Routes: QFoodtracking', () => {
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(404)
-                    .then(err => {
-                        expect(err.body.error.message).to.eql(`Entity not found: Qfoodtracking with id "${NON_EXISTENT_ID}"`)
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
         }) // error occurs
@@ -315,7 +301,7 @@ describe('Routes: QFoodtracking', () => {
 
             it('qfoodtracking.patch010: should return status code 403 and info message from insufficient permissions for admin', () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking1)
+                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
 
                 return request(URI)
                     .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
@@ -330,7 +316,7 @@ describe('Routes: QFoodtracking', () => {
 
             it('qfoodtracking.patch011: should return status code 403 and info message from insufficient permissions for child', () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking1)
+                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
 
                 return request(URI)
                     .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
@@ -345,7 +331,7 @@ describe('Routes: QFoodtracking', () => {
 
             it('qfoodtracking.patch012: should return status code 403 and info message from insufficient permissions for health professional', () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking1)
+                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
 
                 return request(URI)
                     .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
@@ -360,7 +346,7 @@ describe('Routes: QFoodtracking', () => {
 
             it('qfoodtracking.patch013: should return status code 403 and info message from insufficient permissions for application', () => {
 
-                const questionnaire: any = fromJSON(QFoodTracking1)
+                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
 
                 return request(URI)
                     .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
@@ -376,7 +362,7 @@ describe('Routes: QFoodtracking', () => {
             describe('when the child does not belong to any of the groups associated with the educator', () => {
                 it('qfoodtracking.patch014: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
 
-                    const questionnaire: any = fromJSON(QFoodTracking1)
+                    const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
 
                     return request(URI)
                         .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
@@ -393,7 +379,7 @@ describe('Routes: QFoodtracking', () => {
             describe('when the child does not belong to any of the groups associated with the family', () => {
                 it('qfoodtracking.patch015: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
 
-                    const questionnaire: any = fromJSON(QFoodTracking1)
+                    const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
 
                     return request(URI)
                         .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
@@ -410,7 +396,6 @@ describe('Routes: QFoodtracking', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-
             it('qfoodtracking.patch015: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
@@ -444,27 +429,16 @@ describe('Routes: QFoodtracking', () => {
                     console.log('Failure in Before from qfoodtracking.patch test: ', err.message)
                 }
             })
-            it('qfoodtracking.post016: should return status code ?', async () => {
+            it('qfoodtracking.post016: should return an error, because child not exist', async () => {
 
                 return request(URI)
                     .patch(`/qfoodtrackings/${questionnaire.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    // .expect(404)
-                    .then(res => {
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
         })
     })
 })
-
-function fromJSON(questionnaire: QfoodtrackingMock) {
-    const JSON = {
-        id: questionnaire.id,
-        child_id: questionnaire.child_id,
-        date: questionnaire.date!.toISOString(),
-        type: questionnaire.type,
-        categories_array: questionnaire.categories_array
-    }
-    return JSON
-}
