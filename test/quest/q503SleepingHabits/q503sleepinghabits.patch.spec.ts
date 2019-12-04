@@ -15,13 +15,13 @@ import { Family } from '../../../src/account-service/model/family'
 import { FamilyMock } from '../../mocks/account-service/family.mock'
 import { Application } from '../../../src/account-service/model/application'
 import { ApplicationMock } from '../../mocks/account-service/application.mock'
-import { QfoodtrackingMock, QFoodTrackingTypeMock } from '../../mocks/quest-service/qfoodtracking.mock'
+import { Q503SleepingHabitsMock } from '../../mocks/quest-service/q503sleepinhhabits.mock'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import * as HttpStatus from 'http-status-codes'
 
-describe('Routes: QFoodtracking', () => {
+describe('Routes: Q503SleepingHabits', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -51,7 +51,9 @@ describe('Routes: QFoodtracking', () => {
 
     const defaultChildrenGroup: ChildrenGroup = new ChildrenGroupMock()
 
-    const QFoodTracking1: QfoodtrackingMock = new QfoodtrackingMock(QFoodTrackingTypeMock.BREAKFAST)
+    const Q503SleepingHabits: Q503SleepingHabitsMock = new Q503SleepingHabitsMock()
+
+    const Q503SleepingHabits2: Q503SleepingHabitsMock = new Q503SleepingHabitsMock()
 
     before(async () => {
         try {
@@ -118,13 +120,13 @@ describe('Routes: QFoodtracking', () => {
             await acc.saveChildrenGroupsForHealthProfessional(accessDefaultHealthProfessionalToken, defaultHealthProfessional, defaultChildrenGroup)
 
         } catch (err) {
-            console.log('Failure on Before from qfoodtracking.patch test: ', err.message)
+            console.log('Failure on Before from q503sleepinghabits.patch test: ', err.message)
         }
     })
     after(async () => {
         try {
             await accountDB.removeCollections()
-            await questionnaireDB.removeCollections()
+            // await questionnaireDB.removeCollections()
             await accountDB.dispose()
             await questionnaireDB.dispose()
         } catch (err) {
@@ -132,35 +134,36 @@ describe('Routes: QFoodtracking', () => {
         }
     })
 
-    describe('PATCH /qfoodtrackings/:qfoodtracking.id', () => {
+    describe('PATCH /q503sleepinghabits/:q503sleepinghabits.id', () => {
 
         beforeEach(async () => {
             try {
-                const resultQFoodTracking1 = await quest.saveQFoodTracking(accessDefaultChildToken, QFoodTracking1)
-                QFoodTracking1.id = resultQFoodTracking1.id
-
+                const resultQ503SleepingHabits = await quest.saveQ503SleepingHabits(accessDefaultChildToken, Q503SleepingHabits)
+                Q503SleepingHabits.id = resultQ503SleepingHabits.id
             } catch (err) {
-                console.log('Failure in before from qfoodtracking.patch test: ', err.message)
+                console.log('Failure in before from q503sleepinghabits.patch test: ', err.message)
             }
         })
         afterEach(async () => {
             try {
-                await questionnaireDB.deleteQFoodTracking()
+                await questionnaireDB.deleteQ503Sleepinghabits()
             } catch (err) {
-                console.log('Failure in after from qfoodtracking.patch test: ', err.message)
+                console.log('Failure in after from q503sleepinghabits.patch test: ', err.message)
             }
         })
 
-        context('when update QFoodtracking successfully', () => {
+        context('when update Q503SleepingHabits successfully', () => {
 
-            it('qfoodtracking.patch001: should return status code 204 and no content for educator user', async () => {
+            it('q503sleepinghabits.patch001: should return status code 204 and no content for educator user', async () => {
 
-                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
+                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
                 const newDate = new Date()
                 questionnaire.date = newDate.toISOString()
+                questionnaire.time_sleep = 'Depois das 12 pm'
+                questionnaire.time_wake_up = 'Depois das 9am'
 
                 return request(URI)
-                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
@@ -170,15 +173,16 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.patch002: should return status code 204 and no content for family', async () => {
+            it('q503sleepinghabits.patch002: should return status code 204 and no content for family', async () => {
 
-                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
+                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
                 questionnaire.id = 'questionario_id' // even though it was passed in the request, the id of the kept questionnaire is what was originally saved
-                questionnaire.type = QFoodTrackingTypeMock.CEIA
-                questionnaire.categories_array = ['rice', '1', 'fish', '2']
+                questionnaire.time_sleep = ''
+                questionnaire.time_nap = 'false'
+                questionnaire.state = 'Incomplete'
 
                 return request(URI)
-                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
@@ -188,13 +192,13 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-        }) // getting a QFoodtracking successfully
+        }) // getting a Q503SleepingHabits successfully
 
         context('when a error occurs', () => {
-            it('qfoodtracking.patch003: should return an error, because the object is empty ', async () => {
+            it('q503sleepinghabits.patch003: should return an error, because the object is empty ', async () => {
 
                 return request(URI)
-                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
                     .send({})
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
@@ -203,13 +207,13 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.patch004: should return an error, because the date format is invalid', async () => {
+            it('q503sleepinghabits.patch004: should return an error, because the date format is invalid', async () => {
 
-                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
+                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
                 questionnaire.date = '02/12/2019'
 
                 return request(URI)
-                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
@@ -218,13 +222,13 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.patch005: should return an error, because type is a number', async () => {
+            it('q503sleepinghabits.patch005: should return an error, because time_sleep is a null', async () => {
 
-                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
-                questionnaire.type = 1
+                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                questionnaire.time_sleep = null
 
                 return request(URI)
-                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
@@ -233,13 +237,13 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.patch006: should return an error, because categories_array is a text', async () => {
+            it('q503sleepinghabits.patch006: should return an error, because time_wake_up is a number', async () => {
 
-                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
-                questionnaire.categories_array = 'two breads'
+                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                questionnaire.time_wake_up = 10
 
                 return request(URI)
-                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
@@ -248,13 +252,43 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.patch007: should return an error, because child id is empty', async () => {
+            it('q503sleepinghabits.patch007: should return an error, because child id is empty', async () => {
 
-                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
+                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
                 questionnaire.child_id = ''
 
                 return request(URI)
-                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .send(questionnaire)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
+                    })
+            })
+
+            it('q503sleepinghabits.patch008: should return an error, because percentage is a number', async () => {
+
+                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                questionnaire.percentage = 1
+
+                return request(URI)
+                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .send(questionnaire)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
+                    })
+            })
+
+            it('q503sleepinghabits.patch009: should return an error, because date is null', async () => {
+
+                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                questionnaire.date = null
+
+                return request(URI)
+                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
@@ -264,15 +298,38 @@ describe('Routes: QFoodtracking', () => {
             })
         })
 
-        context('when the updated QFoodTracking not exist', () => {
+        describe('when a duplicate occurs', () => {
+            before(async () => {
+                try {
+                    await quest.saveQ503SleepingHabits(accessDefaultEducatorToken, Q503SleepingHabits2)
+                } catch (err) {
+                    console.log('Failure in Before from q503sleepinghabits.patch test: ', err.message)
+                }
+            })
+            it('q503sleepinghabits.patch010: should return an error, because the Q503Sleepinghabits is already registered', () => {
 
-            it('qfoodtracking.patch008: should return an error, because QFoodTracking.id is invalid', async () => {
+                const questionnaireDuplicated: any = Q503SleepingHabits2.fromJSON(Q503SleepingHabits2)
 
-                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
+                return request(URI)
+                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .send(questionnaireDuplicated)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
+                    })
+            })
+        })
+
+        context('when the updated Q503SleepingHabits not exist', () => {
+
+            it('q503sleepinghabits.patch011: should return an error, because QFoodTracking.id is invalid', async () => {
+
+                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
                 const INVALID_ID = '123'
 
                 return request(URI)
-                    .patch(`/qfoodtrackings/${INVALID_ID}`)
+                    .patch(`/q503sleepinghabits/${INVALID_ID}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
@@ -281,13 +338,13 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.patch009: should return an error, because QFoodTracking not found', async () => {
+            it('q503sleepinghabits.patch012: should return an error, because Q503SleepingHabits not found', async () => {
 
-                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
+                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
                 const NON_EXISTENT_ID = '1dd572e805560300431b1004'
 
                 return request(URI)
-                    .patch(`/qfoodtrackings/${NON_EXISTENT_ID}`)
+                    .patch(`/q503sleepinghabits/${NON_EXISTENT_ID}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
@@ -297,14 +354,14 @@ describe('Routes: QFoodtracking', () => {
             })
         }) // error occurs
 
-        context('when the user does not have permission for get QFoodTracking of a specific child', () => {
+        context('when the user does not have permission for get Q503SleepingHabits of a specific child', () => {
 
-            it('qfoodtracking.patch010: should return status code 403 and info message from insufficient permissions for admin', () => {
+            it('q503sleepinghabits.patch013: should return status code 403 and info message from insufficient permissions for admin', () => {
 
-                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
+                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
 
                 return request(URI)
-                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
@@ -314,12 +371,12 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.patch011: should return status code 403 and info message from insufficient permissions for child', () => {
+            it('q503sleepinghabits.patch014: should return status code 403 and info message from insufficient permissions for child', () => {
 
-                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
+                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
 
                 return request(URI)
-                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
@@ -329,12 +386,12 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.patch012: should return status code 403 and info message from insufficient permissions for health professional', () => {
+            it('q503sleepinghabits.patch015: should return status code 403 and info message from insufficient permissions for health professional', () => {
 
-                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
+                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
 
                 return request(URI)
-                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
@@ -344,12 +401,12 @@ describe('Routes: QFoodtracking', () => {
                     })
             })
 
-            it('qfoodtracking.patch013: should return status code 403 and info message from insufficient permissions for application', () => {
+            it('q503sleepinghabits.patch016: should return status code 403 and info message from insufficient permissions for application', () => {
 
-                const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
+                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
 
                 return request(URI)
-                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
@@ -360,12 +417,12 @@ describe('Routes: QFoodtracking', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the educator', () => {
-                it('qfoodtracking.patch014: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
+                it('q503sleepinghabits.patch017: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
 
-                    const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
+                    const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
 
                     return request(URI)
-                        .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                        .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
                         .send(questionnaire)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
@@ -377,12 +434,12 @@ describe('Routes: QFoodtracking', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the family', () => {
-                it('qfoodtracking.patch015: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
+                it('q503sleepinghabits.patch018: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
 
-                    const questionnaire: any = QFoodTracking1.fromJSON(QFoodTracking1)
+                    const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
 
                     return request(URI)
-                        .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                        .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
                         .send(questionnaire)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
@@ -396,10 +453,10 @@ describe('Routes: QFoodtracking', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('qfoodtracking.patch015: should return the status code 401 and the authentication failure informational message', () => {
+            it('q503sleepinghabits.patch019: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .patch(`/qfoodtrackings/${QFoodTracking1.id}`)
+                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(401)
@@ -411,7 +468,7 @@ describe('Routes: QFoodtracking', () => {
 
         describe('when the child has been deleted', () => {
             const child: Child = new ChildMock()
-            const questionnaire: QfoodtrackingMock = new QfoodtrackingMock()
+            const questionnaire: Q503SleepingHabitsMock = new Q503SleepingHabitsMock()
 
             before(async () => {
                 try {
@@ -426,13 +483,16 @@ describe('Routes: QFoodtracking', () => {
                     await acc.deleteUser(accessTokenAdmin, child.id)
 
                 } catch (err) {
-                    console.log('Failure in Before from qfoodtracking.patch test: ', err.message)
+                    console.log('Failure in Before from q503sleepinghabits.patch test: ', err.message)
                 }
             })
-            it('qfoodtracking.patch016: should return an error, because child not exist', async () => {
+            it('q503sleepinghabits.patch020: should return an error, because child not exist', async () => {
+
+                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
 
                 return request(URI)
-                    .patch(`/qfoodtrackings/${questionnaire.id}`)
+                    .patch(`/q503sleepinghabits/${questionnaire.id}`)
+                    .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(err => {
