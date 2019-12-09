@@ -25,6 +25,17 @@ class QuestionnairesUtil {
             .catch(err => Promise.reject(err.body))
     }
 
+    public saveQ501PhysicalActivityForChildren(accessToken: string, q501physicalactivityforchildren: any): Promise<any> {
+
+        return request(this.URI)
+            .post('/q501physicalactivityforchildren')
+            .set('Content-Type', 'application/json')
+            .set('Authorization', 'Bearer '.concat(accessToken))
+            .send(q501physicalactivityforchildren)
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err.body))
+    }
+
     public getQFoodTrackingByID(accessToken: string, questionnaire_id: string): Promise<any> {
 
         return request(this.URI)

@@ -15,13 +15,13 @@ import { Family } from '../../../src/account-service/model/family'
 import { FamilyMock } from '../../mocks/account-service/family.mock'
 import { Application } from '../../../src/account-service/model/application'
 import { ApplicationMock } from '../../mocks/account-service/application.mock'
-import { Q503SleepingHabitsMock } from '../../mocks/quest-service/q503sleepinghabits.mock'
+import { Q501PhysicalActivityForChildrenMock } from '../../mocks/quest-service/q501physicalactivityforchildren.mock'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import * as HttpStatus from 'http-status-codes'
 
-describe('Routes: Q503SleepingHabits', () => {
+describe('Routes: Q501PhysicalActivityForChildren', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -51,9 +51,9 @@ describe('Routes: Q503SleepingHabits', () => {
 
     const defaultChildrenGroup: ChildrenGroup = new ChildrenGroupMock()
 
-    const Q503SleepingHabits: Q503SleepingHabitsMock = new Q503SleepingHabitsMock()
+    const Q501PhysicalActivityForChildren: Q501PhysicalActivityForChildrenMock = new Q501PhysicalActivityForChildrenMock()
 
-    const Q503SleepingHabits2: Q503SleepingHabitsMock = new Q503SleepingHabitsMock()
+    const Q501PhysicalActivityForChildren2: Q501PhysicalActivityForChildrenMock = new Q501PhysicalActivityForChildrenMock()
 
     before(async () => {
         try {
@@ -120,7 +120,7 @@ describe('Routes: Q503SleepingHabits', () => {
             await acc.saveChildrenGroupsForHealthProfessional(accessDefaultHealthProfessionalToken, defaultHealthProfessional, defaultChildrenGroup)
 
         } catch (err) {
-            console.log('Failure on Before from q503sleepinghabits.patch test: ', err.message)
+            console.log('Failure on Before from q501physicalactivityforchildren.patch test: ', err.message)
         }
     })
     after(async () => {
@@ -134,36 +134,37 @@ describe('Routes: Q503SleepingHabits', () => {
         }
     })
 
-    describe('PATCH /q503sleepinghabits/:q503sleepinghabits.id', () => {
+    describe('PATCH /q501physicalactivityforchildren/:q501physicalactivityforchildren.id', () => {
 
         beforeEach(async () => {
             try {
-                const resultQ503SleepingHabits = await quest.saveQ503SleepingHabits(accessDefaultChildToken, Q503SleepingHabits)
-                Q503SleepingHabits.id = resultQ503SleepingHabits.id
+                const result = await quest.saveQ501PhysicalActivityForChildren(accessDefaultChildToken, Q501PhysicalActivityForChildren)
+                Q501PhysicalActivityForChildren.id = result.id
             } catch (err) {
-                console.log('Failure in before from q503sleepinghabits.patch test: ', err.message)
+                console.log('Failure in before from q501physicalactivityforchildren.patch test: ', err.message)
             }
         })
         afterEach(async () => {
             try {
-                await questionnaireDB.deleteQ503Sleepinghabits()
+                await questionnaireDB.deleteQ501PhysicalActivityForChildren()
             } catch (err) {
-                console.log('Failure in after from q503sleepinghabits.patch test: ', err.message)
+                console.log('Failure in after from q501physicalactivityforchildren.patch test: ', err.message)
             }
         })
 
-        context('when update Q503SleepingHabits successfully', () => {
+        context('when update Q501PhysicalActivityForChildren successfully', () => {
 
-            it('q503sleepinghabits.patch001: should return status code 204 and no content for educator user', async () => {
+            it('q501physicalactivityforchildren.patch001: should return status code 204 and no content for educator user', async () => {
 
-                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
                 const newDate = new Date()
                 questionnaire.date = newDate.toISOString()
-                questionnaire.time_sleep = 'Depois das 12 pm'
-                questionnaire.time_wake_up = 'Depois das 9am'
+                questionnaire.a = '5' // how many times a week did the child walk as exercise
+                questionnaire.b = '5'// how many times a week did the child ride a bicycle as an exercise
+                questionnaire.c = '5'// how many times a week did the child swim as exercise
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
@@ -173,16 +174,17 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.patch002: should return status code 204 and no content for family', async () => {
+            it('q501physicalactivityforchildren.patch002: should return status code 204 and no content for family', async () => {
 
-                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
                 questionnaire.id = 'questionario_id' // even though it was passed in the request, the id of the kept questionnaire is what was originally saved
-                questionnaire.time_sleep = ''
-                questionnaire.time_nap = 'false'
-                questionnaire.state = 'Incomplete'
+                questionnaire.a_7 = '5' // how often did the child perform physical activity on Monday - (5: oftentimes)
+                questionnaire.b_7 = '5' // how often did the child perform physical activity on Tuesday - (5: oftentimes)
+                questionnaire.c_7 = '5' // how often did the child perform physical activity on Wednesday - (5: oftentimes)
+                questionnaire.f_7 = '1' // how often did the child perform physical activity on Sunday - (5: none)
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
@@ -192,13 +194,13 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-        }) // getting a Q503SleepingHabits successfully
+        }) // getting a Q501PhysicalActivityForChildren successfully
 
         context('when a error occurs', () => {
-            it('q503sleepinghabits.patch003: should return an error, because the object is empty ', async () => {
+            it('q501physicalactivityforchildren.patch003: should return an error, because the object is empty ', async () => {
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                     .send({})
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
@@ -207,13 +209,13 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.patch004: should return an error, because the date format is invalid', async () => {
+            it('q501physicalactivityforchildren.patch004: should return an error, because the date format is invalid', async () => {
 
-                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
                 questionnaire.date = '02/12/2019'
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
@@ -222,13 +224,13 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.patch005: should return an error, because time_sleep is a null', async () => {
+            it('q501physicalactivityforchildren.patch005: should return an error, because some of the values is null', async () => {
 
-                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
-                questionnaire.time_sleep = null
+                const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
+                questionnaire.a = null // how many times a week did the child walk as exercise
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
@@ -237,13 +239,13 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.patch006: should return an error, because time_wake_up is a number', async () => {
+            it('q501physicalactivityforchildren.patch006: should return an error, because scoring_PAQC is a number', async () => {
 
-                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
-                questionnaire.time_wake_up = 10
+                const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
+                questionnaire.scoring_PAQC = 10
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
@@ -252,13 +254,13 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.patch007: should return an error, because child id is empty', async () => {
+            it('q501physicalactivityforchildren.patch007: should return an error, because child id is empty', async () => {
 
-                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
                 questionnaire.child_id = ''
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
@@ -267,13 +269,13 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.patch008: should return an error, because percentage is a number', async () => {
+            it('q501physicalactivityforchildren.patch008: should return an error, because percentage is a number', async () => {
 
-                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
                 questionnaire.percentage = 1
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
@@ -282,13 +284,13 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.patch009: should return an error, because date is null', async () => {
+            it('q501physicalactivityforchildren.patch009: should return an error, because date is null', async () => {
 
-                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
                 questionnaire.date = null
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
@@ -301,17 +303,17 @@ describe('Routes: Q503SleepingHabits', () => {
         describe('when a duplicate occurs', () => {
             before(async () => {
                 try {
-                    await quest.saveQ503SleepingHabits(accessDefaultEducatorToken, Q503SleepingHabits2)
+                    await quest.saveQ501PhysicalActivityForChildren(accessDefaultEducatorToken, Q501PhysicalActivityForChildren2)
                 } catch (err) {
-                    console.log('Failure in Before from q503sleepinghabits.patch test: ', err.message)
+                    console.log('Failure in Before from q501physicalactivityforchildren.patch test: ', err.message)
                 }
             })
-            it('q503sleepinghabits.patch010: should return an error, because the Q503Sleepinghabits is already registered', () => {
+            it('q501physicalactivityforchildren.patch010: should return an error, because the Q501PhysicalActivityForChildren is already registered', () => {
 
-                const questionnaireDuplicated: any = Q503SleepingHabits2.fromJSON(Q503SleepingHabits2)
+                const questionnaireDuplicated: any = Q501PhysicalActivityForChildren2.fromJSON(Q501PhysicalActivityForChildren2)
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                     .send(questionnaireDuplicated)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
@@ -321,15 +323,15 @@ describe('Routes: Q503SleepingHabits', () => {
             })
         })
 
-        context('when the updated Q503SleepingHabits not exist', () => {
+        context('when the updated Q501PhysicalActivityForChildren not exist', () => {
 
-            it('q503sleepinghabits.patch011: should return an error, because QFoodTracking.id is invalid', async () => {
+            it('q501physicalactivityforchildren.patch011: should return an error, because Q501PhysicalActivityForChildren.id is invalid', async () => {
 
-                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
                 const INVALID_ID = '123'
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${INVALID_ID}`)
+                    .patch(`/q501physicalactivityforchildren/${INVALID_ID}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
@@ -338,13 +340,13 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.patch012: should return an error, because Q503SleepingHabits not found', async () => {
+            it('q501physicalactivityforchildren.patch012: should return an error, because Q501PhysicalActivityForChildren not found', async () => {
 
-                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
                 const NON_EXISTENT_ID = '1dd572e805560300431b1004'
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${NON_EXISTENT_ID}`)
+                    .patch(`/q501physicalactivityforchildren/${NON_EXISTENT_ID}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
@@ -354,14 +356,14 @@ describe('Routes: Q503SleepingHabits', () => {
             })
         }) // error occurs
 
-        context('when the user does not have permission for get Q503SleepingHabits of a specific child', () => {
+        context('when the user does not have permission for get Q501PhysicalActivityForChildren of a specific child', () => {
 
-            it('q503sleepinghabits.patch013: should return status code 403 and info message from insufficient permissions for admin', () => {
+            it('q501physicalactivityforchildren.patch013: should return status code 403 and info message from insufficient permissions for admin', () => {
 
-                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
@@ -371,12 +373,12 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.patch014: should return status code 403 and info message from insufficient permissions for child', () => {
+            it('q501physicalactivityforchildren.patch014: should return status code 403 and info message from insufficient permissions for child', () => {
 
-                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
@@ -386,12 +388,12 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.patch015: should return status code 403 and info message from insufficient permissions for health professional', () => {
+            it('q501physicalactivityforchildren.patch015: should return status code 403 and info message from insufficient permissions for health professional', () => {
 
-                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
@@ -401,12 +403,12 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.patch016: should return status code 403 and info message from insufficient permissions for application', () => {
+            it('q501physicalactivityforchildren.patch016: should return status code 403 and info message from insufficient permissions for application', () => {
 
-                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
@@ -417,12 +419,12 @@ describe('Routes: Q503SleepingHabits', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the educator', () => {
-                it('q503sleepinghabits.patch017: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
+                it('q501physicalactivityforchildren.patch017: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
 
-                    const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                    const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
 
                     return request(URI)
-                        .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                        .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                         .send(questionnaire)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
@@ -434,12 +436,12 @@ describe('Routes: Q503SleepingHabits', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the family', () => {
-                it('q503sleepinghabits.patch018: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
+                it('q501physicalactivityforchildren.patch018: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
 
-                    const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                    const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
 
                     return request(URI)
-                        .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                        .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                         .send(questionnaire)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
@@ -453,10 +455,10 @@ describe('Routes: Q503SleepingHabits', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('q503sleepinghabits.patch019: should return the status code 401 and the authentication failure informational message', () => {
+            it('q501physicalactivityforchildren.patch019: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(401)
@@ -468,7 +470,7 @@ describe('Routes: Q503SleepingHabits', () => {
 
         describe('when the child has been deleted', () => {
             const child: Child = new ChildMock()
-            const questionnaire: Q503SleepingHabitsMock = new Q503SleepingHabitsMock()
+            const questionnaire: Q501PhysicalActivityForChildrenMock = new Q501PhysicalActivityForChildrenMock()
 
             before(async () => {
                 try {
@@ -477,21 +479,21 @@ describe('Routes: Q503SleepingHabits', () => {
                     questionnaire.child_id = child.username
 
                     const childToken = await acc.auth(child.username!, child.password!)
-                    const resultQuestionnaire = await quest.saveQ503SleepingHabits(childToken, questionnaire)
+                    const resultQuestionnaire = await quest.saveQ501PhysicalActivityForChildren(childToken, questionnaire)
                     questionnaire.id = resultQuestionnaire.id
 
                     await acc.deleteUser(accessTokenAdmin, child.id)
 
                 } catch (err) {
-                    console.log('Failure in Before from q503sleepinghabits.patch test: ', err.message)
+                    console.log('Failure in Before from q501physicalactivityforchildren.patch test: ', err.message)
                 }
             })
-            it('q503sleepinghabits.patch020: should return an error, because child not exist', async () => {
+            it('q501physicalactivityforchildren.patch020: should return an error, because child not exist', async () => {
 
-                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+                const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
 
                 return request(URI)
-                    .patch(`/q503sleepinghabits/${questionnaire.id}`)
+                    .patch(`/q501physicalactivityforchildren/${questionnaire.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
