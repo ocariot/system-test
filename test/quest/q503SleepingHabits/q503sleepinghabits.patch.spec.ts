@@ -323,7 +323,7 @@ describe('Routes: Q503SleepingHabits', () => {
 
         context('when the updated Q503SleepingHabits not exist', () => {
 
-            it('q503sleepinghabits.patch011: should return an error, because QFoodTracking.id is invalid', async () => {
+            it('q503sleepinghabits.patch011: should return an error, because Q503SleepingHabits.id is invalid', async () => {
 
                 const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
                 const INVALID_ID = '123'

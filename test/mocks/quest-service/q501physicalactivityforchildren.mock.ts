@@ -78,6 +78,7 @@ export class Q501PhysicalActivityForChildrenMock {
         this.paqc_5 = Math.floor((Math.random() * 5 + 1)).toString()// [1, 5]
         this.paqc_5br = Math.floor((Math.random() * 5 + 1)).toString()// [1, 5]
         this.paqc_6 = Math.floor((Math.random() * 5 + 1)).toString()// [1, 5]
+        this.paqc_6br = Math.floor((Math.random() * 5 + 1)).toString()// [1, 5]
         this.paqc_7 = Math.floor((Math.random() * 5 + 1)).toString()// [1, 5]
         this.paqc_8 = Math.floor((Math.random() * 5 + 1)).toString()// [1, 5]
         this.a_7 = Math.floor((Math.random() * 5 + 1)).toString()// [1, 5]

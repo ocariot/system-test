@@ -36,10 +36,10 @@ class QuestionnairesUtil {
             .catch(err => Promise.reject(err.body))
     }
 
-    public getQFoodTrackingByID(accessToken: string, questionnaire_id: string): Promise<any> {
+    public getQ501PhysicalActivityForChildrenByID(accessToken: string, questionnaire_id: string): Promise<any> {
 
         return request(this.URI)
-            .get(`/qfoodtrackings/${questionnaire_id}`)
+            .get(`/q501physicalactivityforchildren/${questionnaire_id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', 'Bearer '.concat(accessToken))
             .then(res => Promise.resolve(res.body))

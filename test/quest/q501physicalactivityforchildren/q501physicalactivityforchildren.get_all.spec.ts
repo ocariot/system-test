@@ -15,13 +15,13 @@ import { Family } from '../../../src/account-service/model/family'
 import { FamilyMock } from '../../mocks/account-service/family.mock'
 import { Application } from '../../../src/account-service/model/application'
 import { ApplicationMock } from '../../mocks/account-service/application.mock'
-import { Q503SleepingHabitsMock } from '../../mocks/quest-service/q503sleepinghabits.mock'
+import { Q501PhysicalActivityForChildrenMock } from '../../mocks/quest-service/q501physicalactivityforchildren.mock'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import * as HttpStatus from 'http-status-codes'
 
-describe('Routes: Q503SleepingHabits', () => {
+describe('Routes: Q501PhysicalActivityForChildren', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -53,8 +53,8 @@ describe('Routes: Q503SleepingHabits', () => {
 
     const defaultChildrenGroup: ChildrenGroup = new ChildrenGroupMock()
 
-    const q503SleepingHabitsDefaultChildArray: Array<Q503SleepingHabitsMock> = new Array<Q503SleepingHabitsMock>()
-    const q503SleepingHabitsAnotherChildArray: Array<Q503SleepingHabitsMock> = new Array<Q503SleepingHabitsMock>()
+    const q501ForDefaultChildArray: Array<Q501PhysicalActivityForChildrenMock> = new Array<Q501PhysicalActivityForChildrenMock>()
+    const q501ForAnotherChildArray: Array<Q501PhysicalActivityForChildrenMock> = new Array<Q501PhysicalActivityForChildrenMock>()
 
     before(async () => {
         try {
@@ -125,37 +125,37 @@ describe('Routes: Q503SleepingHabits', () => {
             await acc.saveChildrenGroupsForEducator(accessDefaultEducatorToken, defaultEducator, defaultChildrenGroup)
             await acc.saveChildrenGroupsForHealthProfessional(accessDefaultHealthProfessionalToken, defaultHealthProfessional, defaultChildrenGroup)
 
-            // Populating q503sleepinghabits arrays
-            // q503sleepinghabits for defaultChild
-            q503SleepingHabitsDefaultChildArray.push(new Q503SleepingHabitsMock())
-            q503SleepingHabitsDefaultChildArray.push(new Q503SleepingHabitsMock())
-            q503SleepingHabitsDefaultChildArray.push(new Q503SleepingHabitsMock())
-            q503SleepingHabitsDefaultChildArray.push(new Q503SleepingHabitsMock())
-            q503SleepingHabitsDefaultChildArray.push(new Q503SleepingHabitsMock())
-            q503SleepingHabitsDefaultChildArray.push(new Q503SleepingHabitsMock())
+            // Populating q501physicalactivityforchildren arrays
+            // q501physicalactivityforchildren for defaultChild
+            q501ForDefaultChildArray.push(new Q501PhysicalActivityForChildrenMock())
+            q501ForDefaultChildArray.push(new Q501PhysicalActivityForChildrenMock())
+            q501ForDefaultChildArray.push(new Q501PhysicalActivityForChildrenMock())
+            q501ForDefaultChildArray.push(new Q501PhysicalActivityForChildrenMock())
+            q501ForDefaultChildArray.push(new Q501PhysicalActivityForChildrenMock())
+            q501ForDefaultChildArray.push(new Q501PhysicalActivityForChildrenMock())
 
-            // q503sleepinghabits for anotherChild
-            q503SleepingHabitsAnotherChildArray.push(new Q503SleepingHabitsMock())
-            q503SleepingHabitsAnotherChildArray.push(new Q503SleepingHabitsMock())
-            q503SleepingHabitsAnotherChildArray.push(new Q503SleepingHabitsMock())
+            // q501physicalactivityforchildren for anotherChild
+            q501ForAnotherChildArray.push(new Q501PhysicalActivityForChildrenMock())
+            q501ForAnotherChildArray.push(new Q501PhysicalActivityForChildrenMock())
+            q501ForAnotherChildArray.push(new Q501PhysicalActivityForChildrenMock())
 
             // for questionnaires you must associate the username with child_id, otherwise it would not be possible to filter the questionnaires of the child through their id
-            for (let i = 0; i < q503SleepingHabitsDefaultChildArray.length; i++) {
-                q503SleepingHabitsDefaultChildArray[i].id = undefined
-                q503SleepingHabitsDefaultChildArray[i].child_id = defaultChild.username
-                const result = await quest.saveQ503SleepingHabits(accessDefaultChildToken, q503SleepingHabitsDefaultChildArray[i])
-                q503SleepingHabitsDefaultChildArray[i].id = result.id
+            for (let i = 0; i < q501ForDefaultChildArray.length; i++) {
+                q501ForDefaultChildArray[i].id = undefined
+                q501ForDefaultChildArray[i].child_id = defaultChild.username
+                const result1 = await quest.saveQ501PhysicalActivityForChildren(accessDefaultChildToken, q501ForDefaultChildArray[i])
+                q501ForDefaultChildArray[i].id = result1.id
             }
 
-            for (let i = 0; i < q503SleepingHabitsAnotherChildArray.length; i++) {
-                q503SleepingHabitsAnotherChildArray[i].id = undefined
-                q503SleepingHabitsAnotherChildArray[i].child_id = anotherChild.username
-                const result = await quest.saveQ503SleepingHabits(accessDefaultChildToken, q503SleepingHabitsAnotherChildArray[i])
-                q503SleepingHabitsAnotherChildArray[i].id = result.id
+            for (let i = 0; i < q501ForAnotherChildArray.length; i++) {
+                q501ForAnotherChildArray[i].id = undefined
+                q501ForAnotherChildArray[i].child_id = anotherChild.username
+                const result2 = await quest.saveQ501PhysicalActivityForChildren(accessDefaultChildToken, q501ForAnotherChildArray[i])
+                q501ForAnotherChildArray[i].id = result2.id
             }
 
         } catch (err) {
-            console.log('Failure on Before from q503sleepinghabits.get_all test: ', err.message)
+            console.log('Failure on Before from q501physicalactivityforchildren.get_all test: ', err.message)
         }
     })
     after(async () => {
@@ -169,132 +169,123 @@ describe('Routes: Q503SleepingHabits', () => {
         }
     })
 
-    describe('GET /q503sleepinghabits', () => {
+    describe('GET /q501physicalactivityforchildren', () => {
 
-        context('when get all Q503SleepingHabits successfully', () => {
-            let TOTAL_Q503_REGISTERED = 0
+        context('when get all q501physicalactivityforchildren successfully', () => {
+            let TOTAL_Q501_REGISTERED = 0
             before(async () => {
                 try {
-                    TOTAL_Q503_REGISTERED = q503SleepingHabitsDefaultChildArray.length + q503SleepingHabitsAnotherChildArray.length
+                    TOTAL_Q501_REGISTERED = q501ForDefaultChildArray.length + q501ForAnotherChildArray.length
                 } catch (err) {
-                    console.log('Failure in Before from q503sleepinghabits.get_all test: ', err.message)
+                    console.log('Failure in Before from q501physicalactivityforchildren.get_all test: ', err.message)
                 }
             })
 
-            it('q503sleepinghabits.get_all001: should return status code 200 and a list with all Q503SleepingHabits registered by admin user', async () => {
+            it('q501physicalactivityforchildren.get_all001: should return status code 200 and a list with all q501physicalactivityforchildren registered by admin user', async () => {
 
                 return request(URI)
-                    .get(`/q503sleepinghabits`)
+                    .get(`/q501physicalactivityforchildren`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .expect(200)
                     .then(res => {
-                        expect(res.body.length).to.eql(TOTAL_Q503_REGISTERED)
+                        expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
                     })
             })
 
-            it('q503sleepinghabits.get_all002: should return status code 200 and a list with all Q503SleepingHabits registered by own child', async () => {
+            it('q501physicalactivityforchildren.get_all002: should return status code 200 and a list with all q501physicalactivityforchildren registered by own child', async () => {
 
                 return request(URI)
-                    .get(`/q503sleepinghabits`)
+                    .get(`/q501physicalactivityforchildren`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .expect(200)
                     .then(res => {
-                        expect(res.body.length).to.eql(TOTAL_Q503_REGISTERED)
+                        expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
                     })
             })
 
-            it('q503sleepinghabits.get_all003: should return status code 200 and a list with all Q503SleepingHabits registered by educator', async () => {
+            it('q501physicalactivityforchildren.get_all003: should return status code 200 and a list with all q501physicalactivityforchildren registered by educator', async () => {
 
                 return request(URI)
-                    .get(`/q503sleepinghabits`)
+                    .get(`/q501physicalactivityforchildren`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(200)
                     .then(res => {
-                        expect(res.body.length).to.eql(TOTAL_Q503_REGISTERED)
+                        expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
                     })
             })
 
-            it('q503sleepinghabits.get_all004: should return status code 200 and a list with all Q503SleepingHabits registered by health professional', async () => {
+            it('q501physicalactivityforchildren.get_all004: should return status code 200 and a list with all q501physicalactivityforchildren registered by health professional', async () => {
 
                 return request(URI)
-                    .get(`/q503sleepinghabits`)
+                    .get(`/q501physicalactivityforchildren`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
                     .expect(200)
                     .then(res => {
-                        expect(res.body.length).to.eql(TOTAL_Q503_REGISTERED)
+                        expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
                     })
             })
 
-            it('q503sleepinghabits.get_all005: should return status code 200 and a list with all Q503SleepingHabits registered by family', async () => {
+            it('q501physicalactivityforchildren.get_all005: should return status code 200 and a list with all q501physicalactivityforchildren registered by family', async () => {
 
                 return request(URI)
-                    .get(`/q503sleepinghabits`)
+                    .get(`/q501physicalactivityforchildren`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .expect(200)
                     .then(res => {
-                        expect(res.body.length).to.eql(TOTAL_Q503_REGISTERED)
+                        expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
                     })
             })
 
-            it('q503sleepinghabits.get_all006: should return status code 200 and a list with all Q503SleepingHabits registered by application', async () => {
+            it('q501physicalactivityforchildren.get_all006: should return status code 200 and a list with all q501physicalactivityforchildren registered by application', async () => {
 
                 return request(URI)
-                    .get(`/q503sleepinghabits`)
+                    .get(`/q501physicalactivityforchildren`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .expect(200)
                     .then(res => {
-                        expect(res.body.length).to.eql(TOTAL_Q503_REGISTERED)
+                        expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
                     })
             })
 
-            describe('when get all Q503SleepingHabitswith some filter successfully', () => {
-                it('q503sleepinghabits.get_all007: should return status code 200 and a list with all Q503SleepingHabits of a specific child by herself', () => {
+            describe('when get all q501physicalactivityforchildren with some filter successfully', () => {
+                it('q501physicalactivityforchildren.get_all007: should return status code 200 and a list with all q501physicalactivityforchildren of a specific child by herself', () => {
 
-                    const TOTAL_BY_CHILD = q503SleepingHabitsDefaultChildArray.length
+                    const TOTAL_BY_CHILD = q501ForDefaultChildArray.length
 
-                    const q503SleepingHabitsArray: any = []
+                    const q501physicalactivityforchildrenArray: any = []
 
-                    q503SleepingHabitsDefaultChildArray.forEach(q503sleepinghabits => {
-                        const bodyElem = {
-                            id: q503sleepinghabits.id,
-                            child_id: q503sleepinghabits.child_id,
-                            date: q503sleepinghabits.date!.toISOString(),
-                            time_sleep: q503sleepinghabits.time_sleep,
-                            time_wake_up: q503sleepinghabits.time_wake_up,
-                            time_nap: q503sleepinghabits.time_nap,
-                            percentage: q503sleepinghabits.percentage,
-                            state: q503sleepinghabits.state
-                        }
-                        q503SleepingHabitsArray.push(bodyElem)
+                    q501ForDefaultChildArray.forEach(q501physicalactivityforchildren => {
+                        const bodyElem = q501physicalactivityforchildren.fromJSON(q501physicalactivityforchildren)
+                        q501physicalactivityforchildrenArray.push(bodyElem)
                     })
 
                     return request(URI)
-                        .get(`/q503sleepinghabits?filter[where][child_id]=${defaultChild.username}`)
+                        .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                         .expect(200)
                         .then(res => {
                             expect(res.body.length).to.eql(TOTAL_BY_CHILD)
-                            for (let i = 0; i < q503SleepingHabitsDefaultChildArray.length; i++) {
-                                expect(res.body[i]).to.deep.eql(q503SleepingHabitsArray[i])
+                            for (let i = 0; i < q501ForDefaultChildArray.length; i++) {
+                                expect(res.body[i]).to.deep.eql(q501physicalactivityforchildrenArray[i])
                             }
                         })
                 })
             })
 
-        }) // getting a Q503SleepingHabits successfully
+        }) // getting a q501physicalactivityforchildren successfully
 
         context('when a error occurs', () => {
-            it('q503sleepinghabits.get_all008: should return an error, because the querystring is invalid', () => {
+            it('q501physicalactivityforchildren.get_all008: should return an error, because the querystring is invalid', () => {
 
                 return request(URI)
-                    .get(`/q503sleepinghabits?filter[where]`)
+                    .get(`/q501physicalactivityforchildren?filter[where]`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .expect(err => {
@@ -303,12 +294,12 @@ describe('Routes: Q503SleepingHabits', () => {
             })
         }) // error occurs
 
-        context('when the user does not have permission for get all Q503SleepingHabits of a specific child', () => {
+        context('when the user does not have permission for get all q501physicalactivityforchildren of a specific child', () => {
 
-            it('q503sleepinghabits.get_all009: should return status code 403 and info message from insufficient permissions for another child', () => {
+            it('q501physicalactivityforchildren.get_all009: should return status code 403 and info message from insufficient permissions for another child', () => {
 
                 return request(URI)
-                    .get(`/q503sleepinghabits?filter[where][child_id]=${defaultChild.username}`)
+                    .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessAnotherChildToken))
                     .expect(403)
@@ -318,10 +309,10 @@ describe('Routes: Q503SleepingHabits', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the health professional', () => {
-                it('q503sleepinghabits.get_all010: should return status code 403 and info message from insufficient permissions for health professional user who is not associated with the child', () => {
+                it('q501physicalactivityforchildren.get_all010: should return status code 403 and info message from insufficient permissions for health professional user who is not associated with the child', () => {
 
                     return request(URI)
-                        .get(`/q503sleepinghabits?filter[where][child_id]=${defaultChild.username}`)
+                        .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherHealthProfessional))
                         .expect(403)
@@ -332,10 +323,10 @@ describe('Routes: Q503SleepingHabits', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the educator', () => {
-                it('q503sleepinghabits.get_all011: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
+                it('q501physicalactivityforchildren.get_all011: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
 
                     return request(URI)
-                        .get(`/q503sleepinghabits?filter[where][child_id]=${defaultChild.username}`)
+                        .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
                         .expect(403)
@@ -346,10 +337,10 @@ describe('Routes: Q503SleepingHabits', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the family', () => {
-                it('q503sleepinghabits.get_all012: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
+                it('q501physicalactivityforchildren.get_all012: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
 
                     return request(URI)
-                        .get(`/q503sleepinghabits?filter[where][child_id]=${defaultChild.username}`)
+                        .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
                         .expect(403)
@@ -362,10 +353,10 @@ describe('Routes: Q503SleepingHabits', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('q503sleepinghabits.get_all013: should return the status code 401 and the authentication failure informational message', () => {
+            it('q501physicalactivityforchildren.get_all013: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .get('/q503sleepinghabits')
+                    .get('/q501physicalactivityforchildren')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(401)
@@ -377,7 +368,7 @@ describe('Routes: Q503SleepingHabits', () => {
 
         describe('when the child has been deleted', () => {
             const child: Child = new ChildMock()
-            const questionnaire: Q503SleepingHabitsMock = new Q503SleepingHabitsMock()
+            const questionnaire: Q501PhysicalActivityForChildrenMock = new Q501PhysicalActivityForChildrenMock()
 
             before(async () => {
                 try {
@@ -386,18 +377,18 @@ describe('Routes: Q503SleepingHabits', () => {
                     questionnaire.child_id = child.username
 
                     const childToken = await acc.auth(child.username!, child.password!)
-                    await quest.saveQ503SleepingHabits(childToken, questionnaire)
+                    await quest.saveQ501PhysicalActivityForChildren(childToken, questionnaire)
 
                     await acc.deleteUser(accessTokenAdmin, child.id)
 
                 } catch (err) {
-                    console.log('Failure in Before from q503sleepinghabits.get_all test: ', err.message)
+                    console.log('Failure in Before from q501physicalactivityforchildren.get_all test: ', err.message)
                 }
             })
-            it('q503sleepinghabits.get_all014: should return an error, because child not exist', async () => {
+            it('q501physicalactivityforchildren.get_all014: should return an error, because child not exist', async () => {
 
                 return request(URI)
-                    .get(`/q503sleepinghabits?filter[where][child_id]=${child.username}`)
+                    .get(`/q501physicalactivityforchildren?filter[where][child_id]=${child.username}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(err => {
@@ -408,7 +399,7 @@ describe('Routes: Q503SleepingHabits', () => {
 
         describe('when the child username has been updated', () => {
             const child: Child = new ChildMock()
-            const questionnaire: Q503SleepingHabitsMock = new Q503SleepingHabitsMock()
+            const questionnaire: Q501PhysicalActivityForChildrenMock = new Q501PhysicalActivityForChildrenMock()
 
             before(async () => {
                 try {
@@ -417,7 +408,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     questionnaire.child_id = child.username
 
                     const childToken = await acc.auth(child.username!, child.password!)
-                    await quest.saveQ503SleepingHabits(childToken, questionnaire)
+                    await quest.saveQ501PhysicalActivityForChildren(childToken, questionnaire)
 
                     const body = { username: 'newcoolusername' }
                     await acc.updateChild(accessTokenAdmin, child, body)
@@ -425,29 +416,20 @@ describe('Routes: Q503SleepingHabits', () => {
                     child.username = 'newcoolusername'
 
                 } catch (err) {
-                    console.log('Failure in Before from q503sleepinghabits.get_all test: ', err.message)
+                    console.log('Failure in Before from q501physicalactivityforchildren.get_all test: ', err.message)
                 }
             })
-            it('q503sleepinghabits.get_all015: should return status code 200 and all Q503SleepingHabits of the child', async () => {
+            it('q501physicalactivityforchildren.get_all015: should return status code 200 and all q501physicalactivityforchildren of the child', async () => {
 
-                const Q503SleepingHabits = {
-                    id: questionnaire.id,
-                    child_id: questionnaire.child_id,
-                    date: questionnaire.date!.toISOString(),
-                    time_sleep: questionnaire.time_sleep,
-                    time_wake_up: questionnaire.time_wake_up,
-                    time_nap: questionnaire.time_nap,
-                    percentage: questionnaire.percentage,
-                    state: questionnaire.state
-                }
+                const q501physicalactivityforchildren = questionnaire.fromJSON(questionnaire)
 
                 return request(URI)
-                    .get(`/q503sleepinghabits?filter[where][child_id]=${child.username}`)
+                    .get(`/q501physicalactivityforchildren?filter[where][child_id]=${child.username}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(200)
                     .then(res => {
-                        expect(res.body).to.deep.eql(Q503SleepingHabits)
+                        expect(res.body).to.deep.eql(q501physicalactivityforchildren)
                     })
             })
         })

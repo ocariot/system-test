@@ -502,5 +502,41 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
         })
+
+        describe('when the child is no longer sick', () => {
+            const questionnaireForSickChild: Q501PhysicalActivityForChildrenMock = new Q501PhysicalActivityForChildrenMock()
+
+            before(async () => {
+                try {
+                    await questionnaireDB.deleteQ501PhysicalActivityForChildren()
+                    questionnaireForSickChild.paqc_10 = '1' // indicates if the child was ill in the last week (1: yes)
+                    questionnaireForSickChild.paqc_11 = 'I had the flu' //
+
+                    await quest.saveQ501PhysicalActivityForChildren(accessDefaultChildToken, questionnaireForSickChild)
+
+                } catch (err) {
+                    console.log('Failure in Before from q501physicalactivityforchildren.patch test: ', err.message)
+                }
+            })
+            it('q501physicalactivityforchildren.patch021: should return status code 204 and no content', async () => {
+
+                const questionnaire: any = questionnaireForSickChild.fromJSON(questionnaireForSickChild)
+                questionnaire.paqc_10 = '2' // indicates if the child was ill in the last week (2: false)
+
+                return request(URI)
+                    .patch(`/q501physicalactivityforchildren/${questionnaire.id}`)
+                    .send(questionnaire)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
+                    .expect(204)
+                    .then(async res => {
+                        expect(res.body).to.eql({})
+
+                        const result = await quest.getQ501PhysicalActivityForChildrenByID(accessDefaultChildToken, questionnaire.id)
+                        expect(result.paqc_10).to.eql('2')
+                        expect(result.paqc_11).to.eql('')
+                    })
+            })
+        })
     })
 })
