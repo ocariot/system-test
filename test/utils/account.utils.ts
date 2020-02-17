@@ -8,6 +8,11 @@ import { HealthProfessional } from '../../src/account-service/model/health.profe
 import { Application } from '../../src/account-service/model/application'
 import jwtDecode from 'jwt-decode'
 import { ChildrenGroup } from 'account-service/model/children.group';
+import { ChildMock } from '../mocks/account-service/child.mock'
+import { EducatorMock } from '../mocks/account-service/educator.mock'
+import { HealthProfessionalMock } from '../mocks/account-service/healthprofessional.mock'
+import { ApplicationMock } from '../mocks/account-service/application.mock'
+import { FamilyMock } from '../mocks/account-service/family.mock'
 
 class AccountUtil {
 
@@ -263,56 +268,42 @@ class AccountUtil {
             result.institution = await this.saveInstitution(token_admin, new InstitutionMock())
             const institution = new Institution().fromJSON(result.institution)
 
-            const child = new Child()
-            child.username = 'Child01'
-            child.age = '9'
+            const child = new ChildMock()
             child.institution = institution
-            child.gender = 'male'
-            child.password = 'child123'
             result.child = await this.saveChild(token_admin, child)
 
-            const educator = new Educator()
-            educator.username = 'Educator01'
-            educator.password = 'educator123'
+            const educator = new EducatorMock()
             educator.institution = institution
             result.educator = await this.saveEducator(token_admin, educator)
 
-            const healthprofessional = new HealthProfessional()
-            healthprofessional.username = 'HealthProfessional01'
-            healthprofessional.password = 'healthprofessional123'
+            const healthprofessional = new HealthProfessionalMock()
             healthprofessional.institution = institution
-            result.health_professional = await this.saveHealthProfessional(
-                token_admin, healthprofessional)
+            result.health_professional = await this.saveHealthProfessional(token_admin, healthprofessional)
 
-            const application = new Application()
-            application.username = 'App01'
-            application.password = 'app123'
-            application.application_name = 'ApplicationName'
+            const application = new ApplicationMock()
             application.institution = institution
             result.application = await this.saveApplication(token_admin, application)
 
             const children: Array<Child> = new Array()
             children.push(result.child)
 
-            const family = new Family()
-            family.username = 'Family01'
-            family.password = 'family123'
-            family.children = children
+            const family = new FamilyMock()
             family.institution = institution
+            family.children = children
 
             result.family = await this.saveFamily(token_admin, family)
 
-            result.child.access_token = await this.auth(result.child.username, child.password)
+            result.child.access_token = await this.auth(result.child.username, child.password!)
 
-            result.educator.access_token = await this.auth(result.educator.username, educator.password)
+            result.educator.access_token = await this.auth(result.educator.username, educator.password!)
 
             result.health_professional.access_token = await this.auth(
-                result.health_professional.username, healthprofessional.password)
+                result.health_professional.username, healthprofessional.password!)
 
             result.application.access_token = await this.auth(
-                result.application.username, application.password)
+                result.application.username, application.password!)
 
-            result.family.access_token = await this.auth(result.family.username, family.password)
+            result.family.access_token = await this.auth(result.family.username, family.password!)
 
             return Promise.resolve(result)
         } catch (err) {

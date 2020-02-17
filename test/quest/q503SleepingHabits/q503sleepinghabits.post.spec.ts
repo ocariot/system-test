@@ -78,7 +78,7 @@ describe('Routes: Q503SleepingHabits', () => {
             defaultFamily.children = new Array<Child>(resultDefaultChild)
             defaultChildrenGroup.children = new Array<Child>(resultDefaultChild)
 
-            // Associating Q503SleepingHabits whith the child
+            // Associating Q503SleepingHabits with the child
             defaultQ503SleepingHabits.child_id = defaultChild.id
 
             // Registering users
@@ -126,7 +126,7 @@ describe('Routes: Q503SleepingHabits', () => {
     after(async () => {
         try {
             await accountDB.removeCollections()
-            // await questionnaireDB.removeCollections()
+            await questionnaireDB.removeCollections()
             await accountDB.dispose()
             await questionnaireDB.dispose()
         } catch (err) {
