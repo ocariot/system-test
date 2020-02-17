@@ -265,7 +265,7 @@ class AccountUtil {
 
             const child = new Child()
             child.username = 'Child01'
-            child.age = 9
+            child.age = '9'
             child.institution = institution
             child.gender = 'male'
             child.password = 'child123'

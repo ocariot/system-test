@@ -115,6 +115,21 @@ services:
       options:
         max-size: 100m
 
+  redis-ds-agent: # Redis container for the Data Sync Agent
+      image: redis:latest
+      container_name: ocariot-redis-ds-agent
+      restart: always
+      command: ["redis-server", "/etc/redis.conf"]
+      volumes:
+        - redis-ds-agent-data:/data
+        - ./config/redisdb/redis.conf:/etc/redis.conf:ro
+      networks:
+        - ocariot-network
+      logging:
+        driver: json-file
+        options:
+          max-size: 100m        
+
   api-gateway: # Container for OCARIoT API Gateway
     image: ocariot/api-gateway
     container_name: ocariot-api-gateway
@@ -162,7 +177,6 @@ services:
       - NODE_ENV=${NODE_ENV}
       - PORT_HTTP=3000
       - PORT_HTTPS=3001
-      - HOST_WHITELIST=${HOST_WHITELIST}
       - SSL_KEY_PATH=/etc/.certs/server.key
       - SSL_CERT_PATH=/etc/.certs/server.cert
       - ISSUER=ocariot
@@ -196,7 +210,6 @@ services:
       - NODE_ENV=${NODE_ENV}
       - PORT_HTTP=4000
       - PORT_HTTPS=4001
-      - HOST_WHITELIST=${HOST_WHITELIST}
       - SSL_KEY_PATH=/etc/.certs/server.key
       - SSL_CERT_PATH=/etc/.certs/server.cert
       - MONGODB_URI=mongodb://${AT_DB_USER}:${AT_DB_PASS}@mongo-activity-tracking:27017/activity-tracking?ssl=true
@@ -222,16 +235,14 @@ services:
       - NODE_ENV=${NODE_ENV}
       - PORT_HTTP=5000
       - PORT_HTTPS=5001
-      - HOST_WHITELIST=${HOST_WHITELIST}
       - SSL_KEY_PATH=/etc/.certs/server.key
       - SSL_CERT_PATH=/etc/.certs/server.cert
       - FITBIT_CLIENT_ID=${FITBIT_CLIENT_ID}
       - FITBIT_CLIENT_SECRET=${FITBIT_CLIENT_SECRET}
-      - FITBIT_CLIENT_SUBSCRIBER=${FITBIT_CLIENT_SUBSCRIBER}
-      - FITBIT_SUBSCRIBER_ID=${FITBIT_SUBSCRIBER_ID}
       - EXPRESSION_AUTO_SYNC=${EXPRESSION_AUTO_SYNC}
       - MONGODB_URI=mongodb://${DS_DB_USER}:${DS_DB_PASS}@mongo-ds-agent:27017/ds-agent?ssl=true
       - RABBITMQ_URI=${DS_RABBITMQ_URI}
+      - REDIS_URI=redis://redis-ds-agent:6379
     volumes:
       - ${SSL_KEY_PATH}:/etc/.certs/server.key
       - ${SSL_CERT_PATH}:/etc/.certs/server.cert
@@ -252,7 +263,6 @@ services:
     environment:
       - PROTOCOL=https
       - PORT=6001
-      - HOST_WHITELIST=${HOST_WHITELIST}
       - SSL_KEY_PATH=/etc/.certs/server.key
       - SSL_CERT_PATH=/etc/.certs/server.cert
       - MONGODB_URI=mongodb://${QUEST_DB_USER}:${QUEST_DB_PASS}@mongo-quest:27017/quest?ssl=true
@@ -300,6 +310,8 @@ volumes:
     name: ocariot-mongo-ds-agent
   redis-api-gateway-data:
     name: ocariot-redis-api-gateway
+  redis-ds-agent-data:
+    name: ocariot-redis-ds-agent
 
 networks:
   ocariot-network:

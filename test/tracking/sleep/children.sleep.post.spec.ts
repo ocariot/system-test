@@ -1,29 +1,29 @@
 import request from 'supertest'
-import { expect } from 'chai'
-import { acc } from '../../utils/account.utils'
-import { accountDB } from '../../../src/account-service/database/account.db'
-import { trck } from '../../utils/tracking.utils'
-import { trackingDB } from '../../../src/tracking-service/database/tracking.db'
-import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
-import { Institution } from '../../../src/account-service/model/institution'
-import { Child } from '../../../src/account-service/model/child'
-import { ChildMock } from '../../mocks/account-service/child.mock'
-import { Educator } from '../../../src/account-service/model/educator'
-import { EducatorMock } from '../../mocks/account-service/educator.mock'
-import { HealthProfessional } from '../../../src/account-service/model/health.professional'
-import { HealthProfessionalMock } from '../../mocks/account-service/healthprofessional.mock'
-import { Family } from '../../../src/account-service/model/family'
-import { FamilyMock } from '../../mocks/account-service/family.mock'
-import { Application } from '../../../src/account-service/model/application'
-import { ApplicationMock } from '../../mocks/account-service/application.mock'
-import { Sleep, SleepType } from '../../../src/tracking-service/model/sleep'
-import { SleepMock } from '../../mocks/tracking-service/sleep.mock'
+import {expect} from 'chai'
+import {acc} from '../../utils/account.utils'
+import {accountDB} from '../../../src/account-service/database/account.db'
+import {trck} from '../../utils/tracking.utils'
+import {trackingDB} from '../../../src/tracking-service/database/tracking.db'
+import {ApiGatewayException} from '../../utils/api.gateway.exceptions'
+import {Institution} from '../../../src/account-service/model/institution'
+import {Child} from '../../../src/account-service/model/child'
+import {ChildMock} from '../../mocks/account-service/child.mock'
+import {Educator} from '../../../src/account-service/model/educator'
+import {EducatorMock} from '../../mocks/account-service/educator.mock'
+import {HealthProfessional} from '../../../src/account-service/model/health.professional'
+import {HealthProfessionalMock} from '../../mocks/account-service/healthprofessional.mock'
+import {Family} from '../../../src/account-service/model/family'
+import {FamilyMock} from '../../mocks/account-service/family.mock'
+import {Application} from '../../../src/account-service/model/application'
+import {ApplicationMock} from '../../mocks/account-service/application.mock'
+import {Sleep, SleepType} from '../../../src/tracking-service/model/sleep'
+import {SleepMock} from '../../mocks/tracking-service/sleep.mock'
 import {
     PhasesPatternType,
     StagesPatternType
 } from '../../../src/tracking-service/model/sleep.pattern.data.set'
-import { ChildrenGroup } from '../../../src/account-service/model/children.group'
-import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
+import {ChildrenGroup} from '../../../src/account-service/model/children.group'
+import {ChildrenGroupMock} from '../../mocks/account-service/children.group.mock'
 
 describe('Routes: children.sleep', () => {
 
@@ -465,7 +465,6 @@ describe('Routes: children.sleep', () => {
                     .expect(400)
                     .then(err => {
                         expect(err.body.message).to.eql(`Datetime: ${invalidDayDate}, is not in valid ISO 8601 format.`)
-                        expect(err.body.description).to.eql('Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ')
                     })
             })
 
