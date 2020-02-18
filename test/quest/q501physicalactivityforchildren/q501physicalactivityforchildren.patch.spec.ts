@@ -138,7 +138,8 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
 
         beforeEach(async () => {
             try {
-                const result = await quest.saveQ501PhysicalActivityForChildren(accessDefaultChildToken, Q501PhysicalActivityForChildren)
+                Q501PhysicalActivityForChildren.child_id = defaultChild.id
+                const result = await quest.saveQ501PhysicalActivityForChildren(accessDefaultEducatorToken, Q501PhysicalActivityForChildren)
                 Q501PhysicalActivityForChildren.id = result.id
             } catch (err) {
                 console.log('Failure in before from q501physicalactivityforchildren.patch test: ', err.message)
@@ -168,7 +169,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(204)
+                    .expect(HttpStatus.NO_CONTENT)
                     .then(res => {
                         expect(res.body).to.deep.eql({})
                     })
@@ -188,7 +189,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
-                    .expect(204)
+                    .expect(HttpStatus.NO_CONTENT)
                     .then(res => {
                         expect(res.body).to.deep.eql({})
                     })
@@ -284,7 +285,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('q501physicalactivityforchildren.patch009: should return an error, because date is null', async () => {
+            it('q501physicalactivityforchildren.patch009: should return an error, because date is null',  () => {
 
                 const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
                 questionnaire.date = null
@@ -303,6 +304,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
         describe('when a duplicate occurs', () => {
             before(async () => {
                 try {
+                    Q501PhysicalActivityForChildren2.child_id = defaultChild.id
                     await quest.saveQ501PhysicalActivityForChildren(accessDefaultEducatorToken, Q501PhysicalActivityForChildren2)
                 } catch (err) {
                     console.log('Failure in Before from q501physicalactivityforchildren.patch test: ', err.message)
@@ -367,7 +369,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -382,7 +384,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -397,7 +399,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -412,7 +414,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -428,7 +430,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                         .send(questionnaire)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -445,7 +447,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                         .send(questionnaire)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -461,7 +463,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
-                    .expect(401)
+                    .expect(HttpStatus.UNAUTHORIZED)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.AUTH.ERROR_401_UNAUTHORIZED)
                     })
@@ -512,7 +514,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     questionnaireForSickChild.paqc_10 = '1' // indicates if the child was ill in the last week (1: yes)
                     questionnaireForSickChild.paqc_11 = 'I had the flu' //
 
-                    await quest.saveQ501PhysicalActivityForChildren(accessDefaultChildToken, questionnaireForSickChild)
+                    await quest.saveQ501PhysicalActivityForChildren(accessDefaultEducatorToken, questionnaireForSickChild)
 
                 } catch (err) {
                     console.log('Failure in Before from q501physicalactivityforchildren.patch test: ', err.message)
@@ -528,11 +530,11 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(204)
+                    .expect(HttpStatus.NO_CONTENT)
                     .then(async res => {
                         expect(res.body).to.eql({})
 
-                        const result = await quest.getQ501PhysicalActivityForChildrenByID(accessDefaultChildToken, questionnaire.id)
+                        const result = await quest.getQ501PhysicalActivityForChildrenByID(accessDefaultEducatorToken, questionnaire.id)
                         expect(result.paqc_10).to.eql('2')
                         expect(result.paqc_11).to.eql('')
                     })
