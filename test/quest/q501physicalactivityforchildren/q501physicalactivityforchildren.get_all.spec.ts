@@ -26,7 +26,6 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
     let accessTokenAdmin: string
-    let accessAnotherChildToken: string
     let accessTokenAnotherHealthProfessional: string
     let accessTokenAnotherEducator: string
     let accessTokenAnotherFamily: string
@@ -63,7 +62,6 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
 
             const tokens = await acc.getAuths()
             accessTokenAdmin = tokens.admin.access_token
-            accessAnotherChildToken = tokens.child.access_token
             accessTokenAnotherEducator = tokens.educator.access_token
             accessTokenAnotherHealthProfessional = tokens.health_professional.access_token
             accessTokenAnotherFamily = tokens.family.access_token
@@ -143,14 +141,14 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
             for (let i = 0; i < q501ForDefaultChildArray.length; i++) {
                 q501ForDefaultChildArray[i].id = undefined
                 q501ForDefaultChildArray[i].child_id = defaultChild.username
-                const result1 = await quest.saveQ501PhysicalActivityForChildren(accessDefaultChildToken, q501ForDefaultChildArray[i])
+                const result1 = await quest.saveQ501PhysicalActivityForChildren(accessDefaultEducatorToken, q501ForDefaultChildArray[i])
                 q501ForDefaultChildArray[i].id = result1.id
             }
 
             for (let i = 0; i < q501ForAnotherChildArray.length; i++) {
                 q501ForAnotherChildArray[i].id = undefined
                 q501ForAnotherChildArray[i].child_id = anotherChild.username
-                const result2 = await quest.saveQ501PhysicalActivityForChildren(accessDefaultChildToken, q501ForAnotherChildArray[i])
+                const result2 = await quest.saveQ501PhysicalActivityForChildren(accessDefaultEducatorToken, q501ForAnotherChildArray[i])
                 q501ForAnotherChildArray[i].id = result2.id
             }
 
@@ -181,73 +179,61 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                 }
             })
 
-            it('q501physicalactivityforchildren.get_all001: should return status code 200 and a list with all q501physicalactivityforchildren registered by admin user', async () => {
+            it('q501physicalactivityforchildren.get_all001: should return status code 200 and a list with all q501physicalactivityforchildren for admin user', async () => {
 
                 return request(URI)
                     .get(`/q501physicalactivityforchildren`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
                     })
             })
 
-            it('q501physicalactivityforchildren.get_all002: should return status code 200 and a list with all q501physicalactivityforchildren registered by own child', async () => {
-
-                return request(URI)
-                    .get(`/q501physicalactivityforchildren`)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
-                    })
-            })
-
-            it('q501physicalactivityforchildren.get_all003: should return status code 200 and a list with all q501physicalactivityforchildren registered by educator', async () => {
+            it('q501physicalactivityforchildren.get_all003: should return status code 200 and a list with all q501physicalactivityforchildren for by educator', async () => {
 
                 return request(URI)
                     .get(`/q501physicalactivityforchildren`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
                     })
             })
 
-            it('q501physicalactivityforchildren.get_all004: should return status code 200 and a list with all q501physicalactivityforchildren registered by health professional', async () => {
+            it('q501physicalactivityforchildren.get_all004: should return status code 200 and a list with all q501physicalactivityforchildren for by health professional', async () => {
 
                 return request(URI)
                     .get(`/q501physicalactivityforchildren`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
                     })
             })
 
-            it('q501physicalactivityforchildren.get_all005: should return status code 200 and a list with all q501physicalactivityforchildren registered by family', async () => {
+            it('q501physicalactivityforchildren.get_all005: should return status code 200 and a list with all q501physicalactivityforchildren for by family', async () => {
 
                 return request(URI)
                     .get(`/q501physicalactivityforchildren`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
                     })
             })
 
-            it('q501physicalactivityforchildren.get_all006: should return status code 200 and a list with all q501physicalactivityforchildren registered by application', async () => {
+            it('q501physicalactivityforchildren.get_all006: should return status code 200 and a list with all q501physicalactivityforchildren for by application', async () => {
 
                 return request(URI)
                     .get(`/q501physicalactivityforchildren`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
                     })
@@ -268,8 +254,8 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     return request(URI)
                         .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
-                        .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                        .expect(200)
+                        .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
+                        .expect(HttpStatus.OK)
                         .then(res => {
                             expect(res.body.length).to.eql(TOTAL_BY_CHILD)
                             for (let i = 0; i < q501ForDefaultChildArray.length; i++) {
@@ -287,7 +273,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                 return request(URI)
                     .get(`/q501physicalactivityforchildren?filter[where]`)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
@@ -296,13 +282,13 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
 
         context('when the user does not have permission for get all q501physicalactivityforchildren of a specific child', () => {
 
-            it('q501physicalactivityforchildren.get_all009: should return status code 403 and info message from insufficient permissions for another child', () => {
+            it('q501physicalactivityforchildren.get_all002: should return status code 403 and info message from insufficient permissions for child', async () => {
 
                 return request(URI)
-                    .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
+                    .get(`/q501physicalactivityforchildren`)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessAnotherChildToken))
-                    .expect(403)
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -315,7 +301,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                         .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherHealthProfessional))
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -329,7 +315,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                         .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -343,7 +329,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                         .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -359,7 +345,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     .get('/q501physicalactivityforchildren')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
-                    .expect(401)
+                    .expect(HttpStatus.UNAUTHORIZED)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.AUTH.ERROR_401_UNAUTHORIZED)
                     })
@@ -407,8 +393,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     await acc.saveChild(accessTokenAdmin, child)
                     questionnaire.child_id = child.username
 
-                    const childToken = await acc.auth(child.username!, child.password!)
-                    await quest.saveQ501PhysicalActivityForChildren(childToken, questionnaire)
+                    await quest.saveQ501PhysicalActivityForChildren(accessDefaultEducatorToken, questionnaire)
 
                     const body = { username: 'newcoolusername' }
                     await acc.updateChild(accessTokenAdmin, child, body)
@@ -427,7 +412,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     .get(`/q501physicalactivityforchildren?filter[where][child_id]=${child.username}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.deep.eql(q501physicalactivityforchildren)
                     })
