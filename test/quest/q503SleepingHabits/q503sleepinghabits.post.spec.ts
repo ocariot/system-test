@@ -158,19 +158,6 @@ describe('Routes: Q503SleepingHabits', () => {
                 }
             })
 
-            it('q503sleepinghabits.post001: should return status code 200 and the saved Q503Sleepinghabits by own child', () => {
-
-                return request(URI)
-                    .post('/q503sleepinghabits')
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .send(q503SleepingHabits)
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).to.deep.eql(q503SleepingHabitsJSON)
-                    })
-            })
-
             it('q503sleepinghabits.post002: should return status code 200 and the saved Q503Sleepinghabits by the educator', () => {
 
                 return request(URI)
@@ -178,7 +165,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(q503SleepingHabits)
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.deep.eql(q503SleepingHabitsJSON)
                     })
@@ -191,20 +178,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .send(q503SleepingHabits)
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).to.deep.eql(q503SleepingHabitsJSON)
-                    })
-            })
-
-            it('q503sleepinghabits.post004: should return status code 200 and the saved Q503Sleepinghabits by the application', () => {
-
-                return request(URI)
-                    .post('/q503sleepinghabits')
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(q503SleepingHabits)
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.deep.eql(q503SleepingHabitsJSON)
                     })
@@ -217,9 +191,9 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(incorrectQ503SleepingHabits)
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.deep.eql(incorrectQ503SleepingHabits)
                     })
@@ -227,7 +201,7 @@ describe('Routes: Q503SleepingHabits', () => {
 
         }) // posting a Q503Sleepinghabits  successfully
 
-        describe('when the child posting a empty Object to himself', () => {
+        describe('when the posting a empty Object for the child', () => {
             it('q503sleepinghabits.post006: should return status code 200 and the saved a Q503Sleepinghabits only with auto-generated id and date fields', () => {
 
                 const body = {}
@@ -235,9 +209,9 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(body)
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                     })
@@ -247,7 +221,8 @@ describe('Routes: Q503SleepingHabits', () => {
         describe('when posting the same Q503Sleepinghabits twice for the same child', () => {
             before(async () => {
                 try {
-                    await quest.saveQ503SleepingHabits(accessDefaultChildToken, defaultQ503SleepingHabits)
+                    defaultQ503SleepingHabits.child_id = defaultChild.id
+                    await quest.saveQ503SleepingHabits(accessDefaultEducatorToken, defaultQ503SleepingHabits)
                 } catch (err) {
                     console.log('Failure in q503sleepinghabits.post test: ', err.message)
                 }
@@ -257,7 +232,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(defaultQ503SleepingHabits)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -274,7 +249,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(incorrectQ503SleepingHabits)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -288,7 +263,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(incorrectQ503SleepingHabits)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -303,7 +278,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(incorrectQ503SleepingHabits)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -317,7 +292,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(incorrectQ503SleepingHabits)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -331,7 +306,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(incorrectQ503SleepingHabits)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -347,7 +322,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(incorrectQ503SleepingHabits)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -361,7 +336,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(incorrectQ503SleepingHabits)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -376,7 +351,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(incorrectQ503SleepingHabits)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -390,7 +365,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(incorrectQ503SleepingHabits)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -400,6 +375,32 @@ describe('Routes: Q503SleepingHabits', () => {
 
         context('when the user does not have permission for register Q503Sleepinghabits', () => {
 
+            it('q503sleepinghabits.post001: should return status code 200 and the saved Q503Sleepinghabits for child', () => {
+
+                return request(URI)
+                    .post('/q503sleepinghabits')
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .send(defaultQ503SleepingHabits)
+                    .expect(HttpStatus.FORBIDDEN)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
+            })
+
+            it('q503sleepinghabits.post004: should return status code 200 and the saved Q503Sleepinghabits by the application', () => {
+
+                return request(URI)
+                    .post('/q503sleepinghabits')
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
+                    .send(defaultQ503SleepingHabits)
+                    .expect(HttpStatus.FORBIDDEN)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
+            })
+
             it('q503sleepinghabits.post017: should return status code 403 and info message from insufficient permissions for admin', () => {
 
                 return request(URI)
@@ -407,7 +408,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .send(defaultQ503SleepingHabits)
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .expect(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -420,7 +421,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
                     .send(defaultQ503SleepingHabits)
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .expect(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -433,7 +434,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAnotherChild))
                     .send(defaultQ503SleepingHabits)
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .expect(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -447,7 +448,7 @@ describe('Routes: Q503SleepingHabits', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
                         .send(defaultQ503SleepingHabits)
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .expect(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -462,7 +463,7 @@ describe('Routes: Q503SleepingHabits', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
                         .send(defaultQ503SleepingHabits)
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .expect(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -480,7 +481,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(defaultQ503SleepingHabits)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -494,7 +495,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(defaultQ503SleepingHabits)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -508,7 +509,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(defaultQ503SleepingHabits)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -522,7 +523,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(defaultQ503SleepingHabits)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -536,7 +537,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .post('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(defaultQ503SleepingHabits)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -553,7 +554,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .send(defaultQ503SleepingHabits)
-                    .expect(401)
+                    .expect(HttpStatus.UNAUTHORIZED)
                     .expect(err => {
                         expect(err.body).to.eql(ApiGatewayException.AUTH.ERROR_401_UNAUTHORIZED)
                     })

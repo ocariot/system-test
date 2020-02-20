@@ -481,7 +481,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                 return request(URI)
                     .post('/q501physicalactivityforchildren')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(defaultQ501PhysicalActivityForChildren)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -495,7 +495,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                 return request(URI)
                     .post('/q501physicalactivityforchildren')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(defaultQ501PhysicalActivityForChildren)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -509,7 +509,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                 return request(URI)
                     .post('/q501physicalactivityforchildren')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(defaultQ501PhysicalActivityForChildren)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -523,7 +523,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                 return request(URI)
                     .post('/q501physicalactivityforchildren')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(defaultQ501PhysicalActivityForChildren)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
@@ -537,7 +537,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                 return request(URI)
                     .post('/q501physicalactivityforchildren')
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(defaultQ501PhysicalActivityForChildren)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
