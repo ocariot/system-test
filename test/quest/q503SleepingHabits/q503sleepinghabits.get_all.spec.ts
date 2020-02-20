@@ -143,14 +143,14 @@ describe('Routes: Q503SleepingHabits', () => {
             for (let i = 0; i < q503SleepingHabitsDefaultChildArray.length; i++) {
                 q503SleepingHabitsDefaultChildArray[i].id = undefined
                 q503SleepingHabitsDefaultChildArray[i].child_id = defaultChild.username
-                const result = await quest.saveQ503SleepingHabits(accessDefaultChildToken, q503SleepingHabitsDefaultChildArray[i])
+                const result = await quest.saveQ503SleepingHabits(accessDefaultEducatorToken, q503SleepingHabitsDefaultChildArray[i])
                 q503SleepingHabitsDefaultChildArray[i].id = result.id
             }
 
             for (let i = 0; i < q503SleepingHabitsAnotherChildArray.length; i++) {
                 q503SleepingHabitsAnotherChildArray[i].id = undefined
                 q503SleepingHabitsAnotherChildArray[i].child_id = anotherChild.username
-                const result = await quest.saveQ503SleepingHabits(accessDefaultChildToken, q503SleepingHabitsAnotherChildArray[i])
+                const result = await quest.saveQ503SleepingHabits(accessDefaultEducatorToken, q503SleepingHabitsAnotherChildArray[i])
                 q503SleepingHabitsAnotherChildArray[i].id = result.id
             }
 
@@ -187,19 +187,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     .get(`/q503sleepinghabits`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body.length).to.eql(TOTAL_Q503_REGISTERED)
-                    })
-            })
-
-            it('q503sleepinghabits.get_all002: should return status code 200 and a list with all Q503SleepingHabits registered by own child', async () => {
-
-                return request(URI)
-                    .get(`/q503sleepinghabits`)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.length).to.eql(TOTAL_Q503_REGISTERED)
                     })
@@ -211,7 +199,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     .get(`/q503sleepinghabits`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.length).to.eql(TOTAL_Q503_REGISTERED)
                     })
@@ -223,7 +211,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     .get(`/q503sleepinghabits`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.length).to.eql(TOTAL_Q503_REGISTERED)
                     })
@@ -235,7 +223,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     .get(`/q503sleepinghabits`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.length).to.eql(TOTAL_Q503_REGISTERED)
                     })
@@ -247,14 +235,14 @@ describe('Routes: Q503SleepingHabits', () => {
                     .get(`/q503sleepinghabits`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.length).to.eql(TOTAL_Q503_REGISTERED)
                     })
             })
 
             describe('when get all Q503SleepingHabitswith some filter successfully', () => {
-                it('q503sleepinghabits.get_all007: should return status code 200 and a list with all Q503SleepingHabits of a specific child by herself', () => {
+                it('q503sleepinghabits.get_all007: should return status code 200 and a list with all Q503SleepingHabits of a specific child', () => {
 
                     const TOTAL_BY_CHILD = q503SleepingHabitsDefaultChildArray.length
 
@@ -277,8 +265,8 @@ describe('Routes: Q503SleepingHabits', () => {
                     return request(URI)
                         .get(`/q503sleepinghabits?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
-                        .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                        .expect(200)
+                        .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
+                        .expect(HttpStatus.OK)
                         .then(res => {
                             expect(res.body.length).to.eql(TOTAL_BY_CHILD)
                             for (let i = 0; i < q503SleepingHabitsDefaultChildArray.length; i++) {
@@ -296,7 +284,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 return request(URI)
                     .get(`/q503sleepinghabits?filter[where]`)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
@@ -305,13 +293,25 @@ describe('Routes: Q503SleepingHabits', () => {
 
         context('when the user does not have permission for get all Q503SleepingHabits of a specific child', () => {
 
+            it('q503sleepinghabits.get_all002: should return status code 403 and info message from insufficient permissions for own child', async () => {
+
+                return request(URI)
+                    .get(`/q503sleepinghabits?filter[where][child_id]=${defaultChild.username}`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
+                    .expect(HttpStatus.FORBIDDEN)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
+            })
+
             it('q503sleepinghabits.get_all009: should return status code 403 and info message from insufficient permissions for another child', () => {
 
                 return request(URI)
                     .get(`/q503sleepinghabits?filter[where][child_id]=${defaultChild.username}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessAnotherChildToken))
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -324,7 +324,7 @@ describe('Routes: Q503SleepingHabits', () => {
                         .get(`/q503sleepinghabits?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherHealthProfessional))
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -338,7 +338,7 @@ describe('Routes: Q503SleepingHabits', () => {
                         .get(`/q503sleepinghabits?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -352,7 +352,7 @@ describe('Routes: Q503SleepingHabits', () => {
                         .get(`/q503sleepinghabits?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -368,7 +368,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     .get('/q503sleepinghabits')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
-                    .expect(401)
+                    .expect(HttpStatus.UNAUTHORIZED)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.AUTH.ERROR_401_UNAUTHORIZED)
                     })
@@ -385,8 +385,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     await acc.saveChild(accessTokenAdmin, child)
                     questionnaire.child_id = child.username
 
-                    const childToken = await acc.auth(child.username!, child.password!)
-                    await quest.saveQ503SleepingHabits(childToken, questionnaire)
+                    await quest.saveQ503SleepingHabits(accessDefaultEducatorToken, questionnaire)
 
                     await acc.deleteUser(accessTokenAdmin, child.id)
 
@@ -416,8 +415,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     await acc.saveChild(accessTokenAdmin, child)
                     questionnaire.child_id = child.username
 
-                    const childToken = await acc.auth(child.username!, child.password!)
-                    await quest.saveQ503SleepingHabits(childToken, questionnaire)
+                    await quest.saveQ503SleepingHabits(accessDefaultEducatorToken, questionnaire)
 
                     const body = { username: 'newcoolusername' }
                     await acc.updateChild(accessTokenAdmin, child, body)
@@ -445,7 +443,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     .get(`/q503sleepinghabits?filter[where][child_id]=${child.username}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.deep.eql(Q503SleepingHabits)
                     })
