@@ -263,7 +263,7 @@ describe('Routes: Q503SleepingHabits', () => {
 
         context('when the user does not have permission for get Q503SleepingHabits of a specific child', () => {
 
-            it('q503sleepinghabits.get_id002: should return status code 200 and the Q503SleepingHabits for child', async () => {
+            it('q503sleepinghabits.get_id002: should return status code 403 and info message from insufficient permissions for child', async () => {
 
                 return request(URI)
                     .get(`/q503sleepinghabits/${Q503SleepingHabits.id}`)

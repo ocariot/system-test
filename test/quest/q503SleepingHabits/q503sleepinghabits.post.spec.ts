@@ -375,7 +375,7 @@ describe('Routes: Q503SleepingHabits', () => {
 
         context('when the user does not have permission for register Q503Sleepinghabits', () => {
 
-            it('q503sleepinghabits.post001: should return status code 200 and the saved Q503Sleepinghabits for child', () => {
+            it('q503sleepinghabits.post001: should return status code 403 and info message from insufficient permissions for child', () => {
 
                 return request(URI)
                     .post('/q503sleepinghabits')
@@ -388,7 +388,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.post004: should return status code 200 and the saved Q503Sleepinghabits by the application', () => {
+            it('q503sleepinghabits.post004: should return status code 403 and info message from insufficient permissions for application', () => {
 
                 return request(URI)
                     .post('/q503sleepinghabits')
