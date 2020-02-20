@@ -158,7 +158,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                 }
             })
 
-            it('Q501PhysicalActivityForChildren.post002: should return status code 200 and the saved Q501PhysicalActivityForChildren by the educator', () => {
+            it('q501physicalactivityforchildren.post002: should return status code 200 and the saved Q501PhysicalActivityForChildren by the educator', () => {
 
                 return request(URI)
                     .post('/q501physicalactivityforchildren')
@@ -171,7 +171,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('Q501PhysicalActivityForChildren.post003: should return status code 200 and the saved Q501PhysicalActivityForChildren by the family', () => {
+            it('q501physicalactivityforchildren.post003: should return status code 200 and the saved Q501PhysicalActivityForChildren by the family', () => {
 
                 return request(URI)
                     .post('/q501physicalactivityforchildren')
@@ -184,7 +184,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('Q501PhysicalActivityForChildren.post005: should return status code 200, even when provided a invalid id for the Q501PhysicalActivityForChildren', () => {
+            it('q501physicalactivityforchildren.post005: should return status code 200, even when provided a invalid id for the Q501PhysicalActivityForChildren', () => {
                 const incorrectQ501PhysicalActivityForChildren = getQ501PhysicalActivityForChildrenJSON()
                 incorrectQ501PhysicalActivityForChildren.id = '123'
 
@@ -202,7 +202,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
         }) // posting a Q501PhysicalActivityForChildren  successfully
 
         describe('when posting a empty Object for the child', () => {
-            it('Q501PhysicalActivityForChildren.post006: should return status code 200 and the saved a Q501PhysicalActivityForChildren only with auto-generated id and date fields', () => {
+            it('q501physicalactivityforchildren.post006: should return status code 200 and the saved a Q501PhysicalActivityForChildren only with auto-generated id and date fields', () => {
 
                 const body = {}
 
@@ -226,7 +226,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     console.log('Failure in Q501PhysicalActivityForChildren.post test: ', err.message)
                 }
             })
-            it('Q501PhysicalActivityForChildren.post007: should return an error, because the same Q501PhysicalActivityForChildren already registered for the child', () => {
+            it('q501physicalactivityforchildren.post007: should return an error, because the same Q501PhysicalActivityForChildren already registered for the child', () => {
 
                 return request(URI)
                     .post('/q501physicalactivityforchildren')
@@ -241,7 +241,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
 
         context('when a validation error occurs', () => {
 
-            it('Q501PhysicalActivityForChildren.post008: should return an error, because child_id is invalid', () => {
+            it('q501physicalactivityforchildren.post008: should return an error, because child_id is invalid', () => {
                 const incorrectQ501PhysicalActivityForChildren = getQ501PhysicalActivityForChildrenJSON()
                 incorrectQ501PhysicalActivityForChildren.child_id = '123'
 
@@ -255,7 +255,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('Q501PhysicalActivityForChildren.post009: should return an error, because child not exist', () => {
+            it('q501physicalactivityforchildren.post009: should return an error, because child not exist', () => {
                 const incorrectQ501PhysicalActivityForChildren = getQ501PhysicalActivityForChildrenJSON()
                 incorrectQ501PhysicalActivityForChildren.child_id = '5a55be50de34500146d9c544'
 
@@ -270,7 +270,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
             })
 
             // SOME FIELD HAS NULL VALUE
-            it('Q501PhysicalActivityForChildren.post010: should return an error, because date is null', () => {
+            it('q501physicalactivityforchildren.post010: should return an error, because date is null', () => {
                 const incorrectQ501PhysicalActivityForChildren = getQ501PhysicalActivityForChildrenJSON()
                 incorrectQ501PhysicalActivityForChildren.date = null
 
@@ -284,7 +284,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('Q501PhysicalActivityForChildren.post011: should return an error, because child_id is null', () => {
+            it('q501physicalactivityforchildren.post011: should return an error, because child_id is null', () => {
                 const incorrectQ501PhysicalActivityForChildren = getQ501PhysicalActivityForChildrenJSON()
                 incorrectQ501PhysicalActivityForChildren.child_id = null
 
@@ -298,7 +298,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('Q501PhysicalActivityForChildren.post012: should return an error, because percentage is null', () => {
+            it('q501physicalactivityforchildren.post012: should return an error, because percentage is null', () => {
                 const incorrectQ501PhysicalActivityForChildren = getQ501PhysicalActivityForChildrenJSON()
                 incorrectQ501PhysicalActivityForChildren.percentage = null
 
@@ -314,7 +314,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
             // SOME FIELD HAS NULL VALUE
 
             // SOME FIELD HAS INVALID (DIFFERENT TYPE)
-            it('Q501PhysicalActivityForChildren.post013: should return an error, because state is a number', () => {
+            it('q501physicalactivityforchildren.post013: should return an error, because state is a number', () => {
                 const incorrectQ501PhysicalActivityForChildren = getQ501PhysicalActivityForChildrenJSON()
                 incorrectQ501PhysicalActivityForChildren.state = 1
 
@@ -328,7 +328,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('Q501PhysicalActivityForChildren.post014: should return an error, because scoring_PAQC is a boolean', () => {
+            it('q501physicalactivityforchildren.post014: should return an error, because scoring_PAQC is a boolean', () => {
                 const incorrectQ501PhysicalActivityForChildren = getQ501PhysicalActivityForChildrenJSON()
                 incorrectQ501PhysicalActivityForChildren.scoring_PAQC = true
 
@@ -343,7 +343,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
             })
             // SOME FIELD HAS INVALID ((DIFFERENT TYPE))
 
-            it('Q501PhysicalActivityForChildren.post015: should return an error, because date format is invalid', () => {
+            it('q501physicalactivityforchildren.post015: should return an error, because date format is invalid', () => {
                 const incorrectQ501PhysicalActivityForChildren = getQ501PhysicalActivityForChildrenJSON()
                 incorrectQ501PhysicalActivityForChildren.date = '2019/12/03T15:28:47.319Z'
 
@@ -357,7 +357,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('Q501PhysicalActivityForChildren.post016: should return an error, because month is invalid', () => {
+            it('q501physicalactivityforchildren.post016: should return an error, because month is invalid', () => {
                 const incorrectQ501PhysicalActivityForChildren = getQ501PhysicalActivityForChildrenJSON()
                 incorrectQ501PhysicalActivityForChildren.date = '2019-13-01T19:40:45.124Z' // invalid month(13)
 
@@ -374,7 +374,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
 
         context('when the user does not have permission for register Q501PhysicalActivityForChildren', () => {
 
-            it('Q501PhysicalActivityForChildren.post001: should return status code 403 and info message from insufficient permissions for own child', () => {
+            it('q501physicalactivityforchildren.post001: should return status code 403 and info message from insufficient permissions for own child', () => {
 
                 return request(URI)
                     .post('/q501physicalactivityforchildren')
@@ -387,7 +387,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('Q501PhysicalActivityForChildren.post017: should return status code 403 and info message from insufficient permissions for admin', () => {
+            it('q501physicalactivityforchildren.post017: should return status code 403 and info message from insufficient permissions for admin', () => {
 
                 return request(URI)
                     .post('/q501physicalactivityforchildren')
@@ -400,7 +400,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('Q501PhysicalActivityForChildren.post018: should return status code 403 and info message from insufficient permissions for Health Professional', () => {
+            it('q501physicalactivityforchildren.post018: should return status code 403 and info message from insufficient permissions for Health Professional', () => {
 
                 return request(URI)
                     .post('/q501physicalactivityforchildren')
@@ -413,7 +413,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('Q501PhysicalActivityForChildren.post019: should return status code 403 and info message from insufficient permissions for another child', () => {
+            it('q501physicalactivityforchildren.post019: should return status code 403 and info message from insufficient permissions for another child', () => {
 
                 return request(URI)
                     .post('/q501physicalactivityforchildren')
@@ -427,7 +427,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the educator', () => {
-                it('Q501PhysicalActivityForChildren.post020: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
+                it('q501physicalactivityforchildren.post020: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
 
                     return request(URI)
                         .post('/q501physicalactivityforchildren')
@@ -442,7 +442,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the family', () => {
-                it('Q501PhysicalActivityForChildren.post021: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
+                it('q501physicalactivityforchildren.post021: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
 
                     return request(URI)
                         .post('/q501physicalactivityforchildren')
@@ -456,7 +456,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                 })
             })
 
-            it('Q501PhysicalActivityForChildren.post004: should return status code 403 and info message from insufficient permissions for application', () => {
+            it('q501physicalactivityforchildren.post004: should return status code 403 and info message from insufficient permissions for application', () => {
 
                 return request(URI)
                     .post('/q501physicalactivityforchildren')
@@ -473,7 +473,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
 
         context('when posting a new Q501PhysicalActivityForChildren for another user that not to be a child', () => {
 
-            it('Q501PhysicalActivityForChildren.post022: should return an error, when try create a Q501PhysicalActivityForChildren for admin', async () => {
+            it('q501physicalactivityforchildren.post022: should return an error, when try create a Q501PhysicalActivityForChildren for admin', async () => {
 
                 const ADMIN_ID = await acc.getAdminID()
                 defaultQ501PhysicalActivityForChildren.child_id = ADMIN_ID
@@ -488,7 +488,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('Q501PhysicalActivityForChildren.post023: should return an error, when try create a Q501PhysicalActivityForChildren for educator', () => {
+            it('q501physicalactivityforchildren.post023: should return an error, when try create a Q501PhysicalActivityForChildren for educator', () => {
 
                 defaultQ501PhysicalActivityForChildren.child_id = defaultEducator.id
 
@@ -502,7 +502,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('Q501PhysicalActivityForChildren.post024: should return an error, when try create a Q501PhysicalActivityForChildren for health professional', () => {
+            it('q501physicalactivityforchildren.post024: should return an error, when try create a Q501PhysicalActivityForChildren for health professional', () => {
 
                 defaultQ501PhysicalActivityForChildren.child_id = defaultHealthProfessional.id
 
@@ -516,7 +516,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('Q501PhysicalActivityForChildren.post025: should return an error, when try create a Q501PhysicalActivityForChildren for family', () => {
+            it('q501physicalactivityforchildren.post025: should return an error, when try create a Q501PhysicalActivityForChildren for family', () => {
 
                 defaultQ501PhysicalActivityForChildren.child_id = defaultFamily.id
 
@@ -530,7 +530,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('Q501PhysicalActivityForChildren.post026: should return an error, when try create a Q501PhysicalActivityForChildren for application', () => {
+            it('q501physicalactivityforchildren.post026: should return an error, when try create a Q501PhysicalActivityForChildren for application', () => {
 
                 defaultQ501PhysicalActivityForChildren.child_id = defaultApplication.id
 
@@ -547,7 +547,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
         }) // another user that not to be a child
 
         describe('when not informed the acess token', () => {
-            it('Q501PhysicalActivityForChildren.post027: should return the status code 401 and the authentication failure informational message', () => {
+            it('q501physicalactivityforchildren.post027: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .post('/q501physicalactivityforchildren')
@@ -562,7 +562,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
         })
 
         describe('when the child has been deleted', () => {
-            it('Q501PhysicalActivityForChildren.post028: should return an error, because child not exist', async () => {
+            it('q501physicalactivityforchildren.post028: should return an error, because child not exist', async () => {
 
                 defaultQ501PhysicalActivityForChildren.child_id = defaultChild.id
                 await acc.deleteUser(accessTokenAdmin, defaultChild.id)
