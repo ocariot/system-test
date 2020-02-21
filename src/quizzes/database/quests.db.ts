@@ -130,7 +130,7 @@ class QuestDb {
         })
     }
 
-    public deleteQ1Sociodemographic(): Promise<boolean> {
+    public deleteQ1SocioDemographic(): Promise<boolean> {
         return this._deleteCollection('Q1SociodemographicModel')
     }
 

@@ -1,21 +1,21 @@
 import request from 'supertest'
 import { expect } from 'chai'
-import { acc } from '../utils/account.utils'
-import { accountDB } from '../../src/account-service/database/account.db'
-import { questionnaireDB } from '../../src/quizzes/database/quests.db'
-import { Institution } from '../../src/account-service/model/institution'
-import { Child } from '../../src/account-service/model/child'
-import { ChildMock } from '../mocks/account-service/child.mock'
-import { Educator } from '../../src/account-service/model/educator'
-import { EducatorMock } from '../mocks/account-service/educator.mock'
-import { HealthProfessional } from '../../src/account-service/model/health.professional'
-import { HealthProfessionalMock } from '../mocks/account-service/healthprofessional.mock'
-import { Family } from '../../src/account-service/model/family'
-import { FamilyMock } from '../mocks/account-service/family.mock'
-import { Application } from '../../src/account-service/model/application'
-import { ApplicationMock } from '../mocks/account-service/application.mock'
-import { ApiGatewayException } from '../utils/api.gateway.exceptions'
-import { Q1SocioDemographicMock } from '../mocks/quest-service/q1sociodemographic.mock'
+import { acc } from '../../utils/account.utils'
+import { accountDB } from '../../../src/account-service/database/account.db'
+import { questionnaireDB } from '../../../src/quizzes/database/quests.db'
+import { Institution } from '../../../src/account-service/model/institution'
+import { Child } from '../../../src/account-service/model/child'
+import { ChildMock } from '../../mocks/account-service/child.mock'
+import { Educator } from '../../../src/account-service/model/educator'
+import { EducatorMock } from '../../mocks/account-service/educator.mock'
+import { HealthProfessional } from '../../../src/account-service/model/health.professional'
+import { HealthProfessionalMock } from '../../mocks/account-service/healthprofessional.mock'
+import { Family } from '../../../src/account-service/model/family'
+import { FamilyMock } from '../../mocks/account-service/family.mock'
+import { Application } from '../../../src/account-service/model/application'
+import { ApplicationMock } from '../../mocks/account-service/application.mock'
+import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
+import { Q1SocioDemographicsMock } from '../../mocks/quest-service/q1SocioDemographicsMock'
 import * as HttpStatus from 'http-status-codes'
 
 describe('Routes: Q1Sociodemographic', () => {
@@ -44,7 +44,7 @@ describe('Routes: Q1Sociodemographic', () => {
     const defaultFamily: Family = new FamilyMock()
     const defaultApplication: Application = new ApplicationMock()
 
-    const defaultQ1SocioDemographic: Q1SocioDemographicMock = new Q1SocioDemographicMock(defaultChild)
+    const defaultQ1SocioDemographic: Q1SocioDemographicsMock = new Q1SocioDemographicsMock(defaultChild)
 
     before(async () => {
         try {
@@ -121,7 +121,7 @@ describe('Routes: Q1Sociodemographic', () => {
 
         afterEach(async () => {
             try {
-                await questionnaireDB.deleteQ1Sociodemographic()
+                await questionnaireDB.deleteQ1SocioDemographic()
             } catch (err) {
                 console.log('Failure in q1sociodemographics.post test: ', err.message)
             }
@@ -129,12 +129,12 @@ describe('Routes: Q1Sociodemographic', () => {
 
         context('when the user posting a Q1Sociodemographic successfully', () => {
 
-            let Q1Sociodemographic: Q1SocioDemographicMock
+            let Q1Sociodemographic: Q1SocioDemographicsMock
             let Q1SocioDemographicMockJSON: any
 
             beforeEach(async () => {
                 try {
-                    Q1Sociodemographic = new Q1SocioDemographicMock(defaultChild)
+                    Q1Sociodemographic = new Q1SocioDemographicsMock(defaultChild)
                     Q1Sociodemographic.child_id = defaultChild.id
                     Q1SocioDemographicMockJSON = Q1Sociodemographic.fromJSON(Q1Sociodemographic)
                 } catch (err) {
@@ -390,7 +390,7 @@ describe('Routes: Q1Sociodemographic', () => {
 
         context('when posting a new Q1SocioDemographic for another user that not to be a child', () => {
 
-            let Q1SociodemographicForOtherUsers: Q1SocioDemographicMock = new Q1SocioDemographicMock(defaultChild)
+            let Q1SociodemographicForOtherUsers: Q1SocioDemographicsMock = new Q1SocioDemographicsMock(defaultChild)
 
             it('q1sociodemographics.post018: should return an error, when try create a Q1SocioDemographic for admin', async () => {
 

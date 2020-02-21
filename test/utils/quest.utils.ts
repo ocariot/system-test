@@ -36,6 +36,17 @@ class QuestionnairesUtil {
             .catch(err => Promise.reject(err.body))
     }
 
+    public saveQ1SocioDemographics(accessToken: string, q1sociodemographics: any): Promise<any> {
+
+        return request(this.URI)
+            .post('/q1sociodemographics')
+            .set('Content-Type', 'application/json')
+            .set('Authorization', 'Bearer '.concat(accessToken))
+            .send(q1sociodemographics)
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err.body))
+    }
+
     public getQ501PhysicalActivityForChildrenByID(accessToken: string, questionnaire_id: string): Promise<any> {
 
         return request(this.URI)

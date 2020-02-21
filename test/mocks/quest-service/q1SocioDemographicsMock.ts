@@ -1,6 +1,6 @@
 import { Child } from '../../../src/account-service/model/child'
 
-export class Q1SocioDemographicMock {
+export class Q1SocioDemographicsMock {
     public id?: string
     public child_id?: string
     public child_age?: number
@@ -42,7 +42,7 @@ export class Q1SocioDemographicMock {
 
     private generateQ1SocioDemographic(child: Child) {
 
-        this.id = '5a62be07de34500146d9c544'
+        this.id = this.generateObjectId()
         this.child_id = child.id
         this.child_age = Number(child.age)
         this.child_gender = child.gender
@@ -85,7 +85,16 @@ export class Q1SocioDemographicMock {
         return this
     }
 
-    public fromJSON(q1sociodemographic : Q1SocioDemographicMock){
+    private generateObjectId(): string {
+        const chars = 'abcdef0123456789'
+        let randS = ''
+        for (let i = 0; i < 24; i++) {
+            randS += chars.charAt(Math.floor(Math.random() * chars.length))
+        }
+        return randS
+    }
+
+    public fromJSON(q1sociodemographic : Q1SocioDemographicsMock){
         const JSON = {
             id: q1sociodemographic.id,
             child_id: q1sociodemographic.child_id,
