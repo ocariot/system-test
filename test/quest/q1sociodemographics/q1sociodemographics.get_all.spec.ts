@@ -15,13 +15,13 @@ import { Family } from '../../../src/account-service/model/family'
 import { FamilyMock } from '../../mocks/account-service/family.mock'
 import { Application } from '../../../src/account-service/model/application'
 import { ApplicationMock } from '../../mocks/account-service/application.mock'
-import { Q501PhysicalActivityForChildrenMock } from '../../mocks/quest-service/q501physicalactivityforchildren.mock'
+import { Q1SocioDemographicsMock } from '../../mocks/quest-service/q1SocioDemographicsMock'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import * as HttpStatus from 'http-status-codes'
 
-describe('Routes: Q501PhysicalActivityForChildren', () => {
+describe('Routes: Q1SocioDemographics', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -52,8 +52,8 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
 
     const defaultChildrenGroup: ChildrenGroup = new ChildrenGroupMock()
 
-    const q501ForDefaultChildArray: Array<Q501PhysicalActivityForChildrenMock> = new Array<Q501PhysicalActivityForChildrenMock>()
-    const q501ForAnotherChildArray: Array<Q501PhysicalActivityForChildrenMock> = new Array<Q501PhysicalActivityForChildrenMock>()
+    const q1SocioDemographicsForDefaultChildArray: Array<Q1SocioDemographicsMock> = new Array<Q1SocioDemographicsMock>()
+    const q1SocioDemographicsForAnotherChildArray: Array<Q1SocioDemographicsMock> = new Array<Q1SocioDemographicsMock>()
 
     before(async () => {
         try {
@@ -123,37 +123,37 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
             await acc.saveChildrenGroupsForEducator(accessDefaultEducatorToken, defaultEducator, defaultChildrenGroup)
             await acc.saveChildrenGroupsForHealthProfessional(accessDefaultHealthProfessionalToken, defaultHealthProfessional, defaultChildrenGroup)
 
-            // Populating q501physicalactivityforchildren arrays
-            // q501physicalactivityforchildren for defaultChild
-            q501ForDefaultChildArray.push(new Q501PhysicalActivityForChildrenMock())
-            q501ForDefaultChildArray.push(new Q501PhysicalActivityForChildrenMock())
-            q501ForDefaultChildArray.push(new Q501PhysicalActivityForChildrenMock())
-            q501ForDefaultChildArray.push(new Q501PhysicalActivityForChildrenMock())
-            q501ForDefaultChildArray.push(new Q501PhysicalActivityForChildrenMock())
-            q501ForDefaultChildArray.push(new Q501PhysicalActivityForChildrenMock())
+            // Populating q1sociodemographics arrays
+            // q1sociodemographics for defaultChild
+            q1SocioDemographicsForDefaultChildArray.push(new Q1SocioDemographicsMock(defaultChild))
+            q1SocioDemographicsForDefaultChildArray.push(new Q1SocioDemographicsMock(defaultChild))
+            q1SocioDemographicsForDefaultChildArray.push(new Q1SocioDemographicsMock(defaultChild))
+            q1SocioDemographicsForDefaultChildArray.push(new Q1SocioDemographicsMock(defaultChild))
+            q1SocioDemographicsForDefaultChildArray.push(new Q1SocioDemographicsMock(defaultChild))
+            q1SocioDemographicsForDefaultChildArray.push(new Q1SocioDemographicsMock(defaultChild))
 
-            // q501physicalactivityforchildren for anotherChild
-            q501ForAnotherChildArray.push(new Q501PhysicalActivityForChildrenMock())
-            q501ForAnotherChildArray.push(new Q501PhysicalActivityForChildrenMock())
-            q501ForAnotherChildArray.push(new Q501PhysicalActivityForChildrenMock())
+            // q1sociodemographics for anotherChild
+            q1SocioDemographicsForAnotherChildArray.push(new Q1SocioDemographicsMock(anotherChild))
+            q1SocioDemographicsForAnotherChildArray.push(new Q1SocioDemographicsMock(anotherChild))
+            q1SocioDemographicsForAnotherChildArray.push(new Q1SocioDemographicsMock(anotherChild))
 
             // for questionnaires you must associate the username with child_id, otherwise it would not be possible to filter the questionnaires of the child through their id
-            for (let i = 0; i < q501ForDefaultChildArray.length; i++) {
-                q501ForDefaultChildArray[i].id = undefined
-                q501ForDefaultChildArray[i].child_id = defaultChild.username
-                const result1 = await quest.saveQ501PhysicalActivityForChildren(accessDefaultEducatorToken, q501ForDefaultChildArray[i])
-                q501ForDefaultChildArray[i].id = result1.id
+            for (let i = 0; i < q1SocioDemographicsForDefaultChildArray.length; i++) {
+                q1SocioDemographicsForDefaultChildArray[i].id = undefined
+                q1SocioDemographicsForDefaultChildArray[i].child_id = defaultChild.username
+                const result1 = await quest.saveQ1SocioDemographics(accessDefaultFamilyToken, q1SocioDemographicsForDefaultChildArray[i])
+                q1SocioDemographicsForDefaultChildArray[i].id = result1.id
             }
 
-            for (let i = 0; i < q501ForAnotherChildArray.length; i++) {
-                q501ForAnotherChildArray[i].id = undefined
-                q501ForAnotherChildArray[i].child_id = anotherChild.username
-                const result2 = await quest.saveQ501PhysicalActivityForChildren(accessDefaultEducatorToken, q501ForAnotherChildArray[i])
-                q501ForAnotherChildArray[i].id = result2.id
+            for (let i = 0; i < q1SocioDemographicsForAnotherChildArray.length; i++) {
+                q1SocioDemographicsForAnotherChildArray[i].id = undefined
+                q1SocioDemographicsForAnotherChildArray[i].child_id = anotherChild.username
+                const result2 = await quest.saveQ1SocioDemographics(accessDefaultFamilyToken, q1SocioDemographicsForAnotherChildArray[i])
+                q1SocioDemographicsForAnotherChildArray[i].id = result2.id
             }
 
         } catch (err) {
-            console.log('Failure on Before from q501physicalactivityforchildren.get_all test: ', err.message)
+            console.log('Failure on Before from q1sociodemographics.get_all test: ', err.message)
         }
     })
     after(async () => {
@@ -167,125 +167,125 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
         }
     })
 
-    describe('GET /q501physicalactivityforchildren', () => {
+    describe('GET /q1sociodemographics', () => {
 
-        context('when get all q501physicalactivityforchildren successfully', () => {
-            let TOTAL_Q501_REGISTERED = 0
+        context('when get all q1sociodemographics successfully', () => {
+            let TOTAL_Q1SOCIODEMOGRAPHICS_REGISTERED = 0
             before(async () => {
                 try {
-                    TOTAL_Q501_REGISTERED = q501ForDefaultChildArray.length + q501ForAnotherChildArray.length
+                    TOTAL_Q1SOCIODEMOGRAPHICS_REGISTERED = q1SocioDemographicsForDefaultChildArray.length + q1SocioDemographicsForAnotherChildArray.length
                 } catch (err) {
-                    console.log('Failure in Before from q501physicalactivityforchildren.get_all test: ', err.message)
+                    console.log('Failure in Before from q1sociodemographics.get_all test: ', err.message)
                 }
             })
 
-            it('q501physicalactivityforchildren.get_all001: should return status code 200 and a list with all q501physicalactivityforchildren for admin user', async () => {
+            it('q1sociodemographics.get_all001: should return status code 200 and a list with all q1sociodemographics for admin user', async () => {
 
                 return request(URI)
-                    .get(`/q501physicalactivityforchildren`)
+                    .get(`/q1sociodemographics`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .expect(HttpStatus.OK)
                     .then(res => {
-                        expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
+                        expect(res.body.length).to.eql(TOTAL_Q1SOCIODEMOGRAPHICS_REGISTERED)
                     })
             })
 
-            it('q501physicalactivityforchildren.get_all003: should return status code 200 and a list with all q501physicalactivityforchildren for educator', async () => {
+            it('q1sociodemographics.get_all004: should return status code 200 and a list with all q1sociodemographics for health professional', async () => {
 
                 return request(URI)
-                    .get(`/q501physicalactivityforchildren`)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(HttpStatus.OK)
-                    .then(res => {
-                        expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
-                    })
-            })
-
-            it('q501physicalactivityforchildren.get_all004: should return status code 200 and a list with all q501physicalactivityforchildren for health professional', async () => {
-
-                return request(URI)
-                    .get(`/q501physicalactivityforchildren`)
+                    .get(`/q1sociodemographics`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
                     .expect(HttpStatus.OK)
                     .then(res => {
-                        expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
+                        expect(res.body.length).to.eql(TOTAL_Q1SOCIODEMOGRAPHICS_REGISTERED)
                     })
             })
 
-            it('q501physicalactivityforchildren.get_all005: should return status code 200 and a list with all q501physicalactivityforchildren for family', async () => {
+            it('q1sociodemographics.get_all005: should return status code 200 and a list with all q1sociodemographics for family', async () => {
 
                 return request(URI)
-                    .get(`/q501physicalactivityforchildren`)
+                    .get(`/q1sociodemographics`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .expect(HttpStatus.OK)
                     .then(res => {
-                        expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
+                        expect(res.body.length).to.eql(TOTAL_Q1SOCIODEMOGRAPHICS_REGISTERED)
                     })
             })
 
-            it('q501physicalactivityforchildren.get_all006: should return status code 200 and a list with all q501physicalactivityforchildren for application', async () => {
+            it('q1sociodemographics.get_all006: should return status code 200 and a list with all q1sociodemographics for application', async () => {
 
                 return request(URI)
-                    .get(`/q501physicalactivityforchildren`)
+                    .get(`/q1sociodemographics`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .expect(HttpStatus.OK)
                     .then(res => {
-                        expect(res.body.length).to.eql(TOTAL_Q501_REGISTERED)
+                        expect(res.body.length).to.eql(TOTAL_Q1SOCIODEMOGRAPHICS_REGISTERED)
                     })
             })
 
-            describe('when get all q501physicalactivityforchildren with some filter successfully', () => {
-                it('q501physicalactivityforchildren.get_all007: should return status code 200 and a list with all q501physicalactivityforchildren of a specific child by herself', () => {
+            describe('when get all q1sociodemographics with some filter successfully', () => {
+                it('q1sociodemographics.get_all007: should return status code 200 and a list with all q1sociodemographics of a specific child by herself', () => {
 
-                    const TOTAL_BY_CHILD = q501ForDefaultChildArray.length
+                    const TOTAL_BY_CHILD = q1SocioDemographicsForDefaultChildArray.length
 
-                    const q501physicalactivityforchildrenArray: any = []
+                    const q1sociodemographicsArray: any = []
 
-                    q501ForDefaultChildArray.forEach(q501physicalactivityforchildren => {
-                        const bodyElem = q501physicalactivityforchildren.fromJSON(q501physicalactivityforchildren)
-                        q501physicalactivityforchildrenArray.push(bodyElem)
+                    q1SocioDemographicsForDefaultChildArray.forEach(q1sociodemographics => {
+                        const bodyElem = q1sociodemographics.fromJSON(q1sociodemographics)
+                        q1sociodemographicsArray.push(bodyElem)
                     })
 
                     return request(URI)
-                        .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
+                        .get(`/q1sociodemographics?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
-                        .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
+                        .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                         .expect(HttpStatus.OK)
                         .then(res => {
                             expect(res.body.length).to.eql(TOTAL_BY_CHILD)
-                            for (let i = 0; i < q501ForDefaultChildArray.length; i++) {
-                                expect(res.body[i]).to.deep.eql(q501physicalactivityforchildrenArray[i])
+                            for (let i = 0; i < q1SocioDemographicsForDefaultChildArray.length; i++) {
+                                expect(res.body[i]).to.deep.eql(q1sociodemographicsArray[i])
                             }
                         })
                 })
             })
 
-        }) // getting a q501physicalactivityforchildren successfully
+        }) // getting a q1sociodemographics successfully
 
         context('when a error occurs', () => {
-            it('q501physicalactivityforchildren.get_all008: should return an error, because the querystring is invalid', () => {
+            it('q1sociodemographics.get_all008: should return an error, because the querystring is invalid', () => {
 
                 return request(URI)
-                    .get(`/q501physicalactivityforchildren?filter[where]`)
+                    .get(`/q1sociodemographics?filter[where]`)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
         }) // error occurs
 
-        context('when the user does not have permission for get all q501physicalactivityforchildren of a specific child', () => {
+        context('when the user does not have permission for get all q1sociodemographics of a specific child', () => {
 
-            it('q501physicalactivityforchildren.get_all002: should return status code 403 and info message from insufficient permissions for child', async () => {
+            it('q1sociodemographics.get_all003: should return status code 403 and info message from insufficient permissions for educator', async () => {
 
                 return request(URI)
-                    .get(`/q501physicalactivityforchildren`)
+                    .get(`/q1sociodemographics`)
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
+                    .expect(HttpStatus.FORBIDDEN)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
+            })
+
+            it('q1sociodemographics.get_all002: should return status code 403 and info message from insufficient permissions for child', async () => {
+
+                return request(URI)
+                    .get(`/q1sociodemographics`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .expect(HttpStatus.FORBIDDEN)
@@ -295,10 +295,10 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the health professional', () => {
-                it('q501physicalactivityforchildren.get_all010: should return status code 403 and info message from insufficient permissions for health professional user who is not associated with the child', () => {
+                it('q1sociodemographics.get_all010: should return status code 403 and info message from insufficient permissions for health professional user who is not associated with the child', () => {
 
                     return request(URI)
-                        .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
+                        .get(`/q1sociodemographics?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherHealthProfessional))
                         .expect(HttpStatus.FORBIDDEN)
@@ -309,10 +309,10 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the educator', () => {
-                it('q501physicalactivityforchildren.get_all011: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
+                it('q1sociodemographics.get_all011: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
 
                     return request(URI)
-                        .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
+                        .get(`/q1sociodemographics?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
                         .expect(HttpStatus.FORBIDDEN)
@@ -323,10 +323,10 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the family', () => {
-                it('q501physicalactivityforchildren.get_all012: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
+                it('q1sociodemographics.get_all012: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
 
                     return request(URI)
-                        .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
+                        .get(`/q1sociodemographics?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
                         .expect(HttpStatus.FORBIDDEN)
@@ -339,10 +339,10 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('q501physicalactivityforchildren.get_all013: should return the status code 401 and the authentication failure informational message', () => {
+            it('q1sociodemographics.get_all013: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .get('/q501physicalactivityforchildren')
+                    .get('/q1sociodemographics')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(HttpStatus.UNAUTHORIZED)
@@ -354,7 +354,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
 
         describe('when the child has been deleted', () => {
             const child: Child = new ChildMock()
-            const questionnaire: Q501PhysicalActivityForChildrenMock = new Q501PhysicalActivityForChildrenMock()
+            const questionnaire: Q1SocioDemographicsMock = new Q1SocioDemographicsMock(child)
 
             before(async () => {
                 try {
@@ -362,21 +362,20 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     await acc.saveChild(accessTokenAdmin, child)
                     questionnaire.child_id = child.username
 
-                    const childToken = await acc.auth(child.username!, child.password!)
-                    await quest.saveQ501PhysicalActivityForChildren(childToken, questionnaire)
+                    await quest.saveQ1SocioDemographics(accessDefaultFamilyToken, questionnaire)
 
                     await acc.deleteUser(accessTokenAdmin, child.id)
 
                 } catch (err) {
-                    console.log('Failure in Before from q501physicalactivityforchildren.get_all test: ', err.message)
+                    console.log('Failure in Before from q1sociodemographics.get_all test: ', err.message)
                 }
             })
-            it('q501physicalactivityforchildren.get_all014: should return an error, because child not exist', async () => {
+            it('q1sociodemographics.get_all014: should return an error, because child not exist', async () => {
 
                 return request(URI)
-                    .get(`/q501physicalactivityforchildren?filter[where][child_id]=${child.username}`)
+                    .get(`/q1sociodemographics?filter[where][child_id]=${child.username}`)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
@@ -385,7 +384,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
 
         describe('when the child username has been updated', () => {
             const child: Child = new ChildMock()
-            const questionnaire: Q501PhysicalActivityForChildrenMock = new Q501PhysicalActivityForChildrenMock()
+            const questionnaire: Q1SocioDemographicsMock = new Q1SocioDemographicsMock(child)
 
             before(async () => {
                 try {
@@ -393,7 +392,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     await acc.saveChild(accessTokenAdmin, child)
                     questionnaire.child_id = child.username
 
-                    await quest.saveQ501PhysicalActivityForChildren(accessDefaultEducatorToken, questionnaire)
+                    await quest.saveQ1SocioDemographics(accessDefaultFamilyToken, questionnaire)
 
                     const body = { username: 'newcoolusername' }
                     await acc.updateChild(accessTokenAdmin, child, body)
@@ -401,20 +400,20 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     child.username = 'newcoolusername'
 
                 } catch (err) {
-                    console.log('Failure in Before from q501physicalactivityforchildren.get_all test: ', err.message)
+                    console.log('Failure in Before from q1sociodemographics.get_all test: ', err.message)
                 }
             })
-            it('q501physicalactivityforchildren.get_all015: should return status code 200 and all q501physicalactivityforchildren of the child', async () => {
+            it('q1sociodemographics.get_all015: should return status code 200 and all q1sociodemographics of the child', async () => {
 
-                const q501physicalactivityforchildren = questionnaire.fromJSON(questionnaire)
+                const q1sociodemographics = questionnaire.fromJSON(questionnaire)
 
                 return request(URI)
-                    .get(`/q501physicalactivityforchildren?filter[where][child_id]=${child.username}`)
+                    .get(`/q1sociodemographics?filter[where][child_id]=${child.username}`)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .expect(HttpStatus.OK)
                     .then(res => {
-                        expect(res.body).to.deep.eql(q501physicalactivityforchildren)
+                        expect(res.body).to.deep.eql(q1sociodemographics)
                     })
             })
         })
