@@ -134,6 +134,10 @@ class QuestDb {
         return this._deleteCollection('Q1SociodemographicModel')
     }
 
+    public deleteQ21ChildsHealthCondition(): Promise<boolean> {
+        return this._deleteCollection('Q21ChildsHealthConditionsModel')
+    }
+
     public deleteQFoodTracking(): Promise<boolean> {
         return this._deleteCollection('Qfoodtracking')
     }
