@@ -32,6 +32,7 @@ class AccountUtil {
                 return Promise.resolve(res.body.access_token)
             })
             .catch(err => {
+                console.log('ERRRO: ', err)
                 return Promise.reject(err)
             })
     }

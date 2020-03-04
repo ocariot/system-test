@@ -5,8 +5,8 @@ services:
     container_name: ocariot-mongo-account
     restart: always
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ADMIN_USER}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ADMIN_PASS}
+      - MONGO_INITDB_ROOT_USERNAME=${DB_ADMIN_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_ADMIN_PASS}
       - MONGO_APPLICATION_DATABASE=account
       - MONGO_APPLICATION_USER=${ACCOUNT_DB_USER}
       - MONGO_APPLICATION_PASS=${ACCOUNT_DB_PASS}
@@ -15,9 +15,9 @@ services:
     command: ["mongod", "--config", "/etc/mongod.conf"]
     volumes:
       - mongo-account-data:/data/db
-      - ${MONGO_PEM_KEY_PATH}:/etc/ssl/mongodb.pem
-      - ./config/mongodb/mongod.conf:/etc/mongod.conf
-      - ./config/mongodb/mongodb-entrypoint.sh:/docker-entrypoint-initdb.d/mongodb-entrypoint.sh
+      - ${MONGO_PEM_KEY_PATH}:/etc/ssl/mongodb.pem:ro
+      - ./config/mongodb/mongod.conf:/etc/mongod.conf:ro
+      - ./config/mongodb/mongodb-entrypoint.sh:/docker-entrypoint-initdb.d/mongodb-entrypoint.sh:ro
     networks:
       - ocariot-network
     logging:
@@ -25,24 +25,24 @@ services:
       options:
         max-size: 100m
 
-  mongo-activity-tracking: # MongoDB container for the Activity Tracking Service
+  mongo-iot-tracking: # MongoDB container for the IoT Tracking Service
     image: mongo:latest
-    container_name: ocariot-mongo-activity-tracking
+    container_name: ocariot-mongo-iot-tracking
     restart: always
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ADMIN_USER}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ADMIN_PASS}
-      - MONGO_APPLICATION_DATABASE=activity-tracking
-      - MONGO_APPLICATION_USER=${AT_DB_USER}
-      - MONGO_APPLICATION_PASS=${AT_DB_PASS}
+      - MONGO_INITDB_ROOT_USERNAME=${DB_ADMIN_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_ADMIN_PASS}
+      - MONGO_APPLICATION_DATABASE=iot-tracking
+      - MONGO_APPLICATION_USER=${IOT_DB_USER}
+      - MONGO_APPLICATION_PASS=${IOT_DB_PASS}
     ports:
       - 27019:27017
     command: ["mongod", "--config", "/etc/mongod.conf"]
     volumes:
-      - mongo-activity-tracking-data:/data/db
-      - ${MONGO_PEM_KEY_PATH}:/etc/ssl/mongodb.pem
-      - ./config/mongodb/mongod.conf:/etc/mongod.conf
-      - ./config/mongodb/mongodb-entrypoint.sh:/docker-entrypoint-initdb.d/mongodb-entrypoint.sh
+      - mongo-iot-tracking-data:/data/db
+      - ${MONGO_PEM_KEY_PATH}:/etc/ssl/mongodb.pem:ro
+      - ./config/mongodb/mongod.conf:/etc/mongod.conf:ro
+      - ./config/mongodb/mongodb-entrypoint.sh:/docker-entrypoint-initdb.d/mongodb-entrypoint.sh:ro
     networks:
       - ocariot-network
     logging:
@@ -55,8 +55,8 @@ services:
     container_name: ocariot-mongo-ds-agent
     restart: always
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ADMIN_USER}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ADMIN_PASS}
+      - MONGO_INITDB_ROOT_USERNAME=${DB_ADMIN_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_ADMIN_PASS}
       - MONGO_APPLICATION_DATABASE=ds-agent
       - MONGO_APPLICATION_USER=${DS_DB_USER}
       - MONGO_APPLICATION_PASS=${DS_DB_PASS}
@@ -65,9 +65,9 @@ services:
     command: ["mongod", "--config", "/etc/mongod.conf"]
     volumes:
       - mongo-ds-agent-data:/data/db
-      - ${MONGO_PEM_KEY_PATH}:/etc/ssl/mongodb.pem
-      - ./config/mongodb/mongod.conf:/etc/mongod.conf
-      - ./config/mongodb/mongodb-entrypoint.sh:/docker-entrypoint-initdb.d/mongodb-entrypoint.sh
+      - ${MONGO_PEM_KEY_PATH}:/etc/ssl/mongodb.pem:ro
+      - ./config/mongodb/mongod.conf:/etc/mongod.conf:ro
+      - ./config/mongodb/mongodb-entrypoint.sh:/docker-entrypoint-initdb.d/mongodb-entrypoint.sh:ro
     networks:
       - ocariot-network
     logging:
@@ -75,13 +75,13 @@ services:
       options:
         max-size: 100m
 
-  mongo-quest: # MongoDB container for the Questionnaire and Gamification Service
+  mongo-quest: # MongoDB container for the Questionnaire Service
     image: mongo:latest
     container_name: ocariot-mongo-quest
     restart: always
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ADMIN_USER}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ADMIN_PASS}
+      - MONGO_INITDB_ROOT_USERNAME=${DB_ADMIN_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_ADMIN_PASS}
       - MONGO_APPLICATION_DATABASE=quest
       - MONGO_APPLICATION_USER=${QUEST_DB_USER}
       - MONGO_APPLICATION_PASS=${QUEST_DB_PASS}
@@ -90,9 +90,9 @@ services:
     command: ["mongod", "--config", "/etc/mongod.conf"]
     volumes:
       - mongo-quest-data:/data/db
-      - ${MONGO_PEM_KEY_PATH}:/etc/ssl/mongodb.pem
-      - ./config/mongodb/mongod.conf:/etc/mongod.conf
-      - ./config/mongodb/mongodb-entrypoint.sh:/docker-entrypoint-initdb.d/mongodb-entrypoint.sh
+      - ${MONGO_PEM_KEY_PATH}:/etc/ssl/mongodb.pem:ro
+      - ./config/mongodb/mongod.conf:/etc/mongod.conf:ro
+      - ./config/mongodb/mongodb-entrypoint.sh:/docker-entrypoint-initdb.d/mongodb-entrypoint.sh:ro
     networks:
       - ocariot-network
     logging:
@@ -100,14 +100,109 @@ services:
       options:
         max-size: 100m
 
-  redis-api-gateway: # Container for the Redis Database
+  mongo-gamification: # MongoDB container for the Gamification Service
+    image: mongo:latest
+    container_name: ocariot-mongo-gamification
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${DB_ADMIN_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_ADMIN_PASS}
+      - MONGO_APPLICATION_DATABASE=gamification
+      - MONGO_APPLICATION_USER=${GAMIFICATION_DB_USER}
+      - MONGO_APPLICATION_PASS=${GAMIFICATION_DB_PASS}
+    ports:
+      - 27022:27017
+    command: ["mongod", "--config", "/etc/mongod.conf"]
+    volumes:
+      - mongo-gamification-data:/data/db
+      - ${MONGO_PEM_KEY_PATH}:/etc/ssl/mongodb.pem:ro
+      - ./config/mongodb/mongod.conf:/etc/mongod.conf:ro
+      - ./config/mongodb/mongodb-entrypoint.sh:/docker-entrypoint-initdb.d/mongodb-entrypoint.sh:ro
+    networks:
+      - ocariot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  mongo-food: # MongoDB container for the Food Service
+    image: mongo:latest
+    container_name: ocariot-mongo-food
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${DB_ADMIN_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_ADMIN_PASS}
+      - MONGO_APPLICATION_DATABASE=food
+      - MONGO_APPLICATION_USER=${FOOD_DB_USER}
+      - MONGO_APPLICATION_PASS=${FOOD_DB_PASS}
+    ports:
+      - 27023:27017
+    command: ["mongod", "--config", "/etc/mongod.conf"]
+    volumes:
+      - mongo-food-data:/data/db
+      - ${MONGO_PEM_KEY_PATH}:/etc/ssl/mongodb.pem:ro
+      - ./config/mongodb/mongod.conf:/etc/mongod.conf:ro
+      - ./config/mongodb/mongodb-entrypoint.sh:/docker-entrypoint-initdb.d/mongodb-entrypoint.sh:ro
+    networks:
+      - ocariot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  mongo-notification: # MongoDB container for the Notification Service
+    image: mongo:latest
+    container_name: ocariot-mongo-notification
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${DB_ADMIN_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_ADMIN_PASS}
+      - MONGO_APPLICATION_DATABASE=notification
+      - MONGO_APPLICATION_USER=${NOTIFICATION_DB_USER}
+      - MONGO_APPLICATION_PASS=${NOTIFICATION_DB_PASS}
+    ports:
+      - 27024:27017
+    command: ["mongod", "--config", "/etc/mongod.conf"]
+    volumes:
+      - mongo-notification-data:/data/db
+      - ${MONGO_PEM_KEY_PATH}:/etc/ssl/mongodb.pem:ro
+      - ./config/mongodb/mongod.conf:/etc/mongod.conf:ro
+      - ./config/mongodb/mongodb-entrypoint.sh:/docker-entrypoint-initdb.d/mongodb-entrypoint.sh:ro
+    networks:
+      - ocariot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  mysql-missions: # MySQL container for the Missions Service
+    image: mysql:5.7
+    container_name: ocariot-mysql-missions
+    restart: always
+    environment:
+      - MYSQL_DATABASE=missions
+      - MYSQL_USER=${MISSIONS_DB_USER}
+      - MYSQL_PASSWORD=${MISSIONS_DB_PASS}
+      - MYSQL_ROOT_PASSWORD=${DB_ADMIN_PASS}
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql-missions-data:/var/lib/mysql
+    networks:
+      - ocariot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  redis-api-gateway: # Redis container for the Api Gateway
     image: redis:latest
     container_name: ocariot-redis-api-gateway
     restart: always
     command: ["redis-server", "/etc/redis.conf"]
     volumes:
-      - redis-api-gateway-data:/redis-master-data
-      - ./config/redisdb/redis.conf:/etc/redis.conf
+      - redis-api-gateway-data:/data
+      - ./config/redisdb/redis.conf:/etc/redis.conf:ro
     networks:
       - ocariot-network
     logging:
@@ -116,19 +211,19 @@ services:
         max-size: 100m
 
   redis-ds-agent: # Redis container for the Data Sync Agent
-      image: redis:latest
-      container_name: ocariot-redis-ds-agent
-      restart: always
-      command: ["redis-server", "/etc/redis.conf"]
-      volumes:
-        - redis-ds-agent-data:/data
-        - ./config/redisdb/redis.conf:/etc/redis.conf:ro
-      networks:
-        - ocariot-network
-      logging:
-        driver: json-file
-        options:
-          max-size: 100m        
+    image: redis:latest
+    container_name: ocariot-redis-ds-agent
+    restart: always
+    command: ["redis-server", "/etc/redis.conf"]
+    volumes:
+      - redis-ds-agent-data:/data
+      - ./config/redisdb/redis.conf:/etc/redis.conf:ro
+    networks:
+      - ocariot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
 
   api-gateway: # Container for OCARIoT API Gateway
     image: ocariot/api-gateway
@@ -143,23 +238,31 @@ services:
       - PORT_HTTPS=${AG_PORT_HTTPS}
       - SSL_KEY_PATH=/etc/.certs/server.key
       - SSL_CERT_PATH=/etc/.certs/server.cert
-      - JWT_PUBLIC_KEY_PATH=/etc/.certs/jwt.pub
+      - JWT_PUBLIC_KEY_PATH=/etc/.certs/jwt.key.pub
       - ISSUER=ocariot
+      - API_GATEWAY_HOSTNAME=localhost
+      - VAULT_HOSTNAME=vault.localhost
+      - RABBIT_MGT_HOSTNAME=rabbit.localhost
+      - MONITOR_HOSTNAME=monitor.localhost
       - API_GATEWAY_SERVICE=https://api-gateway:${AG_PORT_HTTPS}
       - ACCOUNT_SERVICE=https://account:3001
       - IOT_TRACKING_SERVICE=https://iot-tracking:4001
       - DS_AGENT_SERVICE=https://ds-agent:5001
       - QUESTIONNAIRE_SERVICE=https://quest:6001
       - GAMIFICATION_SERVICE=https://gamification:7001
-      - MISSION_SERVICE=https://gamification:7001
-      - FOOD_SERVICE=https://food:8001
+      - MISSIONS_SERVICE=https://missions:8001
+      - FOOD_SERVICE=https://food:9001
+      - NOTIFICATION_SERVICE=https://notification:10001
+      - VAULT_SERVICE=https://vault:8200
+      - RABBIT_MGT_SERVICE=http://rabbitmq:15672
+      - MONITOR_SERVICE=https://monitor:3200
       - EMULATE_REDIS=false
       - PORT_REDIS=6379
       - HOST_REDIS=redis-api-gateway
     volumes:
-      - ${SSL_KEY_PATH}:/etc/.certs/server.key
-      - ${SSL_CERT_PATH}:/etc/.certs/server.cert
-      - ${JWT_PUBLIC_KEY_PATH}:/etc/.certs/jwt.pub
+      - ${SSL_KEY_PATH}:/etc/.certs/server.key:ro
+      - ${SSL_CERT_PATH}:/etc/.certs/server.cert:ro
+      - ${JWT_PUBLIC_KEY_PATH}:/etc/.certs/jwt.key.pub:ro
     depends_on:
       - redis-api-gateway
     networks:
@@ -188,10 +291,10 @@ services:
       - MONGODB_URI=mongodb://${ACCOUNT_DB_USER}:${ACCOUNT_DB_PASS}@mongo-account:27017/account?ssl=true
       - RABBITMQ_URI=${ACCOUNT_RABBITMQ_URI}
     volumes:
-      - ${SSL_KEY_PATH}:/etc/.certs/server.key
-      - ${SSL_CERT_PATH}:/etc/.certs/server.cert
-      - ${JWT_PRIVATE_KEY_PATH}:/etc/.certs/jwt.key
-      - ${JWT_PUBLIC_KEY_PATH}:/etc/.certs/jwt.pub
+      - ${SSL_KEY_PATH}:/etc/.certs/server.key:ro
+      - ${SSL_CERT_PATH}:/etc/.certs/server.cert:ro
+      - ${JWT_PRIVATE_KEY_PATH}:/etc/.certs/jwt.key:ro
+      - ${JWT_PUBLIC_KEY_PATH}:/etc/.certs/jwt.pub:ro
     depends_on:
       - mongo-account
       - rabbitmq
@@ -202,7 +305,7 @@ services:
       options:
         max-size: 100m
 
-  iot-tracking: # Container for OCARIoT Activity Tracking service
+  iot-tracking: # Container for OCARIoT IoT Tracking service
     image: ocariot/iot-tracking
     container_name: ocariot-iot-tracking
     restart: always
@@ -212,13 +315,13 @@ services:
       - PORT_HTTPS=4001
       - SSL_KEY_PATH=/etc/.certs/server.key
       - SSL_CERT_PATH=/etc/.certs/server.cert
-      - MONGODB_URI=mongodb://${AT_DB_USER}:${AT_DB_PASS}@mongo-activity-tracking:27017/activity-tracking?ssl=true
-      - RABBITMQ_URI=${AT_RABBITMQ_URI}
+      - MONGODB_URI=mongodb://${IOT_DB_USER}:${IOT_DB_PASS}@mongo-iot-tracking:27017/iot-tracking?ssl=true
+      - RABBITMQ_URI=${IOT_RABBITMQ_URI}
     volumes:
-      - ${SSL_KEY_PATH}:/etc/.certs/server.key
-      - ${SSL_CERT_PATH}:/etc/.certs/server.cert
+      - ${SSL_KEY_PATH}:/etc/.certs/server.key:ro
+      - ${SSL_CERT_PATH}:/etc/.certs/server.cert:ro
     depends_on:
-      - mongo-activity-tracking
+      - mongo-iot-tracking
       - rabbitmq
     networks:
       - ocariot-network
@@ -241,13 +344,14 @@ services:
       - FITBIT_CLIENT_SECRET=${FITBIT_CLIENT_SECRET}
       - EXPRESSION_AUTO_SYNC=${EXPRESSION_AUTO_SYNC}
       - MONGODB_URI=mongodb://${DS_DB_USER}:${DS_DB_PASS}@mongo-ds-agent:27017/ds-agent?ssl=true
-      - RABBITMQ_URI=${DS_RABBITMQ_URI}
       - REDIS_URI=redis://redis-ds-agent:6379
+      - RABBITMQ_URI=${DS_RABBITMQ_URI}
     volumes:
-      - ${SSL_KEY_PATH}:/etc/.certs/server.key
-      - ${SSL_CERT_PATH}:/etc/.certs/server.cert
+      - ${SSL_KEY_PATH}:/etc/.certs/server.key:ro
+      - ${SSL_CERT_PATH}:/etc/.certs/server.cert:ro
     depends_on:
       - mongo-ds-agent
+      - redis-ds-agent
       - rabbitmq
     networks:
       - ocariot-network
@@ -256,7 +360,7 @@ services:
       options:
         max-size: 100m
 
-  quest: # Container for OCARIoT Questionnaire and Gamification service
+  quest: # Container for OCARIoT Questionnaire service
     image: ocariot/quest
     container_name: ocariot-quest
     restart: always
@@ -268,10 +372,120 @@ services:
       - MONGODB_URI=mongodb://${QUEST_DB_USER}:${QUEST_DB_PASS}@mongo-quest:27017/quest?ssl=true
       - RABBITMQ_URI=${QUEST_RABBITMQ_URI}
     volumes:
-      - ${SSL_KEY_PATH}:/etc/.certs/server.key
-      - ${SSL_CERT_PATH}:/etc/.certs/server.cert
+      - ${SSL_KEY_PATH}:/etc/.certs/server.key:ro
+      - ${SSL_CERT_PATH}:/etc/.certs/server.cert:ro
     depends_on:
       - mongo-quest
+      - rabbitmq
+    networks:
+      - ocariot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  gamification: # Container for OCARIoT Gamification service
+    image: ocariot/gamification
+    container_name: ocariot-gamification
+    restart: always
+    environment:
+      - PROTOCOL=https
+      - PORT=7001
+      - SSL_KEY_PATH=/etc/.certs/server.key
+      - SSL_CERT_PATH=/etc/.certs/server.cert
+      - MONGODB_URI=mongodb://${GAMIFICATION_DB_USER}:${GAMIFICATION_DB_PASS}@mongo-gamification:27017/gamification?ssl=true
+      - RABBITMQ_URI=${GAMIFICATION_RABBITMQ_URI}
+    volumes:
+      - ${SSL_KEY_PATH}:/etc/.certs/server.key:ro
+      - ${SSL_CERT_PATH}:/etc/.certs/server.cert:ro
+    depends_on:
+      - mongo-gamification
+      - rabbitmq
+    networks:
+      - ocariot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  food: # Container for OCARIoT Food service
+    image: ocariot/food
+    container_name: ocariot-food
+    restart: always
+    environment:
+      - PROTOCOL=https
+      - PORT=9001
+      - SSL_KEY_PATH=/etc/.certs/server.key
+      - SSL_CERT_PATH=/etc/.certs/server.cert
+      - MONGODB_URI=mongodb://${FOOD_DB_USER}:${FOOD_DB_PASS}@mongo-food:27017/food?ssl=true
+      - RABBITMQ_URI=${FOOD_RABBITMQ_URI}
+    volumes:
+      - ${SSL_KEY_PATH}:/etc/.certs/server.key:ro
+      - ${SSL_CERT_PATH}:/etc/.certs/server.cert:ro
+    depends_on:
+      - mongo-food
+      - rabbitmq
+    networks:
+      - ocariot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  missions: # Container for OCARIoT Missions service
+    image: ocariot/missions
+    container_name: ocariot-missions
+    restart: always
+    environment:
+      - NODE_ENV=development
+      - PORT=8000
+      - SSL_PORT=8001
+      - DATABASE_DIALECT=mysql
+      - DATABASE_HOST=mysql-missions
+      - DATABASE_NAME=missions
+      - DATABASE_PORT=3306
+      - DATABASE_USER_NAME=${MISSIONS_DB_USER}
+      - DATABASE_USER_PASSWORD=${MISSIONS_DB_PASS}
+      - RABBITMQ_URI=${MISSIONS_RABBITMQ_URI}
+      - DATABASE_SSL=false
+      - SSL_KEY_PATH=/etc/.certs/server.key
+      - SSL_CERT_PATH=/etc/.certs/server.cert
+      - UPLOAD_VOLUME=/files/
+    volumes:
+      - ${SSL_KEY_PATH}:/etc/.certs/server.key:ro
+      - ${SSL_CERT_PATH}:/etc/.certs/server.cert:ro
+    depends_on:
+      - mysql-missions
+      - rabbitmq
+    networks:
+      - ocariot-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+  notification: # Container for OCARIoT Notification service
+    image: ocariot/notification
+    container_name: ocariot-notification
+    restart: always
+    environment:
+      - PORT_HTTPS=10001
+      - MONGODB_URI=mongodb://${NOTIFICATION_DB_USER}:${NOTIFICATION_DB_PASS}@mongo-notification:27017/notification?ssl=true
+      - MONGO_NOTIFICATION_DATABASE=notification
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
+      - RABBITMQ_USERNAME=${NOTIFICATION_RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${NOTIFICATION_RABBITMQ_PASS}
+      - RABBITMQ_VHOST=ocariot
+      - RABBITMQ_SSL=false #enable or disable ssl connection to rabbitmq
+      - KEYSTORE_PASS=${KEYSTORE_PASS}
+      - GOOGLE_APPLICATION_CREDENTIALS=/etc/keys/firebase_keyfile.json
+    volumes:
+      - ${SSL_KEY_PATH}:/etc/.certs/server.key:ro
+      - ${SSL_CERT_PATH}:/etc/.certs/server.cert:ro
+      - ${FIREBASE_KEYFILE_PATH}:/etc/keys/firebase_keyfile.json:ro
+    depends_on:
+      - mongo-notification
       - rabbitmq
     networks:
       - ocariot-network
@@ -288,8 +502,8 @@ services:
       - ${RABBITMQ_MGMT_PORT:-15672}:15672  # AMQP Management UI
       - ${RABBITMQ_PORT:-5672}:5672  # AMQP Service
     volumes:
-      - ./config/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
-      - ./config/rabbitmq/rabbit_config.json:/etc/rabbitmq/rabbit_config.json
+      - ./config/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+      - ./config/rabbitmq/rabbit_config.json:/etc/rabbitmq/rabbit_config.json:ro
     environment:
       - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbitmq_management load_definitions "/etc/rabbitmq/rabbit_config.json"
     networks:
@@ -302,12 +516,20 @@ services:
 volumes:
   mongo-account-data:
     name: ocariot-mongo-account
-  mongo-activity-tracking-data:
-    name: ocariot-mongo-activity-tracking
-  mongo-quest-data:
-    name: ocariot-mongo-quest
+  mongo-iot-tracking-data:
+    name: ocariot-mongo-iot-tracking
   mongo-ds-agent-data:
     name: ocariot-mongo-ds-agent
+  mongo-quest-data:
+    name: ocariot-mongo-quest
+  mongo-gamification-data:
+    name: ocariot-mongo-gamification
+  mongo-food-data:
+    name: ocariot-mongo-food
+  mongo-notification-data:
+    name: ocariot-mongo-notification
+  mysql-missions-data:
+    name: ocariot-mysql-missions
   redis-api-gateway-data:
     name: ocariot-redis-api-gateway
   redis-ds-agent-data:
