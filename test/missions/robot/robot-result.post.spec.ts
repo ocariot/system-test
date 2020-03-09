@@ -19,6 +19,8 @@ import { RobotResultMock } from '../../mocks/missions-service/robotResult.mock'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import * as HttpStatus from 'http-status-codes'
 import { InstitutionMock } from '../../mocks/account-service/institution.mock'
+import { ChildrenGroup } from '../../../src/account-service/model/children.group'
+import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
 
 describe('Routes: Robot', () => {
 
@@ -42,6 +44,8 @@ describe('Routes: Robot', () => {
 
     const defaultRobotResult: RobotResultMock = new RobotResultMock()
 
+    const defaultChildrenGroup: ChildrenGroup = new ChildrenGroupMock()
+
     before(async () => {
         try {
             await accountDB.connect()
@@ -63,6 +67,7 @@ describe('Routes: Robot', () => {
             const resultDefaultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
             defaultChild.id = resultDefaultChild.id
             defaultFamily.children = new Array<Child>(resultDefaultChild)
+            defaultChildrenGroup.children = new Array<Child>(resultDefaultChild)
             defaultRobotResult.userId = defaultChild.id
 
             const resultDefaultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
@@ -97,6 +102,9 @@ describe('Routes: Robot', () => {
             if (defaultHealthProfessional.username && defaultHealthProfessional.password) {
                 accessDefaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
             }
+
+            // Associating defaultChildrenGroup with educator
+            await acc.saveChildrenGroupsForEducator(accessDefaultEducatorToken, defaultEducator, defaultChildrenGroup)
 
         } catch (err) {
             console.log('Failure on Before from robot-result.post test: ', err.message)
