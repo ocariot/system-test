@@ -10,9 +10,9 @@ export class FoodRecognitionMock {
 
     private generateFoodRecognition() {
         this.childId = this.generateObjectId()
-        this.outcome = 'result robo'
+        this.outcome = 'result obtained'
         this.imagePath = 'home/usr/public/1de40af0-3d25-11ea-b6d4-27aada5a6b2c.JPG'
-        this.date = new Date('2019-11-07T19:40:45.124Z')
+        this.date = new Date(1560826800000 + Math.floor((Math.random() * 100000)))
     }
 
     private generateObjectId(): string {
