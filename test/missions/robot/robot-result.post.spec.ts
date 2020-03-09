@@ -15,7 +15,7 @@ import { Family } from '../../../src/account-service/model/family'
 import { FamilyMock } from '../../mocks/account-service/family.mock'
 import { Application } from '../../../src/account-service/model/application'
 import { ApplicationMock } from '../../mocks/account-service/application.mock'
-import { FoodRecognitionMock } from '../../mocks/missions-service/foodRecognitionMock'
+import { RobotResultMock } from '../../mocks/missions-service/robotResult.mock'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import * as HttpStatus from 'http-status-codes'
 import { InstitutionMock } from '../../mocks/account-service/institution.mock'
@@ -40,7 +40,7 @@ describe('Routes: Robot', () => {
     const defaultFamily: Family = new FamilyMock()
     const defaultApplication: Application = new ApplicationMock()
 
-    const defaultFoodRecognition: FoodRecognitionMock = new FoodRecognitionMock()
+    const defaultRobotResult: RobotResultMock = new RobotResultMock()
 
     before(async () => {
         try {
@@ -63,7 +63,7 @@ describe('Routes: Robot', () => {
             const resultDefaultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
             defaultChild.id = resultDefaultChild.id
             defaultFamily.children = new Array<Child>(resultDefaultChild)
-            defaultFoodRecognition.childId = defaultChild.id
+            defaultRobotResult.userId = defaultChild.id
 
             const resultDefaultEducator = await acc.saveEducator(accessTokenAdmin, defaultEducator)
             defaultEducator.id = resultDefaultEducator.id
@@ -99,7 +99,7 @@ describe('Routes: Robot', () => {
             }
 
         } catch (err) {
-            console.log('Failure on Before from robot-result.food-recognition.post test: ', err.message)
+            console.log('Failure on Before from robot-result.post test: ', err.message)
         }
     })
     after(async () => {
@@ -115,41 +115,41 @@ describe('Routes: Robot', () => {
         }
     })
 
-    describe('POST /robot-result/food-recognition', () => {
+    describe('POST /robot-result', () => {
 
         // afterEach(async () => {
         //     try {
         //         await missionsDB.restoreDatabase()
         //     } catch (err) {
-        //         console.log('Failure in robot-result/food-recognition.post test: ', err.message)
+        //         console.log('Failure in robot-result.post test: ', err.message)
         //     }
         // })
 
-        context('when the user posting a Food-Recognition successfully', () => {
+        context('when the user posting a Robot-Result successfully', () => {
 
-            it('food-recognition.post001: should return status code 200 and the saved Food-Recognition by the educator user', async () => {
-
-                console.log(defaultFoodRecognition)
+            it('robot-result.post001: should return status code 200 and the saved Robot-Result by the educator user', async () => {
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .send(defaultFoodRecognition)
+                    .send(defaultRobotResult)
                     .then(res => {
                         expect(res.status).to.eql(HttpStatus.OK)
+                        expect(res.body.data).to.deep.eql(defaultRobotResult.fromJSON(defaultRobotResult))
                     })
             })
 
-            it('food-recognition.post002: should return status code 200 and the saved Food-Recognition by the application', async () => {
+            it('robot-result.post002: should return status code 200 and the saved Robot-Result by the application', async () => {
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(defaultFoodRecognition)
+                    .send(defaultRobotResult)
                     .then(res => {
                         expect(res.status).to.eql(HttpStatus.OK)
+                        expect(res.body.data).to.deep.eql(defaultRobotResult.fromJSON(defaultRobotResult))
                     })
             })
 
@@ -157,90 +157,103 @@ describe('Routes: Robot', () => {
 
         context('when a validation error occurs', () => {
 
-            let incorrectFoodRecognition: any
+            let incorrectRobotResult: any
 
             beforeEach(async () => {
                 try {
-                    incorrectFoodRecognition = new FoodRecognitionMock()
+                    incorrectRobotResult = new RobotResultMock()
                 } catch (err) {
-                    console.log('Failure on Before in robot-result.food-recognition.post test: ', err.message)
+                    console.log('Failure on Before in robot-result.post test: ', err.message)
                 }
             })
 
-            it('food-recognition.post003: should return an error, because childId is invalid', () => {
-                incorrectFoodRecognition.childId = '123'
+            it('robot-result.post003: should return an error, because userId is invalid', () => {
+                incorrectRobotResult.userId = '123'
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(incorrectFoodRecognition)
+                    .send(incorrectRobotResult)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('food-recognition.post004: should return an error, because child not exist', () => {
-                incorrectFoodRecognition.childId = '5a55be50de34500146d9c544'
+            it('robot-result.post004: should return an error, because user not exist', () => {
+                incorrectRobotResult.userId = '5a55be50de34500146d9c544'
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(incorrectFoodRecognition)
+                    .send(incorrectRobotResult)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
             // SOME FIELD HAS NULL VALUE
-            it('food-recognition.post005: should return an error, because date is null', () => {
-                incorrectFoodRecognition.date = null
+            it('robot-result.post005: should return an error, because date is null', () => {
+                incorrectRobotResult.date = null
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(incorrectFoodRecognition)
+                    .send(incorrectRobotResult)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('food-recognition.post006: should return an error, because childId is null', () => {
-                incorrectFoodRecognition.childId = null
+            it('robot-result.post006: should return an error, because userId is null', () => {
+                incorrectRobotResult.userId = null
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(incorrectFoodRecognition)
+                    .send(incorrectRobotResult)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('food-recognition.post007: should return an error, because outcome is null', () => {
-                incorrectFoodRecognition.outcome = null
+            it('robot-result.post007: should return an error, because userName is null', () => {
+                incorrectRobotResult.userName = null
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(incorrectFoodRecognition)
+                    .send(incorrectRobotResult)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('food-recognition.post008: should return an error, because imagePath is null', () => {
-                incorrectFoodRecognition.imagePath = null
+            it('robot-result.post008: should return an error, because favoriteSport is null', () => {
+                incorrectRobotResult.favoriteSport = null
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(incorrectFoodRecognition)
+                    .send(incorrectRobotResult)
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
+                    })
+            })
+
+            it('robot-result.post009: should return an error, because missions is null', () => {
+                incorrectRobotResult.missions = null
+
+                return request(URI)
+                    .post('/robot-result')
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
+                    .send(incorrectRobotResult)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
@@ -248,108 +261,121 @@ describe('Routes: Robot', () => {
             // SOME FIELD HAS NULL VALUE
 
             // SOME FIELD HAS INVALID (DIFFERENT TYPE)
-            it('food-recognition.post009: should return an error, because outcome is a number', () => {
-                incorrectFoodRecognition.outcome = 1
+            it('robot-result.post010: should return an error, because userName is a number', () => {
+                incorrectRobotResult.userName = 1
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(incorrectFoodRecognition)
+                    .send(incorrectRobotResult)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('food-recognition.post010: should return an error, because imagePath is a boolean', () => {
-                incorrectFoodRecognition.imagePath = false
+            it('robot-result.post011: should return an error, because favoriteSport is a boolean', () => {
+                incorrectRobotResult.favoriteSport = false
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(incorrectFoodRecognition)
+                    .send(incorrectRobotResult)
+                    .expect(err => {
+                        expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
+                    })
+            })
+
+            it('robot-result.post012: should return an error, because userLog.question is a boolean', () => {
+                incorrectRobotResult.userLog.question = true
+
+                return request(URI)
+                    .post('/robot-result')
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
+                    .send(incorrectRobotResult)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
             // SOME FIELD HAS INVALID ((DIFFERENT TYPE))
 
-            it('food-recognition.post011: should return an error, because date format is invalid', () => {
-                incorrectFoodRecognition.date = '2019/12/03T15:28:47.319Z'
+            it('robot-result.post013: should return an error, because date format is invalid', () => {
+                incorrectRobotResult.date = '2019/12/03T15:28:47.319Z'
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(incorrectFoodRecognition)
+                    .send(incorrectRobotResult)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('food-recognition.post012: should return an error, because month is invalid', () => {
-                incorrectFoodRecognition.date = '2019-13-01T19:40:45.124Z' // invalid month(13)
+            it('robot-result.post014: should return an error, because month is invalid', () => {
+                incorrectRobotResult.date = '2019-13-01T19:40:45.124Z' // invalid month(13)
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(incorrectFoodRecognition)
+                    .send(incorrectRobotResult)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
         })
 
-        context('when the user does not have permission for register Food-Recognition', () => {
+        context('when the user does not have permission for register Robot-Result', () => {
 
-            it('food-recognition.post013: should return status code 403 and info message from insufficient permissions for child user', () => {
+            it('robot-result.post015: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .send(defaultFoodRecognition)
+                    .send(defaultRobotResult)
                     .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('food-recognition.post014: should return status code 403 and info message from insufficient permissions for admin user', () => {
+            it('robot-result.post016: should return status code 403 and info message from insufficient permissions for admin user', () => {
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .send(defaultFoodRecognition)
+                    .send(defaultRobotResult)
                     .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('food-recognition.post015: should return status code 403 and info message from insufficient permissions for health professional user', () => {
+            it('robot-result.post017: should return status code 403 and info message from insufficient permissions for health professional user', () => {
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
-                    .send(defaultFoodRecognition)
+                    .send(defaultRobotResult)
                     .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('food-recognition.post016: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('robot-result.post018: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
-                    .send(defaultFoodRecognition)
+                    .send(defaultRobotResult)
                     .expect(HttpStatus.FORBIDDEN)
                     .expect(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
@@ -357,13 +383,13 @@ describe('Routes: Robot', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the educator', () => {
-                it('food-recognition.post017: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
+                it('robot-result.post019: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
 
                     return request(URI)
-                        .post('/robot-result/food-recognition')
+                        .post('/robot-result')
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
-                        .send(defaultFoodRecognition)
+                        .send(defaultRobotResult)
                         .expect(HttpStatus.FORBIDDEN)
                         .expect(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
@@ -373,75 +399,75 @@ describe('Routes: Robot', () => {
 
         }) // user does not have permission
 
-        context('when posting a new Food-Recognition for another user that not to be a child', () => {
+        context('when posting a new Robot-Result for another user that not to be a child', () => {
 
-            const foodRecognitionForOtherUser = defaultFoodRecognition
+            const robotResultForOtherUser = defaultRobotResult
 
-            it('food-recognition.post018: should return an error, when try create a Food-Recognition for admin', async () => {
+            it('robot-result.post020: should return an error, when try create a Robot-Result for admin', async () => {
 
-                foodRecognitionForOtherUser.childId = await acc.getAdminID()
+                robotResultForOtherUser.userId = await acc.getAdminID()
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(foodRecognitionForOtherUser)
+                    .send(robotResultForOtherUser)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('food-recognition.post019: should return an error, when try create a Food-Recognition for educator', () => {
+            it('robot-result.post021: should return an error, when try create a Robot-Result for educator', () => {
 
-                foodRecognitionForOtherUser.childId = defaultEducator.id
+                robotResultForOtherUser.userId = defaultEducator.id
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(foodRecognitionForOtherUser)
+                    .send(robotResultForOtherUser)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('food-recognition.post020: should return an error, when try create a Food-Recognition for health professional', () => {
+            it('robot-result.post022: should return an error, when try create a Robot-Result for health professional', () => {
 
-                foodRecognitionForOtherUser.childId = defaultHealthProfessional.id
+                robotResultForOtherUser.userId = defaultHealthProfessional.id
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(foodRecognitionForOtherUser)
+                    .send(robotResultForOtherUser)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('food-recognition.post021: should return an error, when try create a Food-Recognition for family', () => {
+            it('robot-result.post023: should return an error, when try create a Robot-Result for family', () => {
 
-                foodRecognitionForOtherUser.childId = defaultFamily.id
+                robotResultForOtherUser.userId = defaultFamily.id
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(foodRecognitionForOtherUser)
+                    .send(robotResultForOtherUser)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('food-recognition.post022: should return an error, when try create a Food-Recognition for application', () => {
+            it('robot-result.post024: should return an error, when try create a Robot-Result for application', () => {
 
-                foodRecognitionForOtherUser.childId = defaultApplication.id
+                robotResultForOtherUser.userId = defaultApplication.id
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(foodRecognitionForOtherUser)
+                    .send(robotResultForOtherUser)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
@@ -450,13 +476,13 @@ describe('Routes: Robot', () => {
         }) // another user that not to be a child        
 
         describe('when not informed the acess token', () => {
-            it('food-recognition.post023: should return the status code 401 and the authentication failure informational message', () => {
+            it('robot-result.post025: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
-                    .send(defaultFoodRecognition)
+                    .send(defaultRobotResult)
                     .expect(HttpStatus.UNAUTHORIZED)
                     .expect(err => {
                         expect(err.body).to.eql(ApiGatewayException.AUTH.ERROR_401_UNAUTHORIZED)
@@ -465,16 +491,16 @@ describe('Routes: Robot', () => {
         })
 
         describe('when the child has been deleted', () => {
-            it('food-recognition.post024: should return an error, because child not exist', async () => {
+            it('robot-result.post026: should return an error, because child not exist', async () => {
 
-                defaultFoodRecognition.childId = defaultChild.id
+                defaultRobotResult.userId = defaultChild.id
                 await acc.deleteUser(accessTokenAdmin, defaultChild.id)
 
                 return request(URI)
-                    .post('/robot-result/food-recognition')
+                    .post('/robot-result')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .send(defaultFoodRecognition)
+                    .send(defaultRobotResult)
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
