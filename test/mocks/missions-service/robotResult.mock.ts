@@ -2,7 +2,7 @@ export class RobotResultMock {
     public userId?: string
     public userName?: string
     public favoriteSport?: string
-    public date?: Date
+    public date?: string
     public missions?: Array<any>
     public userLog?: Array<any>
 
@@ -14,9 +14,17 @@ export class RobotResultMock {
         this.userId = this.generateObjectId()
         this.userName = 'username'
         this.favoriteSport = 'basketball'
-        this.date = new Date(1560826800000 + Math.floor((Math.random() * 100000)))
+        this.date = this.generateDate()
         this.missions = this.generateMissions()
         this.userLog = this.generateUserLog()
+    }
+
+    private generateDate(): string {
+        const dateStart = new Date(2018, 4, 15)
+        const dateEnd = new Date()
+        const randomDateMilliseconds = dateEnd.getTime() + Math.floor(Math.random() * (dateEnd.getTime() - dateStart.getTime()))
+
+        return new Date(randomDateMilliseconds).toISOString()
     }
 
     private generateMissions(): Array<any> {
@@ -53,11 +61,15 @@ export class RobotResultMock {
             userId: robotResultMock.userId,
             userName: robotResultMock.userName,
             favoriteSport: robotResultMock.favoriteSport,
-            date: robotResultMock.date?.toISOString(),
+            date: robotResultMock.date,
             missions: robotResultMock.missions,
             userLog: robotResultMock.userLog
         }
 
         return JSON
+    }
+
+    public getDateFormattedAccordingToMissionsService(date: string): string {
+        return `${date.substring(0, 4)}-${date.substring(5, 7)}-${date.substring(8, 10)} ${date.substring(11, 13)}:${date.substring(14, 16)}`
     }
 }
