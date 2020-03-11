@@ -22,7 +22,7 @@ import { ChildrenGroup } from '../../../src/account-service/model/children.group
 
 describe('Routes: children.bodyfats', () => {
 
-    const URI: string = process.env.AG_URL || 'https://localhost:8081'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
     let accessTokenAnotherEducator: string
     let accessTokenAnotherFamily: string

@@ -14,7 +14,7 @@
 //
 // describe('Routes: children.physicalactivities', () => {
 //
-//     const URI: string = process.env.AG_URL || 'https://localhost:8081'
+//     const URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 //
 //     let accessTokenAdmin: string
 //     let accessTokenEducator: string

@@ -21,7 +21,7 @@ import { HealthProfessionalMock } from '../../mocks/account-service/healthprofes
 
 describe('Routes: children.bodyfats', () => {
 
-    const URI: string = process.env.AG_URL || 'https://localhost:8081'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
     let accessTokenAdmin: string
     let accessTokenEducator: string
     let accessTokenFamily: string

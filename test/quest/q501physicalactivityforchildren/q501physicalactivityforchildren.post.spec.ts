@@ -23,7 +23,7 @@ import * as HttpStatus from 'http-status-codes'
 
 describe('Routes: Q501PhysicalActivityForChildren', () => {
 
-    const URI: string = process.env.AG_URL || 'https://localhost:8081'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
     let accessTokenAdmin: string
     let accessTokenAnotherChild: string

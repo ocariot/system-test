@@ -20,7 +20,7 @@ import * as HttpStatus from 'http-status-codes'
 
 describe('Routes: Q21ChildsHealthConditions', () => {
 
-    const URI: string = process.env.AG_URL || 'https://localhost:8081'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
     let accessTokenAnotherFamily: string
 

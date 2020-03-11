@@ -10,7 +10,7 @@ import { ChildrenGroup } from '../../../src/account-service/model/children.group
 
 describe('Routes: educators.children.groups', () => {
 
-    const URI: string = process.env.AG_URL || 'https://localhost:8081'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
     let defaultEducatorToken: string
     let anotherEducatorToken: string

@@ -10,7 +10,7 @@ import { HealthProfessional } from '../../../src/account-service/model/health.pr
 
 describe('Routes: healthprofessionals.children.groups', () => {
 
-    const URI: string = process.env.AG_URL || 'https://localhost:8081'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
     let defaultHealthProfessionalToken: string
     let anotherHealthProfessionalToken: string

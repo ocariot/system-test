@@ -22,7 +22,7 @@ import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mo
 
 describe('Routes: Q1Sociodemographic', () => {
 
-    const URI: string = process.env.AG_URL || 'https://localhost:8081'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
     let accessTokenAnotherFamily: string
 
