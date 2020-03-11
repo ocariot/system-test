@@ -7,6 +7,7 @@ import { Educator } from '../../../src/account-service/model/educator'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Child } from '../../../src/account-service/model/child'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: educators.children.groups', () => {
 
@@ -32,17 +33,8 @@ describe('Routes: educators.children.groups', () => {
     defaultEducator.username = 'Default educator'
     defaultEducator.password = 'default pass'
 
-    const defaultChild: Child = new Child()
-    defaultChild.username = 'Default child'
-    defaultChild.password = 'default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
-
-    const anotherChild: Child = new Child()
-    anotherChild.username = 'another child'
-    anotherChild.password = 'another pass'
-    anotherChild.gender = 'female'
-    anotherChild.age = 8
+    const defaultChild: Child = new ChildMock()
+    const anotherChild: Child = new ChildMock()
 
     const defaultChildrenGroup: ChildrenGroup = new ChildrenGroup()
     defaultChildrenGroup.name = 'Default children group'
@@ -252,7 +244,7 @@ describe('Routes: educators.children.groups', () => {
                 })
             })
         }) // get all children groups successfully
-        
+
         describe('when the educator not found', () => {
 
             it('educators.children.groups.get_all005: should return status code 200 and empty array, because the educator was not found', () => {
@@ -267,7 +259,7 @@ describe('Routes: educators.children.groups', () => {
                         expect(res.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_EDUCATOR_NOT_FOUND)
                     })
             })
-        })    
+        })
 
         describe('when the educator_id is invalid', () => {
             it('educators.children.groups.get_all006: should return status code 400 and message info about invalid id', () => {

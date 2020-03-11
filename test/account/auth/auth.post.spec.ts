@@ -9,6 +9,7 @@ import { HealthProfessional } from '../../../src/account-service/model/health.pr
 import { Family } from '../../../src/account-service/model/family'
 import { Application } from '../../../src/account-service/model/application'
 import { accountDB } from '../../../src/account-service/database/account.db'
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: Auth', () => {
 
@@ -23,11 +24,7 @@ describe('Routes: Auth', () => {
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
 
-    const defaultChild: Child = new Child()
-    defaultChild.username = 'default child'
-    defaultChild.password = 'default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
+    const defaultChild: Child = new ChildMock()
 
     const defaultEducator: Educator = new Educator()
     defaultEducator.username = 'default educator'

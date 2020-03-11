@@ -7,6 +7,7 @@ import { Educator } from '../../../src/account-service/model/educator'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Child } from '../../../src/account-service/model/child'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: educators.children.groups', () => {
 
@@ -32,17 +33,7 @@ describe('Routes: educators.children.groups', () => {
     defaultEducator.username = 'Default educator'
     defaultEducator.password = 'default pass'
 
-    const defaultChild: Child = new Child()
-    defaultChild.username = 'Default child'
-    defaultChild.password = 'default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
-
-    const anotherChild: Child = new Child()
-    anotherChild.username = 'another child'
-    anotherChild.password = 'another pass'
-    anotherChild.gender = 'female'
-    anotherChild.age = 8
+    const defaultChild: Child = new ChildMock()
 
     const defaultChildrenGroup: ChildrenGroup = new ChildrenGroup()
     defaultChildrenGroup.name = 'Default children group'

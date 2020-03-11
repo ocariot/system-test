@@ -6,6 +6,7 @@ import { accountDB } from '../../../src/account-service/database/account.db'
 import { Child } from '../../../src/account-service/model/child'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { before } from 'mocha'
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: children', () => {
 
@@ -25,11 +26,7 @@ describe('Routes: children', () => {
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
 
-    const defaultChild: Child = new Child()
-    defaultChild.username = 'Default child'
-    defaultChild.password = 'Default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
+    const defaultChild: Child = new ChildMock()
 
     let defaultChildToken: string
 

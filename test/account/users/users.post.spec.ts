@@ -32,11 +32,7 @@ describe('Routes: users', () => {
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
 
-    const defaultChild: Child = new Child()
-    defaultChild.username = 'default child'
-    defaultChild.password = 'default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
+    const defaultChild: Child = new ChildMock()
 
     const defaultEducator: Educator = new Educator()
     defaultEducator.username = 'default educator'
@@ -55,7 +51,7 @@ describe('Routes: users', () => {
     defaultApplication.password = 'default pass'
     defaultApplication.application_name = 'default application name'
 
-    before(async () =>  {
+    before(async () => {
         try {
             await accountDB.connect()
             await accountDB.removeCollections()
@@ -127,7 +123,7 @@ describe('Routes: users', () => {
 
                 return request(URI)
                     .post(`/users/${ADMIN_ID}/reset-password`)
-                    .send({ new_password:  'admin123' })
+                    .send({ new_password: 'admin123' })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -140,7 +136,7 @@ describe('Routes: users', () => {
 
                 return request(URI)
                     .post(`/users/${defaultChild.id}/reset-password`)
-                    .send({ new_password:  newPassword })
+                    .send({ new_password: newPassword })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -153,7 +149,7 @@ describe('Routes: users', () => {
 
                 return request(URI)
                     .post(`/users/${defaultEducator.id}/reset-password`)
-                    .send({ new_password:  newPassword })
+                    .send({ new_password: newPassword })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -166,7 +162,7 @@ describe('Routes: users', () => {
 
                 return request(URI)
                     .post(`/users/${defaultHealthProfessional.id}/reset-password`)
-                    .send({ new_password:  newPassword })
+                    .send({ new_password: newPassword })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -179,7 +175,7 @@ describe('Routes: users', () => {
 
                 return request(URI)
                     .post(`/users/${defaultFamily.id}/reset-password`)
-                    .send({ new_password:  newPassword })
+                    .send({ new_password: newPassword })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(204)
@@ -192,7 +188,7 @@ describe('Routes: users', () => {
 
                 return request(URI)
                     .post(`/users/${defaultApplication.id}/reset-password`)
-                    .send({ new_password:  newPassword })
+                    .send({ new_password: newPassword })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(204)

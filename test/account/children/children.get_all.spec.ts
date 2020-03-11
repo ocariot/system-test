@@ -5,6 +5,7 @@ import { acc } from '../../utils/account.utils'
 import { accountDB } from '../../../src/account-service/database/account.db'
 import { Child } from '../../../src/account-service/model/child'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: children', () => {
 
@@ -26,17 +27,8 @@ describe('Routes: children', () => {
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
 
-    const defaultChild: Child = new Child()
-    defaultChild.username = 'Default child'
-    defaultChild.password = 'Default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
-
-    const anotherChild: Child = new Child()
-    anotherChild.username = 'another child'
-    anotherChild.password = 'another pass'
-    anotherChild.gender = 'female'
-    anotherChild.age = 8
+    const defaultChild: Child = new ChildMock()
+    const anotherChild: Child = new ChildMock()
 
     before(async () => {
         try {
@@ -220,7 +212,7 @@ describe('Routes: children', () => {
         }) // get all children in database successfull
 
         describe('When the child already first logged in to the system', () => {
-            
+
             before(async () => {
                 try {
                     await acc.auth(defaultChild.username!, defaultChild.password!)
@@ -238,13 +230,13 @@ describe('Routes: children', () => {
             })
 
             it('children.get_all007: should return status code 200 and a list of children and information when the child has already first logged in to the system for admin user', async () => {
-                
+
                 return request(URI)
-                .get('/children')
-                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                .set('Content-Type', 'application/json')
-                .expect(200)
-                .then(res => {
+                    .get('/children')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(200)
+                    .then(res => {
                         for (let i = 0; i < res.body.length; i++) {
                             expect(res.body[i].id).to.eql(childArr[i].id)
                             expect(res.body[i].username).to.eql(childArr[i].username)
@@ -252,10 +244,10 @@ describe('Routes: children', () => {
                             expect(res.body[i].age).to.eql(childArr[i].age)
                             expect(res.body[i].institution_id).to.eql(defaultInstitution.id)
                             if (childArr[i].last_login)
-                            expect(res.body[i].last_login).to.eql(childArr[i].last_login)
+                                expect(res.body[i].last_login).to.eql(childArr[i].last_login)
                         }
                     })
-                })
+            })
         })
 
         describe('when the user does not have permission to get all children in database', () => {

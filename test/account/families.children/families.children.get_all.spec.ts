@@ -6,6 +6,7 @@ import { accountDB } from '../../../src/account-service/database/account.db'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Child } from '../../../src/account-service/model/child'
 import { Family } from '../../../src/account-service/model/family'
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: families.children', () => {
 
@@ -25,17 +26,8 @@ describe('Routes: families.children', () => {
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
 
-    const defaultChild: Child = new Child
-    defaultChild.username = 'Default child'
-    defaultChild.password = 'default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
-
-    const anotherChild: Child = new Child()
-    anotherChild.username = 'another child'
-    anotherChild.password = 'another pass'
-    anotherChild.gender = 'female'
-    anotherChild.age = 14
+    const defaultChild: Child = new ChildMock()
+    const anotherChild: Child = new ChildMock()
 
     const defaultFamily: Family = new Family()
     defaultFamily.username = 'default family'
@@ -146,7 +138,7 @@ describe('Routes: families.children', () => {
             })
 
             it('families.children.get_all003: should return status code 200 and all children associated with the family in descending order by child username', () => {
-                
+
                 const sortField = 'username'
 
                 return request(URI)
@@ -237,39 +229,39 @@ describe('Routes: families.children', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the family
 
                 return request(URI)
-                .get(`/families/${NON_EXISTENT_ID}/children`)
-                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                .set('Content-Type', 'application/json')
-                .expect(404)
-                .then(err => {
-                    expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_404_FAMILY_NOT_FOUND)
-                })
+                    .get(`/families/${NON_EXISTENT_ID}/children`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(404)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_404_FAMILY_NOT_FOUND)
+                    })
             })
 
             it('families.children.get_all008: should return status code 400 and message info message from invalid parameter, because family does not exist', () => {
                 const INVALID_ID = '123' // invalid id of the family
 
                 return request(URI)
-                .get(`/families/${INVALID_ID}/children`)
-                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                .set('Content-Type', 'application/json')
-                .expect(400)
-                .then(err => {
-                    expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_FORMAT_ID)
-                })
+                    .get(`/families/${INVALID_ID}/children`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_FORMAT_ID)
+                    })
             })
 
             it('families.children.get_all009: should return status code 400 and message info message from invalid parameter, because family does not exist', () => {
                 const NULL_ID_FAMILY = null // invalid id of the family
 
                 return request(URI)
-                .get(`/families/${NULL_ID_FAMILY}/children`)
-                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                .set('Content-Type', 'application/json')
-                .expect(400)
-                .then(err => {
-                    expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_FORMAT_ID)
-                })
+                    .get(`/families/${NULL_ID_FAMILY}/children`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_FORMAT_ID)
+                    })
             })
 
         })

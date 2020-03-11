@@ -5,6 +5,7 @@ import { acc } from '../../utils/account.utils'
 import { accountDB } from '../../../src/account-service/database/account.db'
 import { Child } from '../../../src/account-service/model/child'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: children', () => {
 
@@ -24,11 +25,7 @@ describe('Routes: children', () => {
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
 
-    const defaultChild: Child = new Child()
-    defaultChild.username = 'Default child'
-    defaultChild.password = 'Default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
+    const defaultChild: Child = new ChildMock()
 
     before(async () => {
         try {
@@ -155,7 +152,7 @@ describe('Routes: children', () => {
                     })
             })
 
-            it('children.post005: should return status code 400 and message info about missing parameters, because institution was not provided', () =>     {
+            it('children.post005: should return status code 400 and message info about missing parameters, because institution was not provided', () => {
 
                 const body = {
                     username: defaultChild.username,

@@ -9,6 +9,7 @@ import { Educator } from '../../../src/account-service/model/educator'
 import { HealthProfessional } from '../../../src/account-service/model/health.professional'
 import { Family } from '../../../src/account-service/model/family'
 import { Application } from '../../../src/account-service/model/application'
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: users', () => {
 
@@ -34,11 +35,7 @@ describe('Routes: users', () => {
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
 
-    const defaultChild: Child = new Child()
-    defaultChild.username = 'default child'
-    defaultChild.password = 'default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
+    const defaultChild: Child = new ChildMock()
 
     const defaultEducator: Educator = new Educator()
     defaultEducator.username = 'default educator'

@@ -138,7 +138,7 @@ describe('Routes: Institution', () => {
                     child.password = 'child123'
                     child.institution = anotherInstitution
                     child.gender = 'male'
-                    child.age = 10
+                    child.age = '10'
 
                     await acc.saveChild(accessTokenAdmin, child)
 

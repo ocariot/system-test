@@ -6,6 +6,7 @@ import { accountDB } from '../../../src/account-service/database/account.db'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Child } from '../../../src/account-service/model/child'
 import { Family } from '../../../src/account-service/model/family'
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: families.children', () => {
 
@@ -25,17 +26,8 @@ describe('Routes: families.children', () => {
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
 
-    const defaultChild: Child = new Child
-    defaultChild.username = 'default child'
-    defaultChild.password = 'default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
-
-    const anotherChild: Child = new Child()
-    anotherChild.username = 'another child'
-    anotherChild.password = 'another pass'
-    anotherChild.gender = 'female'
-    anotherChild.age = 14
+    const defaultChild: Child = new ChildMock()
+    const anotherChild: Child = new ChildMock()
 
     const defaultFamily: Family = new Family()
     defaultFamily.username = 'default family'
@@ -135,7 +127,7 @@ describe('Routes: families.children', () => {
             before(async () => {
                 try {
                     defaultFamily.children = new Array<Child>(defaultChild)
-                    
+
                     await acc.associateChildWithFamily(accessTokenAdmin, defaultFamily.id, defaultChild.id)
                 } catch (err) {
                     console.log('Failure in families.children.post test: ', err)
@@ -159,7 +151,7 @@ describe('Routes: families.children', () => {
                         expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
                     })
             })
-        })        
+        })
 
         describe('when a validation error occurs', () => {
 

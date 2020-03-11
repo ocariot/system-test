@@ -4,7 +4,6 @@ import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Institution } from '../../../src/account-service/model/institution'
 import { accountDB } from '../../../src/account-service/database/account.db'
 import { acc } from '../../utils/account.utils'
-import { Child } from '../../../src/account-service/model/child'
 
 describe('Routes: Institution', () => {
 
@@ -29,15 +28,8 @@ describe('Routes: Institution', () => {
     anotherInstitution.name = "another name"
 
     const institutionWillBeUpdated: Institution = new Institution
-    institutionWillBeUpdated.type = 'not upated type',
-        institutionWillBeUpdated.name = 'not updated name'
-
-    const defaultChild: Child = new Child()
-    defaultChild.username = 'default username'
-    defaultChild.password = 'default password'
-    defaultChild.institution = new Institution()
-    defaultChild.gender = 'male'
-    defaultChild.age = 10
+    institutionWillBeUpdated.type = 'not upated type'
+    institutionWillBeUpdated.name = 'not updated name'
 
     before(async () => {
         try {
@@ -88,7 +80,7 @@ describe('Routes: Institution', () => {
                     .expect(201)
                     .then(res => {
                         expect(res.body).to.have.property('id')
-                        expect(res.body.type).to.eql(defaultInstitution.type)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+                        expect(res.body.type).to.eql(defaultInstitution.type)
                         expect(res.body.name).to.eql(defaultInstitution.name)
                         expect(res.body.address).to.eql(defaultInstitution.address)
                         expect(res.body.latitude).to.eql(defaultInstitution.latitude)

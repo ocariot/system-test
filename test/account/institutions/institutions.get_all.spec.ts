@@ -117,7 +117,7 @@ describe('Routes: Institution', () => {
             })
 
             it('institutions.get_all003: should return status code 200 and a list of institutions for health professional user', () => {
-    
+
                 return request(URI)
                     .get('/institutions')
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
@@ -142,7 +142,7 @@ describe('Routes: Institution', () => {
             })
 
             it('institutions.get_all004: should return status code 200 and a list of institutions for application user', () => {
-    
+
                 return request(URI)
                     .get('/institutions')
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
@@ -248,7 +248,7 @@ describe('Routes: Institution', () => {
             })
 
         }) // get all institutions in database
-        
+
         context('when want get all institutions in database after deleting all of them', () => {
 
             before(async () => {
@@ -258,7 +258,7 @@ describe('Routes: Institution', () => {
                     console.log('DB ERROR', err)
                 }
             })
-            
+
             it('institutions.get_all008: should return status code 200 and empty list ', () => {
 
                 return request(URI)
@@ -270,7 +270,7 @@ describe('Routes: Institution', () => {
                         expect(res.body.length).to.eql(0)
                     })
             })
-        })  
+        })
 
         context('when the user does not have permission to get all institution', () => {
 
@@ -285,7 +285,7 @@ describe('Routes: Institution', () => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
-            
+
             it('institutions.get_all010: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)

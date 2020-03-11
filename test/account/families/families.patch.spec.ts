@@ -6,6 +6,7 @@ import { accountDB } from '../../../src/account-service/database/account.db'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Child } from '../../../src/account-service/model/child'
 import { Family } from '../../../src/account-service/model/family'
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: families', () => {
 
@@ -29,17 +30,8 @@ describe('Routes: families', () => {
     anotherInstitution.type = 'another type'
     anotherInstitution.name = 'another institutions'
 
-    const defaultChild: Child = new Child
-    defaultChild.username = 'default child'
-    defaultChild.password = 'default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
-
-    const anotherChild: Child = new Child()
-    anotherChild.username = 'another child'
-    anotherChild.password = 'another pass'
-    anotherChild.gender = 'female'
-    anotherChild.age = 14
+    const defaultChild: Child = new ChildMock()
+    const anotherChild: Child = new ChildMock()
 
     const defaultFamily: Family = new Family()
     defaultFamily.username = 'Default family'
@@ -88,7 +80,7 @@ describe('Routes: families', () => {
             const resultDefaultFamily = await acc.saveFamily(accessTokenAdmin, defaultFamily)
             defaultFamily.id = resultDefaultFamily.id
 
-            if (defaultFamily.username && defaultFamily.password){
+            if (defaultFamily.username && defaultFamily.password) {
                 defaultFamilyToken = await acc.auth(defaultFamily.username, defaultFamily.password)
             }
 
@@ -252,43 +244,43 @@ describe('Routes: families', () => {
                 const NULL_USERNAME = null // invalid username of the family
 
                 return request(URI)
-                .patch(`/families/${defaultFamily.id}`)
-                .send({ username: NULL_USERNAME })
-                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                .set('Content-Type', 'application/json')
-                .expect(400)
-                .then(err => {
-                    expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_USERNAME)
-                })
+                    .patch(`/families/${defaultFamily.id}`)
+                    .send({ username: NULL_USERNAME })
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_USERNAME)
+                    })
             })
 
             it('families.patch009: should return status code 400 and message from invalid parameter, because children is null', () => {
                 const NULL_CHILDREN = null // invalid id of the children
 
                 return request(URI)
-                .patch(`/families/${defaultFamily.id}`)
-                .send({ children: NULL_CHILDREN })
-                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                .set('Content-Type', 'application/json')
-                .expect(400)
-                .then(err => {
-                    expect(err.body.message).to.eql('One or more request fields are invalid...')
-                    expect(err.body.description).to.eql(`The following IDs from children attribute are not in valid format: ${NULL_CHILDREN}`)
-                })
+                    .patch(`/families/${defaultFamily.id}`)
+                    .send({ children: NULL_CHILDREN })
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body.message).to.eql('One or more request fields are invalid...')
+                        expect(err.body.description).to.eql(`The following IDs from children attribute are not in valid format: ${NULL_CHILDREN}`)
+                    })
             })
 
             it('families.patch010: should return status code 400 and message from invalid parameter, because istitution is null', () => {
                 const NULL_INSTITUTION = null // invalid id of the institution
 
                 return request(URI)
-                .patch(`/families/${defaultFamily.id}`)
-                .send({ institution_id: NULL_INSTITUTION })
-                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                .set('Content-Type', 'application/json')
-                .expect(400)
-                .then(err => {
-                    expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_ID_IS_INVALID)
-                })
+                    .patch(`/families/${defaultFamily.id}`)
+                    .send({ institution_id: NULL_INSTITUTION })
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_ID_IS_INVALID)
+                    })
             })
         }) // validation error occurs
 

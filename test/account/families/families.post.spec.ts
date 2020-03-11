@@ -6,6 +6,7 @@ import { accountDB } from '../../../src/account-service/database/account.db'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Child } from '../../../src/account-service/model/child'
 import { Family } from '../../../src/account-service/model/family'
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: families', () => {
 
@@ -25,11 +26,7 @@ describe('Routes: families', () => {
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
 
-    const defaultChild: Child = new Child
-    defaultChild.username = 'default child'
-    defaultChild.password = 'default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
+    const defaultChild: Child = new ChildMock()
 
     const defaultFamily: Family = new Family()
     defaultFamily.username = 'default family'

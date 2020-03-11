@@ -7,6 +7,7 @@ import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Child } from '../../../src/account-service/model/child'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { HealthProfessional } from '../../../src/account-service/model/health.professional';
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: healthprofessionals.children.groups', () => {
 
@@ -32,17 +33,8 @@ describe('Routes: healthprofessionals.children.groups', () => {
     defaultHealthProfessional.username = 'Default healthprofessional'
     defaultHealthProfessional.password = 'default pass'
 
-    const defaultChild: Child = new Child()
-    defaultChild.username = 'Default child'
-    defaultChild.password = 'default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
-
-    const anotherChild: Child = new Child()
-    anotherChild.username = 'another child'
-    anotherChild.password = 'another pass'
-    anotherChild.gender = 'female'
-    anotherChild.age = 8
+    const defaultChild: Child = new ChildMock()
+    const anotherChild: Child = new ChildMock()
 
     let defaultChildrenGroup: ChildrenGroup = new ChildrenGroup()
     defaultChildrenGroup.name = 'Default children group'
@@ -137,8 +129,8 @@ describe('Routes: healthprofessionals.children.groups', () => {
             describe('after updating the data of the child that belong to the group', () => {
                 before(async () => {
                     try {
-                        anotherChild.age = 15
-                        await acc.updateChild(accessTokenAdmin, anotherChild, { age: 15 })
+                        anotherChild.age = '15'
+                        await acc.updateChild(accessTokenAdmin, anotherChild, { age: '15' })
                     } catch (err) {
                         console.log('Failure in healthprofessionals.children.groups.get_id test: ', err)
                     }

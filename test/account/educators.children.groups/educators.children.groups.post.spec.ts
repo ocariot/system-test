@@ -7,6 +7,7 @@ import { Educator } from '../../../src/account-service/model/educator'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Child } from '../../../src/account-service/model/child'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group';
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: educators.children.groups', () => {
 
@@ -37,17 +38,7 @@ describe('Routes: educators.children.groups', () => {
     anotherEducator.username = 'another educator'
     anotherEducator.password = 'default pass'
 
-    const defaultChild: Child = new Child()
-    defaultChild.username = 'Default child'
-    defaultChild.password = 'default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
-
-    const anotherChild: Child = new Child()
-    anotherChild.username = 'another child'
-    anotherChild.password = 'another pass'
-    anotherChild.gender = 'female'
-    anotherChild.age = 8
+    const defaultChild: Child = new ChildMock()
 
     const defaultChildrenGroup: ChildrenGroup = new ChildrenGroup()
     defaultChildrenGroup.name = 'Default children group'
@@ -289,7 +280,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it.only('educators.children.group.post008: should return status code 400 and info message from educator_id is invalid', () => {
+            it('educators.children.group.post008: should return status code 400 and info message from educator_id is invalid', () => {
                 const INVALID_ID = '123' // invalid id of the educator
 
                 const body = {

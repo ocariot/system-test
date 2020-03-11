@@ -193,7 +193,7 @@ describe('Routes: Institution', () => {
         }) // validation error occurs
 
         describe('when not informed the acess token', () => {
-            
+
             it('institutions.get_id009: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)

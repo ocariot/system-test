@@ -5,6 +5,7 @@ import { acc } from '../../utils/account.utils'
 import { accountDB } from '../../../src/account-service/database/account.db'
 import { Child } from '../../../src/account-service/model/child'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: children', () => {
 
@@ -33,17 +34,8 @@ describe('Routes: children', () => {
     anotherInstitution.latitude = -7.2100766
     anotherInstitution.longitude = -35.9175756
 
-    const defaultChild: Child = new Child()
-    defaultChild.username = 'Default child'
-    defaultChild.password = 'Default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
-
-    const anotherChild: Child = new Child()
-    anotherChild.username = 'another child'
-    anotherChild.password = 'another pass'
-    anotherChild.gender = 'female'
-    anotherChild.age = 8
+    const defaultChild: Child = new ChildMock()
+    const anotherChild: Child = new ChildMock()
 
     before(async () => {
         try {
@@ -97,7 +89,7 @@ describe('Routes: children', () => {
             it('children.patch001: should return status code 200 and updated username, institution, age and gender of the child', () => {
 
                 defaultChild.username = 'Default username updated'
-                defaultChild.age = 13
+                defaultChild.age = '13'
                 defaultChild.institution = anotherInstitution
                 defaultChild.gender = 'female'
 
@@ -198,7 +190,7 @@ describe('Routes: children', () => {
 
                 return request(URI)
                     .patch(`/children/${defaultChild.id}`)
-                    .send({ institution_id : INVALID_ID })
+                    .send({ institution_id: INVALID_ID })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
@@ -211,33 +203,33 @@ describe('Routes: children', () => {
                 const NULL_AGE = null // invalid age because value is null
 
                 return request(URI)
-                .patch(`/children/${defaultChild.id}`)
-                .send({ age: NULL_AGE })
-                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                .set('Content-Type', 'application/json')
-                .expect(400)
-                .then(err => {
-                    expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_AGE_IS_NOT_A_NUMBER)
-                })
+                    .patch(`/children/${defaultChild.id}`)
+                    .send({ age: NULL_AGE })
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_AGE_IS_NOT_A_NUMBER)
+                    })
             })
 
             it('children.patch008: should return status code 400 and info message from null username', () => {
                 const NULL_USERNAME = null // invalid username because value is null
 
                 return request(URI)
-                .patch(`/children/${defaultChild.id}`)
-                .send({ username: NULL_USERNAME })
-                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                .set('Content-Type', 'application/json')
-                .expect(400)
-                .then(err => {
-                    expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_USERNAME)
-                })
+                    .patch(`/children/${defaultChild.id}`)
+                    .send({ username: NULL_USERNAME })
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_USERNAME)
+                    })
             })
 
         }) // validation error occurs
 
-        describe('when child is not found or past id is invalid', () => {   
+        describe('when child is not found or past id is invalid', () => {
 
             it('children.patch009: should return status code 404 and info message from child not found', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // child id does not exist

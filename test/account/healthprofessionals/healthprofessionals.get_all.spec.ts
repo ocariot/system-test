@@ -7,6 +7,7 @@ import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Child } from '../../../src/account-service/model/child'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { HealthProfessional } from '../../../src/account-service/model/health.professional'
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: healthprofessionals', () => {
 
@@ -36,11 +37,7 @@ describe('Routes: healthprofessionals', () => {
     anotherHealthProfessional.username = 'another healthprofessional'
     anotherHealthProfessional.password = 'another pass'
 
-    const defaultChild: Child = new Child()
-    defaultChild.username = 'Default child'
-    defaultChild.password = 'Default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
+    const defaultChild: Child = new ChildMock()
 
     let defaultChildrenGroup: ChildrenGroup = new ChildrenGroup()
     defaultChildrenGroup.name = 'Default children group'
