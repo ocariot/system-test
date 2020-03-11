@@ -176,7 +176,7 @@ describe('Routes: QFoodtracking', () => {
                     .get(`/qfoodtrackings/${QFoodTracking1.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.deep.eql(questionnaire)
                     })
@@ -190,7 +190,7 @@ describe('Routes: QFoodtracking', () => {
                     .get(`/qfoodtrackings/${QFoodTracking2.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.deep.eql(questionnaire)
                     })
@@ -204,7 +204,7 @@ describe('Routes: QFoodtracking', () => {
                     .get(`/qfoodtrackings/${QFoodTracking2.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.deep.eql(questionnaire)
                     })
@@ -218,7 +218,7 @@ describe('Routes: QFoodtracking', () => {
                     .get(`/qfoodtrackings/${QFoodTracking3.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.deep.eql(questionnaire)
                     })
@@ -232,7 +232,7 @@ describe('Routes: QFoodtracking', () => {
                     .get(`/qfoodtrackings/${QFoodTracking3.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.deep.eql(questionnaire)
                     })
@@ -246,7 +246,7 @@ describe('Routes: QFoodtracking', () => {
                     .get(`/qfoodtrackings/${QFoodTracking1.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.deep.eql(questionnaire)
                     })
@@ -285,26 +285,26 @@ describe('Routes: QFoodtracking', () => {
 
         context('when the user does not have permission for get QFoodTracking of a specific child', () => {
 
-            it('qfoodtracking.get_id011: should return status code 403 and info message from insufficient permissions for another child', () => {
+            it('qfoodtracking.get_id009: should return status code 403 and info message from insufficient permissions for another child', () => {
 
                 return request(URI)
                     .get(`/qfoodtrackings/${QFoodTracking1.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessAnotherChildToken))
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
             describe('when the child does not belong to any of the groups associated with the health professional', () => {
-                it('qfoodtracking.get_id012: should return status code 403 and info message from insufficient permissions for health professional user who is not associated with the child', () => {
+                it('qfoodtracking.get_id010: should return status code 403 and info message from insufficient permissions for health professional user who is not associated with the child', () => {
 
                     return request(URI)
                         .get(`/qfoodtrackings/${QFoodTracking1.id}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherHealthProfessional))
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -312,13 +312,13 @@ describe('Routes: QFoodtracking', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the educator', () => {
-                it('qfoodtracking.get_id013: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
+                it('qfoodtracking.get_id011: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
 
                     return request(URI)
                         .get(`/qfoodtrackings/${QFoodTracking2.id}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -326,13 +326,13 @@ describe('Routes: QFoodtracking', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the family', () => {
-                it('qfoodtracking.get_id014: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
+                it('qfoodtracking.get_id012: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
 
                     return request(URI)
                         .get(`/qfoodtrackings/${QFoodTracking2.id}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -342,13 +342,13 @@ describe('Routes: QFoodtracking', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('qfoodtracking.get_id015: should return the status code 401 and the authentication failure informational message', () => {
+            it('qfoodtracking.get_id013: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .get(`/qfoodtrackings/${QFoodTracking3.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
-                    .expect(401)
+                    .expect(HttpStatus.UNAUTHORIZED)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.AUTH.ERROR_401_UNAUTHORIZED)
                     })
@@ -375,7 +375,7 @@ describe('Routes: QFoodtracking', () => {
                     console.log('Failure in Before from qfoodtracking.get_id test: ', err.message)
                 }
             })
-            it('qfoodtracking.get_id016: should return an error, because QFoodtracking is not found', async () => {
+            it('qfoodtracking.get_id014: should return an error, because QFoodtracking is not found', async () => {
 
                 return request(URI)
                     .get(`/qfoodtrackings/${questionnaire.id}`)

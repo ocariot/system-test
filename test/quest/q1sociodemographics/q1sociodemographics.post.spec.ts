@@ -17,6 +17,8 @@ import { ApplicationMock } from '../../mocks/account-service/application.mock'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Q1SocioDemographicsMock } from '../../mocks/quest-service/q1SocioDemographicsMock'
 import * as HttpStatus from 'http-status-codes'
+import { ChildrenGroup } from '../../../src/account-service/model/children.group'
+import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
 
 describe('Routes: Q1Sociodemographic', () => {
 
@@ -44,6 +46,8 @@ describe('Routes: Q1Sociodemographic', () => {
     const defaultFamily: Family = new FamilyMock()
     const defaultApplication: Application = new ApplicationMock()
 
+    const defaultChildrenGroup: ChildrenGroup = new ChildrenGroupMock()
+
     const defaultQ1SocioDemographic: Q1SocioDemographicsMock = new Q1SocioDemographicsMock(defaultChild)
 
     before(async () => {
@@ -66,6 +70,7 @@ describe('Routes: Q1Sociodemographic', () => {
             const resultDefaultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
             defaultChild.id = resultDefaultChild.id
             defaultFamily.children = new Array<Child>(resultDefaultChild)
+            defaultChildrenGroup.children = new Array<Child>(resultDefaultChild)
 
             defaultQ1SocioDemographic.child_id = resultDefaultChild.id
 
@@ -101,6 +106,9 @@ describe('Routes: Q1Sociodemographic', () => {
             if (defaultHealthProfessional.username && defaultHealthProfessional.password) {
                 accessDefaultHealthProfessionalToken = await acc.auth(defaultHealthProfessional.username, defaultHealthProfessional.password)
             }
+            // Associating defaultChildrenGroup with educator and health professional
+            await acc.saveChildrenGroupsForEducator(accessDefaultEducatorToken, defaultEducator, defaultChildrenGroup)
+            await acc.saveChildrenGroupsForHealthProfessional(accessDefaultHealthProfessionalToken, defaultHealthProfessional, defaultChildrenGroup)
 
         } catch (err) {
             console.log('Failure on Before from q1sociodemographics.post test: ', err.message)
@@ -129,29 +137,18 @@ describe('Routes: Q1Sociodemographic', () => {
 
         context('when the user posting a Q1Sociodemographic successfully', () => {
 
-            let Q1Sociodemographic: Q1SocioDemographicsMock
-            let Q1SocioDemographicMockJSON: any
+            it('q1sociodemographics.post001: should return status code 200 and the saved Q1Sociodemographic by the family user', () => {
 
-            beforeEach(async () => {
-                try {
-                    Q1Sociodemographic = new Q1SocioDemographicsMock(defaultChild)
-                    Q1Sociodemographic.child_id = defaultChild.id
-                    Q1SocioDemographicMockJSON = Q1Sociodemographic.fromJSON(Q1Sociodemographic)
-                } catch (err) {
-                    console.log('Failure on Before in q1sociodemographics.post test: ', err.message)
-                }
-            })            
-
-            it('q1sociodemographics.post001: should return status code 201 and the saved Q1Sociodemographic by the family user', () => {
+                const defaultQ1SocioDemographicJSON: any = defaultQ1SocioDemographic.fromJSON(defaultQ1SocioDemographic)
 
                 return request(URI)
                     .post('/q1sociodemographics')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
-                    .send(Q1Sociodemographic)
+                    .send(defaultQ1SocioDemographic)
                     .expect(HttpStatus.OK)
                     .then(res => {
-                        expect(res.body).to.deep.eql(Q1SocioDemographicMockJSON)
+                        expect(res.body).to.deep.eql(defaultQ1SocioDemographicJSON)
                     })
             })
 
@@ -164,11 +161,11 @@ describe('Routes: Q1Sociodemographic', () => {
                 incorrectQ1SocioDemographic.child_id = '123'
 
                 return request(URI)
-                .post('/q1sociodemographics')
-                .set('Content-Type', 'application/json')
-                .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
-                .send(incorrectQ1SocioDemographic)
-                .expect(err => {
+                    .post('/q1sociodemographics')
+                    .set('Content-Type', 'application/json')
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
+                    .send(incorrectQ1SocioDemographic)
+                    .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
@@ -384,7 +381,7 @@ describe('Routes: Q1Sociodemographic', () => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
                 })
-            })            
+            })
 
         }) // user does not have permission
 
@@ -483,11 +480,10 @@ describe('Routes: Q1Sociodemographic', () => {
         describe('when the child has been deleted', () => {
             it('q1sociodemographics.post024: should return an error, because child not exist', async () => {
 
-                defaultQ1SocioDemographic.child_id = defaultChild.id
                 await acc.deleteUser(accessTokenAdmin, defaultChild.id)
 
                 return request(URI)
-                    .post('/Q1SocioDemographic')
+                    .post('/q1sociodemographics')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .send(defaultQ1SocioDemographic)

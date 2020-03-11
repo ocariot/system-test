@@ -21,7 +21,7 @@ import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mo
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import * as HttpStatus from 'http-status-codes'
 
-describe('Routes: q1sociodemographics', () => {
+describe('Routes: Q1Sociodemographics', () => {
 
     const URI: string = process.env.AG_URL || 'https://localhost:8081'
 
@@ -173,7 +173,7 @@ describe('Routes: q1sociodemographics', () => {
                     })
             })
 
-            it('q1sociodemographics.get_id004: should return status code 200 and the Q1SocioDemographics for health professional', async () => {
+            it('q1sociodemographics.get_id002: should return status code 200 and the Q1SocioDemographics for health professional', async () => {
 
                 const questionnaire: any = Q1SocioDemographics.fromJSON(Q1SocioDemographics)
 
@@ -187,7 +187,7 @@ describe('Routes: q1sociodemographics', () => {
                     })
             })
 
-            it('q1sociodemographics.get_id005: should return status code 200 and the Q1SocioDemographics for family', async () => {
+            it('q1sociodemographics.get_id003: should return status code 200 and the Q1SocioDemographics for family', async () => {
 
                 const questionnaire: any = Q1SocioDemographics.fromJSON(Q1SocioDemographics)
 
@@ -201,7 +201,7 @@ describe('Routes: q1sociodemographics', () => {
                     })
             })
 
-            it('q1sociodemographics.get_id006: should return status code 200 and the Q1SocioDemographics for application', async () => {
+            it('q1sociodemographics.get_id004: should return status code 200 and the Q1SocioDemographics for application', async () => {
 
                 const questionnaire: any = Q1SocioDemographics.fromJSON(Q1SocioDemographics)
 
@@ -219,7 +219,7 @@ describe('Routes: q1sociodemographics', () => {
 
         context('when the Q1SocioDemographics not found', () => {
 
-            it('q1sociodemographics.get_id007: should return an error, because Q1SocioDemographics.id is invalid', async () => {
+            it('q1sociodemographics.get_id005: should return an error, because Q1SocioDemographics.id is invalid', async () => {
 
                 const INVALID_ID = '123'
 
@@ -232,7 +232,7 @@ describe('Routes: q1sociodemographics', () => {
                     })
             })
 
-            it('q1sociodemographics.get_id008: should return an error, because Q1SocioDemographics not found', async () => {
+            it('q1sociodemographics.get_id006: should return an error, because Q1SocioDemographics not found', async () => {
 
                 const NON_EXISTENT_ID = '1dd572e805560300431b1004'
 
@@ -248,7 +248,7 @@ describe('Routes: q1sociodemographics', () => {
 
         context('when the user does not have permission for get Q1SocioDemographics of a specific child', () => {
 
-            it('q1sociodemographics.get_id003: should return status code 403 and info message from insufficient permissions for educator', async () => {
+            it('q1sociodemographics.get_id007: should return status code 403 and info message from insufficient permissions for educator', async () => {
 
                 return request(URI)
                     .get(`/q1sociodemographics/${Q1SocioDemographics.id}`)
@@ -260,7 +260,7 @@ describe('Routes: q1sociodemographics', () => {
                     })
             })
 
-            it('q1sociodemographics.get_id002: should return status code 403 and info message from insufficient permissions for child', async () => {
+            it('q1sociodemographics.get_id008: should return status code 403 and info message from insufficient permissions for child', async () => {
 
                 return request(URI)
                     .get(`/q1sociodemographics/${Q1SocioDemographics.id}`)
@@ -272,8 +272,7 @@ describe('Routes: q1sociodemographics', () => {
                     })
             })
 
-
-            it('q1sociodemographics.get_id011: should return status code 403 and info message from insufficient permissions for another child', () => {
+            it('q1sociodemographics.get_id009: should return status code 403 and info message from insufficient permissions for another child', () => {
 
                 return request(URI)
                     .get(`/q1sociodemographics/${Q1SocioDemographics.id}`)
@@ -286,7 +285,7 @@ describe('Routes: q1sociodemographics', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the health professional', () => {
-                it('q1sociodemographics.get_id012: should return status code 403 and info message from insufficient permissions for health professional user who is not associated with the child', () => {
+                it('q1sociodemographics.get_id010: should return status code 403 and info message from insufficient permissions for health professional user who is not associated with the child', () => {
 
                     return request(URI)
                         .get(`/q1sociodemographics/${Q1SocioDemographics.id}`)
@@ -300,7 +299,7 @@ describe('Routes: q1sociodemographics', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the educator', () => {
-                it('q1sociodemographics.get_id013: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
+                it('q1sociodemographics.get_id011: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
 
                     return request(URI)
                         .get(`/q1sociodemographics/${Q1SocioDemographics.id}`)
@@ -314,7 +313,7 @@ describe('Routes: q1sociodemographics', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the family', () => {
-                it('q1sociodemographics.get_id014: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
+                it('q1sociodemographics.get_id012: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
 
                     return request(URI)
                         .get(`/q1sociodemographics/${Q1SocioDemographics.id}`)
@@ -330,7 +329,7 @@ describe('Routes: q1sociodemographics', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('q1sociodemographics.get_id015: should return the status code 401 and the authentication failure informational message', () => {
+            it('q1sociodemographics.get_id013: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .get(`/q1sociodemographics/${Q1SocioDemographics.id}`)
@@ -362,7 +361,7 @@ describe('Routes: q1sociodemographics', () => {
                     console.log('Failure in Before from q1sociodemographics.get_id test: ', err.message)
                 }
             })
-            it('q1sociodemographics.get_id016: should return an error, because Q1SocioDemographics not found', async () => {
+            it('q1sociodemographics.get_id014: should return an error, because Q1SocioDemographics not found', async () => {
 
                 return request(URI)
                     .get(`/q1sociodemographics/${questionnaire.id}`)

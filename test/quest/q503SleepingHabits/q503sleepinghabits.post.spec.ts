@@ -158,7 +158,7 @@ describe('Routes: Q503SleepingHabits', () => {
                 }
             })
 
-            it('q503sleepinghabits.post002: should return status code 200 and the saved Q503Sleepinghabits by the educator', () => {
+            it('q503sleepinghabits.post001: should return status code 200 and the saved Q503Sleepinghabits by the educator', () => {
 
                 return request(URI)
                     .post('/q503sleepinghabits')
@@ -171,7 +171,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.post003: should return status code 200 and the saved Q503Sleepinghabits by the family', () => {
+            it('q503sleepinghabits.post002: should return status code 200 and the saved Q503Sleepinghabits by the family', () => {
 
                 return request(URI)
                     .post('/q503sleepinghabits')
@@ -184,7 +184,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.post005: should return status code 200, even when provided a invalid id for the Q503Sleepinghabits', () => {
+            it('q503sleepinghabits.post003: should return status code 200, even when provided a invalid id for the Q503Sleepinghabits', () => {
                 const incorrectQ503SleepingHabits = getQ503SleepingHabitsJSON()
                 incorrectQ503SleepingHabits.id = '123'
 
@@ -202,7 +202,7 @@ describe('Routes: Q503SleepingHabits', () => {
         }) // posting a Q503Sleepinghabits  successfully
 
         describe('when the posting a empty Object for the child', () => {
-            it('q503sleepinghabits.post006: should return status code 200 and the saved a Q503Sleepinghabits only with auto-generated id and date fields', () => {
+            it('q503sleepinghabits.post004: should return status code 200 and the saved a Q503Sleepinghabits only with auto-generated id and date fields', () => {
 
                 const body = {}
 
@@ -227,7 +227,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     console.log('Failure in q503sleepinghabits.post test: ', err.message)
                 }
             })
-            it('q503sleepinghabits.post007: should return an error, because the same Q503Sleepinghabits already registered for the child', () => {
+            it('q503sleepinghabits.post005: should return an error, because the same Q503Sleepinghabits already registered for the child', () => {
 
                 return request(URI)
                     .post('/q503sleepinghabits')
@@ -242,7 +242,7 @@ describe('Routes: Q503SleepingHabits', () => {
 
         context('when a validation error occurs', () => {
 
-            it('q503sleepinghabits.post008: should return an error, because child_id is invalid', () => {
+            it('q503sleepinghabits.post006: should return an error, because child_id is invalid', () => {
                 const incorrectQ503SleepingHabits = getQ503SleepingHabitsJSON()
                 incorrectQ503SleepingHabits.child_id = '123'
 
@@ -256,7 +256,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.post009: should return an error, because child not exist', () => {
+            it('q503sleepinghabits.post007: should return an error, because child not exist', () => {
                 const incorrectQ503SleepingHabits = getQ503SleepingHabitsJSON()
                 incorrectQ503SleepingHabits.child_id = '5a55be50de34500146d9c544'
 
@@ -271,7 +271,7 @@ describe('Routes: Q503SleepingHabits', () => {
             })
 
             // SOME FIELD HAS NULL VALUE
-            it('q503sleepinghabits.post010: should return an error, because date is null', () => {
+            it('q503sleepinghabits.post008: should return an error, because date is null', () => {
                 const incorrectQ503SleepingHabits = getQ503SleepingHabitsJSON()
                 incorrectQ503SleepingHabits.date = null
 
@@ -285,7 +285,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.post011: should return an error, because child_id is null', () => {
+            it('q503sleepinghabits.post009: should return an error, because child_id is null', () => {
                 const incorrectQ503SleepingHabits = getQ503SleepingHabitsJSON()
                 incorrectQ503SleepingHabits.child_id = null
 
@@ -299,7 +299,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.post012: should return an error, because percentage is null', () => {
+            it('q503sleepinghabits.post010: should return an error, because percentage is null', () => {
                 const incorrectQ503SleepingHabits = getQ503SleepingHabitsJSON()
                 incorrectQ503SleepingHabits.percentage = null
 
@@ -315,7 +315,7 @@ describe('Routes: Q503SleepingHabits', () => {
             // SOME FIELD HAS NULL VALUE
 
             // SOME FIELD HAS INVALID (DIFFERENT TYPE)
-            it('q503sleepinghabits.post013: should return an error, because time_sleep is a number', () => {
+            it('q503sleepinghabits.post011: should return an error, because time_sleep is a number', () => {
                 const incorrectQ503SleepingHabits = getQ503SleepingHabitsJSON()
                 incorrectQ503SleepingHabits.time_sleep = 1
 
@@ -329,7 +329,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.post014: should return an error, because time_nap is a boolean', () => {
+            it('q503sleepinghabits.post012: should return an error, because time_nap is a boolean', () => {
                 const incorrectQ503SleepingHabits = getQ503SleepingHabitsJSON()
                 incorrectQ503SleepingHabits.time_nap = true
 
@@ -344,7 +344,7 @@ describe('Routes: Q503SleepingHabits', () => {
             })
             // SOME FIELD HAS INVALID ((DIFFERENT TYPE))
 
-            it('q503sleepinghabits.post015: should return an error, because date format is invalid', () => {
+            it('q503sleepinghabits.post013: should return an error, because date format is invalid', () => {
                 const incorrectQ503SleepingHabits = getQ503SleepingHabitsJSON()
                 incorrectQ503SleepingHabits.date = '2019/12/03T15:28:47.319Z'
 
@@ -358,7 +358,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.post016: should return an error, because month is invalid', () => {
+            it('q503sleepinghabits.post014: should return an error, because month is invalid', () => {
                 const incorrectQ503SleepingHabits = getQ503SleepingHabitsJSON()
                 incorrectQ503SleepingHabits.date = '2019-13-01T19:40:45.124Z' // invalid month(13)
 
@@ -375,7 +375,7 @@ describe('Routes: Q503SleepingHabits', () => {
 
         context('when the user does not have permission for register Q503Sleepinghabits', () => {
 
-            it('q503sleepinghabits.post001: should return status code 403 and info message from insufficient permissions for child', () => {
+            it('q503sleepinghabits.post015: should return status code 403 and info message from insufficient permissions for child', () => {
 
                 return request(URI)
                     .post('/q503sleepinghabits')
@@ -388,7 +388,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.post004: should return status code 403 and info message from insufficient permissions for application', () => {
+            it('q503sleepinghabits.post016: should return status code 403 and info message from insufficient permissions for application', () => {
 
                 return request(URI)
                     .post('/q503sleepinghabits')

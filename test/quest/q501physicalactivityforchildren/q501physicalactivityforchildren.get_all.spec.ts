@@ -191,7 +191,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('q501physicalactivityforchildren.get_all003: should return status code 200 and a list with all q501physicalactivityforchildren for educator', async () => {
+            it('q501physicalactivityforchildren.get_all002: should return status code 200 and a list with all q501physicalactivityforchildren for educator', async () => {
 
                 return request(URI)
                     .get(`/q501physicalactivityforchildren`)
@@ -203,7 +203,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('q501physicalactivityforchildren.get_all004: should return status code 200 and a list with all q501physicalactivityforchildren for health professional', async () => {
+            it('q501physicalactivityforchildren.get_all003: should return status code 200 and a list with all q501physicalactivityforchildren for health professional', async () => {
 
                 return request(URI)
                     .get(`/q501physicalactivityforchildren`)
@@ -215,7 +215,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('q501physicalactivityforchildren.get_all005: should return status code 200 and a list with all q501physicalactivityforchildren for family', async () => {
+            it('q501physicalactivityforchildren.get_all004: should return status code 200 and a list with all q501physicalactivityforchildren for family', async () => {
 
                 return request(URI)
                     .get(`/q501physicalactivityforchildren`)
@@ -227,7 +227,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('q501physicalactivityforchildren.get_all006: should return status code 200 and a list with all q501physicalactivityforchildren for application', async () => {
+            it('q501physicalactivityforchildren.get_all005: should return status code 200 and a list with all q501physicalactivityforchildren for application', async () => {
 
                 return request(URI)
                     .get(`/q501physicalactivityforchildren`)
@@ -240,7 +240,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
             })
 
             describe('when get all q501physicalactivityforchildren with some filter successfully', () => {
-                it('q501physicalactivityforchildren.get_all007: should return status code 200 and a list with all q501physicalactivityforchildren of a specific child by herself', () => {
+                it('q501physicalactivityforchildren.get_all006: should return status code 200 and a list with all q501physicalactivityforchildren of a specific child by herself', () => {
 
                     const TOTAL_BY_CHILD = q501ForDefaultChildArray.length
 
@@ -268,7 +268,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
         }) // getting a q501physicalactivityforchildren successfully
 
         context('when a error occurs', () => {
-            it('q501physicalactivityforchildren.get_all008: should return an error, because the querystring is invalid', () => {
+            it('q501physicalactivityforchildren.get_all007: should return an error, because the querystring is invalid', () => {
 
                 return request(URI)
                     .get(`/q501physicalactivityforchildren?filter[where]`)
@@ -282,7 +282,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
 
         context('when the user does not have permission for get all q501physicalactivityforchildren of a specific child', () => {
 
-            it('q501physicalactivityforchildren.get_all002: should return status code 403 and info message from insufficient permissions for child', async () => {
+            it('q501physicalactivityforchildren.get_all008: should return status code 403 and info message from insufficient permissions for child', async () => {
 
                 return request(URI)
                     .get(`/q501physicalactivityforchildren`)
@@ -295,7 +295,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the health professional', () => {
-                it('q501physicalactivityforchildren.get_all010: should return status code 403 and info message from insufficient permissions for health professional user who is not associated with the child', () => {
+                it('q501physicalactivityforchildren.get_all009: should return status code 403 and info message from insufficient permissions for health professional user who is not associated with the child', () => {
 
                     return request(URI)
                         .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
@@ -309,7 +309,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the educator', () => {
-                it('q501physicalactivityforchildren.get_all011: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
+                it('q501physicalactivityforchildren.get_all010: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
 
                     return request(URI)
                         .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
@@ -323,7 +323,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the family', () => {
-                it('q501physicalactivityforchildren.get_all012: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
+                it('q501physicalactivityforchildren.get_all011: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
 
                     return request(URI)
                         .get(`/q501physicalactivityforchildren?filter[where][child_id]=${defaultChild.username}`)
@@ -339,7 +339,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('q501physicalactivityforchildren.get_all013: should return the status code 401 and the authentication failure informational message', () => {
+            it('q501physicalactivityforchildren.get_all012: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .get('/q501physicalactivityforchildren')
@@ -371,7 +371,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     console.log('Failure in Before from q501physicalactivityforchildren.get_all test: ', err.message)
                 }
             })
-            it('q501physicalactivityforchildren.get_all014: should return an error, because child not exist', async () => {
+            it('q501physicalactivityforchildren.get_all013: should return an error, because child not exist', async () => {
 
                 return request(URI)
                     .get(`/q501physicalactivityforchildren?filter[where][child_id]=${child.username}`)
@@ -404,7 +404,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     console.log('Failure in Before from q501physicalactivityforchildren.get_all test: ', err.message)
                 }
             })
-            it('q501physicalactivityforchildren.get_all015: should return status code 200 and all q501physicalactivityforchildren of the child', async () => {
+            it('q501physicalactivityforchildren.get_all014: should return status code 200 and all q501physicalactivityforchildren of the child', async () => {
 
                 const q501physicalactivityforchildren = questionnaire.fromJSON(questionnaire)
 

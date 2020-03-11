@@ -285,7 +285,7 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
                     })
             })
 
-            it('q501physicalactivityforchildren.patch009: should return an error, because date is null',  () => {
+            it('q501physicalactivityforchildren.patch009: should return an error, because date is null', () => {
 
                 const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
                 questionnaire.date = null
@@ -459,8 +459,11 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
         describe('when not informed the acess token', () => {
             it('q501physicalactivityforchildren.patch019: should return the status code 401 and the authentication failure informational message', () => {
 
+                const questionnaire: any = Q501PhysicalActivityForChildren.fromJSON(Q501PhysicalActivityForChildren)
+
                 return request(URI)
                     .patch(`/q501physicalactivityforchildren/${Q501PhysicalActivityForChildren.id}`)
+                    .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(HttpStatus.UNAUTHORIZED)

@@ -156,7 +156,7 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(qFoodBreakFast)
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body).to.have.property('child_id', defaultChild.id)
@@ -176,7 +176,7 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(qFoodSnack)
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body).to.have.property('child_id', defaultChild.id)
@@ -196,7 +196,7 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .send(qFoodLunch)
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body).to.have.property('child_id', qFoodLunch.child_id)
@@ -216,7 +216,7 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .send(qFoodDinner)
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body).to.have.property('child_id', qFoodDinner.child_id)
@@ -238,7 +238,7 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(body)
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                     })
             })
@@ -464,7 +464,7 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .send(defaultQfoodtracking)
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -477,7 +477,7 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
                     .send(defaultQfoodtracking)
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -490,7 +490,7 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAnotherChild))
                     .send(defaultQfoodtracking)
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -504,7 +504,7 @@ describe('Routes: QFoodtracking', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
                         .send(defaultQfoodtracking)
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -519,7 +519,7 @@ describe('Routes: QFoodtracking', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
                         .send(defaultQfoodtracking)
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -610,7 +610,7 @@ describe('Routes: QFoodtracking', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .send(defaultQfoodtracking)
-                    .expect(401)
+                    .expect(HttpStatus.UNAUTHORIZED)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.AUTH.ERROR_401_UNAUTHORIZED)
                     })

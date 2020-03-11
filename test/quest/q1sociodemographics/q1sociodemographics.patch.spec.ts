@@ -155,7 +155,7 @@ describe('Routes: Q1SocioDemographics', () => {
 
         context('when update Q1SocioDemographics successfully', () => {
 
-            it('q1sociodemographics.patch002: should return status code 204 and no content for family', async () => {
+            it('q1sociodemographics.patch001: should return status code 204 and no content for family', async () => {
 
                 const questionnaire: any = Q1SocioDemographics.fromJSON(Q1SocioDemographics)
                 const ages_household_members_array = questionnaire.ages_household_members
@@ -192,7 +192,7 @@ describe('Routes: Q1SocioDemographics', () => {
                     console.log('Failure in before from q1sociodemographics.patch test: ', err.message)
                 }
             })
-            it('q1sociodemographics.patch003: should return an error, because the object is empty ', async () => {
+            it('q1sociodemographics.patch002: should return an error, because the object is empty ', async () => {
 
                 return request(URI)
                     .patch(`/q1sociodemographics/${Q1SocioDemographics.id}`)
@@ -204,7 +204,7 @@ describe('Routes: Q1SocioDemographics', () => {
                     })
             })
 
-            it('q1sociodemographics.patch004: should return an error, because the date format is invalid', async () => {
+            it('q1sociodemographics.patch003: should return an error, because the date format is invalid', async () => {
 
                 questionnaire.date = '02/12/2019'
 
@@ -218,7 +218,7 @@ describe('Routes: Q1SocioDemographics', () => {
                     })
             })
 
-            it('q1sociodemographics.patch005: should return an error, because respondent_gender is null', async () => {
+            it('q1sociodemographics.patch004: should return an error, because respondent_gender is null', async () => {
 
                 questionnaire.respondent_gender = null
 
@@ -232,7 +232,7 @@ describe('Routes: Q1SocioDemographics', () => {
                     })
             })
 
-            it('q1sociodemographics.patch006: should return an error, because number_children is a number', async () => {
+            it('q1sociodemographics.patch005: should return an error, because number_children is a number', async () => {
 
                 questionnaire.number_children = 10
 
@@ -246,7 +246,7 @@ describe('Routes: Q1SocioDemographics', () => {
                     })
             })
 
-            it('q1sociodemographics.patch007: should return an error, because child id is empty', async () => {
+            it('q1sociodemographics.patch006: should return an error, because child id is empty', async () => {
 
                 questionnaire.child_id = ''
 
@@ -260,7 +260,7 @@ describe('Routes: Q1SocioDemographics', () => {
                     })
             })
 
-            it('q1sociodemographics.patch008: should return an error, because number_siblings is a number', async () => {
+            it('q1sociodemographics.patch007: should return an error, because number_siblings is a number', async () => {
 
                 questionnaire.number_siblings = 1
 
@@ -274,7 +274,7 @@ describe('Routes: Q1SocioDemographics', () => {
                     })
             })
 
-            it('q1sociodemographics.patch009: should return an error, because date is null',  () => {
+            it('q1sociodemographics.patch008: should return an error, because date is null', () => {
 
                 questionnaire.date = null
 
@@ -298,7 +298,7 @@ describe('Routes: Q1SocioDemographics', () => {
                     console.log('Failure in Before from q1sociodemographics.patch test: ', err.message)
                 }
             })
-            it('q1sociodemographics.patch010: should return an error, because the Q1SocioDemographics is already registered', () => {
+            it('q1sociodemographics.patch009: should return an error, because the Q1SocioDemographics is already registered', () => {
 
                 const questionnaireDuplicated: any = Q1SocioDemographics2.fromJSON(Q1SocioDemographics2)
 
@@ -315,7 +315,7 @@ describe('Routes: Q1SocioDemographics', () => {
 
         context('when the updated Q1SocioDemographics not exist', () => {
 
-            it('q1sociodemographics.patch011: should return an error, because Q1SocioDemographics.id is invalid', async () => {
+            it('q1sociodemographics.patch010: should return an error, because Q1SocioDemographics.id is invalid', async () => {
 
                 const questionnaire: any = Q1SocioDemographics.fromJSON(Q1SocioDemographics)
                 const INVALID_ID = '123'
@@ -324,13 +324,13 @@ describe('Routes: Q1SocioDemographics', () => {
                     .patch(`/q1sociodemographics/${INVALID_ID}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })
 
-            it('q1sociodemographics.patch012: should return an error, because Q1SocioDemographics not found', async () => {
+            it('q1sociodemographics.patch011: should return an error, because Q1SocioDemographics not found', async () => {
 
                 const questionnaire: any = Q1SocioDemographics.fromJSON(Q1SocioDemographics)
                 const NON_EXISTENT_ID = '1dd572e805560300431b1004'
@@ -339,7 +339,7 @@ describe('Routes: Q1SocioDemographics', () => {
                     .patch(`/q1sociodemographics/${NON_EXISTENT_ID}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
@@ -348,7 +348,7 @@ describe('Routes: Q1SocioDemographics', () => {
 
         context('when the user does not have permission for get Q1SocioDemographics of a specific child', () => {
 
-            it('q1sociodemographics.patch001: should return status code 403 and info message from insufficient permissions for educator', async () => {
+            it('q1sociodemographics.patch012: should return status code 403 and info message from insufficient permissions for educator', async () => {
 
                 const questionnaire: any = Q1SocioDemographics.fromJSON(Q1SocioDemographics)
 
@@ -462,8 +462,11 @@ describe('Routes: Q1SocioDemographics', () => {
         describe('when not informed the acess token', () => {
             it('q1sociodemographics.patch019: should return the status code 401 and the authentication failure informational message', () => {
 
+                const questionnaire: any = Q1SocioDemographics.fromJSON(Q1SocioDemographics)
+
                 return request(URI)
                     .patch(`/q1sociodemographics/${Q1SocioDemographics.id}`)
+                    .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(HttpStatus.UNAUTHORIZED)
@@ -483,8 +486,7 @@ describe('Routes: Q1SocioDemographics', () => {
                     await acc.saveChild(accessTokenAdmin, child)
                     questionnaire.child_id = child.username
 
-                    const childToken = await acc.auth(child.username!, child.password!)
-                    const resultQuestionnaire = await quest.saveQ1SocioDemographics(childToken, questionnaire)
+                    const resultQuestionnaire = await quest.saveQ1SocioDemographics(accessDefaultFamilyToken, questionnaire)
                     questionnaire.id = resultQuestionnaire.id
 
                     await acc.deleteUser(accessTokenAdmin, child.id)
@@ -501,7 +503,7 @@ describe('Routes: Q1SocioDemographics', () => {
                     .patch(`/q1sociodemographics/${questionnaire.id}`)
                     .send(questionnaire)
                     .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
+                    .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })

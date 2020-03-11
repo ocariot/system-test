@@ -456,8 +456,11 @@ describe('Routes: Q503SleepingHabits', () => {
         describe('when not informed the acess token', () => {
             it('q503sleepinghabits.patch019: should return the status code 401 and the authentication failure informational message', () => {
 
+                const questionnaire: any = Q503SleepingHabits.fromJSON(Q503SleepingHabits)
+
                 return request(URI)
                     .patch(`/q503sleepinghabits/${Q503SleepingHabits.id}`)
+                    .send(questionnaire)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(HttpStatus.UNAUTHORIZED)

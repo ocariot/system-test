@@ -185,7 +185,7 @@ describe('Routes: QFoodtracking', () => {
                     .get(`/qfoodtrackings`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.length).to.eql(TOTAL)
                     })
@@ -199,7 +199,7 @@ describe('Routes: QFoodtracking', () => {
                     .get(`/qfoodtrackings`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.length).to.eql(TOTAL)
                     })
@@ -213,7 +213,7 @@ describe('Routes: QFoodtracking', () => {
                     .get(`/qfoodtrackings`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.length).to.eql(TOTAL)
                     })
@@ -227,7 +227,7 @@ describe('Routes: QFoodtracking', () => {
                     .get(`/qfoodtrackings`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.length).to.eql(TOTAL)
                     })
@@ -241,7 +241,7 @@ describe('Routes: QFoodtracking', () => {
                     .get(`/qfoodtrackings`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.length).to.eql(TOTAL)
                     })
@@ -255,7 +255,7 @@ describe('Routes: QFoodtracking', () => {
                     .get(`/qfoodtrackings`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.length).to.eql(TOTAL)
                     })
@@ -284,7 +284,7 @@ describe('Routes: QFoodtracking', () => {
                         .get(`/qfoodtrackings?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                        .expect(200)
+                        .expect(HttpStatus.OK)
                         .then(res => {
                             expect(res.body.length).to.eql(TOTAL)
                             for (let i = 0; i < qFoodTrackingsDefaultChildArray.length; i++) {
@@ -302,7 +302,7 @@ describe('Routes: QFoodtracking', () => {
                         .get(`/qfoodtrackings?filter[where][and][0][child_id]=${anotherChild.username}&filter[where][and][1][categories_array]=${rice}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                        .expect(200)
+                        .expect(HttpStatus.OK)
                         .then(res => {
                             expect(res.body.length).to.eql(TOTAL)
                         })
@@ -317,7 +317,7 @@ describe('Routes: QFoodtracking', () => {
                         .get(`/qfoodtrackings?filter[where][categories_array]=${bread}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
-                        .expect(200)
+                        .expect(HttpStatus.OK)
                         .then(res => {
                             expect(res.body.length).to.eql(TOTAL)
                         })
@@ -347,7 +347,7 @@ describe('Routes: QFoodtracking', () => {
                     .get(`/qfoodtrackings?filter[where][child_id]=${defaultChild.username}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessAnotherChildToken))
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -360,7 +360,7 @@ describe('Routes: QFoodtracking', () => {
                         .get(`/qfoodtrackings?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherHealthProfessional))
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -374,7 +374,7 @@ describe('Routes: QFoodtracking', () => {
                         .get(`/qfoodtrackings?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -388,7 +388,7 @@ describe('Routes: QFoodtracking', () => {
                         .get(`/qfoodtrackings?filter[where][child_id]=${defaultChild.username}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -404,7 +404,7 @@ describe('Routes: QFoodtracking', () => {
                     .get('/qfoodtrackings')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
-                    .expect(401)
+                    .expect(HttpStatus.UNAUTHORIZED)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.AUTH.ERROR_401_UNAUTHORIZED)
                     })
@@ -478,7 +478,7 @@ describe('Routes: QFoodtracking', () => {
                     .get(`/qfoodtrackings?filter[where][child_id]=${child.username}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body).to.deep.eql(qFoodTracking)
                     })
@@ -486,68 +486,3 @@ describe('Routes: QFoodtracking', () => {
         })
     })
 })
-
-// function getQFoodTrackingJSON() {
-//
-//     const incorrectQFoodTrackingJSON: any = {
-//         id: '5dd572e805560300431b1004',
-//         child_id: '5a62be07de34500146d9c544',
-//         date: '2019-11-07T19:40:45.124Z',
-//         type: 'Breakfast',
-//         categories_array: ['Bread', '2', 'Eggs', '3', 'low_milk', '1']
-//     }
-//
-//     return incorrectQFoodTrackingJSON
-// }
-
-// function getBody() {
-//     const body = {
-//         where: {},
-//         fields: {
-//             id: true,
-//             child_id: true,
-//             date: true,
-//             type: true,
-//             bread: true,
-//             pasta: true,
-//             rice: true,
-//             fruit: true,
-//             vegetable: true,
-//             cheese: true,
-//             lowMilk: true,
-//             vegetableMilk: true,
-//             indJuice: true,
-//             biscuits: true,
-//             indPastry: true,
-//             nuts: true,
-//             sweets: true,
-//             procMeats: true,
-//             legumes: true,
-//             hamburguer: true,
-//             pizza: true,
-//             hotDog: true,
-//             oliveOil: true,
-//             indSauce: true,
-//             caloricDessert: true,
-//             sugarySodas: true,
-//             water: true,
-//             sandwich: true,
-//             milk: true,
-//             yogurt: true,
-//             candy: true,
-//             frenchFries: true,
-//             eggs: true,
-//             fish: true,
-//             meat: true,
-//             cereal: true
-//         },
-//         offset: 0,
-//         limit: 0,
-//         skip: 0,
-//         order: [
-//             'string'
-//         ]
-//     }
-//
-//     return body
-// }

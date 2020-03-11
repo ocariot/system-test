@@ -193,7 +193,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.get_all003: should return status code 200 and a list with all Q503SleepingHabits registered by educator', async () => {
+            it('q503sleepinghabits.get_all002: should return status code 200 and a list with all Q503SleepingHabits registered by educator', async () => {
 
                 return request(URI)
                     .get(`/q503sleepinghabits`)
@@ -205,7 +205,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.get_all004: should return status code 200 and a list with all Q503SleepingHabits registered by health professional', async () => {
+            it('q503sleepinghabits.get_all003: should return status code 200 and a list with all Q503SleepingHabits registered by health professional', async () => {
 
                 return request(URI)
                     .get(`/q503sleepinghabits`)
@@ -217,7 +217,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.get_all005: should return status code 200 and a list with all Q503SleepingHabits registered by family', async () => {
+            it('q503sleepinghabits.get_all004: should return status code 200 and a list with all Q503SleepingHabits registered by family', async () => {
 
                 return request(URI)
                     .get(`/q503sleepinghabits`)
@@ -229,7 +229,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     })
             })
 
-            it('q503sleepinghabits.get_all006: should return status code 200 and a list with all Q503SleepingHabits registered by application', async () => {
+            it('q503sleepinghabits.get_all005: should return status code 200 and a list with all Q503SleepingHabits registered by application', async () => {
 
                 return request(URI)
                     .get(`/q503sleepinghabits`)
@@ -242,7 +242,7 @@ describe('Routes: Q503SleepingHabits', () => {
             })
 
             describe('when get all Q503SleepingHabitswith some filter successfully', () => {
-                it('q503sleepinghabits.get_all007: should return status code 200 and a list with all Q503SleepingHabits of a specific child', () => {
+                it('q503sleepinghabits.get_all006: should return status code 200 and a list with all Q503SleepingHabits of a specific child', () => {
 
                     const TOTAL_BY_CHILD = q503SleepingHabitsDefaultChildArray.length
 
@@ -279,7 +279,7 @@ describe('Routes: Q503SleepingHabits', () => {
         }) // getting a Q503SleepingHabits successfully
 
         context('when a error occurs', () => {
-            it('q503sleepinghabits.get_all008: should return an error, because the querystring is invalid', () => {
+            it('q503sleepinghabits.get_all007: should return an error, because the querystring is invalid', () => {
 
                 return request(URI)
                     .get(`/q503sleepinghabits?filter[where]`)
@@ -293,7 +293,7 @@ describe('Routes: Q503SleepingHabits', () => {
 
         context('when the user does not have permission for get all Q503SleepingHabits of a specific child', () => {
 
-            it('q503sleepinghabits.get_all002: should return status code 403 and info message from insufficient permissions for own child', async () => {
+            it('q503sleepinghabits.get_all008: should return status code 403 and info message from insufficient permissions for own child', async () => {
 
                 return request(URI)
                     .get(`/q503sleepinghabits?filter[where][child_id]=${defaultChild.username}`)

@@ -129,29 +129,17 @@ describe('Routes: Q21ChildsHealthConditions', () => {
 
         context('when the user posting a Q21ChildsHealthConditions successfully', () => {
 
-            let Q21ChildsHealthConditions: Q21ChildsHealthConditionsMock
-            let Q21ChildsHealthConditionsJSON: any
+            it('q21childshealthconditions.post001: should return status code 200 and the saved Q21ChildsHealthConditions by the family user', () => {
 
-            beforeEach(async () => {
-                try {
-                    Q21ChildsHealthConditions = new Q21ChildsHealthConditionsMock(defaultChild)
-                    Q21ChildsHealthConditions.child_id = defaultChild.id
-                    Q21ChildsHealthConditionsJSON = Q21ChildsHealthConditions.fromJSON(Q21ChildsHealthConditions)
-                } catch (err) {
-                    console.log('Failure on Before in q21childshealthconditions.post test: ', err.message)
-                }
-            })
-
-            it('q21childshealthconditions.post001: should return status code 201 and the saved Q21ChildsHealthConditions by the family user', () => {
-
+                const defaultQ21ChildsHealthConditionsJSON: any = defaultQ21ChildsHealthConditions.fromJSON(defaultQ21ChildsHealthConditions)
                 return request(URI)
                     .post('/q21childshealthconditions')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
-                    .send(Q21ChildsHealthConditions)
+                    .send(defaultQ21ChildsHealthConditions)
                     .expect(HttpStatus.OK)
                     .then(res => {
-                        expect(res.body).to.deep.eql(Q21ChildsHealthConditionsJSON)
+                        expect(res.body).to.deep.eql(defaultQ21ChildsHealthConditionsJSON)
                     })
             })
 
