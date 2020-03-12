@@ -9,7 +9,7 @@ import { Institution } from '../../src/account-service/model/institution'
 
 class TrackingUtil {
 
-    public readonly URI: string = process.env.AG_URL || 'https://localhost:8081'
+    public readonly URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
     public saveEnvironment(accessToken: string, institution: Institution, environment: Environment): Promise<any> {
 

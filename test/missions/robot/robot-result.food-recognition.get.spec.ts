@@ -15,11 +15,11 @@ import { Family } from '../../../src/account-service/model/family'
 import { FamilyMock } from '../../mocks/account-service/family.mock'
 import { Application } from '../../../src/account-service/model/application'
 import { ApplicationMock } from '../../mocks/account-service/application.mock'
-import { RobotResultMock } from '../../mocks/missions-service/robotResult.mock'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import * as HttpStatus from 'http-status-codes'
+import { FoodRecognitionMock } from '../../mocks/missions-service/foodRecognitionMock'
 
 describe('Routes: Robot', () => {
 
@@ -53,8 +53,7 @@ describe('Routes: Robot', () => {
 
     const defaultChildrenGroup: ChildrenGroup = new ChildrenGroupMock()
 
-    const defaultRobotResult: RobotResultMock = new RobotResultMock()
-
+    const defaultFoodRecognition: FoodRecognitionMock = new FoodRecognitionMock()
     before(async () => {
         try {
             await accountDB.connect()
@@ -79,8 +78,7 @@ describe('Routes: Robot', () => {
 
             const resultDefaultChild = await acc.saveChild(accessTokenAdmin, defaultChild)
             defaultChild.id = resultDefaultChild.id
-            defaultRobotResult.userId = defaultChild.id
-            defaultRobotResult.userName = defaultChild.username
+            defaultFoodRecognition.childId = defaultChild.id
 
             const resultAnotherChild = await acc.saveChild(accessTokenAdmin, anotherChild)
             anotherChild.id = resultAnotherChild.id
@@ -126,8 +124,9 @@ describe('Routes: Robot', () => {
             await acc.saveChildrenGroupsForEducator(accessDefaultEducatorToken, defaultEducator, defaultChildrenGroup)
             await acc.saveChildrenGroupsForHealthProfessional(accessDefaultHealthProfessionalToken, defaultHealthProfessional, defaultChildrenGroup)
 
+            await missions.saveRobotResultFoodRecognition(accessDefaultApplicationToken, defaultFoodRecognition)
         } catch (err) {
-            console.log('Failure on Before from robot-result.mission.get test: ', err.message)
+            console.log('Failure on Before from robot-result/food-recognition.get test: ', err.message)
         }
     })
     after(async () => {
@@ -140,155 +139,138 @@ describe('Routes: Robot', () => {
         }
     })
 
-    describe('GET /robot-result/mission/:child.id', () => {
+    describe('GET /robot-result/food-recognition/:child.id', () => {
 
-        beforeEach(async () => {
-            try {
-                await missions.saveRobotResult(accessDefaultApplicationToken, defaultRobotResult)
-            } catch (err) {
-                console.log('Failure in before from robot-result.mission.get test: ', err.message)
-            }
-        })
+        context('when get Food-Recognition successfully', () => {
+            const formattedDate = defaultFoodRecognition.getDateFormattedAccordingToMissionsService(defaultFoodRecognition.date!)
+            const missionsUrl = 'https://missions:8001'
 
-        context('when get Robot-Result successfully', () => {
-
-            it('robot-result.mission.get001: should return status code 200 and the Robot-Result for admin user', async () => {
+            it('food-recognition.get001: should return status code 200 and the Food-Recognition for admin user', async () => {
 
                 return request(URI)
-                    .get(`/robot-result/mission/${defaultChild.id}`)
+                    .get(`/robot-result/food-recognition/${defaultChild.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .expect(HttpStatus.OK)
                     .then(res => {
-                        expect(res.body.data).to.have.property('id')
-                        expect(res.body.data).to.have.property('name', defaultRobotResult.userName)
-                        expect(res.body.data).to.have.property('favoriteSport', defaultRobotResult.favoriteSport)
-                        expect(res.body.data).to.have.property('date', defaultRobotResult.getDateFormattedAccordingToMissionsService(defaultRobotResult.date!))
-                        expect(res.body.data).to.have.deep.property('missions', defaultRobotResult.missions)
-                        expect(res.body.data).to.have.deep.property('logs', defaultRobotResult.userLog)
+                        expect(res.body.data[0]).to.have.property('id')
+                        expect(res.body.data[0]).to.have.property('outcome', defaultFoodRecognition.outcome)
+                        expect(res.body.data[0]).to.have.property('imagePath',  missionsUrl.concat(defaultFoodRecognition.imagePath!))
+                        expect(res.body.data[0]).to.have.property('captureDate',  formattedDate)
                         expect(res.body).to.have.property('message')
-                        expect(res.body.status).to.eql(HttpStatus.OK)
+                        expect(res.body).to.have.property('status', HttpStatus.OK)
                     })
             })
 
-            it('robot-result.mission.get002: should return status code 200 and the Robot-Result for own child', async () => {
+            it('food-recognition.get002: should return status code 200 and the Food-Recognition for own child', async () => {
 
                 return request(URI)
-                    .get(`/robot-result/mission/${defaultChild.id}`)
+                    .get(`/robot-result/food-recognition/${defaultChild.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .expect(HttpStatus.OK)
                     .then(res => {
-                        expect(res.body.data).to.have.property('id')
-                        expect(res.body.data).to.have.property('name', defaultRobotResult.userName)
-                        expect(res.body.data).to.have.property('favoriteSport', defaultRobotResult.favoriteSport)
-                        expect(res.body.data).to.have.property('date', defaultRobotResult.getDateFormattedAccordingToMissionsService(defaultRobotResult.date!))
-                        expect(res.body.data).to.have.deep.property('missions', defaultRobotResult.missions)
-                        expect(res.body.data).to.have.deep.property('logs', defaultRobotResult.userLog)
+                        expect(res.body.data[0]).to.have.property('id')
+                        expect(res.body.data[0]).to.have.property('outcome', defaultFoodRecognition.outcome)
+                        expect(res.body.data[0]).to.have.property('imagePath',  missionsUrl.concat(defaultFoodRecognition.imagePath!))
+                        expect(res.body.data[0]).to.have.property('captureDate',  formattedDate)
                         expect(res.body).to.have.property('message')
-                        expect(res.body.status).to.eql(HttpStatus.OK)
+                        expect(res.body).to.have.property('status', HttpStatus.OK)
                     })
             })
 
-            it('robot-result.mission.get003: should return status code 200 and the Robot-Result for educator user', async () => {
+            it('food-recognition.get003: should return status code 200 and the Food-Recognition for educator user', async () => {
 
                 return request(URI)
-                    .get(`/robot-result/mission/${defaultChild.id}`)
+                    .get(`/robot-result/food-recognition/${defaultChild.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .expect(HttpStatus.OK)
                     .then(res => {
-                        expect(res.body.data).to.have.property('id')
-                        expect(res.body.data).to.have.property('name', defaultRobotResult.userName)
-                        expect(res.body.data).to.have.property('favoriteSport', defaultRobotResult.favoriteSport)
-                        expect(res.body.data).to.have.property('date', defaultRobotResult.getDateFormattedAccordingToMissionsService(defaultRobotResult.date!))
-                        expect(res.body.data).to.have.deep.property('missions', defaultRobotResult.missions)
-                        expect(res.body.data).to.have.deep.property('logs', defaultRobotResult.userLog)
+                        expect(res.body.data[0]).to.have.property('id')
+                        expect(res.body.data[0]).to.have.property('outcome', defaultFoodRecognition.outcome)
+                        expect(res.body.data[0]).to.have.property('imagePath',  missionsUrl.concat(defaultFoodRecognition.imagePath!))
+                        expect(res.body.data[0]).to.have.property('captureDate',  formattedDate)
                         expect(res.body).to.have.property('message')
-                        expect(res.body.status).to.eql(HttpStatus.OK)
+                        expect(res.body).to.have.property('status', HttpStatus.OK)
                     })
             })
 
-            it('robot-result.mission.get004: should return status code 200 and the Robot-Result for health professional', async () => {
+            it('food-recognition.get004: should return status code 200 and the Food-Recognition for health professional', async () => {
 
                 return request(URI)
-                    .get(`/robot-result/mission/${defaultChild.id}`)
+                    .get(`/robot-result/food-recognition/${defaultChild.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
                     .expect(HttpStatus.OK)
                     .then(res => {
-                        expect(res.body.data).to.have.property('id')
-                        expect(res.body.data).to.have.property('name', defaultRobotResult.userName)
-                        expect(res.body.data).to.have.property('favoriteSport', defaultRobotResult.favoriteSport)
-                        expect(res.body.data).to.have.property('date', defaultRobotResult.getDateFormattedAccordingToMissionsService(defaultRobotResult.date!))
-                        expect(res.body.data).to.have.deep.property('missions', defaultRobotResult.missions)
-                        expect(res.body.data).to.have.deep.property('logs', defaultRobotResult.userLog)
+                        expect(res.body.data[0]).to.have.property('id')
+                        expect(res.body.data[0]).to.have.property('outcome', defaultFoodRecognition.outcome)
+                        expect(res.body.data[0]).to.have.property('imagePath',  missionsUrl.concat(defaultFoodRecognition.imagePath!))
+                        expect(res.body.data[0]).to.have.property('captureDate',  formattedDate)
                         expect(res.body).to.have.property('message')
-                        expect(res.body.status).to.eql(HttpStatus.OK)
+                        expect(res.body).to.have.property('status', HttpStatus.OK)
                     })
             })
 
-            it('robot-result.mission.get005: should return status code 200 and the Robot-Result for family', async () => {
+            it('food-recognition.get005: should return status code 200 and the Food-Recognition for family', async () => {
 
                 return request(URI)
-                    .get(`/robot-result/mission/${defaultChild.id}`)
+                    .get(`/robot-result/food-recognition/${defaultChild.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .expect(HttpStatus.OK)
                     .then(res => {
-                        expect(res.body.data).to.have.property('id')
-                        expect(res.body.data).to.have.property('name', defaultRobotResult.userName)
-                        expect(res.body.data).to.have.property('favoriteSport', defaultRobotResult.favoriteSport)
-                        expect(res.body.data).to.have.property('date', defaultRobotResult.getDateFormattedAccordingToMissionsService(defaultRobotResult.date!))
-                        expect(res.body.data).to.have.deep.property('missions', defaultRobotResult.missions)
-                        expect(res.body.data).to.have.deep.property('logs', defaultRobotResult.userLog)
+                        expect(res.body.data[0]).to.have.property('id')
+                        expect(res.body.data[0]).to.have.property('outcome', defaultFoodRecognition.outcome)
+                        expect(res.body.data[0]).to.have.property('imagePath',  missionsUrl.concat(defaultFoodRecognition.imagePath!))
+                        expect(res.body.data[0]).to.have.property('captureDate',  formattedDate)
                         expect(res.body).to.have.property('message')
-                        expect(res.body.status).to.eql(HttpStatus.OK)
+                        expect(res.body).to.have.property('status', HttpStatus.OK)
                     })
             })
 
-            it('robot-result.mission.get006: should return status code 200 and the Robot-Result for application', async () => {
+            it('food-recognition.get006: should return status code 200 and the Food-Recognition for application', async () => {
 
                 return request(URI)
-                    .get(`/robot-result/mission/${defaultChild.id}`)
+                    .get(`/robot-result/food-recognition/${defaultChild.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .expect(HttpStatus.OK)
                     .then(res => {
-                        expect(res.body.data).to.have.property('id')
-                        expect(res.body.data).to.have.property('name', defaultRobotResult.userName)
-                        expect(res.body.data).to.have.property('favoriteSport', defaultRobotResult.favoriteSport)
-                        expect(res.body.data).to.have.property('date', defaultRobotResult.getDateFormattedAccordingToMissionsService(defaultRobotResult.date!))
-                        expect(res.body.data).to.have.deep.property('missions', defaultRobotResult.missions)
-                        expect(res.body.data).to.have.deep.property('logs', defaultRobotResult.userLog)
+                        expect(res.body.data[0]).to.have.property('id')
+                        expect(res.body.data[0]).to.have.property('outcome', defaultFoodRecognition.outcome)
+                        expect(res.body.data[0]).to.have.property('imagePath',  missionsUrl.concat(defaultFoodRecognition.imagePath!))
+                        expect(res.body.data[0]).to.have.property('captureDate',  formattedDate)
                         expect(res.body).to.have.property('message')
-                        expect(res.body.status).to.eql(HttpStatus.OK)
+                        expect(res.body).to.have.property('status', HttpStatus.OK)
                     })
             })
 
-        }) // getting a Robot-Result successfully
+        }) // getting a Food-Recognition successfully
 
-        context('when the Robot-Result not found', () => {
+        context('when the child not found', () => {
 
-            it('robot-result.mission.get007: should return an error, because childId is invalid', async () => {
+            it('food-recognition.get007: should return an error, because child.id is invalid', async () => {
 
                 const INVALID_ID = '123'
 
                 return request(URI)
-                    .get(`/robot-result/mission/${INVALID_ID}`)
+                    .get(`/robot-result/food-recognition/${INVALID_ID}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .expect(err => {
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
+
                     })
             })
 
-            it('robot-result.mission.get008: should return an error, because child not found', async () => {
+            it('food-recognition.get008: should return an error, because child not found', async () => {
 
                 const NON_EXISTENT_ID = '1dd572e805560300431b1004'
 
                 return request(URI)
-                    .get(`/robot-result/mission/${NON_EXISTENT_ID}`)
+                    .get(`/robot-result/food-recognition/${NON_EXISTENT_ID}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .expect(err => {
@@ -297,12 +279,12 @@ describe('Routes: Robot', () => {
             })
         }) // error occurs
 
-        context('when the user does not have permission for get Robot-Result of a specific child', () => {
+        context('when the user does not have permission for get Food-Recognition of a specific child', () => {
 
-            it('robot-result.mission.get009: should return status code 403 and info message from insufficient permissions for another child', () => {
+            it('food-recognition.get009: should return status code 403 and info message from insufficient permissions for another child', () => {
 
                 return request(URI)
-                    .get(`/robot-result/mission/${defaultChild.id}`)
+                    .get(`/robot-result/food-recognition/${defaultChild.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessAnotherChildToken))
                     .expect(HttpStatus.FORBIDDEN)
@@ -312,10 +294,10 @@ describe('Routes: Robot', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the health professional', () => {
-                it('robot-result.mission.get010: should return status code 403 and info message from insufficient permissions for health professional user who is not associated with the child', () => {
+                it('food-recognition.get010: should return status code 403 and info message from insufficient permissions for health professional user who is not associated with the child', () => {
 
                     return request(URI)
-                        .get(`/robot-result/mission/${defaultChild.id}`)
+                        .get(`/robot-result/food-recognition/${defaultChild.id}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherHealthProfessional))
                         .expect(HttpStatus.FORBIDDEN)
@@ -326,10 +308,10 @@ describe('Routes: Robot', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the educator', () => {
-                it('robot-result.mission.get011: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
+                it('food-recognition.get011: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
 
                     return request(URI)
-                        .get(`/robot-result/mission/${defaultChild.id}`)
+                        .get(`/robot-result/food-recognition/${defaultChild.id}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
                         .expect(HttpStatus.FORBIDDEN)
@@ -340,10 +322,10 @@ describe('Routes: Robot', () => {
             })
 
             describe('when the child does not belong to any of the groups associated with the family', () => {
-                it('robot-result.mission.get012: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
+                it('food-recognition.get012: should return status code 403 and info message from insufficient permissions for family user who is not associated with the child', () => {
 
                     return request(URI)
-                        .get(`/robot-result/mission/${defaultChild.id}`)
+                        .get(`/robot-result/food-recognition/${defaultChild.id}`)
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
                         .expect(HttpStatus.FORBIDDEN)
@@ -356,10 +338,10 @@ describe('Routes: Robot', () => {
         }) // user does not have permission
 
         describe('when not informed the access token', () => {
-            it('robot-result.mission.get013: should return the status code 401 and the authentication failure informational message', () => {
+            it('food-recognition.get013: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
-                    .get(`/robot-result/mission/${defaultChild.id}`)
+                    .get(`/robot-result/food-recognition/${defaultChild.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(HttpStatus.UNAUTHORIZED)
@@ -371,28 +353,29 @@ describe('Routes: Robot', () => {
 
         describe('when the child has been deleted', () => {
             const child: Child = new ChildMock()
-            const robotResult: RobotResultMock = new RobotResultMock()
+            const foodRecognition: FoodRecognitionMock = new FoodRecognitionMock()
 
             before(async () => {
                 try {
                     child.institution = defaultInstitution
                     const resultChild = await acc.saveChild(accessTokenAdmin, child)
                     child.id = resultChild.id
-                    robotResult.userId = child.id
-                    robotResult.userName = child.username
 
-                    await missions.saveRobotResult(accessDefaultApplicationToken, robotResult)
+                    foodRecognition.childId = child.id
+
+                    await missions.saveRobotResultFoodRecognition(accessDefaultApplicationToken, foodRecognition)
 
                     await acc.deleteUser(accessTokenAdmin, child.id)
 
                 } catch (err) {
-                    console.log('Failure in Before from robot-result.mission.get test: ', err.message)
+                    console.log('Failure in Before from robot-result/food-recognition.get test: ', err.message)
                 }
             })
-            it('robot-result.mission.get014: should return an error, because child not found', async () => {
+
+            it('food-recognition.get014: should return an error, because the child not found', async () => {
 
                 return request(URI)
-                    .get(`/robot-result/mission/${child.id}`)
+                    .get(`/robot-result/food-recognition/${child.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .expect(err => {

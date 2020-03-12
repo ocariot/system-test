@@ -1,7 +1,7 @@
 import request from 'supertest'
 
 class QuestionnairesUtil {
-    public readonly URI: string = process.env.AG_URL || 'https://localhost:8081'
+    public readonly URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
     public saveQFoodTracking(accessToken: string, qfoodtracking: any): Promise<any> {
 

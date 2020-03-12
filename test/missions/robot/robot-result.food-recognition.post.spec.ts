@@ -2,7 +2,6 @@ import request from 'supertest'
 import { expect } from 'chai'
 import { acc } from '../../utils/account.utils'
 import { accountDB } from '../../../src/account-service/database/account.db'
-import { questionnaireDB } from '../../../src/quizzes/database/quests.db'
 import { missionsDB } from '../../../src/missions/database/missions.db'
 import { Institution } from '../../../src/account-service/model/institution'
 import { Child } from '../../../src/account-service/model/child'
@@ -49,7 +48,6 @@ describe('Routes: Robot', () => {
     before(async () => {
         try {
             await accountDB.connect()
-            await questionnaireDB.connect()
             await missionsDB.connect()
 
             const tokens = await acc.getAuths()
@@ -113,11 +111,8 @@ describe('Routes: Robot', () => {
     after(async () => {
         try {
             await accountDB.removeCollections()
-            await questionnaireDB.removeCollections()
             await missionsDB.restoreDatabase()
             await accountDB.dispose()
-            await questionnaireDB.dispose()
-            await missionsDB.close()
         } catch (err) {
             console.log('DB ERROR', err)
         }
@@ -125,19 +120,9 @@ describe('Routes: Robot', () => {
 
     describe('POST /robot-result/food-recognition', () => {
 
-        // afterEach(async () => {
-        //     try {
-        //         await missionsDB.restoreDatabase()
-        //     } catch (err) {
-        //         console.log('Failure in robot-result/food-recognition.post test: ', err.message)
-        //     }
-        // })
-
         context('when the user posting a Food-Recognition successfully', () => {
 
             it('food-recognition.post001: should return status code 200 and the saved Food-Recognition by the educator user', async () => {
-
-                console.log(defaultFoodRecognition)
 
                 return request(URI)
                     .post('/robot-result/food-recognition')

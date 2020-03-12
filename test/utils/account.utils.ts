@@ -16,7 +16,7 @@ import { FamilyMock } from '../mocks/account-service/family.mock'
 
 class AccountUtil {
 
-    public readonly URI: string = process.env.AG_URL || 'https://localhost:8081'
+    public readonly URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
     // Retirar
     public readonly NON_EXISTENT_ID: string = '111111111111111111111111'
