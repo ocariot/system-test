@@ -120,6 +120,13 @@ describe('Routes: Educator Missions', () => {
 
     describe('POST /educator-missions', () => {
 
+        afterEach(async () => {
+            try {
+                await missionsDB.deleteAllEducatorMissions()
+            } catch (err) {
+                console.log('Failure on AfterEach from educator-missions.post test: ', err.message)
+            }
+        })
         context('when the user posting a Educator Missions successfully', () => {
 
             it('educator-missions.post001: should return status code 200 and the saved Educator Missions by the educator user', async () => {
@@ -380,25 +387,10 @@ describe('Routes: Educator Missions', () => {
                     })
             })
 
-            describe('when the child does not belong to any of the groups associated with the educator', () => {
-                it('educator-missions.post019: should return status code 403 and info message from insufficient permissions for educator user who is not associated with the child', () => {
-
-                    return request(URI)
-                        .post('/educator-missions')
-                        .set('Content-Type', 'application/json')
-                        .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
-                        .send(defaultEducatorMissionsDiet)
-                        .expect(HttpStatus.FORBIDDEN)
-                        .expect(err => {
-                            expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                        })
-                })
-            })
-
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('educator-missions.post020: should return the status code 401 and the authentication failure informational message', () => {
+            it('educator-missions.post019: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .post('/educator-missions')

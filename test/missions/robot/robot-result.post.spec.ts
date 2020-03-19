@@ -120,13 +120,13 @@ describe('Routes: Robot', () => {
 
     describe('POST /robot-result', () => {
 
-        // afterEach(async () => {
-        //     try {
-        //         await missionsDB.restoreDatabase()
-        //     } catch (err) {
-        //         console.log('Failure in robot-result.post test: ', err.message)
-        //     }
-        // })
+        afterEach(async () => {
+            try {
+                await missionsDB.deleteAllRobotResult()
+            } catch (err) {
+                console.log('Failure in robot-result.post test: ', err.message)
+            }
+        })
 
         context('when the user posting a Robot-Result successfully', () => {
 

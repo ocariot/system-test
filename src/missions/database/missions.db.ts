@@ -33,6 +33,30 @@ class MissionsDb {
         shelljs.exec(`cat ${__dirname}/backup.sql | docker exec -i ${MISSIONS_CONTAINER_NAME} /usr/bin/mysql -u ${this.MISSIONS_DB_USER} -p"${this.MISSIONS_DB_PASS}" ${this.MISSIONS_DB_NAME}`)
     }
 
+    public deleteAllRobotResult(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            this.sequelize.getQueryInterface().bulkDelete(TableNameMock.ROBOT_RESULT, {})
+                .then(() => resolve(true))
+                .catch(reject)
+        })
+    }
+
+    public deleteAllFoodRecognition(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            this.sequelize.getQueryInterface().bulkDelete(TableNameMock.FOOD_RECOGNITION, {})
+                .then(() => resolve(true))
+                .catch(reject)
+        })
+    }
+
+    public deleteAllEducatorMissions(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            this.sequelize.getQueryInterface().bulkDelete(TableNameMock.EDUCATOR_MISSION, {})
+                .then(() => resolve(true))
+                .catch(reject)
+        })
+    }
+
     public showTables(): any {
         return this.sequelize.getQueryInterface().showAllSchemas()
     }

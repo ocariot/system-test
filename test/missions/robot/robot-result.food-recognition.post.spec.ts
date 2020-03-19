@@ -120,6 +120,14 @@ describe('Routes: Robot', () => {
 
     describe('POST /robot-result/food-recognition', () => {
 
+        afterEach(async () => {
+            try {
+                await missionsDB.deleteAllFoodRecognition()
+            } catch (err) {
+                console.log('Failure in robot-result.food-recognition.post test: ', err.message)
+            }
+        })
+
         context('when the user posting a Food-Recognition successfully', () => {
 
             it('food-recognition.post001: should return status code 200 and the saved Food-Recognition by the educator user', async () => {

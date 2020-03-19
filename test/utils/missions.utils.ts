@@ -1,6 +1,7 @@
 import request from 'supertest'
 import { RobotResultMock } from '../mocks/missions-service/robotResult.mock'
 import { FoodRecognitionMock } from '../mocks/missions-service/foodRecognitionMock'
+import { EducatorMissionsMock } from '../mocks/missions-service/educatorMissionsMock'
 
 class missionsUtil {
 
@@ -24,6 +25,17 @@ class missionsUtil {
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .send(foodRecognition)
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err))
+    }
+
+    public saveEducatorMissions(accessToken: string, educatorMissions: EducatorMissionsMock): Promise<any> {
+
+        return request(this.URI)
+            .post(`/educator-missions`)
+            .set('Authorization', 'Bearer '.concat(accessToken))
+            .set('Content-Type', 'application/json')
+            .send(educatorMissions)
             .then(res => Promise.resolve(res.body))
             .catch(err => Promise.reject(err))
     }
