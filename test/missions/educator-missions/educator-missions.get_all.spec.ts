@@ -122,7 +122,7 @@ describe('Routes: Educator Missions', () => {
     })
 
     describe('GET /educator-missions', () => {
-        let CREATION_DATE: Date = new Date()
+        let CREATION_DATE: string = new Date().toISOString()
 
         beforeEach(async () => {
             try {
@@ -160,7 +160,7 @@ describe('Routes: Educator Missions', () => {
                         expect(res.body.data[0]).to.have.property('type', defaultEducatorMissions.type)
                         expect(res.body.data[0]).to.have.property('durationType', defaultEducatorMissions.durationType)
                         expect(res.body.data[0]).to.have.property('durationNumber', defaultEducatorMissions.durationNumber)
-                        expect(res.body.data[0].createdAt.substring(0, 10)).to.eql(CREATION_DATE.toISOString().substring(0, 10)) // ex: 2020-03-19
+                        expect(res.body.data[0].createdAt.substring(0, 10)).to.eql(CREATION_DATE.substring(0, 10)) // ex: 2020-03-19
                     })
             })
 
@@ -181,7 +181,7 @@ describe('Routes: Educator Missions', () => {
                         expect(res.body.data[0]).to.have.property('type', defaultEducatorMissions.type)
                         expect(res.body.data[0]).to.have.property('durationType', defaultEducatorMissions.durationType)
                         expect(res.body.data[0]).to.have.property('durationNumber', defaultEducatorMissions.durationNumber)
-                        expect(res.body.data[0].createdAt.substring(0, 10)).to.eql(CREATION_DATE.toISOString().substring(0, 10)) // ex: 2020-03-19
+                        expect(res.body.data[0].createdAt.substring(0, 10)).to.eql(CREATION_DATE.substring(0, 10)) // ex: 2020-03-19
                     })
             })
 
@@ -202,7 +202,7 @@ describe('Routes: Educator Missions', () => {
                         expect(res.body.data[0]).to.have.property('type', defaultEducatorMissions.type)
                         expect(res.body.data[0]).to.have.property('durationType', defaultEducatorMissions.durationType)
                         expect(res.body.data[0]).to.have.property('durationNumber', defaultEducatorMissions.durationNumber)
-                        expect(res.body.data[0].createdAt.substring(0, 10)).to.eql(CREATION_DATE.toISOString().substring(0, 10)) // ex: 2020-03-19
+                        expect(res.body.data[0].createdAt.substring(0, 10)).to.eql(CREATION_DATE.substring(0, 10)) // ex: 2020-03-19
                     })
             })
 
@@ -223,7 +223,7 @@ describe('Routes: Educator Missions', () => {
                         expect(res.body.data[0]).to.have.property('type', defaultEducatorMissions.type)
                         expect(res.body.data[0]).to.have.property('durationType', defaultEducatorMissions.durationType)
                         expect(res.body.data[0]).to.have.property('durationNumber', defaultEducatorMissions.durationNumber)
-                        expect(res.body.data[0].createdAt.substring(0, 10)).to.eql(CREATION_DATE.toISOString().substring(0, 10)) // ex: 2020-03-19
+                        expect(res.body.data[0].createdAt.substring(0, 10)).to.eql(CREATION_DATE.substring(0, 10)) // ex: 2020-03-19
                     })
             })
 
@@ -244,7 +244,7 @@ describe('Routes: Educator Missions', () => {
                         expect(res.body.data[0]).to.have.property('type', defaultEducatorMissions.type)
                         expect(res.body.data[0]).to.have.property('durationType', defaultEducatorMissions.durationType)
                         expect(res.body.data[0]).to.have.property('durationNumber', defaultEducatorMissions.durationNumber)
-                        expect(res.body.data[0].createdAt.substring(0, 10)).to.eql(CREATION_DATE.toISOString().substring(0, 10)) // ex: 2020-03-19
+                        expect(res.body.data[0].createdAt.substring(0, 10)).to.eql(CREATION_DATE.substring(0, 10)) // ex: 2020-03-19
                     })
             })
 
@@ -265,7 +265,7 @@ describe('Routes: Educator Missions', () => {
                         expect(res.body.data[0]).to.have.property('type', defaultEducatorMissions.type)
                         expect(res.body.data[0]).to.have.property('durationType', defaultEducatorMissions.durationType)
                         expect(res.body.data[0]).to.have.property('durationNumber', defaultEducatorMissions.durationNumber)
-                        expect(res.body.data[0].createdAt.substring(0, 10)).to.eql(CREATION_DATE.toISOString().substring(0, 10)) // ex: 2020-03-19
+                        expect(res.body.data[0].createdAt.substring(0, 10)).to.eql(CREATION_DATE.substring(0, 10)) // ex: 2020-03-19
                     })
             })
 
@@ -301,7 +301,7 @@ describe('Routes: Educator Missions', () => {
                             expect(res.body.data[0]).to.have.property('type', educatorMissionsActivity.type)
                             expect(res.body.data[0]).to.have.property('durationType', educatorMissionsActivity.durationType)
                             expect(res.body.data[0]).to.have.property('durationNumber', educatorMissionsActivity.durationNumber)
-                            expect(res.body.data[0].createdAt.substring(0, 10)).to.eql(CREATION_DATE.toISOString().substring(0, 10)) // ex: 2020-03-19
+                            expect(res.body.data[0].createdAt.substring(0, 10)).to.eql(CREATION_DATE.substring(0, 10)) // ex: 2020-03-19
 
                             expect(res.body.data[1]).to.have.deep.property('goal', educatorMissionsEducation.goal)
                             expect(res.body.data[1]).to.have.deep.property('description', educatorMissionsEducation.description)
@@ -312,7 +312,7 @@ describe('Routes: Educator Missions', () => {
                             expect(res.body.data[1]).to.have.property('type', educatorMissionsEducation.type)
                             expect(res.body.data[1]).to.have.property('durationType', educatorMissionsEducation.durationType)
                             expect(res.body.data[1]).to.have.property('durationNumber', educatorMissionsEducation.durationNumber)
-                            expect(res.body.data[1].createdAt.substring(0, 10)).to.eql(CREATION_DATE.toISOString().substring(0, 10)) // ex: 2020-03-19
+                            expect(res.body.data[1].createdAt.substring(0, 10)).to.eql(CREATION_DATE.substring(0, 10)) // ex: 2020-03-19
 
                             expect(res.body.data[2]).to.have.deep.property('goal', defaultEducatorMissions.goal)
                             expect(res.body.data[2]).to.have.deep.property('description', defaultEducatorMissions.description)
@@ -323,7 +323,7 @@ describe('Routes: Educator Missions', () => {
                             expect(res.body.data[2]).to.have.property('type', defaultEducatorMissions.type)
                             expect(res.body.data[2]).to.have.property('durationType', defaultEducatorMissions.durationType)
                             expect(res.body.data[2]).to.have.property('durationNumber', defaultEducatorMissions.durationNumber)
-                            expect(res.body.data[2].createdAt.substring(0, 10)).to.eql(CREATION_DATE.toISOString().substring(0, 10)) // ex: 2020-03-19
+                            expect(res.body.data[2].createdAt.substring(0, 10)).to.eql(CREATION_DATE.substring(0, 10)) // ex: 2020-03-19
                         })
                 })
             })
