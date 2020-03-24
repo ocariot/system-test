@@ -32,8 +32,6 @@ describe('Routes: Educator Missions', () => {
     let accessDefaultFamilyToken: string
     let accessDefaultApplicationToken: string
 
-    let accessTokenAnotherEducator: string
-
     const defaultInstitution: Institution = new InstitutionMock()
     const defaultChild: Child = new ChildMock()
     const defaultEducator: Educator = new EducatorMock()
@@ -53,7 +51,6 @@ describe('Routes: Educator Missions', () => {
 
             const tokens = await acc.getAuths()
             accessTokenAdmin = tokens.admin.access_token
-            accessTokenAnotherEducator = tokens.educator.access_token
 
             const resultDefaultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = resultDefaultInstitution.id
