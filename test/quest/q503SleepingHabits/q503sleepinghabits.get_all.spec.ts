@@ -417,10 +417,10 @@ describe('Routes: Q503SleepingHabits', () => {
 
                     await quest.saveQ503SleepingHabits(accessDefaultEducatorToken, questionnaire)
 
-                    // const body = { username: 'newcoolusername' }
-                    // await acc.updateChild(accessTokenAdmin, child, body)
+                    const body = { username: 'newcoolusername' }
+                    await acc.updateChild(accessTokenAdmin, child, body)
 
-                    // child.username = 'newcoolusername'
+                    child.username = 'newcoolusername'
 
                 } catch (err) {
                     console.log('Failure in Before from q503sleepinghabits.get_all test: ', err.message)

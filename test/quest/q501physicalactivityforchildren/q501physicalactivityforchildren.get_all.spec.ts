@@ -395,10 +395,10 @@ describe('Routes: Q501PhysicalActivityForChildren', () => {
 
                     await quest.saveQ501PhysicalActivityForChildren(accessDefaultEducatorToken, questionnaire)
 
-                    // const body = { username: 'newcoolusername' }
-                    // await acc.updateChild(accessTokenAdmin, child, body)
+                    const body = { username: 'newcoolusername' }
+                    await acc.updateChild(accessTokenAdmin, child, body)
 
-                    // child.username = 'newcoolusername'
+                    child.username = 'newcoolusername'
 
                 } catch (err) {
                     console.log('Failure in Before from q501physicalactivityforchildren.get_all test: ', err.message)
