@@ -417,10 +417,10 @@ describe('Routes: Q503SleepingHabits', () => {
 
                     await quest.saveQ503SleepingHabits(accessDefaultEducatorToken, questionnaire)
 
-                    const body = { username: 'newcoolusername' }
-                    await acc.updateChild(accessTokenAdmin, child, body)
+                    // const body = { username: 'newcoolusername' }
+                    // await acc.updateChild(accessTokenAdmin, child, body)
 
-                    child.username = 'newcoolusername'
+                    // child.username = 'newcoolusername'
 
                 } catch (err) {
                     console.log('Failure in Before from q503sleepinghabits.get_all test: ', err.message)
@@ -428,7 +428,7 @@ describe('Routes: Q503SleepingHabits', () => {
             })
             it('q503sleepinghabits.get_all015: should return status code 200 and all Q503SleepingHabits of the child', async () => {
 
-                const Q503SleepingHabits = {
+                const Q503SleepingHabits = new Array({
                     id: questionnaire.id,
                     child_id: questionnaire.child_id,
                     date: questionnaire.date!.toISOString(),
@@ -437,7 +437,7 @@ describe('Routes: Q503SleepingHabits', () => {
                     time_nap: questionnaire.time_nap,
                     percentage: questionnaire.percentage,
                     state: questionnaire.state
-                }
+                })
 
                 return request(URI)
                     .get(`/q503sleepinghabits?filter[where][child_id]=${child.username}`)

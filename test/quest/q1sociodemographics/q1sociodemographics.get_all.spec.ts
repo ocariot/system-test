@@ -405,7 +405,7 @@ describe('Routes: Q1SocioDemographics', () => {
             })
             it('q1sociodemographics.get_all014: should return status code 200 and all q1sociodemographics of the child', async () => {
 
-                const q1sociodemographics = questionnaire.fromJSON(questionnaire)
+                const q1sociodemographics = new Array(questionnaire.fromJSON(questionnaire))
 
                 return request(URI)
                     .get(`/q1sociodemographics?filter[where][child_id]=${child.username}`)

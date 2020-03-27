@@ -430,7 +430,7 @@ describe('Routes: QFoodtracking', () => {
                     console.log('Failure in Before from qfoodtracking.get_all test: ', err.message)
                 }
             })
-            it('qfoodtracking.post016: should return an error, because child not exist', async () => {
+            it('qfoodtracking.get_all016: should return an error, because child not exist', async () => {
 
                 return request(URI)
                     .get(`/qfoodtrackings?filter[where][child_id]=${child.username}`)
@@ -464,15 +464,15 @@ describe('Routes: QFoodtracking', () => {
                     console.log('Failure in Before from qfoodtracking.get_all test: ', err.message)
                 }
             })
-            it('qfoodtracking.post017: should return status code 200 and all QFoodTrackings of the child', async () => {
+            it('qfoodtracking.get_all017: should return status code 200 and all QFoodTrackings of the child', async () => {
 
-                const qFoodTracking = {
+                const qFoodTracking = new Array({
                     id: questionnaire.id,
                     child_id: questionnaire.child_id,
                     date: questionnaire.date!.toISOString(),
                     type: questionnaire.type,
                     categories_array: questionnaire.categories_array
-                }
+                })
 
                 return request(URI)
                     .get(`/qfoodtrackings?filter[where][child_id]=${child.username}`)
