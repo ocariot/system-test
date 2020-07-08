@@ -8,10 +8,6 @@
 export abstract class Entity {
     public _id?: string
 
-    protected constructor(id?: string) {
-        this.id = id
-    }
-
     get id(): string | undefined {
         return this._id
     }

@@ -7,7 +7,7 @@ import { acc } from '../../utils/account.utils'
 
 describe('Routes: Institution', () => {
 
-    const URI: string = process.env.AG_URL || 'https://localhost:8081'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
     let accessTokenAdmin: string
     let accessTokenChild: string
@@ -39,7 +39,7 @@ describe('Routes: Institution', () => {
             accessTokenHealthProfessional = tokens.health_professional.access_token
             accessTokenFamily = tokens.family.access_token
             accessTokenApplication = tokens.application.access_token
-            
+
             await accountDB.deleteInstitutions()
 
             const resultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
@@ -66,7 +66,7 @@ describe('Routes: Institution', () => {
 
         context('when want get all institutions in database successfully', () => {
 
-            it('institutions.get_all001: should return status code 200 and a list with two institutions', () => {
+            it('institutions.get_all001: should return status code 200 and a list of institutions for admin user', () => {
 
                 return request(URI)
                     .get('/institutions')
@@ -76,20 +76,97 @@ describe('Routes: Institution', () => {
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
                         expect(res.body.length).is.eql(2)
-                        expect(res.body[0]).to.have.property('name', anotherInstitution.name)
-                        expect(res.body[0]).to.have.property('type', anotherInstitution.type)
+                        expect(res.body[0].id).to.eql(anotherInstitution.id)
+                        expect(res.body[0].name).to.eql(anotherInstitution.name)
+                        expect(res.body[0].type).to.eql(anotherInstitution.type)
                         expect(res.body[0]).to.not.have.property('address')
                         expect(res.body[0]).to.not.have.property('latitude')
                         expect(res.body[0]).to.not.have.property('longitude')
-                        expect(res.body[1]).to.have.property('name', defaultInstitution.name)
-                        expect(res.body[1]).to.have.property('type', defaultInstitution.type)
-                        expect(res.body[1]).to.have.property('address', defaultInstitution.address)
-                        expect(res.body[1]).to.have.property('latitude', defaultInstitution.latitude)
-                        expect(res.body[1]).to.have.property('longitude', defaultInstitution.longitude)
+                        expect(res.body[1].id).to.eql(defaultInstitution.id)
+                        expect(res.body[1].name).to.eql(defaultInstitution.name)
+                        expect(res.body[1].type).to.eql(defaultInstitution.type)
+                        expect(res.body[1].address).to.eql(defaultInstitution.address)
+                        expect(res.body[1].latitude).to.eql(defaultInstitution.latitude)
+                        expect(res.body[1].longitude).to.eql(defaultInstitution.longitude)
                     })
             })
 
-            it('institutions.get_all002: should return status code 200 and a list with two institutions in ascending order by name', () => {
+            it('institutions.get_all002: should return status code 200 and a list of institutions for educator user', () => {
+
+                return request(URI)
+                    .get('/institutions')
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .set('Content-Type', 'application/json')
+                    .expect(200)
+                    .then(res => {
+                        expect(res.body).is.instanceof(Array)
+                        expect(res.body.length).is.eql(2)
+                        expect(res.body[0].id).to.eql(anotherInstitution.id)
+                        expect(res.body[0].name).to.eql(anotherInstitution.name)
+                        expect(res.body[0].type).to.eql(anotherInstitution.type)
+                        expect(res.body[0]).to.not.have.property('address')
+                        expect(res.body[0]).to.not.have.property('latitude')
+                        expect(res.body[0]).to.not.have.property('longitude')
+                        expect(res.body[1].id).to.eql(defaultInstitution.id)
+                        expect(res.body[1].name).to.eql(defaultInstitution.name)
+                        expect(res.body[1].type).to.eql(defaultInstitution.type)
+                        expect(res.body[1].address).to.eql(defaultInstitution.address)
+                        expect(res.body[1].latitude).to.eql(defaultInstitution.latitude)
+                        expect(res.body[1].longitude).to.eql(defaultInstitution.longitude)
+                    })
+            })
+
+            it('institutions.get_all003: should return status code 200 and a list of institutions for health professional user', () => {
+
+                return request(URI)
+                    .get('/institutions')
+                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
+                    .set('Content-Type', 'application/json')
+                    .expect(200)
+                    .then(res => {
+                        expect(res.body).is.instanceof(Array)
+                        expect(res.body.length).is.eql(2)
+                        expect(res.body[0].id).to.eql(anotherInstitution.id)
+                        expect(res.body[0].name).to.eql(anotherInstitution.name)
+                        expect(res.body[0].type).to.eql(anotherInstitution.type)
+                        expect(res.body[0]).to.not.have.property('address')
+                        expect(res.body[0]).to.not.have.property('latitude')
+                        expect(res.body[0]).to.not.have.property('longitude')
+                        expect(res.body[1].id).to.eql(defaultInstitution.id)
+                        expect(res.body[1].name).to.eql(defaultInstitution.name)
+                        expect(res.body[1].type).to.eql(defaultInstitution.type)
+                        expect(res.body[1].address).to.eql(defaultInstitution.address)
+                        expect(res.body[1].latitude).to.eql(defaultInstitution.latitude)
+                        expect(res.body[1].longitude).to.eql(defaultInstitution.longitude)
+                    })
+            })
+
+            it('institutions.get_all004: should return status code 200 and a list of institutions for application user', () => {
+
+                return request(URI)
+                    .get('/institutions')
+                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
+                    .set('Content-Type', 'application/json')
+                    .expect(200)
+                    .then(res => {
+                        expect(res.body).is.instanceof(Array)
+                        expect(res.body.length).is.eql(2)
+                        expect(res.body[0].id).to.eql(anotherInstitution.id)
+                        expect(res.body[0].name).to.eql(anotherInstitution.name)
+                        expect(res.body[0].type).to.eql(anotherInstitution.type)
+                        expect(res.body[0]).to.not.have.property('address')
+                        expect(res.body[0]).to.not.have.property('latitude')
+                        expect(res.body[0]).to.not.have.property('longitude')
+                        expect(res.body[1].id).to.eql(defaultInstitution.id)
+                        expect(res.body[1].name).to.eql(defaultInstitution.name)
+                        expect(res.body[1].type).to.eql(defaultInstitution.type)
+                        expect(res.body[1].address).to.eql(defaultInstitution.address)
+                        expect(res.body[1].latitude).to.eql(defaultInstitution.latitude)
+                        expect(res.body[1].longitude).to.eql(defaultInstitution.longitude)
+                    })
+            })
+
+            it('institutions.get_all005: should return status code 200 and a list with two institutions in ascending order by name', () => {
 
                 const sortField = 'name'
 
@@ -101,20 +178,22 @@ describe('Routes: Institution', () => {
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
                         expect(res.body.length).is.eql(2)
-                        expect(res.body[0]).to.have.property('name', anotherInstitution.name)
-                        expect(res.body[0]).to.have.property('type', anotherInstitution.type)
+                        expect(res.body[0].id).to.eql(anotherInstitution.id)
+                        expect(res.body[0].name).to.eql(anotherInstitution.name)
+                        expect(res.body[0].type).to.eql(anotherInstitution.type)
                         expect(res.body[0]).to.not.have.property('address')
                         expect(res.body[0]).to.not.have.property('latitude')
                         expect(res.body[0]).to.not.have.property('longitude')
-                        expect(res.body[1]).to.have.property('name', defaultInstitution.name)
-                        expect(res.body[1]).to.have.property('type', defaultInstitution.type)
-                        expect(res.body[1]).to.have.property('address', defaultInstitution.address)
-                        expect(res.body[1]).to.have.property('latitude', defaultInstitution.latitude)
-                        expect(res.body[1]).to.have.property('longitude', defaultInstitution.longitude)
+                        expect(res.body[1].id).to.eql(defaultInstitution.id)
+                        expect(res.body[1].name).to.eql(defaultInstitution.name)
+                        expect(res.body[1].type).to.eql(defaultInstitution.type)
+                        expect(res.body[1].address).to.eql(defaultInstitution.address)
+                        expect(res.body[1].latitude).to.eql(defaultInstitution.latitude)
+                        expect(res.body[1].longitude).to.eql(defaultInstitution.longitude)
                     })
             })
 
-            it('institutions.get_all003: should return status code 200 and a list with two institutions in descending order by type', () => {
+            it('institutions.get_all006: should return status code 200 and a list with two institutions in descending order by type', () => {
 
                 const sortField = 'type'
 
@@ -126,76 +205,22 @@ describe('Routes: Institution', () => {
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
                         expect(res.body.length).is.eql(2)
-                        expect(res.body[0]).to.have.property('name', defaultInstitution.name)
-                        expect(res.body[0]).to.have.property('type', defaultInstitution.type)
-                        expect(res.body[0]).to.have.property('address', defaultInstitution.address)
-                        expect(res.body[0]).to.have.property('latitude', defaultInstitution.latitude)
-                        expect(res.body[0]).to.have.property('longitude', defaultInstitution.longitude)
-                        expect(res.body[1]).to.have.property('name', anotherInstitution.name)
-                        expect(res.body[1]).to.have.property('type', anotherInstitution.type)
+                        expect(res.body[0].id).to.eql(defaultInstitution.id)
+                        expect(res.body[0].name).to.eql(defaultInstitution.name)
+                        expect(res.body[0].type).to.eql(defaultInstitution.type)
+                        expect(res.body[0].address).to.eql(defaultInstitution.address)
+                        expect(res.body[0].latitude).to.eql(defaultInstitution.latitude)
+                        expect(res.body[0].longitude).to.eql(defaultInstitution.longitude)
+                        expect(res.body[1].id).to.eql(anotherInstitution.id)
+                        expect(res.body[1].name).to.eql(anotherInstitution.name)
+                        expect(res.body[1].type).to.eql(anotherInstitution.type)
                         expect(res.body[1]).to.not.have.property('address')
                         expect(res.body[1]).to.not.have.property('latitude')
                         expect(res.body[1]).to.not.have.property('longitude')
                     })
             })
 
-            it('institutions.get_all004: should return status code 200 and a list with only name and ID of two institutions', () => {
-
-                const field = 'name'
-
-                return request(URI)
-                    .get(`/institutions?fields=${field}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(2)
-                        expect(res.body[0]).to.have.property('id')
-                        expect(res.body[0]).to.have.property('name', anotherInstitution.name)
-                        expect(res.body[0]).to.not.have.property('type')
-                        expect(res.body[0]).to.not.have.property('address')
-                        expect(res.body[0]).to.not.have.property('latitude')
-                        expect(res.body[0]).to.not.have.property('longitude')
-                        expect(res.body[1]).to.have.property('id')
-                        expect(res.body[1]).to.have.property('name', defaultInstitution.name)
-                        expect(res.body[1]).to.not.have.property('type')
-                        expect(res.body[1]).to.not.have.property('address')
-                        expect(res.body[1]).to.not.have.property('latitude')
-                        expect(res.body[1]).to.not.have.property('longitude')
-                    })
-            })
-
-            it('institutions.get_all005: should return status code 200 and a list of institutions with only name, ID and type of two institutions', () => {
-
-                const fieldOne = 'name'
-                const fieldTwo = 'type'
-
-                return request(URI)
-                    .get(`/institutions?fields=${fieldOne}%2C${fieldTwo}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(2)
-                        expect(res.body[0]).to.have.property('id')
-                        expect(res.body[0]).to.have.property('name', anotherInstitution.name)
-                        expect(res.body[0]).to.have.property('type', anotherInstitution.type)
-                        expect(res.body[0]).to.not.have.property('address')
-                        expect(res.body[0]).to.not.have.property('latitude')
-                        expect(res.body[0]).to.not.have.property('longitude')
-
-                        expect(res.body[1]).to.have.property('id')
-                        expect(res.body[1]).to.have.property('name', defaultInstitution.name)
-                        expect(res.body[1]).to.have.property('type', defaultInstitution.type)
-                        expect(res.body[1]).to.not.have.property('address')
-                        expect(res.body[1]).to.not.have.property('latitude')
-                        expect(res.body[1]).to.not.have.property('longitude')
-                    })
-            })
-
-            it('institutions.get_all006: should return status code 200 and a list of two most recent institutions in database', () => {
+            it('institutions.get_all007: should return status code 200 and a list of two most recent institutions in database', () => {
                 const page = 1
                 const limit = 2
 
@@ -207,37 +232,49 @@ describe('Routes: Institution', () => {
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
                         expect(res.body.length).is.eql(2)
+                        expect(res.body[0].id).to.eql(anotherInstitution.id)
+                        expect(res.body[0].name).to.eql(anotherInstitution.name)
+                        expect(res.body[0].type).to.eql(anotherInstitution.type)
+                        expect(res.body[0]).to.not.have.property('address')
+                        expect(res.body[0]).to.not.have.property('latitude')
+                        expect(res.body[0]).to.not.have.property('longitude')
+                        expect(res.body[1].id).to.eql(defaultInstitution.id)
+                        expect(res.body[1].name).to.eql(defaultInstitution.name)
+                        expect(res.body[1].type).to.eql(defaultInstitution.type)
+                        expect(res.body[1].address).to.eql(defaultInstitution.address)
+                        expect(res.body[1].latitude).to.eql(defaultInstitution.latitude)
+                        expect(res.body[1].longitude).to.eql(defaultInstitution.longitude)
                     })
             })
 
         }) // get all institutions in database
 
-        context('when the user get all institution in database', () => {
+        context('when want get all institutions in database after deleting all of them', () => {
 
-            it('institutions.get_all007: should return status code 200 and a list of institutions for admin user', () => {
+            before(async () => {
+                try {
+                    await accountDB.deleteInstitutions()
+                } catch (err) {
+                    console.log('DB ERROR', err)
+                }
+            })
+
+            it('institutions.get_all008: should return status code 200 and empty list ', () => {
 
                 return request(URI)
                     .get('/institutions')
-                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .then(res => {
-                        expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).to.eql(2)
-                        expect(res.body[0]).to.have.property('name', anotherInstitution.name)
-                        expect(res.body[0]).to.have.property('type', anotherInstitution.type)
-                        expect(res.body[0]).to.not.have.property('address')
-                        expect(res.body[0]).to.not.have.property('latitude')
-                        expect(res.body[0]).to.not.have.property('longitude')
-                        expect(res.body[1]).to.have.property('name', defaultInstitution.name)
-                        expect(res.body[1]).to.have.property('type', defaultInstitution.type)
-                        expect(res.body[1]).to.have.property('address', defaultInstitution.address)
-                        expect(res.body[1]).to.have.property('latitude', defaultInstitution.latitude)
-                        expect(res.body[1]).to.have.property('longitude', defaultInstitution.longitude)
+                        expect(res.body.length).to.eql(0)
                     })
             })
+        })
 
-            it('institutions.get_all008: should return status code 403 and info message from insufficient permissions for child user', () => {
+        context('when the user does not have permission to get all institution', () => {
+
+            it('institutions.get_all009: should return status code 403 and info message from insufficient permissions for child user', () => {
 
                 return request(URI)
                     .get('/institutions')
@@ -249,53 +286,7 @@ describe('Routes: Institution', () => {
                     })
             })
 
-            it('institutions.get_all009: should return status code 200 and a list of institutions for educator user', () => {
-
-                return request(URI)
-                    .get('/institutions')
-                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).to.eql(2)
-                        expect(res.body[0]).to.have.property('name', anotherInstitution.name)
-                        expect(res.body[0]).to.have.property('type', anotherInstitution.type)
-                        expect(res.body[0]).to.not.have.property('address')
-                        expect(res.body[0]).to.not.have.property('latitude')
-                        expect(res.body[0]).to.not.have.property('longitude')
-                        expect(res.body[1]).to.have.property('name', defaultInstitution.name)
-                        expect(res.body[1]).to.have.property('type', defaultInstitution.type)
-                        expect(res.body[1]).to.have.property('address', defaultInstitution.address)
-                        expect(res.body[1]).to.have.property('latitude', defaultInstitution.latitude)
-                        expect(res.body[1]).to.have.property('longitude', defaultInstitution.longitude)
-                    })
-            })
-
-            it('institutions.get_all010: should return status code 200 and a list of institutions for health professional user', () => {
-
-                return request(URI)
-                    .get('/institutions')
-                    .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).to.eql(2)
-                        expect(res.body[0]).to.have.property('name', anotherInstitution.name)
-                        expect(res.body[0]).to.have.property('type', anotherInstitution.type)
-                        expect(res.body[0]).to.not.have.property('address')
-                        expect(res.body[0]).to.not.have.property('latitude')
-                        expect(res.body[0]).to.not.have.property('longitude')
-                        expect(res.body[1]).to.have.property('name', defaultInstitution.name)
-                        expect(res.body[1]).to.have.property('type', defaultInstitution.type)
-                        expect(res.body[1]).to.have.property('address', defaultInstitution.address)
-                        expect(res.body[1]).to.have.property('latitude', defaultInstitution.latitude)
-                        expect(res.body[1]).to.have.property('longitude', defaultInstitution.longitude)
-                    })
-            })
-
-            it('institutions.get_all011: should return status code 403 and info message from insufficient permissions for family user', () => {
+            it('institutions.get_all010: should return status code 403 and info message from insufficient permissions for family user', () => {
 
                 return request(URI)
                     .get('/institutions')
@@ -306,34 +297,10 @@ describe('Routes: Institution', () => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
-
-            it('institutions.get_all012: should return status code 200 and a list of institutions for application user', () => {
-
-                return request(URI)
-                    .get('/institutions')
-                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).to.eql(2)
-                        expect(res.body[0]).to.have.property('name', anotherInstitution.name)
-                        expect(res.body[0]).to.have.property('type', anotherInstitution.type)
-                        expect(res.body[0]).to.not.have.property('address')
-                        expect(res.body[0]).to.not.have.property('latitude')
-                        expect(res.body[0]).to.not.have.property('longitude')
-                        expect(res.body[1]).to.have.property('name', defaultInstitution.name)
-                        expect(res.body[1]).to.have.property('type', defaultInstitution.type)
-                        expect(res.body[1]).to.have.property('address', defaultInstitution.address)
-                        expect(res.body[1]).to.have.property('latitude', defaultInstitution.latitude)
-                        expect(res.body[1]).to.have.property('longitude', defaultInstitution.longitude)
-                    })
-            })
-
-        }) // user get all institution in database
+        }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('institutions.get_all013: should return the status code 401 and the authentication failure informational message', () => {
+            it('institutions.get_all011: should return the status code 401 and the authentication failure informational message', () => {
 
                 return request(URI)
                     .get('/institutions')
@@ -347,63 +314,5 @@ describe('Routes: Institution', () => {
             })
         })
 
-        describe('when want get all institutions in database after deleting all of them', () => {
-            before(async () => {
-                try {
-                    await accountDB.deleteInstitutions()
-                } catch (err) {
-                    console.log('DB ERROR', err)
-                }
-            })
-            it('institutions.get_all014: should return status code 200 and empty list ', () => {
-
-                return request(URI)
-                    .get('/institutions')
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body.length).to.eql(0)
-                    })
-            })
-        })
-
-        // describe('when get the one hundred most recently registered institutions in database', () => {
-            
-        //     const institution101 = new InstitutionMock()
-        //     before(async () => {
-        //         try {
-        //             await con.deleteInstitutions()
-        //             await acc.saveInstitution(accessTokenAdmin, new InstitutionMock())
-        //             for (let i = 1; i < 100; i++) {
-        //                 await acc.saveInstitution(accessTokenAdmin, new InstitutionMock())
-        //             }
-        //         } catch (err) {
-        //             console.log('Failure in institutions.get_all.spec test: ', err)
-        //         }
-        //     })
-        //     after(async () => {
-        //         try {
-        //             await con.deleteInstitutions()
-        //         } catch (err) {
-        //             console.log('Failure in institutions.get_all.spec test: ', err)
-        //         }
-        //     })
-        //     it('institutions.get_all00?: should return status code 200 and a list with only one hundred institutions', () => {
-        //         const page = 1
-        //         const limit = 100
-
-        //         return request(URI)
-        //             .get(`/institutions?page=${page}&limit=${limit}`)
-        //             .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-        //             .set('Content-Type', 'application/json')
-        //             .expect(200)
-        //             .then(res => {
-        //                 expect(res.body).is.instanceof(Array)
-        //                 expect(res.body.length).is.eql(100)
-        //                 expect(res.body[99]).to.not.eql(institution101)
-        //             })
-        //     })
-        // })        
     })
 })

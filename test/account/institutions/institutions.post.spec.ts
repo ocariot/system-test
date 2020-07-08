@@ -4,11 +4,10 @@ import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Institution } from '../../../src/account-service/model/institution'
 import { accountDB } from '../../../src/account-service/database/account.db'
 import { acc } from '../../utils/account.utils'
-import { Child } from '../../../src/account-service/model/child'
 
 describe('Routes: Institution', () => {
 
-    const URI: string = process.env.AG_URL || 'https://localhost:8081'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
     let accessTokenAdmin: string
     let accessTokenChild: string
@@ -29,15 +28,8 @@ describe('Routes: Institution', () => {
     anotherInstitution.name = "another name"
 
     const institutionWillBeUpdated: Institution = new Institution
-    institutionWillBeUpdated.type = 'not upated type',
-        institutionWillBeUpdated.name = 'not updated name'
-
-    const defaultChild: Child = new Child()
-    defaultChild.username = 'default username'
-    defaultChild.password = 'default password'
-    defaultChild.institution = new Institution()
-    defaultChild.gender = 'male'
-    defaultChild.age = 10
+    institutionWillBeUpdated.type = 'not upated type'
+    institutionWillBeUpdated.name = 'not updated name'
 
     before(async () => {
         try {
@@ -144,27 +136,7 @@ describe('Routes: Institution', () => {
 
         context('when a validation error occurs', () => {
 
-            it('institutions.post004: should return status code 400 and info message from missing parameters, because type was not informed', async () => {
-
-                const body = {
-                    name: 'Name Example',
-                    address: '221B Baker Street, St.',
-                    latitude: 0,
-                    longitude: 0
-                }
-
-                return request(URI)
-                    .post('/institutions')
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .send(body)
-                    .expect(400)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_TYPE)
-                    })
-            })
-
-            it('institutions.post005: should return status code 400 and info message from missing parameters, because name was not informed', async () => {
+            it('institutions.post004: should return status code 400 and info message from missing parameters, because name was not informed', async () => {
 
                 const body = {
                     type: 'Any Type',
@@ -184,7 +156,93 @@ describe('Routes: Institution', () => {
                     })
             })
 
-            it('institutions.post006: should return status code 400 and info message from invalid parameters, because institution latitude is a text', () => {
+            it('institutions.post005: should return status code 400 and info message from missing parameters, because type was not informed', async () => {
+
+                const body = {
+                    name: 'Name Example',
+                    address: '221B Baker Street, St.',
+                    latitude: 0,
+                    longitude: 0
+                }
+
+                return request(URI)
+                    .post('/institutions')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_TYPE)
+                    })
+            })
+
+            it('institutions.post006: should return status code 400 and info message, because name is a number', () => {
+
+                const body = {
+                    name: 145,
+                    type: 'Cool Type',
+                    address: '230B Baker Street, St.',
+                    latitude: 0,
+                    longitude: 0
+                }
+
+                return request(URI)
+                    .post('/institutions')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INVALID_NAME)
+                    })
+
+            })
+
+            it('institutions.post007: should return status code 400 and info message, because type is a number', () => {
+
+                const body = {
+                    name: 'Cool Name',
+                    type: 123,
+                    address: '230B Baker Street, St.',
+                    latitude: 0,
+                    longitude: 0
+                }
+
+                return request(URI)
+                    .post('/institutions')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INVALID_TYPE)
+                    })
+
+            })
+
+            it('institutions.post008: should return status code 400 and info message, because address is a number', () => {
+
+                const body = {
+                    name: 'Cool Name',
+                    type: 'Coll Type',
+                    address: 123,
+                    latitude: 0,
+                    longitude: 0
+                }
+
+                return request(URI)
+                    .post('/institutions')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INVALID_ADDRESS)
+                    })
+
+            })
+
+            it('institutions.post009: should return status code 400 and info message from invalid parameters, because institution latitude is a text', () => {
 
                 const body = {
                     type: defaultInstitution.type,
@@ -202,37 +260,72 @@ describe('Routes: Institution', () => {
                         expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_FAILED_CAST_LATITUDE)
                     })
             })
-        }) // validation error occurs
 
-        /* TESTES - RESTRIÇÕES NOS CAMPOS TYPE/NAME ... (CRIAR COM ESPAÇO ?)
-        context('when the institution type is equal to blank space', () => {
-            it('should return the status ... ?', () => {
+            it('institutions.post010: should return status code 400 and info message from invalid parameters, because institution longitude is a text', () => {
 
                 const body = {
-                    type: ' ',
-                    name : 'Institution with blank type',
-                    address: defaultInstitution.address,
-                    latitude: 0,
+                    type: defaultInstitution.type,
+                    name: 'Longitude like a text',
+                    longitude: 'TEXT'
+                }
+
+                return request(URI)
+                    .post('/institutions')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_FAILED_CAST_LONGITUDE)
+                    })
+            })
+
+            it('institutions.post011: should return status code 400 and info message from invalid parameters, because null type', () => {
+                const NULL_TYPE = null // invalid type of the institution
+
+                const body = {
+                    type: NULL_TYPE,
+                    name: 'Longitude like a text',
                     longitude: 0
                 }
 
                 return request(URI)
                     .post('/institutions')
-                    .post('/institutions')
-                    .set('Authorization', 'Bearer ')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_NAME)
-                    })                    
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INVALID_TYPE)
+                    })
             })
-        })
-        */
+
+            it('institutions.post012: should return status code 400 and info message from invalid parameters, because null longitude', () => {
+                const NULL_LONGITUDE = null // invalid longitude of the institution
+
+                const body = {
+                    type: defaultInstitution.type,
+                    name: defaultInstitution.name,
+                    latitude: 0,
+                    longitude: NULL_LONGITUDE
+                }
+
+                return request(URI)
+                    .post('/institutions')
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .send(body)
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_FAILED_CAST_LONGITUDE)
+                    })
+            })
+
+        }) // validation error occurs
 
         context('when the user does not have permission to register the institution', () => {
 
-            it('institutions.post007: should return status code 403 and info message from insufficient permissions to the child', async () => {
+            it('institutions.post013: should return status code 403 and info message from insufficient permissions to the child', async () => {
 
                 return request(URI)
                     .post('/institutions')
@@ -245,7 +338,7 @@ describe('Routes: Institution', () => {
                     })
             })
 
-            it('institutions.post008: should return status code 403 and info message from insufficient permissions to the educator', async () => {
+            it('institutions.post014: should return status code 403 and info message from insufficient permissions to the educator', async () => {
 
                 return request(URI)
                     .post('/institutions')
@@ -258,7 +351,7 @@ describe('Routes: Institution', () => {
                     })
             })
 
-            it('institutions.post009: should return status code 403 and info message from insufficient permissions to the health professional', async () => {
+            it('institutions.post015: should return status code 403 and info message from insufficient permissions to the health professional', async () => {
 
                 return request(URI)
                     .post('/institutions')
@@ -271,7 +364,7 @@ describe('Routes: Institution', () => {
                     })
             })
 
-            it('institutions.post010: should return status code 403 and info message from insufficient permissions to the family', async () => {
+            it('institutions.post016: should return status code 403 and info message from insufficient permissions to the family', async () => {
 
                 return request(URI)
                     .post('/institutions')
@@ -284,7 +377,7 @@ describe('Routes: Institution', () => {
                     })
             })
 
-            it('institutions.post011: should return status code 403 and info message from insufficient permissions to the application', async () => {
+            it('institutions.post017: should return status code 403 and info message from insufficient permissions to the application', async () => {
 
                 return request(URI)
                     .post('/institutions')
@@ -300,7 +393,7 @@ describe('Routes: Institution', () => {
         }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('institutions.post012: should return the status code 401 and the authentication failure informational message', async () => {
+            it('institutions.post018: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .post('/institutions')

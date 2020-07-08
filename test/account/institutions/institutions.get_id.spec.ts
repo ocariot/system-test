@@ -7,7 +7,7 @@ import { acc } from '../../utils/account.utils'
 
 describe('Routes: Institution', () => {
 
-    const URI: string = process.env.AG_URL || 'https://localhost:8081'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
     let accessTokenAdmin: string
     let accessTokenChild: string
@@ -161,62 +161,15 @@ describe('Routes: Institution', () => {
                     })
             })
 
-            it('institutions.get_id007: should return status code 200 and only the ID, name and address of the institution', () => {
-
-                const fieldOne = 'name'
-                const fieldTwo = 'address'
-
-                return request(URI)
-                    .get(`/institutions/${defaultInstitution.id}?fields=${fieldOne}%2C${fieldTwo}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).to.have.property('id')
-                        expect(res.body).to.have.property('name')
-                        expect(res.body).to.have.property('address')
-                        expect(res.body).to.not.have.property('type')
-                        expect(res.body).to.not.have.property('latitude')
-                        expect(res.body).to.not.have.property('longitude')
-                        expect(res.body.id).to.eql(defaultInstitution.id)
-                        expect(res.body.name).to.eql(defaultInstitution.name)
-                        expect(res.body.address).to.eql(defaultInstitution.address)
-                    })
-            })
-
-            it('institutions.get_id008: should return status code 200 and only the ID, type, latitude and longitude of the institution', () => {
-
-                const fieldOne = 'type'
-                const fieldTwo = 'latitude'
-                const fieldTree = 'longitude'
-
-                return request(URI)
-                    .get(`/institutions/${defaultInstitution.id}?fields=${fieldOne}%2C${fieldTwo}%2C${fieldTree}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                    .set('Content-Type', 'application/json')
-                    .expect(200)
-                    .then(res => {
-                        expect(res.body).to.have.property('id')
-                        expect(res.body).to.have.property('type')
-                        expect(res.body).to.have.property('latitude')
-                        expect(res.body).to.have.property('longitude')
-                        expect(res.body).to.not.have.property('name')
-                        expect(res.body).to.not.have.property('address')
-                        expect(res.body.id).to.eql(defaultInstitution.id)
-                        expect(res.body.type).to.eql(defaultInstitution.type)
-                        expect(res.body.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body.longitude).to.eql(defaultInstitution.longitude)
-                    })
-            })
-
         }) // get a unique institution in database successfull
 
+        context('when a validation error occurs', () => {
 
-        describe('when the institution is not found', () => {
-            it('institutions.get_id009: should return status code 404 and info message from institution not found', () => {
+            it('institutions.get_id007: should return status code 404 and info message from institution not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existen id of the institution
 
                 return request(URI)
-                    .get(`/institutions/${acc.NON_EXISTENT_ID}`)
+                    .get(`/institutions/${NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(404)
@@ -224,24 +177,24 @@ describe('Routes: Institution', () => {
                         expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_404_INSTITUTION_NOT_FOUND)
                     })
             })
-        })
 
-        describe('when get a unique institution informing an invalid ID', () => {
-            it('institutions.get_id010: should return status code 400 and info message from invalid ID format', () => {
+            it('institutions.get_id008: should return status code 400 and info message from invalid ID format', () => {
+                const INVALID_ID = '123' // invalid id of the institution
 
                 return request(URI)
-                    .get(`/institutions/${acc.INVALID_ID}`)
+                    .get(`/institutions/${INVALID_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_ID_IS_INVALID)
                     })
             })
-        })
+        }) // validation error occurs
 
         describe('when not informed the acess token', () => {
-            it('institutions.get_id011: should return the status code 401 and the authentication failure informational message', async () => {
+
+            it('institutions.get_id009: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .get(`/institutions/${defaultInstitution.id}`)

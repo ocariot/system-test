@@ -13,10 +13,11 @@ export class ChildMock extends Child {
         super.username = 'BR '.concat(this.generateObjectId())
         super.password = 'child123'
         super.institution = this.generateInstitution()
-        super.age = Math.floor(Math.random() * 5) + 5
+        super.age = `${Math.floor(Math.random() * 5) + 5}`
         super.gender = this.generateGender()
         super.last_login = new Date()
         super.last_sync = new Date()
+        super.age_calc_date = '2019-12-10'
     }
 
     private generateObjectId(): string {

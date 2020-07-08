@@ -9,10 +9,11 @@ import { HealthProfessional } from '../../../src/account-service/model/health.pr
 import { Family } from '../../../src/account-service/model/family'
 import { Application } from '../../../src/account-service/model/application'
 import { accountDB } from '../../../src/account-service/database/account.db'
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: Auth', () => {
 
-    const URI: string = process.env.AG_URL || 'https://localhost:8081'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
     let accessTokenAdmin: string
 
@@ -23,11 +24,7 @@ describe('Routes: Auth', () => {
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
 
-    const defaultChild: Child = new Child()
-    defaultChild.username = 'default child'
-    defaultChild.password = 'default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
+    const defaultChild: Child = new ChildMock()
 
     const defaultEducator: Educator = new Educator()
     defaultEducator.username = 'default educator'
@@ -50,7 +47,7 @@ describe('Routes: Auth', () => {
         try {
             await accountDB.connect()
             await accountDB.removeCollections()
-                
+
             accessTokenAdmin = await acc.getAdminToken()
 
             const resultInstitution = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
@@ -138,7 +135,10 @@ describe('Routes: Auth', () => {
                 return request(URI)
                     .post('/auth')
                     .set('Content-Type', 'application/json')
-                    .send({ 'username': defaultHealthProfessional.username, 'password': defaultHealthProfessional.password })
+                    .send({
+                        'username': defaultHealthProfessional.username,
+                        'password': defaultHealthProfessional.password
+                    })
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('access_token')

@@ -8,7 +8,7 @@ import { Child } from '../../../src/account-service/model/child'
 
 describe('Routes: Institution', () => {
 
-    const URI: string = process.env.AG_URL || 'https://localhost:8081'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
     let accessTokenAdmin: string
     let accessTokenChild: string
@@ -138,7 +138,7 @@ describe('Routes: Institution', () => {
                     child.password = 'child123'
                     child.institution = anotherInstitution
                     child.gender = 'male'
-                    child.age = 10
+                    child.age = '10'
 
                     await acc.saveChild(accessTokenAdmin, child)
 
@@ -177,23 +177,25 @@ describe('Routes: Institution', () => {
 
         describe('when the institution_id is invalid', () => {
             it('institutions.delete008: should return status code 400 and info message from invalid id', () => {
+                const INVALID_ID = '123' // invalid id of the institution
 
                 return request(URI)
-                    .delete(`/institutions/${acc.INVALID_ID}`)
+                    .delete(`/institutions/${INVALID_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_ID_IS_INVALID)
                     })
             })
         })
 
         describe('when the institution is not found', () => {
             it('institutions.delete009: should return status code 204 and no content, even the institution was not founded', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the institution
 
                 return request(URI)
-                    .delete(`/institutions/${acc.NON_EXISTENT_ID}`)
+                    .delete(`/institutions/${NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(204)

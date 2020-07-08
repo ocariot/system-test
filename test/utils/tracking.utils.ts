@@ -5,15 +5,16 @@ import { Sleep } from 'tracking-service/model/sleep'
 import { Log, LogType } from 'tracking-service/model/log'
 import { BodyFat } from 'tracking-service/model/body.fat';
 import { Weight } from 'tracking-service/model/weight';
+import { Institution } from '../../src/account-service/model/institution'
 
 class TrackingUtil {
 
-    public readonly URI: string = process.env.AG_URL || 'https://localhost:8081'
+    public readonly URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
-    public saveEnvironment(accessToken: string, environment: Environment): Promise<any> {
+    public saveEnvironment(accessToken: string, institution: Institution, environment: Environment): Promise<any> {
 
         return request(this.URI)
-            .post('/environments')
+            .post(`/institutions/${institution.id}/environments`)
             .set('Authorization', 'Bearer '.concat(accessToken))
             .set('Content-Type', 'application/json')
             .send(environment.toJSON())
@@ -55,7 +56,7 @@ class TrackingUtil {
     }
 
     public saveBodyFat(accessToken: string, bodyFat: BodyFat, child_ID): Promise<any> {
-        
+
         return request(this.URI)
             .post(`/children/${child_ID}/bodyfats`)
             .send(bodyFat.toJSON())
@@ -66,7 +67,7 @@ class TrackingUtil {
     }
 
     public saveWeight(accessToken: string, weight: Weight, child_ID): Promise<any> {
-        
+
         return request(this.URI)
             .post(`/children/${child_ID}/weights`)
             .send(weight.toJSON())

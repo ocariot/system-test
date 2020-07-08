@@ -9,10 +9,11 @@ import { Educator } from '../../../src/account-service/model/educator'
 import { HealthProfessional } from '../../../src/account-service/model/health.professional'
 import { Family } from '../../../src/account-service/model/family'
 import { Application } from '../../../src/account-service/model/application'
+import { ChildMock } from '../../mocks/account-service/child.mock'
 
 describe('Routes: users', () => {
 
-    const URI: string = process.env.AG_URL || 'https://localhost:8081'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
     let accessTokenAdmin: string
     let accessTokenChild: string
@@ -34,11 +35,7 @@ describe('Routes: users', () => {
     defaultInstitution.latitude = 0
     defaultInstitution.longitude = 0
 
-    const defaultChild: Child = new Child()
-    defaultChild.username = 'default child'
-    defaultChild.password = 'default pass'
-    defaultChild.gender = 'male'
-    defaultChild.age = 11
+    const defaultChild: Child = new ChildMock()
 
     const defaultEducator: Educator = new Educator()
     defaultEducator.username = 'default educator'
@@ -118,12 +115,14 @@ describe('Routes: users', () => {
         }
     })
 
-    describe('DELETE /users/:user_id', () => {
+    describe('DELETE /:user_id', () => {
 
-        it('users.post001: should return status code 204 and no content, because user does not exists', () => {
+        describe('when the user does not exist', () => {
+            it('users.post001: should return status code 204 and no content, because user does not exists', () => {
+            const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the user
 
             return request(URI)
-                .delete(`/users/${acc.NON_EXISTENT_ID}`)
+                .delete(`/users/${NON_EXISTENT_ID}`)
                 .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                 .set('Content-Type', 'application/json')
                 .expect(204)
@@ -131,17 +130,21 @@ describe('Routes: users', () => {
                     expect(res.body).to.eql({})
                 })
         })
+        })
 
-        it('users.post002: should return status code 400 and message info about invalid id', () => {
+        describe('when the user_id is invalid', () => {
+            it('users.post002: should return status code 400 and message info about invalid id', () => {
+                const INVALID_ID = '123' // invalid id of the user
 
-            return request(URI)
-                .delete(`/users/${acc.INVALID_ID}`)
-                .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
-                .set('Content-Type', 'application/json')
-                .expect(400)
-                .then(err => {
-                    expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_FORMAT_ID)
-                })
+                return request(URI)
+                    .delete(`/users/${INVALID_ID}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.USER.ERROR_400_INVALID_FORMAT_ID)
+                    })
+            })
         })
 
         describe('when the user does not have permission', () => {

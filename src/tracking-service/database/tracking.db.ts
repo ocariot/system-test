@@ -18,8 +18,8 @@ class TrackingDb {
         useCreateIndex: true,
         useFindAndModify: false,
         bufferMaxEntries: 0,
-        reconnectTries: Number.MAX_SAFE_INTEGER,
-        reconnectInterval: 1500,
+        //reconnectTries: Number.MAX_SAFE_INTEGER,
+        //reconnectInterval: 1500,
         useUnifiedTopology: true
     }
 
@@ -62,8 +62,8 @@ class TrackingDb {
      * @param interval
      */
     private createConnection(retries: number, interval: number): Promise<Connection> {
-        this.options.reconnectTries = (retries === 0) ? Number.MAX_SAFE_INTEGER : retries
-        this.options.reconnectInterval = interval
+        //this.options.reconnectTries = (retries === 0) ? Number.MAX_SAFE_INTEGER : retries
+        //this.options.reconnectInterval = interval
 
         return new Promise<Connection>((resolve, reject) => {
             mongoose.createConnection(this.getURL(), this.options)
@@ -140,11 +140,15 @@ class TrackingDb {
     }
 
     public deletePhysicalActivitiesLogs(): Promise<boolean> {
-        return this._deleteCollection('physicalactivitieslogs')
+        return this._deleteCollection('logs')
     }
 
     public deleteSleepsRecords(): Promise<boolean> {
         return this._deleteCollection('sleeps')
+    }
+
+    public deleteMeasurements(): Promise<boolean> {
+        return this._deleteCollection('measurements')
     }
 
     public async removeCollections(): Promise<boolean> {
@@ -152,9 +156,10 @@ class TrackingDb {
             const result = await this._connection.db
                 .listCollections({
                     $or: [
-                        { name: 'environments' },
+                        { name: 'institutions.environments' },
                         { name: 'physicalactivities' },
-                        { name: 'physicalactivitieslogs' },
+                        { name: 'logs' },
+                        { name: 'measurements' },
                         { name: 'sleeps' }
                     ]
                 })

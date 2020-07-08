@@ -4,8 +4,8 @@
 export class Location {
     public local!: string // Local where device is installed.
     public room!: string // Room where device is installed.
-    public latitude?: number // Latitude from place's geolocation.
-    public longitude?:number // Longitude from place's geolocation.
+    public latitude?: string // Latitude from place's geolocation.
+    public longitude?:string // Longitude from place's geolocation.
 
     public fromJSON(json: any): Location {
         if (!json) return this

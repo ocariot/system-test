@@ -7,7 +7,7 @@ import { acc } from '../../utils/account.utils'
 
 describe('Routes: Institution', () => {
 
-    const URI: string = process.env.AG_URL || 'https://localhost:8081'
+    const URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
     let accessTokenAdmin: string
     let accessTokenChild: string
@@ -35,7 +35,7 @@ describe('Routes: Institution', () => {
             accessTokenHealthProfessional = tokens.health_professional.access_token
             accessTokenFamily = tokens.family.access_token
             accessTokenApplication = tokens.application.access_token
-            
+
             await accountDB.removeCollections()
 
             const result = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
@@ -74,23 +74,13 @@ describe('Routes: Institution', () => {
                         expect(res.body.id).to.eql(defaultInstitution.id)
                         expect(res.body.type).to.eql(defaultInstitution.type)
                         expect(res.body.name).to.eql(defaultInstitution.name)
+                        expect(res.body.address).to.eql(defaultInstitution.address)
+                        expect(res.body.latitude).to.eql(defaultInstitution.latitude)
+                        expect(res.body.longitude).to.eql(defaultInstitution.longitude)
                     })
             })
 
-            it('institutions.patch002: should return status code 403 and info message from insufficient permissions for child user', () => {
-
-                return request(URI)
-                    .patch(`/institutions/${defaultInstitution.id}`)
-                    .send({ address: 'any address' })
-                    .set('Authorization', 'Bearer '.concat(accessTokenChild))
-                    .set('Content-Type', 'application/json')
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
-            })
-
-            it('institutions.patch003: should return status code 200 and address, latitude and longitude of the institution updated by educator user', () => {
+            it('institutions.patch002: should return status code 200 and address, latitude and longitude of the institution updated by educator user', () => {
 
                 defaultInstitution.address = 'another address'
                 defaultInstitution.latitude = 0
@@ -112,8 +102,8 @@ describe('Routes: Institution', () => {
                     })
             })
 
-            it('institutions.patch004: should return status code 200 and updated the institution by the health professional user', () => {
-                
+            it('institutions.patch003: should return status code 200 and updated the institution by the health professional user', () => {
+
                 defaultInstitution.name = 'another cool name'
                 defaultInstitution.type = 'another cool type'
                 defaultInstitution.address = 'another cool address'
@@ -143,37 +133,10 @@ describe('Routes: Institution', () => {
                         expect(res.body.longitude).to.eql(defaultInstitution.longitude)
                     })
             })
-
-            it('institutions.patch005: should return status code 403 and info message from insufficient permissions for family user', () => {
-
-                return request(URI)
-                    .patch(`/institutions/${defaultInstitution.id}`)
-                    .send({ latitude: 1 })
-                    .set('Authorization', 'Bearer '.concat(accessTokenFamily))
-                    .set('Content-Type', 'application/json')
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
-            })
-
-            it('institutions.patch006: should return status code 403 and info message from insufficient permissions for application user', () => {
-
-                return request(URI)
-                    .patch(`/institutions/${defaultInstitution.id}`)
-                    .send({ latitude: 1 })
-                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
-                    .set('Content-Type', 'application/json')
-                    .expect(403)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
-                    })
-            })
-
         }) // user update institution
 
-        describe('when a duplication error occurs', () => {
-            
+        context('when a duplication error occurs', () => {
+
             before(async () => {
 
                 const body: Institution = new Institution()
@@ -190,7 +153,7 @@ describe('Routes: Institution', () => {
                 }
             })
 
-            it('institutions.patch007: should return status code 409 and info message about institution is already exist', () => {
+            it('institutions.patch004: should return status code 409 and info message about institution is already exist', () => {
 
                 return request(URI)
                     .patch(`/institutions/${defaultInstitution.id}`)
@@ -204,26 +167,27 @@ describe('Routes: Institution', () => {
             })
         })
 
-        describe('when the institution_id is invalid', () => {
-            it('institutions.patch008: should return status code 400 and info message from invalid id', () => {
+        context('when a validation error occurs', () => {
+
+            it('institutions.patch005: should return status code 400 and info message from invalid id', () => {
+                const INVALID_ID = '123' // invalid id of the institution
 
                 return request(URI)
-                    .patch(`/institutions/${acc.INVALID_ID}`)
+                    .patch(`/institutions/${INVALID_ID}`)
                     .send({})
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INVALID_FORMAT_ID)
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INSTITUTION_ID_IS_INVALID)
                     })
             })
-        })
 
-        describe('when the institution is not found', () => {
-            it('institutions.patch009: should return status code 404 and info message from institution not found', () => {
+            it('institutions.patch006: should return status code 404 and info message from institution not found', () => {
+                const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the institution
 
                 return request(URI)
-                    .patch(`/institutions/${acc.NON_EXISTENT_ID}`)
+                    .patch(`/institutions/${NON_EXISTENT_ID}`)
                     .send({})
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
@@ -232,10 +196,142 @@ describe('Routes: Institution', () => {
                         expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_404_INSTITUTION_NOT_FOUND)
                     })
             })
-        })
+
+            it('institutions.patch007: should return status code 400 and info message from invalid name, because name is a number', () => {
+
+                return request(URI)
+                    .patch(`/institutions/${defaultInstitution.id}`)
+                    .send({ name: 123 })
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INVALID_NAME)
+                    })
+
+            })
+
+            it('institutions.patch008: should return status code 400 and info message from invalid type, because type is a number', () => {
+
+                return request(URI)
+                    .patch(`/institutions/${defaultInstitution.id}`)
+                    .send({ type: 123 })
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INVALID_TYPE)
+                    })
+
+            })
+
+            it('institutions.patch009: should return status code 400 and info message from invalid address, because address is a number', () => {
+
+                return request(URI)
+                    .patch(`/institutions/${defaultInstitution.id}`)
+                    .send({ address: 123 })
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INVALID_ADDRESS)
+                    })
+
+            })
+
+            it('institutions.patch0010: should return status code 400 and info message from invalid longitude, because longitude is a text', () => {
+                const TEXT_LONGITUDE = 'Longitude like a text' // invalid longitude of the institution
+
+                return request(URI)
+                    .patch(`/institutions/${defaultInstitution.id}`)
+                    .send({ longitude: TEXT_LONGITUDE })
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_FAILED_CAST_LONGITUDE)
+                    })
+            })
+
+            it('institutions.patch011: should return status code 400 and info message from invalid latitude, because latitude is null', () => {
+                const NULL_LONGITUDE = null // invalid longitude of the institution
+
+                return request(URI)
+                    .patch(`/institutions/${defaultInstitution.id}`)
+                    .send({ longitude: NULL_LONGITUDE })
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_FAILED_CAST_LONGITUDE)
+                    })
+
+            })
+
+            it('institutions.patch012: should return status code 400 and info message from invalid name, because name is null', () => {
+                const NULL_NAME = null // invalid name of the institution
+
+                return request(URI)
+                    .patch(`/institutions/${defaultInstitution.id}`)
+                    .send({ longitude: NULL_NAME })
+                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .set('Content-Type', 'application/json')
+                    .expect(400)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INVALID_NAME)
+                    })
+
+            })
+        }) // validation error occurs
+
+        context('when the user does not have permission to update the institution', () => {
+
+            it('institutions.patch013: should return status code 403 and info message from insufficient permissions for child user', () => {
+
+                return request(URI)
+                    .patch(`/institutions/${defaultInstitution.id}`)
+                    .send({ address: 'any address' })
+                    .set('Authorization', 'Bearer '.concat(accessTokenChild))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
+
+            })
+
+            it('institutions.patch014: should return status code 403 and info message from insufficient permissions for family user', () => {
+
+                return request(URI)
+                    .patch(`/institutions/${defaultInstitution.id}`)
+                    .send({ latitude: 1 })
+                    .set('Authorization', 'Bearer '.concat(accessTokenFamily))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
+
+            })
+
+            it('institutions.patch015: should return status code 403 and info message from insufficient permissions for application user', () => {
+
+                return request(URI)
+                    .patch(`/institutions/${defaultInstitution.id}`)
+                    .send({ latitude: 1 })
+                    .set('Authorization', 'Bearer '.concat(accessTokenApplication))
+                    .set('Content-Type', 'application/json')
+                    .expect(403)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                    })
+
+            })
+        }) // user does not have permission
 
         describe('when not informed the acess token', () => {
-            it('institutions.patch010: should return the status code 401 and the authentication failure informational message', async () => {
+
+            it('institutions.patch016: should return the status code 401 and the authentication failure informational message', async () => {
 
                 return request(URI)
                     .patch(`/institutions/${defaultInstitution.id}`)
@@ -246,6 +342,7 @@ describe('Routes: Institution', () => {
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.AUTH.ERROR_401_UNAUTHORIZED)
                     })
+                    
             })
         })
     })
