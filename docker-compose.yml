@@ -236,10 +236,14 @@ services:
       - NODE_ENV=${NODE_ENV}
       - PORT_HTTP=${AG_PORT_HTTP}
       - PORT_HTTPS=${AG_PORT_HTTPS}
+      - SSL_IOT_KEY_PATH=/etc/.certs/server.key
+      - SSL_IOT_CERT_PATH=/etc/.certs/server.cert
+      - SSL_IOT_CA_PATH=/etc/.certs/ca.cert
       - SSL_KEY_PATH=/etc/.certs/server.key
       - SSL_CERT_PATH=/etc/.certs/server.cert
       - JWT_PUBLIC_KEY_PATH=/etc/.certs/jwt.key.pub
       - ISSUER=ocariot
+      - API_IOT_HOSTNAME=iot.localhost
       - API_GATEWAY_HOSTNAME=localhost
       - VAULT_HOSTNAME=vault.localhost
       - RABBIT_MGT_HOSTNAME=rabbit.localhost
@@ -260,6 +264,7 @@ services:
       - PORT_REDIS=6379
       - HOST_REDIS=redis-api-gateway
     volumes:
+      - ${SSL_IOT_CA_PATH}:/etc/.certs/ca.cert:ro
       - ${SSL_KEY_PATH}:/etc/.certs/server.key:ro
       - ${SSL_CERT_PATH}:/etc/.certs/server.cert:ro
       - ${JWT_PUBLIC_KEY_PATH}:/etc/.certs/jwt.key.pub:ro
@@ -276,6 +281,8 @@ services:
     image: ocariot/account
     container_name: ocariot-account
     restart: always
+    ports:
+      - 3001:3001
     environment: # Environment available for this service
       - NODE_ENV=${NODE_ENV}
       - PORT_HTTP=3000
@@ -309,6 +316,8 @@ services:
     image: ocariot/iot-tracking
     container_name: ocariot-iot-tracking
     restart: always
+    ports:
+      - 4001:4001
     environment:
       - NODE_ENV=${NODE_ENV}
       - PORT_HTTP=4000
@@ -334,6 +343,8 @@ services:
     image: ocariot/ds-agent
     container_name: ocariot-ds-agent
     restart: always
+    ports:
+      - 5001:5001
     environment:
       - NODE_ENV=${NODE_ENV}
       - PORT_HTTP=5000
@@ -364,6 +375,8 @@ services:
     image: ocariot/quest
     container_name: ocariot-quest
     restart: always
+    ports:
+      - 6001:6001
     environment:
       - PROTOCOL=https
       - PORT=6001
@@ -388,6 +401,8 @@ services:
     image: ocariot/gamification
     container_name: ocariot-gamification
     restart: always
+    ports:
+      - 7001:7001
     environment:
       - PROTOCOL=https
       - PORT=7001
@@ -412,6 +427,8 @@ services:
     image: ocariot/food
     container_name: ocariot-food
     restart: always
+    ports:
+      - 9001:9001
     environment:
       - PROTOCOL=https
       - PORT=9001
@@ -436,6 +453,8 @@ services:
     image: ocariot/missions
     container_name: ocariot-missions
     restart: always
+    ports:
+      - 8001:8001
     environment:
       - NODE_ENV=development
       - PORT=8000
@@ -468,6 +487,8 @@ services:
     image: ocariot/notification
     container_name: ocariot-notification
     restart: always
+    ports:
+      - 10001:10001
     environment:
       - PORT_HTTPS=10001
       - MONGODB_URI=mongodb://${NOTIFICATION_DB_USER}:${NOTIFICATION_DB_PASS}@mongo-notification:27017/notification?ssl=true
@@ -480,10 +501,14 @@ services:
       - RABBITMQ_SSL=false #enable or disable ssl connection to rabbitmq
       - KEYSTORE_PASS=${KEYSTORE_PASS}
       - GOOGLE_APPLICATION_CREDENTIALS=/etc/keys/firebase_keyfile.json
+      - MESSAGES_PATH=/etc/keys/messages.json
+      - MONGO_PEM_KEY_PATH=/etc/keys/mongodb.pem
     volumes:
       - ${SSL_KEY_PATH}:/etc/.certs/server.key:ro
       - ${SSL_CERT_PATH}:/etc/.certs/server.cert:ro
       - ${FIREBASE_KEYFILE_PATH}:/etc/keys/firebase_keyfile.json:ro
+      - ${MESSAGES_FILE_PATH}:/etc/keys/messages.json:ro
+      - ${MONGO_PEM_KEY_PATH}:/etc/keys/mongodb.pem:ro
     depends_on:
       - mongo-notification
       - rabbitmq

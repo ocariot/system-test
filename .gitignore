@@ -82,4 +82,8 @@ bash.exe.stackdump
 *.cert
 certs
 
+# others files
+*.json
+!config/notification/messages.json
+docker-generated.yml
 

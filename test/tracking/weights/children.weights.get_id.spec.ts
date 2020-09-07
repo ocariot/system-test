@@ -154,7 +154,7 @@ describe('Routes: children.weights', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('id', defaultWeight.id)
-                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString())
+                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString().split('.')[0])
                         expect(res.body).to.have.property('value', defaultWeight.value)
                         expect(res.body).to.have.property('unit', defaultWeight.unit)
                         expect(res.body).to.have.property('body_fat', defaultWeight.body_fat!.value)
@@ -171,7 +171,7 @@ describe('Routes: children.weights', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('id', defaultWeight.id)
-                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString())
+                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString().split('.')[0])
                         expect(res.body).to.have.property('value', defaultWeight.value)
                         expect(res.body).to.have.property('unit', defaultWeight.unit)
                         expect(res.body).to.have.property('body_fat', defaultWeight.body_fat!.value)
@@ -188,7 +188,7 @@ describe('Routes: children.weights', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('id', defaultWeight.id)
-                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString())
+                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString().split('.')[0])
                         expect(res.body).to.have.property('value', defaultWeight.value)
                         expect(res.body).to.have.property('unit', defaultWeight.unit)
                         expect(res.body).to.have.property('body_fat', defaultWeight.body_fat!.value)
@@ -205,7 +205,7 @@ describe('Routes: children.weights', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('id', defaultWeight.id)
-                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString())
+                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString().split('.')[0])
                         expect(res.body).to.have.property('value', defaultWeight.value)
                         expect(res.body).to.have.property('unit', defaultWeight.unit)
                         expect(res.body).to.have.property('body_fat', defaultWeight.body_fat!.value)
@@ -222,7 +222,7 @@ describe('Routes: children.weights', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('id', defaultWeight.id)
-                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString())
+                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString().split('.')[0])
                         expect(res.body).to.have.property('value', defaultWeight.value)
                         expect(res.body).to.have.property('unit', defaultWeight.unit)
                         expect(res.body).to.have.property('body_fat', defaultWeight.body_fat!.value)
@@ -239,7 +239,7 @@ describe('Routes: children.weights', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('id', defaultWeight.id)
-                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString())
+                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString().split('.')[0])
                         expect(res.body).to.have.property('value', defaultWeight.value)
                         expect(res.body).to.have.property('unit', defaultWeight.unit)
                         expect(res.body).to.have.property('body_fat', defaultWeight.body_fat!.value)

@@ -128,6 +128,7 @@ describe('Routes: Educator Missions', () => {
             try {
                 const result = await missions.saveEducatorMissions(accessDefaultApplicationToken, defaultEducatorMissions)
                 defaultEducatorMissions.id = result.data
+                console.log(result)
             } catch (err) {
                 console.log('Failure in beforeEach from educator-missions.get test: ', err.message)
             }
