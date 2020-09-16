@@ -24,7 +24,7 @@ export class RobotResultMock {
         const dateEnd = new Date()
         const randomDateMilliseconds = dateEnd.getTime() + Math.floor(Math.random() * (dateEnd.getTime() - dateStart.getTime()))
 
-        return new Date(randomDateMilliseconds).toISOString()
+        return new Date(randomDateMilliseconds).toISOString().replace(/T|Z|\.\d{3}/g, ' ').trim()
     }
 
     private generateMissions(): Array<any> {

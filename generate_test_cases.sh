@@ -3,7 +3,7 @@
 function generate_test_cases()
 {
 	> test_cases_final.txt
-	cat $1 | grep -e " 4 " > result_test.txt
+	cat $1 | awk '$9 >= 4{print $0}' | grep -v "009" > result_test.txt
 	FIRST_TIME="true"
 	i=0
 	while [ "$(echo "${TESTS}" | wc -w)" == "1" ] || [ "${FIRST_TIME}" == "true" ]; do
@@ -19,4 +19,4 @@ function generate_test_cases()
 sed -i '$ d' test_cases_final.txt
 }
 
-generate_test_cases
+generate_test_cases $1

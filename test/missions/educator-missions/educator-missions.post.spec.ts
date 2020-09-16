@@ -136,7 +136,7 @@ describe('Routes: Educator Missions', () => {
                     .send(defaultEducatorMissionsDiet)
                     .then(res => {
                         expect(res.status).to.eql(HttpStatus.OK)
-                        expect(res.body.data).to.have.property('data')
+                        expect(res.body).to.have.property('data')
                     })
             })
 
@@ -150,7 +150,7 @@ describe('Routes: Educator Missions', () => {
                     .send(defaultEducatorMissionsEducation)
                     .then(res => {
                         expect(res.status).to.eql(HttpStatus.OK)
-                        expect(res.body.data).to.have.property('data')
+                        expect(res.body).to.have.property('data')
                     })
             })
 
@@ -177,6 +177,7 @@ describe('Routes: Educator Missions', () => {
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .send(incorrectEducatorMissions)
                     .expect(err => {
+                        console.log('err.statusCode: ', err.statusCode)
                         expect(err.statusCode).to.be.gte(HttpStatus.BAD_REQUEST)
                     })
             })

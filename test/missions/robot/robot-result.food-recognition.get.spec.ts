@@ -124,7 +124,7 @@ describe('Routes: Robot', () => {
             await acc.saveChildrenGroupsForEducator(accessDefaultEducatorToken, defaultEducator, defaultChildrenGroup)
             await acc.saveChildrenGroupsForHealthProfessional(accessDefaultHealthProfessionalToken, defaultHealthProfessional, defaultChildrenGroup)
 
-            await missions.saveRobotResultFoodRecognition(accessDefaultApplicationToken, defaultFoodRecognition)
+            await missions.saveRobotResultFoodRecognition(accessDefaultEducatorToken, defaultFoodRecognition)
         } catch (err) {
             console.log('Failure on Before from robot-result/food-recognition.get test: ', err.message)
         }

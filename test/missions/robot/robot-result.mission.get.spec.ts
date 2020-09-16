@@ -144,7 +144,7 @@ describe('Routes: Robot', () => {
 
         beforeEach(async () => {
             try {
-                await missions.saveRobotResult(accessDefaultApplicationToken, defaultRobotResult)
+                await missions.saveRobotResult(accessDefaultEducatorToken, defaultRobotResult)
             } catch (err) {
                 console.log('Failure in before from robot-result.mission.get test: ', err.message)
             }

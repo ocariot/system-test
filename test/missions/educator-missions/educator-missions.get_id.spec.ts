@@ -132,10 +132,11 @@ describe('Routes: Educator Missions', () => {
                 EducatorMissionsDiet.id = resultDiet.data
 
                 const resultEducation = await missions.saveEducatorMissions(accessDefaultApplicationToken, EducatorMissionsEducation)
-                EducatorMissionsDiet.id = resultEducation.data
+                EducatorMissionsEducation.id = resultEducation.data
 
                 const resultActivity = await missions.saveEducatorMissions(accessDefaultApplicationToken, EducatorMissionsActivity)
-                EducatorMissionsDiet.id = resultActivity.data
+                EducatorMissionsActivity.id = resultActivity.data
+
             } catch (err) {
                 console.log('Failure in beforeEach from educator-missions.get_id test: ', err.message)
             }
@@ -175,7 +176,7 @@ describe('Routes: Educator Missions', () => {
             it('educator-missions.get_id002: should return status code 200 and the Educator Missions for child', () => {
 
                 return request(URI)
-                    .get(`/educator-missions/${EducatorMissionsEducation}`)
+                    .get(`/educator-missions/${EducatorMissionsEducation.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .expect(HttpStatus.OK)
@@ -309,9 +310,8 @@ describe('Routes: Educator Missions', () => {
 
         describe('when not informed the access token', () => {
             it('educator-missions.get_id009: should return the status code 401 and the authentication failure informational message', () => {
-
                 return request(URI)
-                    .get(`/educator-missions/${EducatorMissionsDiet}`)
+                    .get(`/educator-missions/${EducatorMissionsDiet.id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .expect(HttpStatus.UNAUTHORIZED)
