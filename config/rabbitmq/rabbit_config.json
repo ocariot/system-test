@@ -54,6 +54,12 @@
       "password_hash":"D5+/9sV01TEL6CNFx/dkhuVwztCiZvjHAZuHQvqilD6DeRv7",
       "hashing_algorithm":"rabbit_password_hashing_sha256",
       "tags":"application"
+    },
+    {
+      "name":"dt.process.app",
+      "password_hash":"mPI0Y0T02WvTEgrK+mkM2QEi1y9QNnQcmFhp2JAU+7k26jhQ",
+      "hashing_algorithm":"rabbit_password_hashing_sha256",
+      "tags":"application"
     }
   ],
   "vhosts": [
@@ -116,6 +122,13 @@
     },
     {
       "user":"notification.app",
+      "vhost":"ocariot",
+      "configure":".*",
+      "write":".*",
+      "read":".*"
+    },
+    {
+      "user":"dt.process.app",
       "vhost":"ocariot",
       "configure":".*",
       "write":".*",
