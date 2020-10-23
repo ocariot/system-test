@@ -210,7 +210,7 @@ services:
       - MYSQL_PASSWORD=${MISSIONS_DB_PASS}
       - MYSQL_ROOT_PASSWORD=${DB_ADMIN_PASS}
     ports:
-      - 3307:3306
+      - 3306:3306
     volumes:
       - mysql-missions-data:/var/lib/mysql
     networks:
