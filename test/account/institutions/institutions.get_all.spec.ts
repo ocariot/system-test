@@ -27,6 +27,9 @@ describe('Routes: Institution', () => {
     anotherInstitution.type = "another type"
     anotherInstitution.name = "another name"
 
+    const institutionsArray = [anotherInstitution, defaultInstitution]
+    const institutionsArrayOrderedByType = [defaultInstitution, anotherInstitution]
+
     before(async () => {
         try {
             await accountDB.connect()
@@ -75,19 +78,11 @@ describe('Routes: Institution', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(2)
-                        expect(res.body[0].id).to.eql(anotherInstitution.id)
-                        expect(res.body[0].name).to.eql(anotherInstitution.name)
-                        expect(res.body[0].type).to.eql(anotherInstitution.type)
-                        expect(res.body[0]).to.not.have.property('address')
-                        expect(res.body[0]).to.not.have.property('latitude')
-                        expect(res.body[0]).to.not.have.property('longitude')
-                        expect(res.body[1].id).to.eql(defaultInstitution.id)
-                        expect(res.body[1].name).to.eql(defaultInstitution.name)
-                        expect(res.body[1].type).to.eql(defaultInstitution.type)
-                        expect(res.body[1].address).to.eql(defaultInstitution.address)
-                        expect(res.body[1].latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body[1].longitude).to.eql(defaultInstitution.longitude)
+                        return res.body
+                    })
+                    .then(array => array.map(element => new Institution().fromJSON(element)))
+                    .then(institutions => {
+                        expect(institutions).to.eql(institutionsArray)
                     })
             })
 
@@ -100,19 +95,11 @@ describe('Routes: Institution', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(2)
-                        expect(res.body[0].id).to.eql(anotherInstitution.id)
-                        expect(res.body[0].name).to.eql(anotherInstitution.name)
-                        expect(res.body[0].type).to.eql(anotherInstitution.type)
-                        expect(res.body[0]).to.not.have.property('address')
-                        expect(res.body[0]).to.not.have.property('latitude')
-                        expect(res.body[0]).to.not.have.property('longitude')
-                        expect(res.body[1].id).to.eql(defaultInstitution.id)
-                        expect(res.body[1].name).to.eql(defaultInstitution.name)
-                        expect(res.body[1].type).to.eql(defaultInstitution.type)
-                        expect(res.body[1].address).to.eql(defaultInstitution.address)
-                        expect(res.body[1].latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body[1].longitude).to.eql(defaultInstitution.longitude)
+                        return res.body
+                    })
+                    .then(array => array.map(element => new Institution().fromJSON(element)))
+                    .then(institutions => {
+                        expect(institutions).to.eql(institutionsArray)
                     })
             })
 
@@ -125,19 +112,11 @@ describe('Routes: Institution', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(2)
-                        expect(res.body[0].id).to.eql(anotherInstitution.id)
-                        expect(res.body[0].name).to.eql(anotherInstitution.name)
-                        expect(res.body[0].type).to.eql(anotherInstitution.type)
-                        expect(res.body[0]).to.not.have.property('address')
-                        expect(res.body[0]).to.not.have.property('latitude')
-                        expect(res.body[0]).to.not.have.property('longitude')
-                        expect(res.body[1].id).to.eql(defaultInstitution.id)
-                        expect(res.body[1].name).to.eql(defaultInstitution.name)
-                        expect(res.body[1].type).to.eql(defaultInstitution.type)
-                        expect(res.body[1].address).to.eql(defaultInstitution.address)
-                        expect(res.body[1].latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body[1].longitude).to.eql(defaultInstitution.longitude)
+                        return res.body
+                    })
+                    .then(array => array.map(element => new Institution().fromJSON(element)))
+                    .then(institutions => {
+                        expect(institutions).to.eql(institutionsArray)
                     })
             })
 
@@ -150,19 +129,11 @@ describe('Routes: Institution', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(2)
-                        expect(res.body[0].id).to.eql(anotherInstitution.id)
-                        expect(res.body[0].name).to.eql(anotherInstitution.name)
-                        expect(res.body[0].type).to.eql(anotherInstitution.type)
-                        expect(res.body[0]).to.not.have.property('address')
-                        expect(res.body[0]).to.not.have.property('latitude')
-                        expect(res.body[0]).to.not.have.property('longitude')
-                        expect(res.body[1].id).to.eql(defaultInstitution.id)
-                        expect(res.body[1].name).to.eql(defaultInstitution.name)
-                        expect(res.body[1].type).to.eql(defaultInstitution.type)
-                        expect(res.body[1].address).to.eql(defaultInstitution.address)
-                        expect(res.body[1].latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body[1].longitude).to.eql(defaultInstitution.longitude)
+                        return res.body
+                    })
+                    .then(array => array.map(element => new Institution().fromJSON(element)))
+                    .then(institutions => {
+                        expect(institutions).to.eql(institutionsArray)
                     })
             })
 
@@ -177,19 +148,11 @@ describe('Routes: Institution', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(2)
-                        expect(res.body[0].id).to.eql(anotherInstitution.id)
-                        expect(res.body[0].name).to.eql(anotherInstitution.name)
-                        expect(res.body[0].type).to.eql(anotherInstitution.type)
-                        expect(res.body[0]).to.not.have.property('address')
-                        expect(res.body[0]).to.not.have.property('latitude')
-                        expect(res.body[0]).to.not.have.property('longitude')
-                        expect(res.body[1].id).to.eql(defaultInstitution.id)
-                        expect(res.body[1].name).to.eql(defaultInstitution.name)
-                        expect(res.body[1].type).to.eql(defaultInstitution.type)
-                        expect(res.body[1].address).to.eql(defaultInstitution.address)
-                        expect(res.body[1].latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body[1].longitude).to.eql(defaultInstitution.longitude)
+                        return res.body
+                    })
+                    .then(array => array.map(element => new Institution().fromJSON(element)))
+                    .then(institutions => {
+                        expect(institutions).to.eql(institutionsArray)
                     })
             })
 
@@ -204,19 +167,11 @@ describe('Routes: Institution', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(2)
-                        expect(res.body[0].id).to.eql(defaultInstitution.id)
-                        expect(res.body[0].name).to.eql(defaultInstitution.name)
-                        expect(res.body[0].type).to.eql(defaultInstitution.type)
-                        expect(res.body[0].address).to.eql(defaultInstitution.address)
-                        expect(res.body[0].latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body[0].longitude).to.eql(defaultInstitution.longitude)
-                        expect(res.body[1].id).to.eql(anotherInstitution.id)
-                        expect(res.body[1].name).to.eql(anotherInstitution.name)
-                        expect(res.body[1].type).to.eql(anotherInstitution.type)
-                        expect(res.body[1]).to.not.have.property('address')
-                        expect(res.body[1]).to.not.have.property('latitude')
-                        expect(res.body[1]).to.not.have.property('longitude')
+                        return res.body
+                    })
+                    .then(array => array.map(element => new Institution().fromJSON(element)))
+                    .then(institutions => {
+                        expect(institutions).to.eql(institutionsArrayOrderedByType)
                     })
             })
 
@@ -231,19 +186,11 @@ describe('Routes: Institution', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).is.instanceof(Array)
-                        expect(res.body.length).is.eql(2)
-                        expect(res.body[0].id).to.eql(anotherInstitution.id)
-                        expect(res.body[0].name).to.eql(anotherInstitution.name)
-                        expect(res.body[0].type).to.eql(anotherInstitution.type)
-                        expect(res.body[0]).to.not.have.property('address')
-                        expect(res.body[0]).to.not.have.property('latitude')
-                        expect(res.body[0]).to.not.have.property('longitude')
-                        expect(res.body[1].id).to.eql(defaultInstitution.id)
-                        expect(res.body[1].name).to.eql(defaultInstitution.name)
-                        expect(res.body[1].type).to.eql(defaultInstitution.type)
-                        expect(res.body[1].address).to.eql(defaultInstitution.address)
-                        expect(res.body[1].latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body[1].longitude).to.eql(defaultInstitution.longitude)
+                        return res.body
+                    })
+                    .then(array => array.map(element => new Institution().fromJSON(element)))
+                    .then(institutions => {
+                        expect(institutions).to.eql(institutionsArray)
                     })
             })
 

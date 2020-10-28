@@ -24,8 +24,8 @@ export class Institution extends Entity {
         if (json.type !== undefined) this.type = json.type
         if (json.name !== undefined) this.name = json.name
         if (json.address !== undefined) this.address = json.address
-        if (json.latitude !== undefined) this.latitude = json.latitude
-        if (json.longitude !== undefined) this.longitude = json.longitude
+        if (json.latitude !== undefined) this.latitude = parseFloat(json.latitude)      //  json.latitude is a string
+        if (json.longitude !== undefined) this.longitude = parseFloat(json.longitude)   //  json.longitude is a string
 
         return this
     }
