@@ -79,7 +79,7 @@ describe('Routes: Institution', () => {
                     })
             })
 
-            it.only('institutions.get_id002: should return status code 200 and a institution for child user', () => {
+            it('institutions.get_id002: should return status code 200 and a institution for child user', () => {
                 return request(URI)
                     .get(`/institutions/${defaultInstitution.id}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))

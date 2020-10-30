@@ -4,6 +4,7 @@ import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
 import { Institution } from '../../../src/account-service/model/institution'
 import { accountDB } from '../../../src/account-service/database/account.db'
 import { acc } from '../../utils/account.utils'
+import * as HttpStatus from 'http-status-codes'
 
 describe('Routes: Institution', () => {
 
@@ -77,14 +78,18 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(defaultInstitution)
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
-                        expect(res.body).to.have.property('id')
-                        expect(res.body.type).to.eql(defaultInstitution.type)
-                        expect(res.body.name).to.eql(defaultInstitution.name)
-                        expect(res.body.address).to.eql(defaultInstitution.address)
-                        expect(res.body.latitude).to.eql(defaultInstitution.latitude)
-                        expect(res.body.longitude).to.eql(defaultInstitution.longitude)
+                        const responseInstitution = new Institution().fromJSON(res.body)
+                        
+                        expect(responseInstitution).to.have.property('id')
+                        return responseInstitution
+                    })
+                    .then(institution => {
+                        //  because defaultInstitution still haven't id property
+                        delete institution.id
+
+                        expect(institution).to.eql(defaultInstitution)
                     })
             })
 
@@ -95,7 +100,7 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(anotherInstitution)
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body.type).to.eql(anotherInstitution.type)
@@ -150,7 +155,7 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_NAME)
                     })
@@ -170,7 +175,7 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_TYPE)
                     })
@@ -191,7 +196,7 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INVALID_NAME)
                     })
@@ -213,7 +218,7 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INVALID_TYPE)
                     })
@@ -235,7 +240,7 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INVALID_ADDRESS)
                     })
@@ -255,7 +260,7 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_FAILED_CAST_LATITUDE)
                     })
@@ -274,7 +279,7 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_FAILED_CAST_LONGITUDE)
                     })
@@ -294,7 +299,7 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_INVALID_TYPE)
                     })
@@ -315,7 +320,7 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .send(body)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.INSTITUTION.ERROR_400_FAILED_CAST_LONGITUDE)
                     })
@@ -332,7 +337,7 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .send(defaultInstitution)
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -345,7 +350,7 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .send(defaultInstitution)
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -358,7 +363,7 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
                     .send(defaultInstitution)
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -371,7 +376,7 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .send(defaultInstitution)
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -384,7 +389,7 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
                     .send(defaultInstitution)
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -400,7 +405,7 @@ describe('Routes: Institution', () => {
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
                     .send(defaultInstitution)
-                    .expect(401)
+                    .expect(HttpStatus.UNAUTHORIZED)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.AUTH.ERROR_401_UNAUTHORIZED)
                     })
