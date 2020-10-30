@@ -264,8 +264,9 @@ describe('Routes: families', () => {
                     .set('Content-Type', 'application/json')
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql('One or more request fields are invalid...')
-                        expect(err.body.description).to.eql(`The following IDs from children attribute are not in valid format: ${NULL_CHILDREN}`)
+                        expect(err.body).to.eql(ApiGatewayException.FAMILY.ERROR_400_INVALID_CHILDREN_ATTRIBUTE_TYPE)
+                        // expect(err.body.message).to.eql('One or more request fields are invalid...')
+                        // expect(err.body.description).to.eql('children must be an array!')
                     })
             })
 
