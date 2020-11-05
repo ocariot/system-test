@@ -164,10 +164,14 @@ describe('Routes: children', () => {
 
             it('children.get_all005: should return status code 200 and a list of children in ascending order by age', () => {
                 const sort = 'age' // parameter for sort the result of the query by order ascending
-                const childSortedAgeArr = childArr.slice() // copy of the array of children that will be ordered
+                const childSortedAgeArr = [...childArr] // copy of the array of children that will be ordered
 
                 // Sorted childArr in ascending order by age ...
-                childSortedAgeArr.sort((a, b) => { return a.age! > b.age! ? 1 : 0 })
+                childSortedAgeArr.sort((a, b) => { 
+                    if (a.age! < b.age!) return -1
+                    else if (a.age! > b.age!) return 1
+                    else return a.id! < b.id! ? -1 : 1
+                })
 
                 return request(URI)
                     .get(`/children?sort=${sort}`)
