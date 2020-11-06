@@ -130,7 +130,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
                 before(async () => {
                     try {
                         anotherChild.age = '15'
-                        await acc.updateChild(accessTokenAdmin, anotherChild, { age: '15' })
+                        await acc.updateChild(accessTokenAdmin, anotherChild, { age: '15', age_calc_date: '2020-10-06' })
                     } catch (err) {
                         console.log('Failure in healthprofessionals.children.groups.get_id test: ', err)
                     }
