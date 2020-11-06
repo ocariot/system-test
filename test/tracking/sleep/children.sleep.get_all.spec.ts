@@ -19,6 +19,7 @@ import { Family } from '../../../src/account-service/model/family'
 import { FamilyMock } from '../../mocks/account-service/family.mock'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
+import { Activity } from '../../../src/tracking-service/model/activity'
 
 describe('Routes: users.children.sleep', () => {
 
@@ -154,12 +155,12 @@ describe('Routes: users.children.sleep', () => {
                         expect(res.body.length).to.eql(SLEEP_AMOUNT)
                         SLEEP_RECORDS.forEach(function (sleep, index) {
                             expect(res.body[index]).to.have.property('id', sleep.id)
-                            expect(res.body[index]).to.have.property('start_time', sleep.start_time!.toISOString())
-                            expect(res.body[index]).to.have.property('end_time', sleep.end_time!.toISOString())
+                            expect(res.body[index]).to.have.property('start_time', Activity.formatDate(sleep.start_time!))
+                            expect(res.body[index]).to.have.property('end_time', Activity.formatDate(sleep.end_time!))
                             expect(res.body[index]).to.have.property('duration', sleep.duration)
                             expect(res.body[index]).to.have.property('type', sleep.type)
                             sleep.pattern!.data_set.forEach(function (elem, index2) {
-                                expect(res.body[index].pattern.data_set[index2].start_time).to.eql(elem.start_time.toISOString())
+                                expect(res.body[index].pattern.data_set[index2].start_time).to.eql(Activity.formatDate(elem.start_time))
                                 expect(res.body[index].pattern.data_set[index2].name).to.eql(elem.name)
                                 expect(res.body[index].pattern.data_set[index2].duration).to.eql(elem.duration)
                             })
@@ -181,12 +182,12 @@ describe('Routes: users.children.sleep', () => {
                         expect(res.body.length).to.eql(SLEEP_AMOUNT)
                         SLEEP_RECORDS.forEach(function (sleep, index) {
                             expect(res.body[index]).to.have.property('id', sleep.id)
-                            expect(res.body[index]).to.have.property('start_time', sleep.start_time!.toISOString())
-                            expect(res.body[index]).to.have.property('end_time', sleep.end_time!.toISOString())
+                            expect(res.body[index]).to.have.property('start_time', Activity.formatDate(sleep.start_time!))
+                            expect(res.body[index]).to.have.property('end_time', Activity.formatDate(sleep.end_time!))
                             expect(res.body[index]).to.have.property('duration', sleep.duration)
                             expect(res.body[index]).to.have.property('type', sleep.type)
                             sleep.pattern!.data_set.forEach(function (elem, index2) {
-                                expect(res.body[index].pattern.data_set[index2].start_time).to.eql(elem.start_time.toISOString())
+                                expect(res.body[index].pattern.data_set[index2].start_time).to.eql(Activity.formatDate(elem.start_time))
                                 expect(res.body[index].pattern.data_set[index2].name).to.eql(elem.name)
                                 expect(res.body[index].pattern.data_set[index2].duration).to.eql(elem.duration)
                             })
@@ -208,12 +209,12 @@ describe('Routes: users.children.sleep', () => {
                         expect(res.body.length).to.eql(SLEEP_AMOUNT)
                         SLEEP_RECORDS.forEach(function (sleep, index) {
                             expect(res.body[index]).to.have.property('id', sleep.id)
-                            expect(res.body[index]).to.have.property('start_time', sleep.start_time!.toISOString())
-                            expect(res.body[index]).to.have.property('end_time', sleep.end_time!.toISOString())
+                            expect(res.body[index]).to.have.property('start_time', Activity.formatDate(sleep.start_time!))
+                            expect(res.body[index]).to.have.property('end_time', Activity.formatDate(sleep.end_time!))
                             expect(res.body[index]).to.have.property('duration', sleep.duration)
                             expect(res.body[index]).to.have.property('type', sleep.type)
                             sleep.pattern!.data_set.forEach(function (elem, index2) {
-                                expect(res.body[index].pattern.data_set[index2].start_time).to.eql(elem.start_time.toISOString())
+                                expect(res.body[index].pattern.data_set[index2].start_time).to.eql(Activity.formatDate(elem.start_time))
                                 expect(res.body[index].pattern.data_set[index2].name).to.eql(elem.name)
                                 expect(res.body[index].pattern.data_set[index2].duration).to.eql(elem.duration)
                             })
@@ -235,12 +236,12 @@ describe('Routes: users.children.sleep', () => {
                         expect(res.body.length).to.eql(SLEEP_AMOUNT)
                         SLEEP_RECORDS.forEach(function (sleep, index) {
                             expect(res.body[index]).to.have.property('id', sleep.id)
-                            expect(res.body[index]).to.have.property('start_time', sleep.start_time!.toISOString())
-                            expect(res.body[index]).to.have.property('end_time', sleep.end_time!.toISOString())
+                            expect(res.body[index]).to.have.property('start_time', Activity.formatDate(sleep.start_time!))
+                            expect(res.body[index]).to.have.property('end_time', Activity.formatDate(sleep.end_time!))
                             expect(res.body[index]).to.have.property('duration', sleep.duration)
                             expect(res.body[index]).to.have.property('type', sleep.type)
                             sleep.pattern!.data_set.forEach(function (elem, index2) {
-                                expect(res.body[index].pattern.data_set[index2].start_time).to.eql(elem.start_time.toISOString())
+                                expect(res.body[index].pattern.data_set[index2].start_time).to.eql(Activity.formatDate(elem.start_time))
                                 expect(res.body[index].pattern.data_set[index2].name).to.eql(elem.name)
                                 expect(res.body[index].pattern.data_set[index2].duration).to.eql(elem.duration)
                             })
@@ -262,12 +263,12 @@ describe('Routes: users.children.sleep', () => {
                         expect(res.body.length).to.eql(SLEEP_AMOUNT)
                         SLEEP_RECORDS.forEach(function (sleep, index) {
                             expect(res.body[index]).to.have.property('id', sleep.id)
-                            expect(res.body[index]).to.have.property('start_time', sleep.start_time!.toISOString())
-                            expect(res.body[index]).to.have.property('end_time', sleep.end_time!.toISOString())
+                            expect(res.body[index]).to.have.property('start_time', Activity.formatDate(sleep.start_time!))
+                            expect(res.body[index]).to.have.property('end_time', Activity.formatDate(sleep.end_time!))
                             expect(res.body[index]).to.have.property('duration', sleep.duration)
                             expect(res.body[index]).to.have.property('type', sleep.type)
                             sleep.pattern!.data_set.forEach(function (elem, index2) {
-                                expect(res.body[index].pattern.data_set[index2].start_time).to.eql(elem.start_time.toISOString())
+                                expect(res.body[index].pattern.data_set[index2].start_time).to.eql(Activity.formatDate(elem.start_time))
                                 expect(res.body[index].pattern.data_set[index2].name).to.eql(elem.name)
                                 expect(res.body[index].pattern.data_set[index2].duration).to.eql(elem.duration)
                             })
@@ -289,12 +290,12 @@ describe('Routes: users.children.sleep', () => {
                         expect(res.body.length).to.eql(SLEEP_AMOUNT)
                         SLEEP_RECORDS.forEach(function (sleep, index) {
                             expect(res.body[index]).to.have.property('id', sleep.id)
-                            expect(res.body[index]).to.have.property('start_time', sleep.start_time!.toISOString())
-                            expect(res.body[index]).to.have.property('end_time', sleep.end_time!.toISOString())
+                            expect(res.body[index]).to.have.property('start_time', Activity.formatDate(sleep.start_time!))
+                            expect(res.body[index]).to.have.property('end_time', Activity.formatDate(sleep.end_time!))
                             expect(res.body[index]).to.have.property('duration', sleep.duration)
                             expect(res.body[index]).to.have.property('type', sleep.type)
                             sleep.pattern!.data_set.forEach(function (elem, index2) {
-                                expect(res.body[index].pattern.data_set[index2].start_time).to.eql(elem.start_time.toISOString())
+                                expect(res.body[index].pattern.data_set[index2].start_time).to.eql(Activity.formatDate(elem.start_time))
                                 expect(res.body[index].pattern.data_set[index2].name).to.eql(elem.name)
                                 expect(res.body[index].pattern.data_set[index2].duration).to.eql(elem.duration)
                             })
@@ -321,12 +322,12 @@ describe('Routes: users.children.sleep', () => {
                             expect(res.body.length).to.eql(LIMIT)
                             res.body.forEach(function (sleep_res, index) {
                                 expect(sleep_res).to.have.property('id', SLEEP_RECORDS[index].id)
-                                expect(sleep_res).to.have.property('start_time', SLEEP_RECORDS[index].start_time!.toISOString())
-                                expect(sleep_res).to.have.property('end_time', SLEEP_RECORDS[index].end_time!.toISOString())
+                                expect(sleep_res).to.have.property('start_time', Activity.formatDate(SLEEP_RECORDS[index].start_time!))
+                                expect(sleep_res).to.have.property('end_time', Activity.formatDate(SLEEP_RECORDS[index].end_time!))
                                 expect(sleep_res).to.have.property('duration', SLEEP_RECORDS[index].duration)
                                 expect(sleep_res).to.have.property('type', SLEEP_RECORDS[index].type)
                                 sleep_res.pattern!.data_set.forEach(function (elem, index2) {
-                                    expect(elem.start_time).to.eql(SLEEP_RECORDS[index].pattern!.data_set[index2].start_time.toISOString())
+                                    expect(elem.start_time).to.eql(Activity.formatDate(SLEEP_RECORDS[index].pattern!.data_set[index2].start_time))
                                     expect(elem.name).to.eql(SLEEP_RECORDS[index].pattern!.data_set[index2].name)
                                     expect(elem.duration).to.eql(SLEEP_RECORDS[index].pattern!.data_set[index2].duration)
                                 })
@@ -360,12 +361,12 @@ describe('Routes: users.children.sleep', () => {
                             expect(res.body.length).to.eql(LIMIT)
                             res.body.forEach(function (sleep_res, index) { // when the amount of sleep is specified, iterate through the response
                                 expect(sleep_res).to.have.property('id', SLEEP_RECORDS_COPY[index].id)
-                                expect(sleep_res).to.have.property('start_time', SLEEP_RECORDS_COPY[index].start_time!.toISOString())
-                                expect(sleep_res).to.have.property('end_time', SLEEP_RECORDS_COPY[index].end_time!.toISOString())
+                                expect(sleep_res).to.have.property('start_time', Activity.formatDate(SLEEP_RECORDS_COPY[index].start_time!))
+                                expect(sleep_res).to.have.property('end_time', Activity.formatDate(SLEEP_RECORDS_COPY[index].end_time!))
                                 expect(sleep_res).to.have.property('duration', SLEEP_RECORDS_COPY[index].duration)
                                 expect(sleep_res).to.have.property('type', SLEEP_RECORDS_COPY[index].type)
                                 sleep_res.pattern!.data_set.forEach(function (elem, index2) {
-                                    expect(elem.start_time).to.eql(SLEEP_RECORDS_COPY[index].pattern!.data_set[index2].start_time.toISOString())
+                                    expect(elem.start_time).to.eql(Activity.formatDate(SLEEP_RECORDS_COPY[index].pattern!.data_set[index2].start_time))
                                     expect(elem.name).to.eql(SLEEP_RECORDS_COPY[index].pattern!.data_set[index2].name)
                                     expect(elem.duration).to.eql(SLEEP_RECORDS_COPY[index].pattern!.data_set[index2].duration)
                                 })
@@ -397,12 +398,12 @@ describe('Routes: users.children.sleep', () => {
                             expect(res.body.length).to.eql(SLEEP_AMOUNT)
                             res.body.forEach(function (sleep_res, index) { // when the amount of sleep is specified, iterate through the response
                                 expect(sleep_res).to.have.property('id', SLEEP_RECORDS_COPY[index].id)
-                                expect(sleep_res).to.have.property('start_time', SLEEP_RECORDS_COPY[index].start_time!.toISOString())
-                                expect(sleep_res).to.have.property('end_time', SLEEP_RECORDS_COPY[index].end_time!.toISOString())
+                                expect(sleep_res).to.have.property('start_time', Activity.formatDate(SLEEP_RECORDS_COPY[index].start_time!))
+                                expect(sleep_res).to.have.property('end_time', Activity.formatDate(SLEEP_RECORDS_COPY[index].end_time!))
                                 expect(sleep_res).to.have.property('duration', SLEEP_RECORDS_COPY[index].duration)
                                 expect(sleep_res).to.have.property('type', SLEEP_RECORDS_COPY[index].type)
                                 sleep_res.pattern!.data_set.forEach(function (elem, index2) {
-                                    expect(elem.start_time).to.eql(SLEEP_RECORDS_COPY[index].pattern!.data_set[index2].start_time.toISOString())
+                                    expect(elem.start_time).to.eql(Activity.formatDate(SLEEP_RECORDS_COPY[index].pattern!.data_set[index2].start_time))
                                     expect(elem.name).to.eql(SLEEP_RECORDS_COPY[index].pattern!.data_set[index2].name)
                                     expect(elem.duration).to.eql(SLEEP_RECORDS_COPY[index].pattern!.data_set[index2].duration)
                                 })
