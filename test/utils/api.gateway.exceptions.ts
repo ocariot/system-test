@@ -39,7 +39,8 @@ export abstract class ApiGatewayException {
         ERROR_400_GENDER_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'gender are required!').toJson(),
         ERROR_400_AGE_NOT_PROVIDED: new ApiException(400, 'Required fields were not provided...', 'age are required!').toJson(),
         ERROR_404_CHILD_NOT_FOUND: new ApiException(404, 'Child not found!', 'Child not found or already removed. A new operation for the same resource is not required.').toJson(),
-        ERROR_409_DUPLICATE: new ApiException(409, 'Child is already registered...').toJson()
+        ERROR_409_DUPLICATE: new ApiException(409, 'Child is already registered...').toJson(),
+        ERROR_400_INVALID_AGE_IS_NULL: new ApiException(400, 'One or more request fields are invalid...', 'age must be a string!').toJson(),
     }
 
     public static readonly EDUCATOR: any = {
