@@ -18,6 +18,7 @@ import { Weight } from '../../../src/tracking-service/model/weight'
 import { WeightMock } from '../../mocks/tracking-service/weight.mock'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
+import { Activity } from '../../../src/tracking-service/model/activity'
 
 describe('Routes: children.weights', () => {
 
@@ -154,7 +155,7 @@ describe('Routes: children.weights', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('id', defaultWeight.id)
-                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString())
+                        expect(res.body).to.have.property('timestamp', Activity.formatDate(defaultWeight.timestamp!))
                         expect(res.body).to.have.property('value', defaultWeight.value)
                         expect(res.body).to.have.property('unit', defaultWeight.unit)
                         expect(res.body).to.have.property('body_fat', defaultWeight.body_fat!.value)
@@ -171,7 +172,7 @@ describe('Routes: children.weights', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('id', defaultWeight.id)
-                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString())
+                        expect(res.body).to.have.property('timestamp', Activity.formatDate(defaultWeight.timestamp!))
                         expect(res.body).to.have.property('value', defaultWeight.value)
                         expect(res.body).to.have.property('unit', defaultWeight.unit)
                         expect(res.body).to.have.property('body_fat', defaultWeight.body_fat!.value)
@@ -188,7 +189,7 @@ describe('Routes: children.weights', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('id', defaultWeight.id)
-                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString())
+                        expect(res.body).to.have.property('timestamp', Activity.formatDate(defaultWeight.timestamp!))
                         expect(res.body).to.have.property('value', defaultWeight.value)
                         expect(res.body).to.have.property('unit', defaultWeight.unit)
                         expect(res.body).to.have.property('body_fat', defaultWeight.body_fat!.value)
@@ -205,7 +206,7 @@ describe('Routes: children.weights', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('id', defaultWeight.id)
-                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString())
+                        expect(res.body).to.have.property('timestamp', Activity.formatDate(defaultWeight.timestamp!))
                         expect(res.body).to.have.property('value', defaultWeight.value)
                         expect(res.body).to.have.property('unit', defaultWeight.unit)
                         expect(res.body).to.have.property('body_fat', defaultWeight.body_fat!.value)
@@ -222,7 +223,7 @@ describe('Routes: children.weights', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('id', defaultWeight.id)
-                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString())
+                        expect(res.body).to.have.property('timestamp', Activity.formatDate(defaultWeight.timestamp!))
                         expect(res.body).to.have.property('value', defaultWeight.value)
                         expect(res.body).to.have.property('unit', defaultWeight.unit)
                         expect(res.body).to.have.property('body_fat', defaultWeight.body_fat!.value)
@@ -239,7 +240,7 @@ describe('Routes: children.weights', () => {
                     .expect(200)
                     .then(res => {
                         expect(res.body).to.have.property('id', defaultWeight.id)
-                        expect(res.body).to.have.property('timestamp', defaultWeight.timestamp!.toISOString())
+                        expect(res.body).to.have.property('timestamp', Activity.formatDate(defaultWeight.timestamp!))
                         expect(res.body).to.have.property('value', defaultWeight.value)
                         expect(res.body).to.have.property('unit', defaultWeight.unit)
                         expect(res.body).to.have.property('body_fat', defaultWeight.body_fat!.value)
