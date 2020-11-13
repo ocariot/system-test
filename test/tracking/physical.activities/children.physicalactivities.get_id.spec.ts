@@ -330,17 +330,16 @@ describe('Routes: children.physicalactivities', () => {
 
             const INVALID_ID = '123'
 
-            it('physical.activities.get_id007: should return status code 400 and info message from child not found', () => {
+            it('physical.activities.get_id007: should return status code 403 and info message from validation error, because the id from inexistent child does not match user id', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111'
 
                 return request(URI)
                     .get(`/children/${NON_EXISTENT_ID}/physicalactivities/${defaultActivity.id}`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
-                    .expect(400)
+                    .expect(403)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${NON_EXISTENT_ID} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
