@@ -247,16 +247,16 @@ describe('Routes: educators.children.groups', () => {
 
         describe('when the educator not found', () => {
 
-            it('educators.children.groups.get_all005: should return status code 200 and empty array, because the educator was not found', () => {
+            it('educators.children.groups.get_all005: should return status code 403 and info message from insufficient permissions, because a non-existent id does not match to user id.', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the educator
 
                 return request(URI)
                     .get(`/educators/${NON_EXISTENT_ID}/children/groups`)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
-                    .expect(400)
+                    .expect(403)
                     .then(res => {
-                        expect(res.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_EDUCATOR_NOT_FOUND)
+                        expect(res.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
