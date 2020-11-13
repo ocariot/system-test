@@ -33,6 +33,8 @@ describe('Routes: users', () => {
     defaultInstitution.longitude = 0
 
     const defaultChild: Child = new ChildMock()
+    defaultChild.username = 'default child'
+    defaultChild.password = 'default pass'
 
     const defaultEducator: Educator = new Educator()
     defaultEducator.username = 'default educator'
