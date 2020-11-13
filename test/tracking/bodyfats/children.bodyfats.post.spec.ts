@@ -553,7 +553,7 @@ describe('Routes: children.bodyfats', () => {
             })
 
             //SOME FIELDS HAVE NULL VALUE
-            it('bodyfats.post027: should return status code 400 and info message from error, because timestamp is null', () => {
+            it('bodyfats.post029: should return status code 400 and info message from error, because timestamp is null', () => {
 
                 const incorrectBodyFat = getIncorrectBodyFatJSON()
                 incorrectBodyFat.timestamp = null
@@ -569,7 +569,7 @@ describe('Routes: children.bodyfats', () => {
                     })
             })
 
-            it('bodyfats.post028: should return status code 400 and info message from error, because value is null', () => {
+            it('bodyfats.post030: should return status code 400 and info message from error, because value is null', () => {
 
                 const incorrectBodyFat = getIncorrectBodyFatJSON()
                 incorrectBodyFat.value = null
