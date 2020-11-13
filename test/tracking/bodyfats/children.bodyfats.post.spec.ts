@@ -19,6 +19,7 @@ import { ApplicationMock } from '../../mocks/account-service/application.mock'
 import { BodyFat } from '../../../src/tracking-service/model/body.fat'
 import { BodyFatMock } from '../../mocks/tracking-service/body.fat.mock'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
+import * as HttpStatus from 'http-status-codes'
 
 describe('Routes: children.bodyfats', () => {
 
@@ -219,7 +220,7 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(bodyfat.toJSON())
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body).to.have.property('timestamp', bodyfat.timestamp!.toISOString())
@@ -236,7 +237,7 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(bodyfat.toJSON())
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body).to.have.property('timestamp', bodyfat.timestamp!.toISOString())
@@ -253,7 +254,7 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .send(bodyfat.toJSON())
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body).to.have.property('timestamp', bodyfat.timestamp!.toISOString())
@@ -270,7 +271,7 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .send(bodyfat.toJSON())
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body).to.have.property('timestamp', bodyfat.timestamp!.toISOString())
@@ -301,7 +302,7 @@ describe('Routes: children.bodyfats', () => {
                             .set('Content-Type', 'application/json')
                             .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                             .send(body)
-                            .expect(207)
+                            .expect(HttpStatus.MULTI_STATUS)
                             .then(res => {
                                 expect(res.body.success.length).to.eql(AMOUNT_OF_CORRECT_BODYFATS)
                                 for (let i = 0; i < res.body.success.length; i++) {
@@ -345,7 +346,7 @@ describe('Routes: children.bodyfats', () => {
                             .set('Content-Type', 'application/json')
                             .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                             .send(body)
-                            .expect(207)
+                            .expect(HttpStatus.MULTI_STATUS)
                             .then(res => {
                                 for (let i = 0; i < res.body.error.length; i++) {
                                     expect(res.body.error[i].code).to.eql(409)
@@ -379,7 +380,7 @@ describe('Routes: children.bodyfats', () => {
                             .set('Content-Type', 'application/json')
                             .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                             .send(body)
-                            .expect(207)
+                            .expect(HttpStatus.MULTI_STATUS)
                             .then(res => {
                                 // Success item
                                 expect(res.body.success[0].code).to.eql(201)
@@ -389,10 +390,9 @@ describe('Routes: children.bodyfats', () => {
                                 expect(res.body.success[0].item).to.have.property('unit', mixedBodyfats[0].unit)
                                 expect(res.body.success[0].item).to.have.property('child_id', defaultChild.id)
 
-                                // Error item
-                                expect(res.body.error[0].code).to.eql(400)
-                                expect(res.body.error[0].message).to.eql(ApiGatewayException.BODYFATS.ERROR_400_NEGATIVE_VALUE.message) // negative value
-                                expect(res.body.error[0].description).to.eql(ApiGatewayException.BODYFATS.ERROR_400_NEGATIVE_VALUE.description)
+                                delete res.body.error[0].item
+                                expect(res.body.error[0]).to.eql(ApiGatewayException.BODYFATS.ERROR_400_NUMBER_EQUAL_TO_OR_GREATER_THAN_ZERO('value'))
+
                             })
                     })
                 })
@@ -416,19 +416,14 @@ describe('Routes: children.bodyfats', () => {
                             .set('Content-Type', 'application/json')
                             .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                             .send(body)
-                            .expect(207)
+                            .expect(HttpStatus.MULTI_STATUS)
                             .then(res => {
                                 expect(res.body.error.length).to.eql(wrongBodyfats.length)
 
-                                // incorrectBodyFat7 (valus is null)
-                                expect(res.body.error[0].code).to.eql(400)
-                                expect(res.body.error[0].message).to.eql(ApiGatewayException.BODYFATS.ERROR_400_INVALID_VALUE.message)
-                                expect(res.body.error[0].description).to.eql(ApiGatewayException.BODYFATS.ERROR_400_INVALID_VALUE.description)
+                                res.body.error.map(err => delete err.item)
 
-                                // incorrectBodyFat8 (timestamp is null)
-                                expect(res.body.error[1].code).to.eql(400)
-                                expect(res.body.error[1].message).to.eql(ApiGatewayException.BODYFATS.ERROR_400_DATE_IS_NULL.message)
-                                expect(res.body.error[1].description).to.eql(ApiGatewayException.BODYFATS.ERROR_400_DATE_IS_NULL.description)
+                                expect(res.body.error[0]).to.eql(ApiGatewayException.BODYFATS.ERROR_400_NUMBER_EQUAL_TO_OR_GREATER_THAN_ZERO('value'))
+                                expect(res.body.error[1]).to.eql(ApiGatewayException.BODYFATS.ERROR_400_DATE_IS_NULL)
                             })
                     })
                 })
@@ -445,7 +440,7 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectBodyFat1)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_TIMESTAMP_ARE_REQUIRED)
                     })
@@ -458,7 +453,7 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectBodyFat2)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_VALUE_ARE_REQUIRED)
                     })
@@ -471,10 +466,9 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectBodyFat3)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Datetime: ${invalidMonthDate}, is not in valid ISO 8601 format.`)
-                        expect(err.body.description).to.eql('Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ')
+                        expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_INVALID_FORMAT_DATE_TIME(invalidMonthDate))
                     })
             })
 
@@ -485,9 +479,9 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectBodyFat4)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_INVALID_VALUE)
+                        expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_NUMBER_EQUAL_TO_OR_GREATER_THAN_ZERO('value'))
                     })
             })
 
@@ -498,14 +492,13 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectBodyFat5)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Datetime: , is not in valid ISO 8601 format.`) // timestamp is empty
-                        expect(err.body.description).to.eql('Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ')
+                        expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_INVALID_FORMAT_DATE_TIME(''))
                     })
             })
 
-            it('bodyfats.post014: should return status code 400 and info message from error, because child not exist', () => {
+            it('bodyfats.post014: should return status code 403 and info message from error, because the non-existent child id does not match to child user.', () => {
 
                 const NON_EXISTENT_ID = '111111111111111111111111'
 
@@ -514,10 +507,11 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(bodyfat.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${NON_EXISTENT_ID} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        // expect(err.body.message).to.eql(`There is no registered Child with ID: ${NON_EXISTENT_ID} on the platform!`)
+                        // expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
@@ -530,7 +524,7 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(bodyfat.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_INVALID_CHILD_ID)
                     })
@@ -546,7 +540,7 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(bodyfat.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_TIMESTAMP_AND_VALUE_ARE_REQUIRED)
                     })
@@ -563,9 +557,9 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectBodyFat)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_DATE_IS_NULL)
+                        expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_INVALID_FORMAT_DATE_TIME('null'))
                     })
             })
 
@@ -579,9 +573,9 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectBodyFat)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_INVALID_VALUE)
+                        expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_400_NUMBER_EQUAL_TO_OR_GREATER_THAN_ZERO('value'))
                     })
             })
             //SOME FIELDS HAVE NULL VALUE
@@ -590,7 +584,7 @@ describe('Routes: children.bodyfats', () => {
 
         context('when posting a new Body Fat for another user that not to be a child', () => {
 
-            it('bodyfats.post017: should return 400 and info message from error, when try create a body fat for admin', async () => {
+            it('bodyfats.post017: should return 403 and info message from error, when try create a body fat for admin', async () => {
 
                 const ADMIN_ID = await acc.getAdminID()
 
@@ -599,56 +593,52 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(bodyfat.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${ADMIN_ID} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('bodyfats.post018: should return 400 and info message from error, when try create a body fat for educator', () => {
+            it('bodyfats.post018: should return 403 and info message from error, when try create a body fat for educator', () => {
 
                 return request(URI)
                     .post(`/children/${defaultEducator.id}/bodyfats`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(bodyfat.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultEducator.id} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('bodyfats.post019: should return 400 and info message from error, when try create a body fat for health professional', () => {
+            it('bodyfats.post019: should return 403 and info message from error, when try create a body fat for health professional', () => {
 
                 return request(URI)
                     .post(`/children/${defaultHealthProfessional.id}/bodyfats`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(bodyfat.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultHealthProfessional.id} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('bodyfats.post020: should return 400 and info message from error, when try create a body fat for family', () => {
+            it('bodyfats.post020: should return 403 and info message from error, when try create a body fat for family', () => {
 
                 return request(URI)
                     .post(`/children/${defaultFamily.id}/bodyfats`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(bodyfat.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultFamily.id} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('bodyfats.post021: should return 400 and info message from error, when try create a body fat for applic' +
+            it('bodyfats.post021: should return 403 and info message from error, when try create a body fat for applic' +
                 'ation', () => {
 
                 return request(URI)
@@ -656,10 +646,9 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(bodyfat.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultApplication.id} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
@@ -685,7 +674,7 @@ describe('Routes: children.bodyfats', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(anotherChildToken))
                         .send(bodyfat.toJSON())
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -700,7 +689,7 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .send(bodyfat.toJSON())
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -714,7 +703,7 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
                     .send(bodyfat.toJSON())
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -729,7 +718,7 @@ describe('Routes: children.bodyfats', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
                         .send(bodyfat.toJSON())
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -745,7 +734,7 @@ describe('Routes: children.bodyfats', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
                         .send(bodyfat.toJSON())
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -762,7 +751,7 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .send(bodyfat.toJSON())
-                    .expect(401)
+                    .expect(HttpStatus.UNAUTHORIZED)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.AUTH.ERROR_401_UNAUTHORIZED)
                     })
@@ -785,7 +774,7 @@ describe('Routes: children.bodyfats', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(BodyFatDuplicated.toJSON())
-                    .expect(409)
+                    .expect(HttpStatus.CONFLICT)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.BODYFATS.ERROR_409_BODYFATS_IS_ALREADY_REGISTERED)
                     })
