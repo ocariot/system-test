@@ -22,6 +22,7 @@ import { PhysicalActivityMock, ActivityTypeMock } from '../../mocks/tracking-ser
 import { HeartRateZone } from '../../../src/tracking-service/model/heart.rate.zone'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { Activity } from '../../../src/tracking-service/model/activity'
+import * as HttpStatus from 'http-status-codes'
 
 describe('Routes: children.physicalactivities', () => {
 
@@ -226,7 +227,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body.name).to.eql(physicalActivity.name)
@@ -253,7 +254,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(physicalActivity.toJSON())
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body.name).to.eql(physicalActivity.name)
@@ -277,7 +278,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .send(physicalActivity.toJSON())
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body.name).to.eql(physicalActivity.name)
@@ -301,7 +302,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .send(physicalActivity.toJSON())
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body.name).to.eql(physicalActivity.name)
@@ -524,26 +525,31 @@ describe('Routes: children.physicalactivities', () => {
                                 expect(res.body.error.length).to.eql(4)
 
                                 // incorrectActivity2
-                                expect(res.body.error[0].message).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_DURATION_ARE_NEGATIVE.message)
-                                expect(res.body.error[0].description).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_DURATION_ARE_NEGATIVE.description)        
-
+                                expect(res.body.error[0].message).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INTEGER_EQUAL_TO_OR_GREATER_THAN_ZERO('levels.duration').message)
+                                expect(res.body.error[0].description).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INTEGER_EQUAL_TO_OR_GREATER_THAN_ZERO('levels.duration').description)
+                                
+                                // expect(res.body.error[0].message).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_DURATION_ARE_NEGATIVE.message)
+                                // expect(res.body.error[0].description).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_DURATION_ARE_NEGATIVE.description)        
+                                
                                 // incorrectActivity4
                                 expect(res.body.error[1].message).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_AVERAGE_ARE_REQUIRED.message)
                                 expect(res.body.error[1].description).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_AVERAGE_ARE_REQUIRED.description)
-
+                                
                                 // incorrectActivity5
                                 expect(res.body.error[2].message).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_OUT_OF_RANGE_ZONE_ARE_REQUIRED.message)
                                 expect(res.body.error[2].description).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_OUT_OF_RANGE_ZONE_ARE_REQUIRED.description)
-
+                                
                                 // incorrectActivity6
-                                expect(res.body.error[3].message).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_FAT_BURN_ZONE_NEGATIVE_DURATION.message)
-                                expect(res.body.error[3].description).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_FAT_BURN_ZONE_NEGATIVE_DURATION.description)
+                                expect(res.body.error[3].message).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INTEGER_EQUAL_TO_OR_GREATER_THAN_ZERO('heart_rate.fat_burn_zone.duration').message)
+                                expect(res.body.error[3].description).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INTEGER_EQUAL_TO_OR_GREATER_THAN_ZERO('heart_rate.fat_burn_zone.duration').description)
+                                // expect(res.body.error[3].message).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_FAT_BURN_ZONE_NEGATIVE_DURATION.message)
+                                // expect(res.body.error[3].description).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_FAT_BURN_ZONE_NEGATIVE_DURATION.description)
 
                                 for (let i = 0; i < wrongActivities.length; i++) {
                                     expect(res.body.error[0].code).to.eql(400)
                                     expect(res.body.error[0].item.name).to.eql(wrongActivities[0].name)
-                                    expect(res.body.error[0].item.start_time).to.eql(wrongActivities[0].start_time!.toISOString())
-                                    expect(res.body.error[0].item.end_time).to.eql(wrongActivities[0].end_time!.toISOString())
+                                    expect(res.body.error[0].item.start_time).to.eql(Activity.formatDate(wrongActivities[0].start_time!))
+                                    expect(res.body.error[0].item.end_time).to.eql(Activity.formatDate(wrongActivities[0].end_time!))
                                     expect(res.body.error[0].item.duration).to.eql(wrongActivities[0].duration)
                                     expect(res.body.error[0].item.calories).to.eql(wrongActivities[0].calories)
                                     if (wrongActivities[0].steps) {
@@ -578,12 +584,12 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body.name).to.eql(physicalActivity.name)
-                        expect(res.body.start_time).to.eql(physicalActivity.start_time!.toISOString())
-                        expect(res.body.end_time).to.eql(physicalActivity.end_time!.toISOString())
+                        expect(res.body.start_time).to.eql(Activity.formatDate(physicalActivity.start_time!))
+                        expect(res.body.end_time).to.eql(Activity.formatDate(physicalActivity.end_time!))
                         expect(res.body.duration).to.eql(physicalActivity.duration)
                         expect(res.body.calories).to.eql(physicalActivity.calories)
                         expect(res.body).to.not.have.property('distance')
@@ -604,12 +610,12 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(swimActivity.toJSON())
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body.name).to.eql(swimActivity.name)
-                        expect(res.body.start_time).to.eql(swimActivity.start_time!.toISOString())
-                        expect(res.body.end_time).to.eql(swimActivity.end_time!.toISOString())
+                        expect(res.body.start_time).to.eql(Activity.formatDate(swimActivity.start_time!))
+                        expect(res.body.end_time).to.eql(Activity.formatDate(swimActivity.end_time!))
                         expect(res.body.duration).to.eql(swimActivity.duration)
                         expect(res.body.calories).to.eql(swimActivity.calories)
                         expect(res.body.distance).to.eql(swimActivity.distance)
@@ -631,12 +637,12 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(walkActivity.toJSON())
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body.name).to.eql(walkActivity.name)
-                        expect(res.body.start_time).to.eql(walkActivity.start_time!.toISOString())
-                        expect(res.body.end_time).to.eql(walkActivity.end_time!.toISOString())
+                        expect(res.body.start_time).to.eql(Activity.formatDate(walkActivity.start_time!))
+                        expect(res.body.end_time).to.eql(Activity.formatDate(walkActivity.end_time!))
                         expect(res.body.duration).to.eql(walkActivity.duration)
                         expect(res.body.calories).to.eql(walkActivity.calories)
                         expect(res.body.distance).to.eql(walkActivity.distance)
@@ -656,12 +662,12 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .send(physicalActivity.toJSON())
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body.name).to.eql(physicalActivity.name)
-                        expect(res.body.start_time).to.eql(physicalActivity.start_time!.toISOString())
-                        expect(res.body.end_time).to.eql(physicalActivity.end_time!.toISOString())
+                        expect(res.body.start_time).to.eql(Activity.formatDate(physicalActivity.start_time!))
+                        expect(res.body.end_time).to.eql(Activity.formatDate(physicalActivity.end_time!))
                         expect(res.body.duration).to.eql(physicalActivity.duration)
                         expect(res.body.calories).to.eql(physicalActivity.calories)
                         expect(res.body.distance).to.eql(physicalActivity.distance)
@@ -685,7 +691,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_NAME_ARE_REQUIRED)
                     })
@@ -700,7 +706,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_START_TIME_ARE_REQUIRED)
                     })
@@ -715,7 +721,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_DURATION_ARE_REQUIRED)
                     })
@@ -730,7 +736,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_CALORIES_ARE_REQUIRED)
                     })
@@ -745,7 +751,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_END_TIME_ARE_REQUIRED)
                     })
@@ -761,7 +767,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_DURATION_AND_NAME_ARE_REQUIRED)
                     })
@@ -780,7 +786,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_ALL_PARAMETERS_ARE_REQUIRED)
                     })
@@ -793,10 +799,9 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectActivity7)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Datetime: ${invalidMonthDate}, is not in valid ISO 8601 format.`)
-                        expect(err.body.description).to.eql('Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ')
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_FORMAT_DATE_TIME(invalidMonthDate))
                     })
             })
 
@@ -811,7 +816,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_START_TIME_IS_GREATER_THAN_END_TIME)
                     })
@@ -826,9 +831,9 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_NEGATIVE_DURATION)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INTEGER_EQUAL_TO_OR_GREATER_THAN_ZERO('duration'))
                     })
             })
 
@@ -841,7 +846,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_DURATION_DOES_NOT_MATCH)
                     })
@@ -856,9 +861,9 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_NEGATIVE_CALORIES)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_NUMBER_EQUAL_TO_OR_GREATER_THAN_ZERO('calories'))
                     })
             })
 
@@ -871,9 +876,9 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_NEGATIVE_STEPS)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INTEGER_EQUAL_TO_OR_GREATER_THAN_ZERO('steps'))
                     })
             })
 
@@ -884,7 +889,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectActivity1)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_NAME_IN_INVALID_FORMAT)
                     })
@@ -897,7 +902,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectActivity8)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_NAME_NOT_ALLOWED)
                     })
@@ -910,9 +915,9 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectActivity2)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_DURATION_ARE_NEGATIVE)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INTEGER_EQUAL_TO_OR_GREATER_THAN_ZERO('levels.duration'))
                     })
             })
 
@@ -926,7 +931,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_ALL_PARAMETERS_OF_HEART_RATE_ARE_REQUIRED)
                     })
@@ -942,7 +947,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body.message).to.eql('Required fields were not provided...')
                         expect(err.body.description).to.eql('heart_rate.fat_burn_zone, heart_rate.peak_zone are required!')
@@ -958,9 +963,9 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_NEGATIVE_AVERAGE)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INTEGER_GREATER_THAN_ZERO('heart_rate.average'))
                     })
 
             })
@@ -974,9 +979,9 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_FAT_BURN_ZONE_NEGATIVE_MIN)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INTEGER_GREATER_THAN_ZERO('heart_rate.fat_burn_zone.min'))
                     })
             })
 
@@ -989,9 +994,9 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_CARDIO_ZONE_NEGATIVE_DURATION)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INTEGER_EQUAL_TO_OR_GREATER_THAN_ZERO('heart_rate.cardio_zone.duration'))
                     })
             })
 
@@ -1004,14 +1009,14 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_PEAK_ZONE_DURATION_ARE_REQUIRED)
                     })
             })
             /* /HEART_RATE INVALID */
 
-            it('physical.activities.post023: should return status code 400 and info message from validation error, because child not exist', () => {
+            it('physical.activities.post023: should return status code 403 and info message from validation error, because the id from inexistent child does not match user id', () => {
 
                 const NON_EXISTENT_ID = '111111111111111111111111'
 
@@ -1020,10 +1025,9 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${NON_EXISTENT_ID} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
@@ -1036,7 +1040,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_CHILD_ID)
                     })
@@ -1049,7 +1053,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectActivity3)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_NAME_NOT_ALLOWED)
                     })
@@ -1066,7 +1070,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectActivity)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_NAME)
                     })
@@ -1082,9 +1086,9 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectActivity)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_DATE_TIME_IS_NULL)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_FORMAT_DATE_TIME('null'))
                     })
             })
 
@@ -1098,9 +1102,9 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectActivity)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INVALID_DISTANCE)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_NUMBER_EQUAL_TO_OR_GREATER_THAN_ZERO('distance'))
                     })
             })
 
@@ -1114,7 +1118,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectActivity)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_NAME_IN_INVALID_FORMAT)
                     })
@@ -1130,9 +1134,9 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectActivity)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_LEVEL_DURATION_INVALID)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INTEGER_EQUAL_TO_OR_GREATER_THAN_ZERO('levels.duration'))
                     })
             })
 
@@ -1146,9 +1150,9 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectActivity)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_INVALID_AVERAGE)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INTEGER_GREATER_THAN_ZERO('heart_rate.average'))
                     })
             })
 
@@ -1162,9 +1166,9 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectActivity)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_HEART_RATE_FAT_BURN_ZONE_INVALID_MIN)
+                        expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_400_INTEGER_GREATER_THAN_ZERO('heart_rate.fat_burn_zone.min'))
                     })
             })
             // SOME FIELDS HAS NULL VALUE
@@ -1173,7 +1177,7 @@ describe('Routes: children.physicalactivities', () => {
 
         context('when posting a new PhysicalActivity for another user that not to be a child', () => {
 
-            it('physical.activities.post026: should return 400 and info message from error, when try create a activity for admin', async () => {
+            it('physical.activities.post026: should return 403 and info message from error, when try create a activity for admin', async () => {
 
                 const ADMIN_ID = await acc.getAdminID()
 
@@ -1182,66 +1186,61 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${ADMIN_ID} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('physical.activities.post027: should return 400 and info message from error, when try create a activity for educator', () => {
+            it('physical.activities.post027: should return 403 and info message from error, when try create a activity for educator', () => {
 
                 return request(URI)
                     .post(`/children/${defaultEducator.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultEducator.id} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('physical.activities.post028: should return 400 and info message from error, when try create a activity for health professional', () => {
+            it('physical.activities.post028: should return 403 and info message from error, when try create a activity for health professional', () => {
 
                 return request(URI)
                     .post(`/children/${defaultHealthProfessional.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultHealthProfessional.id} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('physical.activities.post029: should return 400 and info message from error, when try create a activity for family', () => {
+            it('physical.activities.post029: should return 403 and info message from error, when try create a activity for family', () => {
 
                 return request(URI)
                     .post(`/children/${defaultFamily.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultFamily.id} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('physical.activities.post030: should return 400 and info message from error, when try create a activity for application', () => {
+            it('physical.activities.post030: should return 403 and info message from error, when try create a activity for application', () => {
 
                 return request(URI)
                     .post(`/children/${defaultApplication.id}/physicalactivities`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultApplication.id} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
@@ -1266,7 +1265,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(anotherChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -1279,7 +1278,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .send(physicalActivity.toJSON())
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -1293,7 +1292,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
                     .send(physicalActivity.toJSON())
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -1308,7 +1307,7 @@ describe('Routes: children.physicalactivities', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherEducator))
                         .send(physicalActivity.toJSON())
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -1323,7 +1322,7 @@ describe('Routes: children.physicalactivities', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherFamily))
                         .send(physicalActivity.toJSON())
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -1340,7 +1339,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .send(physicalActivity.toJSON())
-                    .expect(401)
+                    .expect(HttpStatus.UNAUTHORIZED)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.AUTH.ERROR_401_UNAUTHORIZED)
                     })
@@ -1361,7 +1360,7 @@ describe('Routes: children.physicalactivities', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(physicalActivity.toJSON())
-                    .expect(409)
+                    .expect(HttpStatus.CONFLICT)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.PHYSICAL_ACTIVITY.ERROR_409_PHYSICAL_ACTIVITY_IS_ALREADY_REGISTERED)
                     })

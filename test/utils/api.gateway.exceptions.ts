@@ -112,7 +112,7 @@ export abstract class ApiGatewayException {
         // Physical Activity
         ERROR_400_NAME_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'name are required!').toJson(),
         ERROR_400_INVALID_NAME: new ApiException(400, 'One or more request fields are invalid...', 'name must be a string!').toJson(),
-        ERROR_400_DATE_TIME_IS_NULL: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
+        ERROR_400_DATE_TIME_IS_NULL: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Datetime must be in the format: yyyy-MM-ddTHH:mm:ssZ').toJson(),
         ERROR_400_START_TIME_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'start_time are required!').toJson(),
         ERROR_400_END_TIME_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'end_time are required!').toJson(),
         ERROR_400_DURATION_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'duration are required!').toJson(),
@@ -127,6 +127,7 @@ export abstract class ApiGatewayException {
         ERROR_400_DURATION_DOES_NOT_MATCH: new ApiException(400, 'One or more request fields are invalid...', 'duration value does not match values passed in start_time and end_time parameters!').toJson(),
         ERROR_404_PHYSICAL_ACTIVITY_NOT_FOUND: new ApiException(404, 'Physical Activity not found!', 'Physical Activity not found or already removed. A new operation for the same resource is not required.').toJson(),
         ERROR_409_PHYSICAL_ACTIVITY_IS_ALREADY_REGISTERED: new ApiException(409, 'Physical Activity is already registered...').toJson(),
+        ERROR_400_INVALID_FORMAT_DATE_TIME: (datetime) => new ApiException(400, `Datetime: ${datetime}, is not in valid ISO 8601 format.`, 'Datetime must be in the format: yyyy-MM-ddTHH:mm:ssZ').toJson(),
 
         // Invalid ID's
         ERROR_400_INVALID_CHILD_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
@@ -149,7 +150,7 @@ export abstract class ApiGatewayException {
         ERROR_400_HEART_RATE_OUT_OF_RANGE_ZONE_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'heart_rate.out_of_range_zone.min are required!').toJson(),
         ERROR_400_HEART_RATE_PEAK_ZONE_DURATION_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'heart_rate.peak_zone.duration are required!').toJson(),
         ERROR_400_HEART_RATE_PEAK_ZONE_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'heart_rate.peak_zone are required!').toJson(),
-        ERROR_400_HEART_RATE_INVALID_AVERAGE: new ApiException(400, 'One or more request fields are invalid...', 'heart_rate.average must be a valid number!').toJson()
+        ERROR_400_HEART_RATE_INVALID_AVERAGE: new ApiException(400, 'One or more request fields are invalid...', 'heart_rate.average must be a valid number!').toJson(),
 
         // Activity.update has been deprecated
         // ERROR_400_ATTRIBUTES_NOT_UPDATEABLE: new ApiException(400, 'Unable to update this attribute.', 'Updateable attributes are: name, calories, steps, distance, levels (only if the update is from an empty array) and heart_rate.').toJson(),
@@ -159,6 +160,9 @@ export abstract class ApiGatewayException {
         // ERROR_400_HEART_RATE_DURATION_IS_INVALID: new ApiException(400, 'Duration field is invalid...', 'HeartRateZone validation failed: The value provided is not a valid number!').toJson(),
         // ERROR_400_HEART_RATE_MAX_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'HeartRateZone validation failed: max is required!').toJson(),
         // ERROR_400_INVALID_CALORIES: new ApiException(400, 'One or more request fields are invalid...', 'calories must be a valid number!').toJson(),
+        ERROR_400_NUMBER_EQUAL_TO_OR_GREATER_THAN_ZERO: (fieldName: string) => new ApiException(400, 'One or more request fields are invalid...', `${fieldName} must be a number equal to or greater than zero.`).toJson(),
+        ERROR_400_INTEGER_EQUAL_TO_OR_GREATER_THAN_ZERO: (fieldName: string) => new ApiException(400, 'One or more request fields are invalid...', `${fieldName} must be an integer equal to or greater than zero.`).toJson(),
+        ERROR_400_INTEGER_GREATER_THAN_ZERO: (fieldName: string) => new ApiException(400, 'One or more request fields are invalid...', `${fieldName} must be an integer greater than zero.`).toJson(),
     }
 
     public static readonly LOGS: any = {
