@@ -25,6 +25,7 @@ import {
 import {ChildrenGroup} from '../../../src/account-service/model/children.group'
 import {ChildrenGroupMock} from '../../mocks/account-service/children.group.mock'
 import { Activity } from '../../../src/tracking-service/model/activity'
+import * as HttpStatus from 'http-status-codes'
 
 describe('Routes: children.sleep', () => {
 
@@ -232,7 +233,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepClassic.toJSON())
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body.start_time).to.eql(Activity.formatDate(sleepClassic.start_time!))
@@ -256,7 +257,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultEducatorToken))
                     .send(sleepStages.toJSON())
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body.start_time).to.eql(Activity.formatDate(sleepStages.start_time!))
@@ -279,7 +280,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultFamilyToken))
                     .send(sleepClassic.toJSON())
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body.start_time).to.eql(Activity.formatDate(sleepClassic.start_time!))
@@ -303,7 +304,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .send(sleepStages.toJSON())
-                    .expect(201)
+                    .expect(HttpStatus.CREATED)
                     .then(res => {
                         expect(res.body).to.have.property('id')
                         expect(res.body.start_time).to.eql(Activity.formatDate(sleepStages.start_time!))
@@ -332,7 +333,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepClassic.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_START_TIME_ARE_REQUIRED)
                     })
@@ -349,7 +350,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepClassic.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_START_TIME_IS_GREATER_THAN_END_TIME)
                     })
@@ -364,7 +365,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepClassic.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_END_TIME_ARE_REQUIRED)
                     })
@@ -379,7 +380,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepClassic.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_DURATION_ARE_REQUIRED)
                     })
@@ -394,7 +395,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepClassic.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_NEGATIVE_DURATION)
                     })
@@ -407,7 +408,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectSleep1)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DURATION)
                     })
@@ -422,7 +423,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepClassic.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_DURATION_DOES_NOT_MATCH)
                     })
@@ -437,7 +438,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepClassic.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_PATTERN_ARE_REQUIRED)
                     })
@@ -450,7 +451,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectSleep5)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_SLEEP_CLASSIC_PATTERN_NAME_NOT_ALLOWED)
                     })
@@ -463,7 +464,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectSleep4)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body.message).to.eql(`Datetime: ${invalidDayDate}, is not in valid ISO 8601 format.`)
                     })
@@ -476,7 +477,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectSleep6)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_NEGATIVE_DURATION_OF_SLEEP_PATTERN_DATASET)
                     })
@@ -489,7 +490,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectSleep7)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_NAME_IS_REQUIRED)
                     })
@@ -502,7 +503,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectSleep2)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_SLEEP_STAGES_PATTERN_NAME_NOT_ALLOWED)
                     })
@@ -515,7 +516,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(incorrectSleep3)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_INVALID)
                     })
@@ -530,7 +531,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepClassic.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body.message).to.eql(`There is no registered Child with ID: ${NON_EXISTENT_ID} on the platform!`)
                         expect(err.body.description).to.eql('Please register the Child and try again...')
@@ -546,7 +547,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepClassic.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_CHILD_ID)
                     })
@@ -564,7 +565,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleep)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_DATE_TIME_IS_NULL)
                     })
@@ -580,7 +581,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleep)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DURATION)
                     })
@@ -596,7 +597,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleep)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_SLEEP_STAGES_PATTERN_NAME_NOT_ALLOWED)
                     })
@@ -612,7 +613,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleep)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_INVALID)
                     })
@@ -628,7 +629,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleep)
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_SLEEP_TYPE)
                     })
@@ -660,7 +661,7 @@ describe('Routes: children.sleep', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                         .send(body)
-                        .expect(207)
+                        .expect(HttpStatus.MULTI_STATUS)
                         .then(res => {
                             for (let i = 0; i < res.body.success.length; i++) {
                                 expect(res.body.success[i].code).to.eql(201)
@@ -712,7 +713,7 @@ describe('Routes: children.sleep', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                         .send(body)
-                        .expect(207)
+                        .expect(HttpStatus.MULTI_STATUS)
                         .then(res => {
                             for (let i = 0; i < res.body.error.length; i++) {
                                 expect(res.body.error[i].code).to.eql(409)
@@ -753,7 +754,7 @@ describe('Routes: children.sleep', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                         .send(body)
-                        .expect(207)
+                        .expect(HttpStatus.MULTI_STATUS)
                         .then(res => {
 
                             // Sucess item
@@ -800,7 +801,7 @@ describe('Routes: children.sleep', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                         .send(body)
-                        .expect(207)
+                        .expect(HttpStatus.MULTI_STATUS)
                         .then(res => {
 
                             // incorrectSleep3
@@ -830,7 +831,7 @@ describe('Routes: children.sleep', () => {
 
         context('when posting a new Sleep for another user that not to be a child', () => {
 
-            it('sleep.post025: should return 400 and info message from error, when try create a sleep for admin', async () => {
+            it('sleep.post025: should return 403 and info message from error, when try create a sleep for admin', async () => {
 
                 const ADMIN_ID = await acc.getAdminID()
 
@@ -839,66 +840,61 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepClassic.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${ADMIN_ID} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('sleep.post026: should return 400 and info message from error, when try create a sleep for educator', () => {
+            it('sleep.post026: should return 403 and info message from error, when try create a sleep for educator', () => {
 
                 return request(URI)
                     .post(`/children/${defaultEducator.id}/sleep`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepClassic.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultEducator.id} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('sleep.post027: should return 400 and info message from error, when try create a sleep for health professional', () => {
+            it('sleep.post027: should return 403 and info message from error, when try create a sleep for health professional', () => {
 
                 return request(URI)
                     .post(`/children/${defaultHealthProfessional.id}/sleep`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepClassic.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultHealthProfessional.id} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('sleep.post028: should return 400 and info message from error, when try create a sleep for family', () => {
+            it('sleep.post028: should return 403 and info message from error, when try create a sleep for family', () => {
 
                 return request(URI)
                     .post(`/children/${defaultFamily.id}/sleep`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepClassic.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultFamily.id} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('sleep.post029: should return 400 and info message from error, when try create a sleep for application', () => {
+            it('sleep.post029: should return 403 and info message from error, when try create a sleep for application', () => {
 
                 return request(URI)
                     .post(`/children/${defaultApplication.id}/sleep`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepClassic.toJSON())
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultApplication.id} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
@@ -924,7 +920,7 @@ describe('Routes: children.sleep', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(anotherChildToken))
                         .send(sleepClassic.toJSON())
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -938,7 +934,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .send(sleepClassic.toJSON())
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -952,7 +948,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultHealthProfessionalToken))
                     .send(sleepClassic.toJSON())
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -970,7 +966,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer ')
                     .send(sleepClassic.toJSON())
-                    .expect(401)
+                    .expect(HttpStatus.UNAUTHORIZED)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.AUTH.ERROR_401_UNAUTHORIZED)
                     })
@@ -993,7 +989,7 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepDuplicated.toJSON())
-                    .expect(409)
+                    .expect(HttpStatus.CONFLICT)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_409_SLEEP_IS_ALREADY_REGISTERED)
                     })

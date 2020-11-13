@@ -228,9 +228,14 @@ export abstract class ApiGatewayException {
         ERROR_400_NEGATIVE_VALUE: new ApiException(400, 'One or more request fields are invalid...', 'value can\'t be negative!').toJson(),
         ERROR_400_INVALID_CHILD_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_400_INVALID_BODYFAT_ID: new ApiException(400, 'Parameter {bodyfat_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
-        ERROR_400_DATE_IS_NULL: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
+        ERROR_400_DATE_IS_NULL: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Datetime must be in the format: yyyy-MM-ddTHH:mm:ssZ').toJson(),
         ERROR_409_BODYFATS_IS_ALREADY_REGISTERED: new ApiException(409, 'Body Fat is already registered...').toJson(),
-        ERROR_404_BODYFAT_NOT_FOUND: new ApiException(404, 'Body Fat not found!', 'Body Fat not found or already removed. A new operation for the same resource is not required.').toJson()
+        ERROR_404_BODYFAT_NOT_FOUND: new ApiException(404, 'Body Fat not found!', 'Body Fat not found or already removed. A new operation for the same resource is not required.').toJson(),
+
+        ERROR_400_INVALID_FORMAT_DATE_TIME: (datetime) => new ApiException(400, `Datetime: ${datetime}, is not in valid ISO 8601 format.`, 'Datetime must be in the format: yyyy-MM-ddTHH:mm:ssZ').toJson(),
+        ERROR_400_NUMBER_EQUAL_TO_OR_GREATER_THAN_ZERO: (fieldName: string) => new ApiException(400, 'One or more request fields are invalid...', `${fieldName} must be a number equal to or greater than zero.`).toJson(),
+        ERROR_400_INTEGER_EQUAL_TO_OR_GREATER_THAN_ZERO: (fieldName: string) => new ApiException(400, 'One or more request fields are invalid...', `${fieldName} must be an integer equal to or greater than zero.`).toJson(),
+        ERROR_400_INTEGER_GREATER_THAN_ZERO: (fieldName: string) => new ApiException(400, 'One or more request fields are invalid...', `${fieldName} must be an integer greater than zero.`).toJson(),
     }
 
     public static readonly ENVIRONMENTS: any = {
