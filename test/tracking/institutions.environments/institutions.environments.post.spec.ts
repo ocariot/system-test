@@ -554,7 +554,7 @@ describe('Routes: institutions.environments', () => {
                     .send(environment.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_INVALID_DATE)
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_DATE('null'))
                     })
             })
 
@@ -580,7 +580,7 @@ describe('Routes: institutions.environments', () => {
                     .send(incorrectEnvironment2)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ENVIRONMENTS.ERROR_400_MEASUREMENT_VALUE_FIELD_IS_INVALID)
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_NUMBER('measurements.value'))
                     })
             })
 
