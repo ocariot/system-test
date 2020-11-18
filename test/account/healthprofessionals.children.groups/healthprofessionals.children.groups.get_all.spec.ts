@@ -252,9 +252,9 @@ describe('Routes: healthprofessionals.children.groups', () => {
                     .get(`/healthprofessionals/${NON_EXISTENT_ID}/children/groups`)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
-                    .expect(400)
+                    .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_HEALTHPROFESSIONAL_NOT_FOUND)
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
