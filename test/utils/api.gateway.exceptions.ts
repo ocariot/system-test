@@ -170,7 +170,7 @@ export abstract class ApiGatewayException {
         ERROR_400_VALUE_NEGATIVE: new ApiException(400, 'Value field is invalid...', 'Child log validation failed: The value provided has a negative value!').toJson(),
         ERROR_400_VALUE_IS_NOT_A_NUMBER: new ApiException(400, 'Value field is invalid...', 'Child log validation failed: The value provided is not a valid number!').toJson(),
         ERROR_400_INVALID_CHILD_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
-        ERROR_400_CHILD_NOT_FOUND: new ApiException(400, 'Child not found!', 'Child not found or already removed. A new operation for the same resource is not required.').toJson()
+        ERROR_400_CHILD_NOT_FOUND: (childId) => new ApiException(400, `There is no registered Child with ID: ${childId} on the platform!`, 'Please register the Child and try again...').toJson()
     }
 
     public static readonly SLEEP: any = {
@@ -280,7 +280,8 @@ export abstract class ApiGatewayException {
         ERROR_400_INVALID_FORMAT_ID: new ApiException(400, 'Some ID provided does not have a valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_403_FORBIDDEN: new ApiException(403, 'FORBIDDEN', 'Authorization failed due to insufficient permissions.').toJson(),
         ERROR_404_USER_NOT_FOUND: new ApiException(404, 'User not found!', 'User not found or already removed. A new operation for the same resource is not required.').toJson(), // user
-        ERROR_400_INVALID_DATE: (dateTime) => new ApiException(400, `Datetime: ${dateTime}, is not in valid ISO 8601 format.`, 'Datetime must be in the format: yyyy-MM-ddTHH:mm:ssZ').toJson(),
+        ERROR_400_INVALID_DATE_TIME: (dateTime) => new ApiException(400, `Datetime: ${dateTime}, is not in valid ISO 8601 format.`, 'Datetime must be in the format: yyyy-MM-ddTHH:mm:ssZ').toJson(),
+        ERROR_400_INVALID_DATE: (date) => new ApiException(400, `Date: ${date}, is not in valid ISO 8601 format.`, 'Date must be in the format: yyyy-MM-dd').toJson(),
         ERROR_400_INVALID_NUMBER: (field) => new ApiException(400, 'One or more request fields are invalid...', `${field} must be a valid number.`).toJson(),
 
     }

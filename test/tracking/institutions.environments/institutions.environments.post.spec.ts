@@ -554,7 +554,7 @@ describe('Routes: institutions.environments', () => {
                     .send(environment.toJSON())
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_DATE('null'))
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_DATE_TIME('null'))
                     })
             })
 

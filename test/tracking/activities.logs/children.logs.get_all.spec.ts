@@ -12,6 +12,7 @@ import { Institution } from '../../../src/account-service/model/institution'
 import { acc } from '../../utils/account.utils'
 import { trck } from '../../utils/tracking.utils'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
+import * as HttpStatus from 'http-status-codes'
 
 describe('Routes: children.logs', () => {
 
@@ -102,7 +103,7 @@ describe('Routes: children.logs', () => {
                     .get(`/children/${defaultChild.id}/logs/date/${date_start}/${date_end}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.active_minutes.length).to.eql(3)
                         expect(res.body.calories.length).to.eql(3)
@@ -141,7 +142,7 @@ describe('Routes: children.logs', () => {
                     .get(`/children/${defaultChild.id}/logs/date/${date_start}/${date_end}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.active_minutes.length).to.eql(3)
                         expect(res.body.calories.length).to.eql(3)
@@ -180,7 +181,7 @@ describe('Routes: children.logs', () => {
                     .get(`/children/${defaultChild.id}/logs/date/${date_start}/${date_end}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.active_minutes.length).to.eql(3)
                         expect(res.body.calories.length).to.eql(3)
@@ -219,7 +220,7 @@ describe('Routes: children.logs', () => {
                     .get(`/children/${defaultChild.id}/logs/date/${date_start}/${date_end}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                     .set('Content-Type', 'application/json')
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.active_minutes.length).to.eql(3)
                         expect(res.body.calories.length).to.eql(3)
@@ -258,7 +259,7 @@ describe('Routes: children.logs', () => {
                     .get(`/children/${defaultChild.id}/logs/date/${date_start}/${date_end}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.active_minutes.length).to.eql(3)
                         expect(res.body.calories.length).to.eql(3)
@@ -297,7 +298,7 @@ describe('Routes: children.logs', () => {
                     .get(`/children/${defaultChild.id}/logs/date/${date_start}/${date_end}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .set('Content-Type', 'application/json')
-                    .expect(200)
+                    .expect(HttpStatus.OK)
                     .then(res => {
                         expect(res.body.active_minutes.length).to.eql(3)
                         expect(res.body.calories.length).to.eql(3)
@@ -339,7 +340,7 @@ describe('Routes: children.logs', () => {
                         .get(`/children/${defaultChild.id}/logs/date/${date_start}/${date_end}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
-                        .expect(200)
+                        .expect(HttpStatus.OK)
                         .then(res => {
                             expect(res.body.active_minutes.length).to.eql(5)
                             expect(res.body.calories.length).to.eql(5)
@@ -409,7 +410,7 @@ describe('Routes: children.logs', () => {
                         .get(`/children/${defaultChild.id}/logs/date/${date_start}/${date_end}`)
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .set('Content-Type', 'application/json')
-                        .expect(200)
+                        .expect(HttpStatus.OK)
                         .then(res => {
                             expect(res.body.active_minutes.length).to.eql(3)
                             expect(res.body.calories.length).to.eql(3)
@@ -450,18 +451,16 @@ describe('Routes: children.logs', () => {
         describe('when a validation error occurs', () => {
 
             it('logs.get_all009: should return status code 400 and info message from invalid year in date', () => {
-                const data_start = '20199-05-05' // initial date the search will be performed with year wrong
+                const date_start = '20199-05-05' // initial date the search will be performed with year wrong
                 const date_end = '2019-08-08' // final date the search will be performed
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/logs/date/${data_start}/${date_end}`)
+                    .get(`/children/${defaultChild.id}/logs/date/${date_start}/${date_end}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body.code).to.eql(400)
-                        expect(err.body.message).to.eql(`Date parameter: ${data_start}, is not in valid ISO 8601 format.`)
-                        expect(err.body.description).to.eql('Date must be in the format: yyyy-MM-dd')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_DATE(date_start))
                     })
             })
 
@@ -473,27 +472,24 @@ describe('Routes: children.logs', () => {
                     .get(`/children/${defaultChild.id}/logs/date/${date_start}/${date_end}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body.code).to.eql(400)
-                        expect(err.body.message).to.eql(`Date parameter: ${date_end}, is not in valid ISO 8601 format.`)
-                        expect(err.body.description).to.eql('Date must be in the format: yyyy-MM-dd')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_DATE(date_end))
                     })
             })
 
             it('logs.get_all011: should return status code 400 and info message from from invalid day in date', () => {
-                const data_start = '2019-08-32' // initial date the search will be performed with day wrong
+                const date_start = '2019-08-32' // initial date the search will be performed with day wrong
                 const date_end = '2019-05-07'// final date the search will be performed
 
                 return request(URI)
-                    .get(`/children/${defaultChild.id}/logs/date/${data_start}/${date_end}`)
-                    .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                    .get(`/children/${defaultChild.id}/logs/date/${date_start}/${date_end}`)
+                    .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body.code).to.eql(400)
-                        expect(err.body.message).to.eql(`Date parameter: ${data_start}, is not in valid ISO 8601 format.`)
-                        expect(err.body.description).to.eql('Date must be in the format: yyyy-MM-dd')
+                        expect(err.body.code).to.eql(HttpStatus.BAD_REQUEST)
+                        expect(err.body.message).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_DATE(date_start).message)
                     })
             })
 
@@ -506,7 +502,7 @@ describe('Routes: children.logs', () => {
                     .get(`/children/${INVALID_ID}/logs/date/${date_start}/${date_end}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.LOGS.ERROR_400_INVALID_CHILD_ID)
                     })
@@ -521,9 +517,9 @@ describe('Routes: children.logs', () => {
                     .get(`/children/${NON_EXISTENT_ID}/logs/date/${date_start}/${date_end}`)
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
-                    .expect(400)
+                    .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.LOGS.ERROR_400_CHILD_NOT_FOUND)
+                        expect(err.body).to.eql(ApiGatewayException.LOGS.ERROR_400_CHILD_NOT_FOUND(NON_EXISTENT_ID))
                     })
             })
         })// validation error occurs
@@ -538,7 +534,7 @@ describe('Routes: children.logs', () => {
                     .get(`/children/${defaultChild.id}/logs/date/${date_start}/${date_end}`)
                     .set('Authorization', 'Bearer '.concat(anotherChildToken))
                     .set('Content-Type', 'application/json')
-                    .expect(403)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
@@ -555,7 +551,7 @@ describe('Routes: children.logs', () => {
                     .get(`/children/${defaultChild.id}/logs/date/${date_start}/${date_end}`)
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
-                    .expect(401)
+                    .expect(HttpStatus.UNAUTHORIZED)
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.AUTH.ERROR_401_UNAUTHORIZED)
                     })
