@@ -170,6 +170,7 @@ export abstract class ApiGatewayException {
         ERROR_400_VALUE_NEGATIVE: new ApiException(400, 'Value field is invalid...', 'Child log validation failed: The value provided has a negative value!').toJson(),
         ERROR_400_VALUE_IS_NOT_A_NUMBER: new ApiException(400, 'Value field is invalid...', 'Child log validation failed: The value provided is not a valid number!').toJson(),
         ERROR_400_INVALID_CHILD_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
+        ERROR_400_INVALID_RESOURCE: new ApiException(400, 'One or more request fields are invalid...', 'The names of the allowed types are: steps, calories, active_minutes, lightly_active_minutes, sedentary_minutes.').toJson(),
         ERROR_400_CHILD_NOT_FOUND: (childId) => new ApiException(400, `There is no registered Child with ID: ${childId} on the platform!`, 'Please register the Child and try again...').toJson()
     }
 
