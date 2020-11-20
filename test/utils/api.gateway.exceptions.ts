@@ -164,9 +164,9 @@ export abstract class ApiGatewayException {
     }
 
     public static readonly LOGS: any = {
-        ERROR_400_DATE_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Child log validation failed: date is required!').toJson(),
-        ERROR_400_VALUE_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Child log validation failed: value is required!').toJson(),
-        ERROR_400_DATE_AND_VALUE_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'Child log validation failed: date, value is required!').toJson(),
+        ERROR_400_DATE_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'date are required!').toJson(),
+        ERROR_400_VALUE_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'value are required!').toJson(),
+        ERROR_400_DATE_AND_VALUE_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'date, value are required!').toJson(),
         ERROR_400_VALUE_NEGATIVE: new ApiException(400, 'Value field is invalid...', 'Child log validation failed: The value provided has a negative value!').toJson(),
         ERROR_400_VALUE_IS_NOT_A_NUMBER: new ApiException(400, 'Value field is invalid...', 'Child log validation failed: The value provided is not a valid number!').toJson(),
         ERROR_400_INVALID_CHILD_ID: new ApiException(400, 'Parameter {child_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
@@ -284,6 +284,7 @@ export abstract class ApiGatewayException {
         ERROR_400_INVALID_DATE_TIME: (dateTime) => new ApiException(400, `Datetime: ${dateTime}, is not in valid ISO 8601 format.`, 'Datetime must be in the format: yyyy-MM-ddTHH:mm:ssZ').toJson(),
         ERROR_400_INVALID_DATE: (date) => new ApiException(400, `Date: ${date}, is not in valid ISO 8601 format.`, 'Date must be in the format: yyyy-MM-dd').toJson(),
         ERROR_400_INVALID_NUMBER: (field) => new ApiException(400, 'One or more request fields are invalid...', `${field} must be a valid number.`).toJson(),
+        ERROR_400_NUMBER_GREATHER_THAN_OR_EQUALS_TO_ZERO: (field) => new ApiException(400, 'One or more request fields are invalid...', `${field} must be a number equal to or greater than zero.`).toJson(),
 
     }
 }
