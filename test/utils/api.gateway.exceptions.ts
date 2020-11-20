@@ -216,7 +216,9 @@ export abstract class ApiGatewayException {
         ERROR_400_EMPTY_UNIT: new ApiException(400, 'One or more request fields are invalid...', 'unit must have at least one character!').toJson(),
         ERROR_404_WEIGHT_NOT_FOUND: new ApiException(404, 'Weight not found!', 'Weight not found or already removed. A new operation for the same resource is not required.').toJson(),
         ERROR_409_WEIGHT_IS_ALREADY_REGISTERED: new ApiException(409, 'Weight is already registered...').toJson(),
-        ERROR_400_DATE_IS_NULL: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson()
+        ERROR_400_DATE_IS_NULL: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
+        ERROR_400_INVALID_DATE_TIME: (dateTime) => new ApiException(400, `Datetime: ${dateTime}, is not in valid ISO 8601 format.`, 'Datetime must be in the format: yyyy-MM-ddTHH:mm:ssZ').toJson(),
+        ERROR_400_NUMBER_GREATHER_OR_EQUALS_TO_ZERO: (field) => new ApiException(400, 'One or more request fields are invalid...', `${field} must be a number equal to or greater than zero.`).toJson(),
 
     }
 
