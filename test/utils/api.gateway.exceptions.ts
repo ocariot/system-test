@@ -188,14 +188,17 @@ export abstract class ApiGatewayException {
         ERROR_400_INVALID_SLEEP_ID: new ApiException(400, 'Parameter {sleep_id} is not in valid format!', 'A 24-byte hex ID similar to this: 507f191e810c19729de860ea is expected.').toJson(),
         ERROR_404_SLEEP_NOT_FOUND: new ApiException(404, 'Sleep not found!', 'Sleep not found or already removed. A new operation for the same resource is not required.').toJson(),
         ERROR_409_SLEEP_IS_ALREADY_REGISTERED: new ApiException(409, 'Sleep is already registered...').toJson(),
-        ERROR_400_DATE_TIME_IS_NULL: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ').toJson(),
+        ERROR_400_DATE_TIME_IS_NULL: new ApiException(400, 'Datetime: null, is not in valid ISO 8601 format.', 'Datetime must be in the format: yyyy-MM-ddTHH:mm:ssZ').toJson(),
         ERROR_400_INVALID_SLEEP_TYPE: new ApiException(400, 'One or more request fields are invalid...', 'The names of the allowed Sleep Pattern types are: classic, stages.').toJson(),
+        ERROR_400_NUMBER_GREATHER_OR_EQUALS_TO_ZERO: (field) => new ApiException(400, 'One or more request fields are invalid...', `${field} must be an integer equal to or greater than zero.`).toJson(),
+        
+        
 
         // sleep pattern.data_set
         ERROR_400_PATTERN_ARE_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'pattern are required!').toJson(),
         ERROR_400_SLEEP_CLASSIC_PATTERN_NAME_NOT_ALLOWED: new ApiException(400, 'One or more request fields are invalid...', 'The names of the allowed data_set patterns are: asleep, restless, awake.').toJson(),
         ERROR_400_SLEEP_STAGES_PATTERN_NAME_NOT_ALLOWED: new ApiException(400, 'One or more request fields are invalid...', 'The names of the allowed data_set patterns are: deep, light, rem, awake.').toJson(),
-        ERROR_400_NEGATIVE_DURATION_OF_SLEEP_PATTERN_DATASET: new ApiException(400, 'One or more request fields are invalid...', 'pattern.data_set.duration can\'t be negative!').toJson(),
+        ERROR_400_NEGATIVE_DURATION_OF_SLEEP_PATTERN_DATASET: (field) => new ApiException(400, 'One or more request fields are invalid...', `${field} must be an integer equal to or greater than zero.`).toJson(),
         ERROR_400_INVALID_PATTERN_DATASET_NAME_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'pattern.data_set.name are required!').toJson(),
         ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_REQUIRED: new ApiException(400, 'Required fields were not provided...', 'pattern.data_set.duration are required!').toJson(),
         ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_INVALID: new ApiException(400, 'One or more request fields are invalid...', 'pattern.data_set.duration must be a valid number!').toJson()

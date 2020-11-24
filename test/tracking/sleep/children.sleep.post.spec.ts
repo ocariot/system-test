@@ -397,7 +397,7 @@ describe('Routes: children.sleep', () => {
                     .send(sleepClassic.toJSON())
                     .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_NEGATIVE_DURATION)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_NUMBER_GREATHER_OR_EQUALS_TO_ZERO('duration'))
                     })
             })
 
@@ -410,7 +410,7 @@ describe('Routes: children.sleep', () => {
                     .send(incorrectSleep1)
                     .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DURATION)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_NUMBER_GREATHER_OR_EQUALS_TO_ZERO('duration'))
                     })
             })
 
@@ -479,7 +479,7 @@ describe('Routes: children.sleep', () => {
                     .send(incorrectSleep6)
                     .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_NEGATIVE_DURATION_OF_SLEEP_PATTERN_DATASET)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_NUMBER_GREATHER_OR_EQUALS_TO_ZERO('pattern.data_set.duration'))
                     })
             })
 
@@ -518,7 +518,7 @@ describe('Routes: children.sleep', () => {
                     .send(incorrectSleep3)
                     .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_INVALID)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_NUMBER_GREATHER_OR_EQUALS_TO_ZERO('pattern.data_set.duration'))
                     })
             })
 
@@ -531,10 +531,13 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(sleepClassic.toJSON())
-                    .expect(HttpStatus.BAD_REQUEST)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${NON_EXISTENT_ID} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        
+                        // expect(err.body.message).to.eql(`There is no registered Child with ID: ${NON_EXISTENT_ID} on the platform!`)
+                        // expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 
@@ -571,7 +574,7 @@ describe('Routes: children.sleep', () => {
                     })
             })
 
-            it('sleep.post035: should return status code 400 and info message from validation error, because sleep duration is null', () => {
+            it('sleep.post039: should return status code 400 and info message from validation error, because sleep duration is null', () => {
 
                 const sleep = getIncorrectSleepStagesJSON()
                 sleep.duration = null
@@ -583,7 +586,7 @@ describe('Routes: children.sleep', () => {
                     .send(sleep)
                     .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DURATION)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_NUMBER_GREATHER_OR_EQUALS_TO_ZERO('duration'))
                     })
             })
 
@@ -615,7 +618,7 @@ describe('Routes: children.sleep', () => {
                     .send(sleep)
                     .expect(HttpStatus.BAD_REQUEST)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_INVALID)
+                        expect(err.body).to.eql(ApiGatewayException.SLEEP.ERROR_400_NUMBER_GREATHER_OR_EQUALS_TO_ZERO('pattern.data_set.duration'))
                     })
             })
 
@@ -772,10 +775,12 @@ describe('Routes: children.sleep', () => {
                             expect(res.body.success[0].item.pattern.summary).to.have.deep.eql(mixedSleepsSummary[0])
                             expect(res.body.success[0].item.child_id).to.eql(defaultChild.id)
 
+                            delete(res.body.error[0].item)
+                            expect(res.body.error[0]).to.eql(ApiGatewayException.SLEEP.ERROR_400_NUMBER_GREATHER_OR_EQUALS_TO_ZERO('duration'))
                             // Error
-                            expect(res.body.error[0].code).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DURATION.code)
-                            expect(res.body.error[0].message).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DURATION.message)
-                            expect(res.body.error[0].description).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DURATION.description)
+                            // expect(res.body.error[0].code).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DURATION.code)
+                            // expect(res.body.error[0].message).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DURATION.message)
+                            // expect(res.body.error[0].description).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_DURATION.description)
                         })
                 })
             })
@@ -805,24 +810,37 @@ describe('Routes: children.sleep', () => {
                         .then(res => {
 
                             // incorrectSleep3
-                            expect(res.body.error[0].code).to.eql(400)
-                            expect(res.body.error[0].message).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_INVALID.message)
-                            expect(res.body.error[0].description).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_INVALID.description)
+                            // expect(res.body.error[0].code).to.eql(400)
+                            // expect(res.body.error[0].message).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_INVALID.message)
+                            // expect(res.body.error[0].description).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_DURATION_IS_INVALID.description)
+                            
+                            delete(res.body.error[0].item)
+                            expect(res.body.error[0]).to.eql(ApiGatewayException.SLEEP.ERROR_400_NUMBER_GREATHER_OR_EQUALS_TO_ZERO('pattern.data_set.duration'))
+                        
 
-                            // incorrectSleep5
-                            expect(res.body.error[1].code).to.eql(400)
-                            expect(res.body.error[1].message).to.eql(ApiGatewayException.SLEEP.ERROR_400_SLEEP_CLASSIC_PATTERN_NAME_NOT_ALLOWED.message)
-                            expect(res.body.error[1].description).to.eql(ApiGatewayException.SLEEP.ERROR_400_SLEEP_CLASSIC_PATTERN_NAME_NOT_ALLOWED.description)
+                            // // incorrectSleep5
+                            // expect(res.body.error[1].code).to.eql(400)
+                            // expect(res.body.error[1].message).to.eql(ApiGatewayException.SLEEP.ERROR_400_SLEEP_CLASSIC_PATTERN_NAME_NOT_ALLOWED.message)
+                            // expect(res.body.error[1].description).to.eql(ApiGatewayException.SLEEP.ERROR_400_SLEEP_CLASSIC_PATTERN_NAME_NOT_ALLOWED.description)
 
-                            // incorrectSleep6
-                            expect(res.body.error[2].code).to.eql(400)
-                            expect(res.body.error[2].message).to.eql(ApiGatewayException.SLEEP.ERROR_400_NEGATIVE_DURATION_OF_SLEEP_PATTERN_DATASET.message)
-                            expect(res.body.error[2].description).to.eql(ApiGatewayException.SLEEP.ERROR_400_NEGATIVE_DURATION_OF_SLEEP_PATTERN_DATASET.description)
+                            delete(res.body.error[1].item)
+                            expect(res.body.error[1]).to.eql(ApiGatewayException.SLEEP.ERROR_400_SLEEP_CLASSIC_PATTERN_NAME_NOT_ALLOWED)
 
-                            // incorrectSleep7
-                            expect(res.body.error[3].code).to.eql(400)
-                            expect(res.body.error[3].message).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_NAME_IS_REQUIRED.message)
-                            expect(res.body.error[3].description).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_NAME_IS_REQUIRED.description)
+                            // // incorrectSleep6
+                            // expect(res.body.error[2].code).to.eql(400)
+                            // expect(res.body.error[2].message).to.eql(ApiGatewayException.SLEEP.ERROR_400_NEGATIVE_DURATION_OF_SLEEP_PATTERN_DATASET.message)
+                            // expect(res.body.error[2].description).to.eql(ApiGatewayException.SLEEP.ERROR_400_NEGATIVE_DURATION_OF_SLEEP_PATTERN_DATASET.description)
+
+                            delete(res.body.error[2].item)
+                            expect(res.body.error[2]).to.eql(ApiGatewayException.SLEEP.ERROR_400_NEGATIVE_DURATION_OF_SLEEP_PATTERN_DATASET('pattern.data_set.duration'))
+
+                            // // incorrectSleep7
+                            // expect(res.body.error[3].code).to.eql(400)
+                            // expect(res.body.error[3].message).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_NAME_IS_REQUIRED.message)
+                            // expect(res.body.error[3].description).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_NAME_IS_REQUIRED.description)
+
+                            delete(res.body.error[3].item)
+                            expect(res.body.error[3]).to.eql(ApiGatewayException.SLEEP.ERROR_400_INVALID_PATTERN_DATASET_NAME_IS_REQUIRED)
 
                         })
                 })
