@@ -142,15 +142,16 @@ describe('Routes: Robot', () => {
                     })
             })
 
-            it('food-recognition.post002: should return status code 200 and the saved Food-Recognition by the application', async () => {
+            it('food-recognition.post002: should return status code 403 and info message from insufficient permissions for application user', async () => {
 
                 return request(URI)
                     .post('/robot-result/food-recognition')
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultApplicationToken))
                     .send(defaultFoodRecognition)
-                    .then(res => {
-                        expect(res.status).to.eql(HttpStatus.OK)
+                    .expect(HttpStatus.FORBIDDEN)
+                    .then(err => {
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
