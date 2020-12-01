@@ -20,6 +20,8 @@ import { FamilyMock } from '../mocks/account-service/family.mock'
 import * as HttpStatus from 'http-status-codes'
 import { ApiGatewayException } from '../utils/api.gateway.exceptions'
 
+import { notificationUtils } from '../utils/notification.utils'
+
 describe('Routes: notification', () => {
     const URI: string = process.env.AG_URL || 'https://localhost:8081/v1'
 
@@ -105,12 +107,12 @@ describe('Routes: notification', () => {
 
         context('when creating a notification successfully.', () => {
 
-            it('notifications.user.post___: should return status code 200 when posting a notification for children user type.', () => {
+            it('notifications.user.post001: should return status code 200 when posting a notification for children user type.', () => {
                 const notificationUserChild: NotificationUser = new NotificationUserMock(defaultChild)
 
                 return request(URI)
                     .post(`/notifications/user/${defaultChild.id}`)
-                    .send(notificationUserChild)
+                    .send(notificationUserChild.asJSONRequestBody())
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(HttpStatus.OK)
@@ -122,14 +124,14 @@ describe('Routes: notification', () => {
                     })
             })
 
-            it('notifications.user.post___: should return status code 200 when posting a notification for family user type.', () => {
+            it('notifications.user.post002: should return status code 200 when posting a notification for family user type.', () => {
                 const notificationUserFamily: NotificationUser = new NotificationUserMock(defaultChild)
                 notificationUserFamily.type = 'family'
                 notificationUserFamily.lang = 'pt'
 
                 return request(URI)
                     .post(`/notifications/user/${defaultChild.id}`)
-                    .send(notificationUserFamily)
+                    .send(notificationUserFamily.asJSONRequestBody())
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .set('Content-Type', 'application/json')
                     .expect(HttpStatus.OK)
@@ -141,14 +143,14 @@ describe('Routes: notification', () => {
                     })
             })
 
-            it('notifications.user.post___: should return status code 200 when posting a notification for educator user type.', () => {
+            it('notifications.user.post003: should return status code 200 when posting a notification for educator user type.', () => {
                 const notificationUserEducator: NotificationUser = new NotificationUserMock(defaultChild)
                 notificationUserEducator.type = 'educator'
                 notificationUserEducator.lang = 'el'
 
                 return request(URI)
                     .post(`/notifications/user/${defaultChild.id}`)
-                    .send(notificationUserEducator)
+                    .send(notificationUserEducator.asJSONRequestBody())
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(HttpStatus.OK)
@@ -159,6 +161,39 @@ describe('Routes: notification', () => {
                         expect(res.body).to.eql(notificationUserEducator.asJSONResponse())
                     })
             })
+
+            describe('when have multiple tokens to a child', () => {
+                let notificationUserChildren: NotificationUser
+                let notificationUserEducator: NotificationUser
+    
+                before(async () => {
+                    notificationUserChildren = new NotificationUserMock(defaultChild)
+                    notificationUserEducator = new NotificationUserMock(defaultChild)
+
+                    notificationUserChildren.token = accessTokenChild
+                    await notificationUtils.saveNotificationUser(accessTokenChild, notificationUserChildren)
+                    
+                    notificationUserEducator.tokens.push(notificationUserChildren.token!)
+                    notificationUserEducator.type = 'educator'
+                    notificationUserEducator.lang = 'el'
+                })
+
+                it('notifications.user.post004: should return status code 200 when posting multiple user notifications.', () => {
+                    
+                    return request(URI)
+                        .post(`/notifications/user/${defaultChild.id}`)
+                        .send(notificationUserEducator.asJSONRequestBody())
+                        .set('Authorization', 'Bearer '.concat(accessTokenEducator))
+                        .set('Content-Type', 'application/json')
+                        .expect(HttpStatus.OK)
+                        .then(res => {
+                            expect(res.body).to.have.property('lastLogin')
+                            delete res.body.lastLogin
+                            
+                            expect(res.body).to.eql(notificationUserEducator.asJSONResponse())
+                        })
+                })
+            })
         })
 
         context('when a validation error ocurrs.', () => {
@@ -168,12 +203,12 @@ describe('Routes: notification', () => {
                 notificationUser = new NotificationUserMock(defaultChild)
             })
 
-            it('notifications.user.post___:  should return status code 400 and info message from validation error, because the user id is invalid', () => {
+            it('notifications.user.post005:  should return status code 400 and info message from validation error, because the user id is invalid', () => {
                 const INVALID_ID = "123"
 
                 return request(URI)
                     .post(`/notifications/user/${INVALID_ID}`)
-                    .send(notificationUser)
+                    .send(notificationUser.asJSONRequestBody())
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(HttpStatus.BAD_REQUEST)
@@ -182,12 +217,12 @@ describe('Routes: notification', () => {
                     })
             })
 
-            it('notifications.user.post___:  should return status code 400 and info message from validation error, because the user id is null', () => {
+            it('notifications.user.post006:  should return status code 400 and info message from validation error, because the user id is null', () => {
                 const NULL_ID = null
 
                 return request(URI)
                     .post(`/notifications/user/${NULL_ID}`)
-                    .send(notificationUser)
+                    .send(notificationUser.asJSONRequestBody())
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(HttpStatus.BAD_REQUEST)
@@ -196,7 +231,7 @@ describe('Routes: notification', () => {
                     })
             })
 
-            it('notifications.user.post___:  should return status code 400 and info message from validation error, because the request body is null.', () => {
+            it('notifications.user.post007:  should return status code 400 and info message from validation error, because the request body is null.', () => {
                 return request(URI)
                     .post(`/notifications/user/${defaultChild.id}`)
                     .send(null)
@@ -205,12 +240,12 @@ describe('Routes: notification', () => {
                     .expect(HttpStatus.BAD_REQUEST)
             })
 
-            it('notifications.user.post___:  should return status code 400 and info message from validation error, because the language is invalid.', () => {
+            it('notifications.user.post008:  should return status code 400 and info message from validation error, because the language is invalid.', () => {
                 notificationUser.lang = 'invalid language'
 
                 return request(URI)
                     .post(`/notifications/user/${defaultChild.id}`)
-                    .send(notificationUser)
+                    .send(notificationUser.asJSONRequestBody())
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(HttpStatus.BAD_REQUEST)
@@ -222,12 +257,12 @@ describe('Routes: notification', () => {
                     })
             })
 
-            it('notifications.user.post___:  should return status code 400 and info message from validation error, because the language is not provided.', () => {
+            it('notifications.user.post009:  should return status code 400 and info message from validation error, because the language is not provided.', () => {
                 delete notificationUser.lang
 
                 return request(URI)
                     .post(`/notifications/user/${defaultChild.id}`)
-                    .send(notificationUser)
+                    .send(notificationUser.asJSONRequestBody())
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(HttpStatus.BAD_REQUEST)
@@ -239,12 +274,12 @@ describe('Routes: notification', () => {
                     })
             })
 
-            it('notifications.user.post___:  should return status code 400 and info message from validation error, because the type of user is invalid.', () => {
+            it('notifications.user.post010:  should return status code 400 and info message from validation error, because the type of user is invalid.', () => {
                 notificationUser.type = 'invalid user type'
 
                 return request(URI)
                     .post(`/notifications/user/${defaultChild.id}`)
-                    .send(notificationUser)
+                    .send(notificationUser.asJSONRequestBody())
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(HttpStatus.BAD_REQUEST)
@@ -256,12 +291,12 @@ describe('Routes: notification', () => {
                     })
             })
 
-            it('notifications.user.post___:  should return status code 400 and info message from validation error, because the type of user is not provided.', () => {
+            it('notifications.user.post011:  should return status code 400 and info message from validation error, because the type of user is not provided.', () => {
                 delete notificationUser.type
 
                 return request(URI)
                     .post(`/notifications/user/${defaultChild.id}`)
-                    .send(notificationUser)
+                    .send(notificationUser.asJSONRequestBody())
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .set('Content-Type', 'application/json')
                     .expect(HttpStatus.BAD_REQUEST)
@@ -282,10 +317,10 @@ describe('Routes: notification', () => {
                 notificationUser = new NotificationUserMock(anotherChild)
             })
 
-            it('notifications.user.post___: should return the status code 401 and the authentication failure informational message', () => {
+            it('notifications.user.post012: should return the status code 401 and the authentication failure informational message', () => {
                 return request(URI)
                     .post(`/notifications/user/${defaultChild.id}`)
-                    .send(notificationUser)
+                    .send(notificationUser.asJSONRequestBody())
                     .set('Authorization', 'Bearer ')
                     .set('Content-Type', 'application/json')
                     .expect(HttpStatus.UNAUTHORIZED)
@@ -294,10 +329,10 @@ describe('Routes: notification', () => {
                     })
             })
 
-            it('notifications.user.post___: should return the status code 403 when trying post notification.user for a child who is not associated with a educator user', () => {
+            it('notifications.user.post013: should return the status code 403 when trying post notification.user for a child who is not associated with a educator user', () => {
                 return request(URI)
                     .post(`/notifications/user/${anotherChild.id}`)
-                    .send(notificationUser)
+                    .send(notificationUser.asJSONRequestBody())
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .set('Content-Type', 'application/json')
                     .expect(HttpStatus.FORBIDDEN)
