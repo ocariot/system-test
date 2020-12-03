@@ -275,6 +275,8 @@ export abstract class ApiGatewayException {
         ERROR_400_INVALID_USER_TYPE: new ApiException(400, 'WRONG PARAMETERS', 'Type of user can only be one of children, family or educator').toJson(),
         ERROR_400_LANGUAGE_NOT_PROVIDED: new ApiException(400, 'MISSING PARAMETERS', 'No lang found in the message body').toJson(),
         ERROR_400_USER_TYPE_NOT_PROVIDED: new ApiException(400, 'MISSING PARAMETERS', 'Type of user not defined').toJson(),
+        ERROR_400_TOKEN_NOT_PROVIDED: new ApiException(400, 'MISSING PARAMETERS', 'No token found in the message body').toJson(),
+        USER_NOT_FOUND: new ApiException(200, 'OK', 'User not found').toJson(),
     }
 
     public static readonly ERROR_MESSAGE: any = {

@@ -341,7 +341,6 @@ describe('Routes: notification', () => {
                     })
             })
 
-
         })
     })
 })

@@ -11,10 +11,10 @@ export class NotificationUser extends Entity {
         this.tokens = new Array<string>()
     }
 
-    public asJSONResponse(): any {
+    public asJSONResponse(withNewToken: boolean = true): any {
         return {
             id: this.id,
-            tokens: new Array<string>(this.token!).concat(this.tokens),
+            tokens: withNewToken ? new Array<string>(this.token!).concat(this.tokens) : this.tokens,
             lang: this.lang,
             type: this.type,
         }
