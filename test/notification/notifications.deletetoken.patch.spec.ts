@@ -123,7 +123,7 @@ describe('Routes: notification', () => {
 
             await acc.saveChildrenGroupsForEducator(accessTokenEducator, defaultEducator, defaultChildrenGroup)
         } catch (err) {
-            console.log('Failure on Before from notifications.user.post test: ', err)
+            console.log('Failure on Before from notifications.deletetoken.patch test: ', err)
         }
     })
 
@@ -143,7 +143,7 @@ describe('Routes: notification', () => {
 
         context('when deleting a notification token successfully.', () => {
 
-            it('notifications.deletetoken.patch___: should return status code 200 when deleting a notification token for a child.', () => {
+            it('notifications.deletetoken.patch001: should return status code 200 when deleting a notification token for a child.', () => {
                 const deletedToken: any = {
                     token: childrenNotificationUser.token
                 }
@@ -162,7 +162,7 @@ describe('Routes: notification', () => {
                     })
             })
 
-            it('notifications.deletetoken.patch___: should return status code 200 when deleting one of notification tokens for a child, even if the token does not exist.', () => {
+            it('notifications.deletetoken.patch002: should return status code 200 when deleting one of notification tokens for a child, even if the token does not exist.', () => {
                 const NON_EXISTENT_TOKEN: any = {
                     token: accessTokenFamily
                 }
@@ -194,7 +194,7 @@ describe('Routes: notification', () => {
                     educatorNotificationUser.tokens.push(childrenNotificationUser.token!)
                 })
 
-                it('notifications.deletetoken.patch___: should return status code 200 when deleting one of notification tokens for a child.', () => {
+                it('notifications.deletetoken.patch003: should return status code 200 when deleting one of notification tokens for a child.', () => {
                     const deletedToken: any = {
                         token: educatorNotificationUser.token
                     }
@@ -226,7 +226,7 @@ describe('Routes: notification', () => {
                 }
             })
 
-            it('notifications.deletetoken.patch___: should return the status code 200 and an informational message when trying delete a notification token for a inexistent id.', () => {
+            it('notifications.deletetoken.patch004: should return the status code 200 and an informational message when trying delete a notification token for a inexistent id.', () => {
                 return request(URI)
                     .patch(`/notifications/deletetoken/${anotherChild.id}`)
                     .send(deletedToken)
@@ -241,7 +241,7 @@ describe('Routes: notification', () => {
                     })
             })
 
-            it('notifications.deletetoken.patch___: should return status code 400 and info message from validation error, because the token is not provided.', () => {
+            it('notifications.deletetoken.patch005: should return status code 400 and info message from validation error, because the token is not provided.', () => {
                 const EMPTY_BODY = {}
 
                 return request(URI)
@@ -258,7 +258,7 @@ describe('Routes: notification', () => {
                     })
             })
 
-            it('notifications.deletetoken.patch___: should return status code 400 and info message from validation error, because the child id is invalid.', () => {
+            it('notifications.deletetoken.patch006: should return status code 400 and info message from validation error, because the child id is invalid.', () => {
                 const INVALID_ID = '123'
 
                 return request(URI)
@@ -284,7 +284,7 @@ describe('Routes: notification', () => {
                 }
             })
 
-            it('notifications.deletetoken.patch___: should return the status code 401 and the authentication failure informational message.', () => {
+            it('notifications.deletetoken.patch007: should return the status code 401 and the authentication failure informational message.', () => {
                 return request(URI)
                     .patch(`/notifications/deletetoken/${defaultChild.id}`)
                     .send(deletedToken)
@@ -296,7 +296,7 @@ describe('Routes: notification', () => {
                     })
             })
 
-            it('notifications.deletetoken.patch___: should return the 403 status code when a child user tries to delete a notification token from another child.', () => {
+            it('notifications.deletetoken.patch008: should return the 403 status code when a child user tries to delete a notification token from another child.', () => {
                 return request(URI)
                     .patch(`/notifications/deletetoken/${defaultChild.id}`)
                     .send(deletedToken)
@@ -308,7 +308,7 @@ describe('Routes: notification', () => {
                     })
             })
 
-            it('notifications.deletetoken.patch___: should return the 403 status code when an educator user tries to delete a notification token from a child who is not associated with it.', () => {
+            it('notifications.deletetoken.patch009: should return the 403 status code when an educator user tries to delete a notification token from a child who is not associated with it.', () => {
                 return request(URI)
                     .patch(`/notifications/deletetoken/${defaultChild.id}`)
                     .send(deletedToken)
@@ -320,7 +320,7 @@ describe('Routes: notification', () => {
                     })
             })
 
-            it('notifications.deletetoken.patch___: should return the 403 status code when a family user tries to delete a notification token from a child who is not associated with it.', () => {
+            it('notifications.deletetoken.patch010: should return the 403 status code when a family user tries to delete a notification token from a child who is not associated with it.', () => {
                 return request(URI)
                     .patch(`/notifications/deletetoken/${defaultChild.id}`)
                     .send(deletedToken)
