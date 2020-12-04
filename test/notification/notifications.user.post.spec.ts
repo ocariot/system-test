@@ -2,6 +2,7 @@ import request from 'supertest'
 import { expect } from 'chai'
 import { acc } from '../utils/account.utils'
 import { accountDB } from '../../src/account-service/database/account.db'
+import { notificationDB } from '../../src/notification/database/notification.db'
 
 import { NotificationUser } from '../../src/notification/model/notification.user'
 import { NotificationUserMock } from '../mocks/notification/notification.user.mock'
@@ -47,11 +48,13 @@ describe('Routes: notification', () => {
     before(async () => {
         try {
             await accountDB.connect()
+            await notificationDB.connect()
 
             const tokens = await acc.getAuths()
             accessTokenAdmin = tokens.admin.access_token
 
             await accountDB.removeCollections()
+            await notificationDB.removeCollections()
 
             const result = await acc.saveInstitution(accessTokenAdmin, defaultInstitution)
             defaultInstitution.id = result.id
@@ -97,7 +100,9 @@ describe('Routes: notification', () => {
     after(async () => {
         try {
             await accountDB.removeCollections()
+            await notificationDB.removeCollections()
             await accountDB.dispose()
+            await notificationDB.dispose()
         } catch (err) {
             console.log('DB ERROR', err)
         }
