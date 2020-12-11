@@ -13,6 +13,15 @@ class FoodUtil {
             .catch(err => Promise.reject(err.body))
     }
 
+    public deleteFoodHabits(accessToken: string, foodHabits: any): Promise<any> {
+        return request(this.URI)
+            .delete(`/foodqs/${foodHabits.id}`)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', 'Bearer '.concat(accessToken))
+            .then(res => Promise.resolve(res.body))
+            .catch(err => Promise.reject(err.body))
+    }
+
 }
 
 export const food = new FoodUtil()
