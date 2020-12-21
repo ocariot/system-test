@@ -120,16 +120,16 @@ describe('Routes: educators.children.groups', () => {
         })
 
         describe('when the educator is not found', () => {
-            it('educators.children.groups.delete002: should return status code 204 and no content', () => {
+            it('educators.children.groups.delete002: should return status code 403 and info message from insufficient permissions, because a non-existent id does not match to user id.', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the educator
 
                 return request(URI)
                     .delete(`/educators/${NON_EXISTENT_ID}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
-                    .expect(204)
+                    .expect(403)
                     .then(res => {
-                        expect(res.body).to.eql({})
+                        expect(res.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })

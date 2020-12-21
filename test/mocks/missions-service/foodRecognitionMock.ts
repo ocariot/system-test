@@ -20,7 +20,7 @@ export class FoodRecognitionMock {
         const dateEnd = new Date()
         const randomDateMilliseconds = dateEnd.getTime() + Math.floor(Math.random() * (dateEnd.getTime() - dateStart.getTime()))
 
-        return new Date(randomDateMilliseconds).toISOString()
+        return this.getDateFormattedAccordingToMissionsService(new Date(randomDateMilliseconds).toISOString())
     }
 
     private generateObjectId(): string {

@@ -36,6 +36,8 @@ describe('Routes: users', () => {
     defaultInstitution.longitude = 0
 
     const defaultChild: Child = new ChildMock()
+    defaultChild.username = 'default child'
+    defaultChild.password = 'default pass'
 
     const defaultEducator: Educator = new Educator()
     defaultEducator.username = 'default educator'
@@ -118,7 +120,7 @@ describe('Routes: users', () => {
     describe('DELETE /:user_id', () => {
 
         describe('when the user does not exist', () => {
-            it('users.post001: should return status code 204 and no content, because user does not exists', () => {
+            it('users.delete001: should return status code 204 and no content, because user does not exists', () => {
             const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the user
 
             return request(URI)
@@ -133,7 +135,7 @@ describe('Routes: users', () => {
         })
 
         describe('when the user_id is invalid', () => {
-            it('users.post002: should return status code 400 and message info about invalid id', () => {
+            it('users.delete002: should return status code 400 and message info about invalid id', () => {
                 const INVALID_ID = '123' // invalid id of the user
 
                 return request(URI)
@@ -159,7 +161,7 @@ describe('Routes: users', () => {
 
             context('child deleting the user', () => {
 
-                it('users.post003: should return status code 403 and info message from insufficient permissions when delete herself', () => {
+                it('users.delete003: should return status code 403 and info message from insufficient permissions when delete herself', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultChild.id}`)
@@ -171,7 +173,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post004: should return status code 403 and info message from insufficient permissions when delete admin', async () => {
+                it('users.delete004: should return status code 403 and info message from insufficient permissions when delete admin', async () => {
 
                     return request(URI)
                         .delete(`/users/${admin_ID}`)
@@ -183,7 +185,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post005: should return status code 403 and info message from insufficient permissions when delete educator', () => {
+                it('users.delete005: should return status code 403 and info message from insufficient permissions when delete educator', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultEducator.id}`)
@@ -195,7 +197,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post006: should return status code 403 and info message from insufficient permissions when delete health professional', () => {
+                it('users.delete006: should return status code 403 and info message from insufficient permissions when delete health professional', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultHealthProfessional.id}`)
@@ -207,7 +209,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post007: should return status code 403 and info message from insufficient permissions when delete family', () => {
+                it('users.delete007: should return status code 403 and info message from insufficient permissions when delete family', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultFamily.id}`)
@@ -219,7 +221,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post008: should return status code 403 and info message from insufficient permissions when delete application', () => {
+                it('users.delete008: should return status code 403 and info message from insufficient permissions when delete application', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultApplication.id}`)
@@ -231,7 +233,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post009: should return status code 403 and info message from insufficient permissions when delete another child', () => {
+                it('users.delete009: should return status code 403 and info message from insufficient permissions when delete another child', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultChild.id}`)
@@ -246,7 +248,7 @@ describe('Routes: users', () => {
 
             context('educator deleting the user', () => {
 
-                it('users.post010: should return status code 403 and info message from insufficient permissions when delete child', () => {
+                it('users.delete010: should return status code 403 and info message from insufficient permissions when delete child', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultChild.id}`)
@@ -258,7 +260,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post011: should return status code 403 and info message from insufficient permissions when delete admin', () => {
+                it('users.delete011: should return status code 403 and info message from insufficient permissions when delete admin', () => {
 
                     return request(URI)
                         .delete(`/users/${admin_ID}`)
@@ -270,7 +272,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post012: should return status code 403 and info message from insufficient permissions when delete himself', () => {
+                it('users.delete012: should return status code 403 and info message from insufficient permissions when delete himself', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultEducator.id}`)
@@ -282,7 +284,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post013: should return status code 403 and info message from insufficient permissions when delete health professional', () => {
+                it('users.delete013: should return status code 403 and info message from insufficient permissions when delete health professional', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultHealthProfessional.id}`)
@@ -294,7 +296,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post014: should return status code 403 and info message from insufficient permissions when delete family', () => {
+                it('users.delete014: should return status code 403 and info message from insufficient permissions when delete family', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultFamily.id}`)
@@ -306,7 +308,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post015: should return status code 403 and info message from insufficient permissions when delete application', () => {
+                it('users.delete015: should return status code 403 and info message from insufficient permissions when delete application', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultApplication.id}`)
@@ -318,7 +320,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post016: should return status code 403 and info message from insufficient permissions when delete another educator', () => {
+                it('users.delete016: should return status code 403 and info message from insufficient permissions when delete another educator', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultEducator.id}`)
@@ -333,7 +335,7 @@ describe('Routes: users', () => {
 
             context('health professional deleting the user', () => {
 
-                it('users.post017: should return status code 403 and info message from insufficient permissions when delete child', () => {
+                it('users.delete017: should return status code 403 and info message from insufficient permissions when delete child', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultChild.id}`)
@@ -345,7 +347,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post018: should return status code 403 and info message from insufficient permissions when delete admin', () => {
+                it('users.delete018: should return status code 403 and info message from insufficient permissions when delete admin', () => {
 
                     return request(URI)
                         .delete(`/users/${admin_ID}`)
@@ -357,7 +359,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post019: should return status code 403 and info message from insufficient permissions when delete educator', () => {
+                it('users.delete019: should return status code 403 and info message from insufficient permissions when delete educator', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultEducator.id}`)
@@ -369,7 +371,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post020: should return status code 403 and info message from insufficient permissions when delete himself', () => {
+                it('users.delete020: should return status code 403 and info message from insufficient permissions when delete himself', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultHealthProfessional.id}`)
@@ -381,7 +383,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post021: should return status code 403 and info message from insufficient permissions when delete family', () => {
+                it('users.delete021: should return status code 403 and info message from insufficient permissions when delete family', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultFamily.id}`)
@@ -393,7 +395,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post022: should return status code 403 and info message from insufficient permissions when delete application', () => {
+                it('users.delete022: should return status code 403 and info message from insufficient permissions when delete application', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultApplication.id}`)
@@ -405,7 +407,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post023: should return status code 403 and info message from insufficient permissions when delete another health professional', () => {
+                it('users.delete023: should return status code 403 and info message from insufficient permissions when delete another health professional', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultHealthProfessional.id}`)
@@ -420,7 +422,7 @@ describe('Routes: users', () => {
 
             context('family deleting the user', () => {
 
-                it('users.post024: should return status code 403 and info message from insufficient permissions when delete child', () => {
+                it('users.delete024: should return status code 403 and info message from insufficient permissions when delete child', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultChild.id}`)
@@ -432,7 +434,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post025: should return status code 403 and info message from insufficient permissions when delete admin', () => {
+                it('users.delete025: should return status code 403 and info message from insufficient permissions when delete admin', () => {
 
                     return request(URI)
                         .delete(`/users/${admin_ID}`)
@@ -444,7 +446,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post026: should return status code 403 and info message from insufficient permissions when delete educator', () => {
+                it('users.delete026: should return status code 403 and info message from insufficient permissions when delete educator', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultEducator.id}`)
@@ -456,7 +458,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post027: should return status code 403 and info message from insufficient permissions when delete health professional', () => {
+                it('users.delete027: should return status code 403 and info message from insufficient permissions when delete health professional', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultHealthProfessional.id}`)
@@ -468,7 +470,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post028: should return status code 403 and info message from insufficient permissions when delete herself', () => {
+                it('users.delete028: should return status code 403 and info message from insufficient permissions when delete herself', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultFamily.id}`)
@@ -480,7 +482,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post029: should return status code 403 and info message from insufficient permissions when delete application', () => {
+                it('users.delete029: should return status code 403 and info message from insufficient permissions when delete application', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultApplication.id}`)
@@ -492,7 +494,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post030: should return status code 403 and info message from insufficient permissions when delete another family', () => {
+                it('users.delete030: should return status code 403 and info message from insufficient permissions when delete another family', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultFamily.id}`)
@@ -507,7 +509,7 @@ describe('Routes: users', () => {
 
             context('application deleting the user', () => {
 
-                it('users.post031: should return status code 403 and info message from insufficient permissions when delete child', () => {
+                it('users.delete031: should return status code 403 and info message from insufficient permissions when delete child', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultChild.id}`)
@@ -519,7 +521,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post032: should return status code 403 and info message from insufficient permissions when delete admin', () => {
+                it('users.delete032: should return status code 403 and info message from insufficient permissions when delete admin', () => {
 
                     return request(URI)
                         .delete(`/users/${admin_ID}`)
@@ -531,7 +533,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post033: should return status code 403 and info message from insufficient permissions when delete educator', () => {
+                it('users.delete033: should return status code 403 and info message from insufficient permissions when delete educator', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultEducator.id}`)
@@ -543,7 +545,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post034: should return status code 403 and info message from insufficient permissions when delete health professional', () => {
+                it('users.delete034: should return status code 403 and info message from insufficient permissions when delete health professional', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultHealthProfessional.id}`)
@@ -555,7 +557,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post035: should return status code 403 and info message from insufficient permissions when delete family', () => {
+                it('users.delete035: should return status code 403 and info message from insufficient permissions when delete family', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultFamily.id}`)
@@ -567,7 +569,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post036: should return status code 403 and info message from insufficient permissions when delete herself', () => {
+                it('users.delete036: should return status code 403 and info message from insufficient permissions when delete herself', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultApplication.id}`)
@@ -579,7 +581,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('users.post037: should return status code 403 and info message from insufficient permissions when delete another application', () => {
+                it('users.delete037: should return status code 403 and info message from insufficient permissions when delete another application', () => {
 
                     return request(URI)
                         .delete(`/users/${defaultApplication.id}`)
@@ -595,7 +597,7 @@ describe('Routes: users', () => {
 
         context('when delete the user without authorization', () => {
 
-            it('users.post038: should return status code 401 and info message about unauthorized when delete admin', async () => {
+            it('users.delete038: should return status code 401 and info message about unauthorized when delete admin', async () => {
 
                 const admin_ID = await acc.getAdminID()
 
@@ -608,7 +610,7 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.post039: should return status code 401 and info message about unauthorized when delete child', () => {
+            it('users.delete039: should return status code 401 and info message about unauthorized when delete child', () => {
 
                 return request(URI)
                     .delete(`/users/${defaultChild.id}`)
@@ -619,7 +621,7 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.post040: should return status code 401 and info message about unauthorized when delete educator', () => {
+            it('users.delete040: should return status code 401 and info message about unauthorized when delete educator', () => {
 
                 return request(URI)
                     .delete(`/users/${defaultEducator.id}`)
@@ -630,7 +632,7 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.post041: should return status code 401 and info message about unauthorized when delete health professional', () => {
+            it('users.delete041: should return status code 401 and info message about unauthorized when delete health professional', () => {
 
                 return request(URI)
                     .delete(`/users/${defaultHealthProfessional.id}`)
@@ -641,7 +643,7 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.post042: should return status code 401 and info message about unauthorized when delete family', () => {
+            it('users.delete042: should return status code 401 and info message about unauthorized when delete family', () => {
 
                 return request(URI)
                     .delete(`/users/${defaultFamily.id}`)
@@ -652,7 +654,7 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.post043: should return status code 401 and info message about unauthorized when delete application', () => {
+            it('users.delete043: should return status code 401 and info message about unauthorized when delete application', () => {
 
                 return request(URI)
                     .delete(`/users/${defaultApplication.id}`)
@@ -666,7 +668,7 @@ describe('Routes: users', () => {
 
         context('when the user was successful deleted', () => {
 
-            it('users.post044: should return status code 204 and no content for child user', () => {
+            it('users.delete044: should return status code 204 and no content for child user', () => {
 
                 return request(URI)
                     .delete(`/users/${defaultChild.id}`)
@@ -678,7 +680,7 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.post045: should return status code 204 and no content for educator user', () => {
+            it('users.delete045: should return status code 204 and no content for educator user', () => {
 
                 return request(URI)
                     .delete(`/users/${defaultEducator.id}`)
@@ -690,7 +692,7 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.post046: should return status code 204 and no content for health professional user', () => {
+            it('users.delete046: should return status code 204 and no content for health professional user', () => {
 
                 return request(URI)
                     .delete(`/users/${defaultHealthProfessional.id}`)
@@ -702,7 +704,7 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.post047: should return status code 204 and no content for family user', () => {
+            it('users.delete047: should return status code 204 and no content for family user', () => {
 
                 return request(URI)
                     .delete(`/users/${defaultFamily.id}`)
@@ -714,7 +716,7 @@ describe('Routes: users', () => {
                     })
             })
 
-            it('users.post048: should return status code 204 and no content for application user', () => {
+            it('users.delete048: should return status code 204 and no content for application user', () => {
 
                 return request(URI)
                     .delete(`/users/${defaultApplication.id}`)

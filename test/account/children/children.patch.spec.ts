@@ -100,6 +100,7 @@ describe('Routes: children', () => {
                             username: 'Default username updated',
                             gender: 'female',
                             age: 13,
+                            age_calc_date: '2020-10-06',
                             institution_id: anotherInstitution.id
                         }
                     )
@@ -122,6 +123,7 @@ describe('Routes: children', () => {
             before(async () => {
                 try {
                     anotherChild.institution = defaultInstitution
+                    anotherChild.username = 'another child'
                     await acc.saveChild(accessTokenAdmin, anotherChild)
                 } catch (err) {
                     console.log('Failure on children.patch test: ', err)
@@ -236,7 +238,7 @@ describe('Routes: children', () => {
 
                 return request(URI)
                     .patch(`/children/${NON_EXISTENT_ID}`)
-                    .send({ age: 10 })
+                    .send({ age: 10, age_calc_date: '2020-10-06' })
                     .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                     .set('Content-Type', 'application/json')
                     .expect(404)

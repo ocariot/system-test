@@ -33,6 +33,8 @@ describe('Routes: users', () => {
     defaultInstitution.longitude = 0
 
     const defaultChild: Child = new ChildMock()
+    defaultChild.username = 'default child'
+    defaultChild.password = 'default pass'
 
     const defaultEducator: Educator = new Educator()
     defaultEducator.username = 'default educator'
@@ -240,7 +242,7 @@ describe('Routes: users', () => {
                     }
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset admin password', async () => {
+                it('users.post007: should return status code 403 and info message from insufficient permissions for reset admin password', async () => {
 
                     const ADMIN_ID = await acc.getAdminID()
                     return request(URI)
@@ -254,7 +256,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset own password', async () => {
+                it('users.post008: should return status code 403 and info message from insufficient permissions for reset own password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultChild.id}/reset-password`)
@@ -267,7 +269,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset educator password', async () => {
+                it('users.post009: should return status code 403 and info message from insufficient permissions for reset educator password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultEducator.id}/reset-password`)
@@ -280,7 +282,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset health professional password', async () => {
+                it('users.post010: should return status code 403 and info message from insufficient permissions for reset health professional password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultHealthProfessional.id}/reset-password`)
@@ -293,7 +295,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset family password', async () => {
+                it('users.post011: should return status code 403 and info message from insufficient permissions for reset family password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultFamily.id}/reset-password`)
@@ -306,7 +308,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset application password', async () => {
+                it('users.post012: should return status code 403 and info message from insufficient permissions for reset application password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultApplication.id}/reset-password`)
@@ -319,7 +321,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset another child password', async () => {
+                it('users.post013: should return status code 403 and info message from insufficient permissions for reset another child password', async () => {
 
                     return request(URI)
                         .post(`/users/${anotherChild.id}/reset-password`)
@@ -373,7 +375,7 @@ describe('Routes: users', () => {
                     }
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset admin password', async () => {
+                it('users.post014: should return status code 403 and info message from insufficient permissions for reset admin password', async () => {
 
                     const ADMIN_ID = await acc.getAdminID()
                     return request(URI)
@@ -387,7 +389,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset child password', async () => {
+                it('users.post015: should return status code 403 and info message from insufficient permissions for reset child password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultChild.id}/reset-password`)
@@ -400,7 +402,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset own password', async () => {
+                it('users.post016: should return status code 403 and info message from insufficient permissions for reset own password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultEducator.id}/reset-password`)
@@ -413,7 +415,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset health professional password', async () => {
+                it('users.post017: should return status code 403 and info message from insufficient permissions for reset health professional password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultHealthProfessional.id}/reset-password`)
@@ -426,7 +428,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset family password', async () => {
+                it('users.post018: should return status code 403 and info message from insufficient permissions for reset family password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultFamily.id}/reset-password`)
@@ -439,7 +441,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset application password', async () => {
+                it('users.post019: should return status code 403 and info message from insufficient permissions for reset application password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultApplication.id}/reset-password`)
@@ -452,7 +454,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset another educator password', async () => {
+                it('users.post020: should return status code 403 and info message from insufficient permissions for reset another educator password', async () => {
 
                     return request(URI)
                         .post(`/users/${anotherEducator.id}/reset-password`)
@@ -506,7 +508,7 @@ describe('Routes: users', () => {
                     }
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset admin password', async () => {
+                it('users.post021: should return status code 403 and info message from insufficient permissions for reset admin password', async () => {
 
                     const ADMIN_ID = await acc.getAdminID()
                     return request(URI)
@@ -520,7 +522,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset child password', async () => {
+                it('users.post022: should return status code 403 and info message from insufficient permissions for reset child password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultChild.id}/reset-password`)
@@ -533,7 +535,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset educator password', async () => {
+                it('users.post023: should return status code 403 and info message from insufficient permissions for reset educator password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultEducator.id}/reset-password`)
@@ -546,7 +548,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset own password', async () => {
+                it('users.post024: should return status code 403 and info message from insufficient permissions for reset own password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultHealthProfessional.id}/reset-password`)
@@ -559,7 +561,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset family password', async () => {
+                it('users.post025: should return status code 403 and info message from insufficient permissions for reset family password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultFamily.id}/reset-password`)
@@ -572,7 +574,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset application password', async () => {
+                it('users.post026: should return status code 403 and info message from insufficient permissions for reset application password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultApplication.id}/reset-password`)
@@ -585,7 +587,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset another health professional password', async () => {
+                it('users.post027: should return status code 403 and info message from insufficient permissions for reset another health professional password', async () => {
 
                     return request(URI)
                         .post(`/users/${anotherHealthProfessional.id}/reset-password`)
@@ -641,7 +643,7 @@ describe('Routes: users', () => {
                     }
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset admin password', async () => {
+                it('users.post028: should return status code 403 and info message from insufficient permissions for reset admin password', async () => {
 
                     const ADMIN_ID = await acc.getAdminID()
                     return request(URI)
@@ -655,7 +657,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset child password', async () => {
+                it('users.post029: should return status code 403 and info message from insufficient permissions for reset child password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultChild.id}/reset-password`)
@@ -668,7 +670,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset educator password', async () => {
+                it('users.post030: should return status code 403 and info message from insufficient permissions for reset educator password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultEducator.id}/reset-password`)
@@ -681,7 +683,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset health professional password', async () => {
+                it('users.post031: should return status code 403 and info message from insufficient permissions for reset health professional password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultHealthProfessional.id}/reset-password`)
@@ -694,7 +696,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset own password', async () => {
+                it('users.post032: should return status code 403 and info message from insufficient permissions for reset own password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultFamily.id}/reset-password`)
@@ -707,7 +709,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset application password', async () => {
+                it('users.post033: should return status code 403 and info message from insufficient permissions for reset application password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultApplication.id}/reset-password`)
@@ -720,7 +722,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset another family password', async () => {
+                it('users.post034: should return status code 403 and info message from insufficient permissions for reset another family password', async () => {
 
                     return request(URI)
                         .post(`/users/${anotherFamily.id}/reset-password`)
@@ -774,7 +776,7 @@ describe('Routes: users', () => {
                     }
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset admin password', async () => {
+                it('users.post035: should return status code 403 and info message from insufficient permissions for reset admin password', async () => {
 
                     const ADMIN_ID = await acc.getAdminID()
                     return request(URI)
@@ -788,7 +790,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset child password', async () => {
+                it('users.post036: should return status code 403 and info message from insufficient permissions for reset child password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultChild.id}/reset-password`)
@@ -801,7 +803,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset educator password', async () => {
+                it('users.post037: should return status code 403 and info message from insufficient permissions for reset educator password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultEducator.id}/reset-password`)
@@ -814,7 +816,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset health professional password', async () => {
+                it('users.post038: should return status code 403 and info message from insufficient permissions for reset health professional password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultHealthProfessional.id}/reset-password`)
@@ -827,7 +829,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset family password', async () => {
+                it('users.post039: should return status code 403 and info message from insufficient permissions for reset family password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultFamily.id}/reset-password`)
@@ -840,7 +842,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset own password', async () => {
+                it('users.post040: should return status code 403 and info message from insufficient permissions for reset own password', async () => {
 
                     return request(URI)
                         .post(`/users/${defaultApplication.id}/reset-password`)
@@ -853,7 +855,7 @@ describe('Routes: users', () => {
                         })
                 })
 
-                it('should return status code 403 and info message from insufficient permissions for reset another application password', async () => {
+                it('users.post041: should return status code 403 and info message from insufficient permissions for reset another application password', async () => {
 
                     return request(URI)
                         .post(`/users/${anotherApplication.id}/reset-password`)

@@ -335,7 +335,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
         }) //validation erros occurs
 
         describe('when the health professional is not found', () => {
-            it('healthprofessionals.children.groups.post011: should return status code 400 and info message about health professional not found', () => {
+            it('healthprofessionals.children.groups.post011: should return status code 403 and info message from insufficient permissions, because the non-existent health professional id does not match to user id', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the health professional
 
                 return request(URI)
@@ -343,9 +343,9 @@ describe('Routes: healthprofessionals.children.groups', () => {
                     .send(defaultChildrenGroup)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
-                    .expect(400)
+                    .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_HEALTHPROFESSIONAL_NOT_FOUND)
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
