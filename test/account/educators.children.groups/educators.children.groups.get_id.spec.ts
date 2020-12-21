@@ -132,7 +132,7 @@ describe('Routes: educators.children.groups', () => {
                 before(async () => {
                     try {
                         anotherChild.age = '15'
-                        await acc.updateChild(accessTokenAdmin, anotherChild, { age: '15' })
+                        await acc.updateChild(accessTokenAdmin, anotherChild, { age: '15', age_calc_date: '2020-10-06' })
                     } catch (err) {
                         console.log('Failure on Educators test: ' + err.message)
                     }
@@ -197,16 +197,16 @@ describe('Routes: educators.children.groups', () => {
         }) // get a unique children_group successfully
 
         describe('when the educator is not found', () => {
-            it('educators.children.groups.get_id004: should return status code 400 and info message from educator not found', () => {
+            it('educators.children.groups.get_id004: should return status code 403 and info message from insufficient permissions, because a non-existent id does not match to user id.', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the educator
 
                 return request(URI)
                     .get(`/educators/${NON_EXISTENT_ID}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
-                    .expect(400)
+                    .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_EDUCATOR_NOT_FOUND)
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })

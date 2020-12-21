@@ -151,16 +151,16 @@ describe('Routes: applications', () => {
         })
 
         describe('when the application is not found', () => {
-            it('applications.get_id004: should return status code 404 and info message about application not found', () => {
+            it('applications.get_id004: should return status code 403 and info message, because the non-existent id does not match to user id', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the application
 
                 return request(URI)
                     .get(`/applications/${NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(defaultApplicationToken))
                     .set('Content-Type', 'application/json')
-                    .expect(404)
+                    .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.APPLICATION.ERROR_404_APPLICATION_NOT_FOUND)
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })

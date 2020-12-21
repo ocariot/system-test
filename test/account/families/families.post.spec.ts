@@ -97,7 +97,6 @@ describe('Routes: families', () => {
                         expect(res.body.children[0].gender).to.eql(defaultChild.gender)
                         expect(res.body.children[0].age).to.eql(defaultChild.age)
                         expect(res.body.children[0].institution_id).to.eql(defaultInstitution.id)
-                        expect(res.body.children[0].last_login).to.eql(defaultChild.last_login)
                     })
             })
         })

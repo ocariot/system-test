@@ -307,7 +307,7 @@ describe('Routes: educators.children.groups', () => {
                     })
             })
 
-            it('educators.children.groups.patch009: should return status code 400 and info message from invalid ID, because educator_id is invalid', () => {
+            it('educators.children.groups.patch009: should return status code 403 and info message from insufficient permissions, because a non-existent id does not match to user id.', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the educator
 
                 return request(URI)
@@ -315,9 +315,9 @@ describe('Routes: educators.children.groups', () => {
                     .send({ children: [defaultChild.id] })
                     .set('Authorization', 'Bearer '.concat(defaultEducatorToken))
                     .set('Content-Type', 'application/json')
-                    .expect(400)
+                    .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_EDUCATOR_NOT_FOUND)
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 

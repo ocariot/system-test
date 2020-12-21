@@ -9,8 +9,15 @@ import { Child } from '../../../src/account-service/model/child'
 import { ChildMock } from '../../mocks/account-service/child.mock'
 import { InstitutionMock } from '../../mocks/account-service/institution.mock'
 import { Institution } from '../../../src/account-service/model/institution'
+import { EducatorMock } from '../../mocks/account-service/educator.mock'
+import { Educator } from '../../../src/account-service/model/educator'
+import { ChildrenGroup } from '../../../src/account-service/model/children.group'
+import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
+import { Family } from '../../../src/account-service/model/family'
+import { FamilyMock } from '../../mocks/account-service/family.mock'
 import { acc } from '../../utils/account.utils'
 import { ApiGatewayException } from '../../utils/api.gateway.exceptions'
+import * as HttpStatus from 'http-status-codes'
 
 describe('Routes: children.physicalactivities.logs', () => {
 
@@ -27,8 +34,11 @@ describe('Routes: children.physicalactivities.logs', () => {
     const defaultInstitution: Institution = new InstitutionMock()
     const defaultChild: Child = new ChildMock()
     const anotherChild: Child = new ChildMock()
+    const defaultEducator: Educator = new EducatorMock()
+    const defaultChildrenGroup: ChildrenGroup = new ChildrenGroupMock()
+    const defaultFamily: Family = new FamilyMock()
     const AMOUNT_LOGS = 5 // amount of logs that will be inserted into the array correctLogs and mixedLogs
-
+    
     before(async () => {
         try {
             await accountDB.connect()
@@ -47,16 +57,42 @@ describe('Routes: children.physicalactivities.logs', () => {
 
             defaultChild.institution = defaultInstitution
             anotherChild.institution = defaultInstitution
+            defaultEducator.institution = defaultInstitution
+            defaultFamily.institution = defaultInstitution
 
             const resultChild: any = await acc.saveChild(accessTokenAdmin, defaultChild)
             defaultChild.id = resultChild.id
-
-            accessTokenChild = await acc.auth(defaultChild.username!, defaultChild.password!)
-
+            
             const resultAnotherChild: any = await acc.saveChild(accessTokenAdmin, anotherChild)
             anotherChild.id = resultAnotherChild.id
+            
+            defaultChildrenGroup.children = new Array<Child>(resultChild, resultAnotherChild)
+            defaultFamily.children = new Array<Child>(resultChild, resultAnotherChild)
+            
+            const resultEducator: any = await acc.saveEducator(accessTokenAdmin, defaultEducator)
+            defaultEducator.id = resultEducator.id
+            
+            const resultFamily: any = await acc.saveFamily(accessTokenAdmin, defaultFamily)
+            defaultFamily.id = resultFamily.id
+            
 
-            accessTokenAnotherChild = await acc.auth(anotherChild.username!, anotherChild.password!)
+            if (defaultChild.username && defaultChild.password) {
+                accessTokenChild = await acc.auth(defaultChild.username, defaultChild.password)
+            }
+            
+            if (anotherChild.username && anotherChild.password) {
+                accessTokenAnotherChild = await acc.auth(anotherChild.username, anotherChild.password)
+            }
+
+            if (defaultEducator.username && defaultEducator.password) {
+                accessTokenEducator = await acc.auth(defaultEducator.username, defaultEducator.password)
+            }
+
+            if (defaultFamily.username && defaultFamily.password) {
+                accessTokenFamily = await acc.auth(defaultFamily.username, defaultFamily.password)
+            }
+
+            await acc.saveChildrenGroupsForEducator(accessTokenEducator, defaultEducator, defaultChildrenGroup)
 
         } catch (e) {
             console.log('before error', e.message)
@@ -97,7 +133,7 @@ describe('Routes: children.physicalactivities.logs', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(correctLogsArr)
-                    .expect(207)
+                    .expect(HttpStatus.MULTI_STATUS)
                     .then(res => {
                         for (let i = 0; i < res.body.success.length; i++) {
                             expect(res.body.success[i].code).to.eql(201)
@@ -115,7 +151,7 @@ describe('Routes: children.physicalactivities.logs', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenEducator))
                     .send(correctLogsArr)
-                    .expect(207)
+                    .expect(HttpStatus.MULTI_STATUS)
                     .then(res => {
                         for (let i = 0; i < res.body.success.length; i++) {
                             expect(res.body.success[i].code).to.eql(201)
@@ -133,7 +169,7 @@ describe('Routes: children.physicalactivities.logs', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenFamily))
                     .send(correctLogsArr)
-                    .expect(207)
+                    .expect(HttpStatus.MULTI_STATUS)
                     .then(res => {
                         for (let i = 0; i < res.body.success.length; i++) {
                             expect(res.body.success[i].code).to.eql(201)
@@ -151,7 +187,7 @@ describe('Routes: children.physicalactivities.logs', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenApplication))
                     .send(correctLogsArr)
-                    .expect(207)
+                    .expect(HttpStatus.MULTI_STATUS)
                     .then(res => {
                         for (let i = 0; i < res.body.success.length; i++) {
                             expect(res.body.success[i].code).to.eql(201)
@@ -193,18 +229,18 @@ describe('Routes: children.physicalactivities.logs', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(mixedLogsArr)
-                    .expect(207)
+                    .expect(HttpStatus.MULTI_STATUS)
                     .then(res => {
                         for (let i = 0; i < res.body.success.length; i++) {
                             expect(res.body.success[i].code).to.eql(201)
                             expect(res.body.success[i].item.date).to.eql(mixedLogsArr[i].date)
                             expect(res.body.success[i].item.value).to.eql(mixedLogsArr[i].value)
                         }
-
-                        expect(res.body.error[0].code).to.eql(ApiGatewayException.LOGS.ERROR_400_DATE_IS_REQUIRED.code)
-                        expect(res.body.error[0].message).to.eql(ApiGatewayException.LOGS.ERROR_400_DATE_IS_REQUIRED.message)
-                        expect(res.body.error[0].description).to.eql(ApiGatewayException.LOGS.ERROR_400_DATE_IS_REQUIRED.description)
+                        
                         expect(res.body.error[0].item.value).to.eql(Log.value)
+                        delete res.body.error[0].item
+
+                        expect(res.body.error[0]).to.eql(ApiGatewayException.LOGS.ERROR_400_DATE_IS_REQUIRED)
 
                     })
             })
@@ -223,7 +259,7 @@ describe('Routes: children.physicalactivities.logs', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(mixedLogsArr)
-                    .expect(207)
+                    .expect(HttpStatus.MULTI_STATUS)
                     .then(res => {
                         for (let i = 0; i < res.body.success.length; i++) {
                             expect(res.body.success[i].code).to.eql(201)
@@ -231,10 +267,10 @@ describe('Routes: children.physicalactivities.logs', () => {
                             expect(res.body.success[i].item.value).to.eql(mixedLogsArr[i].value)
                         }
 
-                        expect(res.body.error[0].code).to.eql(ApiGatewayException.LOGS.ERROR_400_VALUE_IS_REQUIRED.code)
-                        expect(res.body.error[0].message).to.eql(ApiGatewayException.LOGS.ERROR_400_VALUE_IS_REQUIRED.message)
-                        expect(res.body.error[0].description).to.eql(ApiGatewayException.LOGS.ERROR_400_VALUE_IS_REQUIRED.description)
                         expect(res.body.error[0].item.date).to.eql(Log.date)
+                        delete res.body.error[0].item
+
+                        expect(res.body.error[0]).to.eql(ApiGatewayException.LOGS.ERROR_400_VALUE_IS_REQUIRED)
                     })
             })
 
@@ -252,7 +288,7 @@ describe('Routes: children.physicalactivities.logs', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(mixedLogsArr)
-                    .expect(207)
+                    .expect(HttpStatus.MULTI_STATUS)
                     .then(res => {
                         for (let i = 0; i < res.body.success.length; i++) {
                             expect(res.body.success[i].code).to.eql(201)
@@ -260,10 +296,10 @@ describe('Routes: children.physicalactivities.logs', () => {
                             expect(res.body.success[i].item.value).to.eql(mixedLogsArr[i].value)
                         }
 
-                        expect(res.body.error[0].code).to.eql(ApiGatewayException.LOGS.ERROR_400_DATE_AND_VALUE_IS_REQUIRED.code)
-                        expect(res.body.error[0].message).to.eql(ApiGatewayException.LOGS.ERROR_400_DATE_AND_VALUE_IS_REQUIRED.message)
-                        expect(res.body.error[0].description).to.eql(ApiGatewayException.LOGS.ERROR_400_DATE_AND_VALUE_IS_REQUIRED.description)
                         expect(res.body.error[0].item).to.eql({})
+                        delete res.body.error[0].item
+
+                        expect(res.body.error[0]).to.eql(ApiGatewayException.LOGS.ERROR_400_DATE_AND_VALUE_IS_REQUIRED)
                     })
             })
 
@@ -281,7 +317,7 @@ describe('Routes: children.physicalactivities.logs', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(mixedLogsArr)
-                    .expect(207)
+                    .expect(HttpStatus.MULTI_STATUS)
                     .then(res => {
                         for (let i = 0; i < res.body.success.length; i++) {
                             expect(res.body.success[i].code).to.eql(201)
@@ -289,11 +325,11 @@ describe('Routes: children.physicalactivities.logs', () => {
                             expect(res.body.success[i].item.value).to.eql(mixedLogsArr[i].value)
                         }
 
-                        expect(res.body.error[0].code).to.eql(400)
-                        expect(res.body.error[0].message).to.eql(`Date parameter: ${Log.date}, is not in valid ISO 8601 format.`)
-                        expect(res.body.error[0].description).to.eql('Date must be in the format: yyyy-MM-dd')
-                        expect(res.body.error[0].item.date).to.eql(Log.date)
                         expect(res.body.error[0].item.value).to.eql(Log.value)
+                        expect(res.body.error[0].item.date).to.eql(Log.date)
+                        delete res.body.error[0].item
+
+                        expect(res.body.error[0]).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_DATE(Log.date))
                     })
             })
 
@@ -311,7 +347,7 @@ describe('Routes: children.physicalactivities.logs', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(mixedLogsArr)
-                    .expect(207)
+                    .expect(HttpStatus.MULTI_STATUS)
                     .then(res => {
                         for (let i = 0; i < res.body.success.length; i++) {
                             expect(res.body.success[i].code).to.eql(201)
@@ -319,11 +355,8 @@ describe('Routes: children.physicalactivities.logs', () => {
                             expect(res.body.success[i].item.value).to.eql(mixedLogsArr[i].value)
                         }
 
-                        expect(res.body.error[0].code).to.eql(ApiGatewayException.LOGS.ERROR_400_VALUE_NEGATIVE.code)
-                        expect(res.body.error[0].message).to.eql(ApiGatewayException.LOGS.ERROR_400_VALUE_NEGATIVE.message)
-                        expect(res.body.error[0].description).to.eql(ApiGatewayException.LOGS.ERROR_400_VALUE_NEGATIVE.description)
-                        expect(res.body.error[0].item.date).to.eql(Log.date)
-                        expect(res.body.error[0].item.value).to.eql(Log.value)
+                        delete res.body.error[0].item
+                        expect(res.body.error[0]).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_NUMBER_GREATHER_THAN_OR_EQUALS_TO_ZERO('value'))
                     })
             })
 
@@ -341,7 +374,7 @@ describe('Routes: children.physicalactivities.logs', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(mixedLogsArr)
-                    .expect(207)
+                    .expect(HttpStatus.MULTI_STATUS)
                     .then(res => {
                         for (let i = 0; i < res.body.success.length; i++) {
                             expect(res.body.success[i].code).to.eql(201)
@@ -349,11 +382,8 @@ describe('Routes: children.physicalactivities.logs', () => {
                             expect(res.body.success[i].item.value).to.eql(mixedLogsArr[i].value)
                         }
 
-                        expect(res.body.error[0].code).to.eql(ApiGatewayException.LOGS.ERROR_400_VALUE_IS_NOT_A_NUMBER.code)
-                        expect(res.body.error[0].message).to.eql(ApiGatewayException.LOGS.ERROR_400_VALUE_IS_NOT_A_NUMBER.message)
-                        expect(res.body.error[0].description).to.eql(ApiGatewayException.LOGS.ERROR_400_VALUE_IS_NOT_A_NUMBER.description)
-                        expect(res.body.error[0].item.date).to.eql(Log.date)
-                        expect(res.body.error[0].item.value).to.eql(Log.value)
+                        delete res.body.error[0].item
+                        expect(res.body.error[0]).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_NUMBER_GREATHER_THAN_OR_EQUALS_TO_ZERO('value'))
                     })
             })
 
@@ -365,16 +395,14 @@ describe('Routes: children.physicalactivities.logs', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(mixedLogsArr)
-                    .expect(207)
+                    .expect(HttpStatus.MULTI_STATUS)
                     .then(res => {
-                        for (let i = 0; i < res.body.error.length; i++) {
-                            expect(res.body.error[i].code).to.eql(400)
-                            expect(res.body.error[i].message).to.eql(`The name of type provided "${invalid_resource}" is not supported...`)
-                            expect(res.body.error[i].description).to.eql('The names of the allowed types are: steps, calories, active_minutes, lightly_active_minutes, sedentary_minutes.')
-                            expect(res.body.error[i].item.date).to.eql(mixedLogsArr[i].date)
-                            expect(res.body.error[i].item.value).to.eql(mixedLogsArr[i].value)
-                        }
                         expect(res.body.success.length).to.eql(0)
+                        res.body.error.map(error => delete error.item)
+
+                        res.body.error.forEach(error => {
+                            expect(error).to.eql(ApiGatewayException.LOGS.ERROR_400_INVALID_RESOURCE)
+                        })
                     })
             })
 
@@ -403,27 +431,17 @@ describe('Routes: children.physicalactivities.logs', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(incorrectLogsArr)
-                    .expect(207)
+                    .expect(HttpStatus.MULTI_STATUS)
                     .then(res => {
-                        expect(res.body.error[0].code).to.eql(ApiGatewayException.LOGS.ERROR_400_VALUE_IS_NOT_A_NUMBER.code)
-                        expect(res.body.error[0].message).to.eql(ApiGatewayException.LOGS.ERROR_400_VALUE_IS_NOT_A_NUMBER.message)
-                        expect(res.body.error[0].description).to.eql(ApiGatewayException.LOGS.ERROR_400_VALUE_IS_NOT_A_NUMBER.description)
-                        expect(res.body.error[0].item.date).to.eql(Log1.date)
-                        expect(res.body.error[0].item.value).to.eql(Log1.value)
-
-                        expect(res.body.error[1].code).to.eql(ApiGatewayException.LOGS.ERROR_400_VALUE_NEGATIVE.code)
-                        expect(res.body.error[1].message).to.eql(ApiGatewayException.LOGS.ERROR_400_VALUE_NEGATIVE.message)
-                        expect(res.body.error[1].description).to.eql(ApiGatewayException.LOGS.ERROR_400_VALUE_NEGATIVE.description)
-                        expect(res.body.error[1].item.date).to.eql(Log2.date)
-                        expect(res.body.error[1].item.value).to.eql(Log2.value)
-
-                        expect(res.body.error[2].code).to.eql(400)
-                        expect(res.body.error[2].message).to.eql(`Date parameter: ${Log3.date}, is not in valid ISO 8601 format.`)
-                        expect(res.body.error[2].description).to.eql('Date must be in the format: yyyy-MM-dd')
-                        expect(res.body.error[2].item.date).to.eql(Log3.date)
-                        expect(res.body.error[2].item.value).to.eql(Log3.value)
-
                         expect(res.body.success.length).to.eql(0)
+
+                        res.body.error.map(error => delete error.item)
+                        expect(res.body.error[0]).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_NUMBER_GREATHER_THAN_OR_EQUALS_TO_ZERO('value'))
+                        expect(res.body.error[1]).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_NUMBER_GREATHER_THAN_OR_EQUALS_TO_ZERO('value'))
+                        
+                        expect(res.body.error[2].code).to.eql(HttpStatus.BAD_REQUEST)
+                        expect(res.body.error[2].message).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_400_INVALID_DATE(Log3.date).message)
+
                     })
             })
 
@@ -435,7 +453,7 @@ describe('Routes: children.physicalactivities.logs', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(mixedLogsArr)
-                    .expect(207)
+                    .expect(HttpStatus.MULTI_STATUS)
                     .then(res => {
                         for (let i = 0; i < res.body.error.length; i++) {
                             expect(res.body.error[i].code).to.eql(ApiGatewayException.LOGS.ERROR_400_INVALID_CHILD_ID.code)
@@ -448,7 +466,7 @@ describe('Routes: children.physicalactivities.logs', () => {
                     })
             })
 
-            it('children.logs.post014: should return status code 400 and info message from validation error, because child not exist', () => {
+            it('children.logs.post014: should return status code 403 and info message from validation error, because the non-existent child id does not match to user id.', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the child
 
                 return request(URI)
@@ -456,16 +474,9 @@ describe('Routes: children.physicalactivities.logs', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessTokenChild))
                     .send(mixedLogsArr)
-                    .expect(400)
+                    .expect(HttpStatus.FORBIDDEN)
                     .then(res => {
-                        for (let i = 0; i < res.body.error.length; i++) {
-                            expect(res.body.error[i].code).to.eql(ApiGatewayException.LOGS.ERROR_404_CHILD_NOT_FOUND.code)
-                            expect(res.body.error[i].message).to.eql(ApiGatewayException.LOGS.ERROR_404_CHILD_NOT_FOUND.message)
-                            expect(res.body.error[i].description).to.eql(ApiGatewayException.LOGS.ERROR_404_CHILD_NOT_FOUND.description)
-                            expect(res.body.error[i].item.date).to.eql(mixedLogsArr[i].date)
-                            expect(res.body.error[i].item.value).to.eql(mixedLogsArr[i].value)
-                        }
-                        expect(res.body.success.length).to.eql(0)
+                        expect(res.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
@@ -479,7 +490,7 @@ describe('Routes: children.physicalactivities.logs', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAnotherChild))
                         .send(mixedLogsArr)
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -492,7 +503,7 @@ describe('Routes: children.physicalactivities.logs', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenAdmin))
                         .send(mixedLogsArr)
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -506,7 +517,7 @@ describe('Routes: children.physicalactivities.logs', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer '.concat(accessTokenHealthProfessional))
                         .send(mixedLogsArr)
-                        .expect(403)
+                        .expect(HttpStatus.FORBIDDEN)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                         })
@@ -523,7 +534,7 @@ describe('Routes: children.physicalactivities.logs', () => {
                         .set('Content-Type', 'application/json')
                         .set('Authorization', 'Bearer ')
                         .send(mixedLogsArr)
-                        .expect(401)
+                        .expect(HttpStatus.UNAUTHORIZED)
                         .then(err => {
                             expect(err.body).to.eql(ApiGatewayException.AUTH.ERROR_401_UNAUTHORIZED)
                         })

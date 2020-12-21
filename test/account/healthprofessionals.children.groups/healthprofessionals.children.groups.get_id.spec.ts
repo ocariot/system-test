@@ -130,7 +130,7 @@ describe('Routes: healthprofessionals.children.groups', () => {
                 before(async () => {
                     try {
                         anotherChild.age = '15'
-                        await acc.updateChild(accessTokenAdmin, anotherChild, { age: '15' })
+                        await acc.updateChild(accessTokenAdmin, anotherChild, { age: '15', age_calc_date: '2020-10-06' })
                     } catch (err) {
                         console.log('Failure in healthprofessionals.children.groups.get_id test: ', err)
                     }
@@ -194,16 +194,16 @@ describe('Routes: healthprofessionals.children.groups', () => {
         }) // get a unique children_group successfully
 
         describe('when the health professional is not found', () => {
-            it('healthprofessionals.children.groups.get_id004: should return status code 400 and info message from health professional not found', () => {
+            it('healthprofessionals.children.groups.get_id004: should return status code 403 and info message from insufficient permissions, because the non-existent health professional id does not match to user id', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the health professional
 
                 return request(URI)
                     .get(`/healthprofessionals/${NON_EXISTENT_ID}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
-                    .expect(400)
+                    .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_HEALTHPROFESSIONAL_NOT_FOUND)
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })

@@ -118,7 +118,8 @@ describe('Routes: children', () => {
                     password: defaultChild.password,
                     institution_id: defaultInstitution.id,
                     gender: defaultChild.gender,
-                    age: defaultChild.age
+                    age: defaultChild.age,
+                    age_calc_date: '2020-10-05'
                 }
 
                 return request(URI)
@@ -138,7 +139,8 @@ describe('Routes: children', () => {
                     username: defaultChild.username,
                     institution_id: defaultInstitution.id,
                     gender: defaultChild.gender,
-                    age: defaultChild.age
+                    age: defaultChild.age,
+                    age_calc_date: '2020-10-05'
                 }
 
                 return request(URI)
@@ -150,7 +152,7 @@ describe('Routes: children', () => {
                     .then(err => {
                         expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_PASSWORD_NOT_PROVIDED)
                     })
-            })
+                })
 
             it('children.post005: should return status code 400 and message info about missing parameters, because institution was not provided', () => {
 
@@ -158,7 +160,8 @@ describe('Routes: children', () => {
                     username: defaultChild.username,
                     password: defaultChild.password,
                     gender: defaultChild.gender,
-                    age: defaultChild.age
+                    age: defaultChild.age,
+                    age_calc_date: '2020-10-05'
                 }
 
                 return request(URI)
@@ -178,7 +181,8 @@ describe('Routes: children', () => {
                     username: defaultChild.username,
                     password: defaultChild.password,
                     institution_id: defaultInstitution.id,
-                    age: defaultChild.age
+                    age: defaultChild.age,
+                    age_calc_date: '2020-10-05'
                 }
 
                 return request(URI)
@@ -220,7 +224,8 @@ describe('Routes: children', () => {
                     password: defaultChild.password,
                     institution_id: NON_EXISTENT_ID,
                     gender: defaultChild.gender,
-                    age: defaultChild.age
+                    age: defaultChild.age,
+                    age_calc_date: '2020-10-05'
                 }
 
                 return request(URI)
@@ -242,7 +247,8 @@ describe('Routes: children', () => {
                     password: defaultChild.password,
                     institution_id: INVALID_ID,
                     gender: defaultChild.gender,
-                    age: defaultChild.age
+                    age: defaultChild.age,
+                    age_calc_date: '2020-10-05'
                 }
 
                 return request(URI)
@@ -308,7 +314,7 @@ describe('Routes: children', () => {
                     password: defaultChild.password,
                     institution_id: defaultInstitution.id,
                     gender: defaultChild.gender,
-                    age: NULL_AGE
+                    age: NULL_AGE,
                 }
 
                 return request(URI)
@@ -318,13 +324,12 @@ describe('Routes: children', () => {
                     .send(body)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_AGE_IS_NOT_A_NUMBER)
+                        expect(err.body).to.eql(ApiGatewayException.CHILD.ERROR_400_INVALID_AGE_IS_NULL)
                     })
             })
 
             it('children.post013: should return status code 400 and message about null username', () => {
                 const NULL_USERNAME = null // invalid username because value is null
-
 
                 const body = {
                     username: NULL_USERNAME,

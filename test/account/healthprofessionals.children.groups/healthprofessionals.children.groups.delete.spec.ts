@@ -117,16 +117,16 @@ describe('Routes: healthprofessionals.children.groups', () => {
         })
 
         describe('when the health professional is not found', () => {
-            it('healthprofessionals.children.groups.delete002: should return status code 400 and info message for health professional not found', () => {
+            it('healthprofessionals.children.groups.delete002: should return status code 403 and info message from insufficient permissions, because the non-existent health professional id does not match to user id', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the health professional
 
                 return request(URI)
                     .delete(`/healthprofessionals/${NON_EXISTENT_ID}/children/groups/${defaultChildrenGroup.id}`)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
-                    .expect(400)
+                    .expect(403)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_400_CHILDREN_GROUPS_HEALTHPROFESSIONAL_NOT_FOUND)
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
         })
@@ -162,16 +162,16 @@ describe('Routes: healthprofessionals.children.groups', () => {
         })
 
         describe('when the children group is not founded', () => {
-            it('healthprofessionals.children.groups.delete005: should return status code 404 and info message for children group not found', () => {
+            it('healthprofessionals.children.groups.delete005: should return status code 204 and no content, even if nothing is deleted.', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111' // non existent id of the child group
 
                 return request(URI)
                     .delete(`/healthprofessionals/${defaultHealthProfessional.id}/children/groups/${NON_EXISTENT_ID}`)
                     .set('Authorization', 'Bearer '.concat(defaultHealthProfessionalToken))
                     .set('Content-Type', 'application/json')
-                    .expect(404)
-                    .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.CHILDREN_GROUPS.ERROR_404_CHILDREN_GROUP_NOT_FOUND)
+                    .expect(204)
+                    .then(res => {
+                        expect(res.body).to.eql({})
                     })
             })
         })
