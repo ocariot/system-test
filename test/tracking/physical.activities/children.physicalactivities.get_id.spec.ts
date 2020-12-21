@@ -19,6 +19,7 @@ import { Family } from '../../../src/account-service/model/family'
 import { FamilyMock } from '../../mocks/account-service/family.mock'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
+import { Activity } from '../../../src/tracking-service/model/activity'
 
 describe('Routes: children.physicalactivities', () => {
 
@@ -144,8 +145,8 @@ describe('Routes: children.physicalactivities', () => {
                     .then(res => {
                         expect(res.body.id).to.eql(defaultActivity.id)
                         expect(res.body.name).to.eql(defaultActivity.name)
-                        expect(res.body.start_time).to.eql(defaultActivity.start_time!.toISOString())
-                        expect(res.body.end_time).to.eql(defaultActivity.end_time!.toISOString())
+                        expect(res.body.start_time).to.eql(Activity.formatDate(defaultActivity.start_time!))
+                        expect(res.body.end_time).to.eql(Activity.formatDate(defaultActivity.end_time!))
                         expect(res.body.duration).to.eql(defaultActivity.duration)
                         expect(res.body.calories).to.eql(defaultActivity.calories)
                         expect(res.body.distance).to.eql(defaultActivity.distance)
@@ -173,8 +174,8 @@ describe('Routes: children.physicalactivities', () => {
                     .then(res => {
                         expect(res.body.id).to.eql(defaultActivity.id)
                         expect(res.body.name).to.eql(defaultActivity.name)
-                        expect(res.body.start_time).to.eql(defaultActivity.start_time!.toISOString())
-                        expect(res.body.end_time).to.eql(defaultActivity.end_time!.toISOString())
+                        expect(res.body.start_time).to.eql(Activity.formatDate(defaultActivity.start_time!))
+                        expect(res.body.end_time).to.eql(Activity.formatDate(defaultActivity.end_time!))
                         expect(res.body.duration).to.eql(defaultActivity.duration)
                         expect(res.body.calories).to.eql(defaultActivity.calories)
                         expect(res.body.distance).to.eql(defaultActivity.distance)
@@ -202,8 +203,8 @@ describe('Routes: children.physicalactivities', () => {
                     .then(res => {
                         expect(res.body.id).to.eql(defaultActivity.id)
                         expect(res.body.name).to.eql(defaultActivity.name)
-                        expect(res.body.start_time).to.eql(defaultActivity.start_time!.toISOString())
-                        expect(res.body.end_time).to.eql(defaultActivity.end_time!.toISOString())
+                        expect(res.body.start_time).to.eql(Activity.formatDate(defaultActivity.start_time!))
+                        expect(res.body.end_time).to.eql(Activity.formatDate(defaultActivity.end_time!))
                         expect(res.body.duration).to.eql(defaultActivity.duration)
                         expect(res.body.calories).to.eql(defaultActivity.calories)
                         expect(res.body.distance).to.eql(defaultActivity.distance)
@@ -231,8 +232,8 @@ describe('Routes: children.physicalactivities', () => {
                     .then(res => {
                         expect(res.body.id).to.eql(defaultActivity.id)
                         expect(res.body.name).to.eql(defaultActivity.name)
-                        expect(res.body.start_time).to.eql(defaultActivity.start_time!.toISOString())
-                        expect(res.body.end_time).to.eql(defaultActivity.end_time!.toISOString())
+                        expect(res.body.start_time).to.eql(Activity.formatDate(defaultActivity.start_time!))
+                        expect(res.body.end_time).to.eql(Activity.formatDate(defaultActivity.end_time!))
                         expect(res.body.duration).to.eql(defaultActivity.duration)
                         expect(res.body.calories).to.eql(defaultActivity.calories)
                         expect(res.body.distance).to.eql(defaultActivity.distance)
@@ -260,8 +261,8 @@ describe('Routes: children.physicalactivities', () => {
                     .then(res => {
                         expect(res.body.id).to.eql(defaultActivity.id)
                         expect(res.body.name).to.eql(defaultActivity.name)
-                        expect(res.body.start_time).to.eql(defaultActivity.start_time!.toISOString())
-                        expect(res.body.end_time).to.eql(defaultActivity.end_time!.toISOString())
+                        expect(res.body.start_time).to.eql(Activity.formatDate(defaultActivity.start_time!))
+                        expect(res.body.end_time).to.eql(Activity.formatDate(defaultActivity.end_time!))
                         expect(res.body.duration).to.eql(defaultActivity.duration)
                         expect(res.body.calories).to.eql(defaultActivity.calories)
                         expect(res.body.distance).to.eql(defaultActivity.distance)
@@ -289,8 +290,8 @@ describe('Routes: children.physicalactivities', () => {
                     .then(res => {
                         expect(res.body.id).to.eql(defaultActivity.id)
                         expect(res.body.name).to.eql(defaultActivity.name)
-                        expect(res.body.start_time).to.eql(defaultActivity.start_time!.toISOString())
-                        expect(res.body.end_time).to.eql(defaultActivity.end_time!.toISOString())
+                        expect(res.body.start_time).to.eql(Activity.formatDate(defaultActivity.start_time!))
+                        expect(res.body.end_time).to.eql(Activity.formatDate(defaultActivity.end_time!))
                         expect(res.body.duration).to.eql(defaultActivity.duration)
                         expect(res.body.calories).to.eql(defaultActivity.calories)
                         expect(res.body.distance).to.eql(defaultActivity.distance)
@@ -329,17 +330,16 @@ describe('Routes: children.physicalactivities', () => {
 
             const INVALID_ID = '123'
 
-            it('physical.activities.get_id007: should return status code 400 and info message from child not found', () => {
+            it('physical.activities.get_id007: should return status code 403 and info message from validation error, because the id from inexistent child does not match user id', () => {
                 const NON_EXISTENT_ID = '111111111111111111111111'
 
                 return request(URI)
                     .get(`/children/${NON_EXISTENT_ID}/physicalactivities/${defaultActivity.id}`)
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .set('Content-Type', 'application/json')
-                    .expect(400)
+                    .expect(403)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${NON_EXISTENT_ID} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 

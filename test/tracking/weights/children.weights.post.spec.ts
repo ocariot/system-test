@@ -20,6 +20,7 @@ import { Weight } from '../../../src/tracking-service/model/weight'
 import { WeightMock } from '../../mocks/tracking-service/weight.mock'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
+import { Activity } from '../../../src/tracking-service/model/activity'
 
 describe('Routes: children.sleep', () => {
 
@@ -229,7 +230,7 @@ describe('Routes: children.sleep', () => {
                     .expect(201)
                     .then(res => {
                         expect(res.body).to.have.property('id')
-                        expect(res.body).to.have.property('timestamp', weight.timestamp!.toISOString())
+                        expect(res.body).to.have.property('timestamp', Activity.formatDate(weight.timestamp!))
                         expect(res.body).to.have.property('value', weight.value)
                         expect(res.body).to.have.property('unit', weight.unit)
                         expect(res.body).to.have.property('body_fat', weight.body_fat!.value)
@@ -247,7 +248,7 @@ describe('Routes: children.sleep', () => {
                     .expect(201)
                     .then(res => {
                         expect(res.body).to.have.property('id')
-                        expect(res.body).to.have.property('timestamp', weight.timestamp!.toISOString())
+                        expect(res.body).to.have.property('timestamp', Activity.formatDate(weight.timestamp!))
                         expect(res.body).to.have.property('value', weight.value)
                         expect(res.body).to.have.property('unit', weight.unit)
                         expect(res.body).to.have.property('body_fat', weight.body_fat!.value)
@@ -265,7 +266,7 @@ describe('Routes: children.sleep', () => {
                     .expect(201)
                     .then(res => {
                         expect(res.body).to.have.property('id')
-                        expect(res.body).to.have.property('timestamp', weight.timestamp!.toISOString())
+                        expect(res.body).to.have.property('timestamp', Activity.formatDate(weight.timestamp!))
                         expect(res.body).to.have.property('value', weight.value)
                         expect(res.body).to.have.property('unit', weight.unit)
                         expect(res.body).to.have.property('body_fat', weight.body_fat!.value)
@@ -283,7 +284,7 @@ describe('Routes: children.sleep', () => {
                     .expect(201)
                     .then(res => {
                         expect(res.body).to.have.property('id')
-                        expect(res.body).to.have.property('timestamp', weight.timestamp!.toISOString())
+                        expect(res.body).to.have.property('timestamp', Activity.formatDate(weight.timestamp!))
                         expect(res.body).to.have.property('value', weight.value)
                         expect(res.body).to.have.property('unit', weight.unit)
                         expect(res.body).to.have.property('body_fat', weight.body_fat!.value)
@@ -304,7 +305,7 @@ describe('Routes: children.sleep', () => {
                         .expect(201)
                         .then(res => {
                             expect(res.body).to.have.property('id')
-                            expect(res.body).to.have.property('timestamp', weight.timestamp!.toISOString())
+                            expect(res.body).to.have.property('timestamp', Activity.formatDate(weight.timestamp!))
                             expect(res.body).to.have.property('value', weight.value)
                             expect(res.body).to.have.property('unit', weight.unit)
                             expect(res.body).to.not.have.property('body_fat')
@@ -341,7 +342,7 @@ describe('Routes: children.sleep', () => {
                                 for (let i = 0; i < res.body.success.length; i++) {
                                     expect(res.body.success[i].code).to.eql(201)
                                     expect(res.body.success[i].item).to.have.property('id')
-                                    expect(res.body.success[i].item).to.have.property('timestamp', correctWeights[i].timestamp!.toISOString())
+                                    expect(res.body.success[i].item).to.have.property('timestamp', Activity.formatDate(correctWeights[i].timestamp!))
                                     expect(res.body.success[i].item).to.have.property('value', correctWeights[i].value)
                                     expect(res.body.success[i].item).to.have.property('unit', correctWeights[i].unit)
                                     if (correctWeights[i].body_fat) {
@@ -388,7 +389,7 @@ describe('Routes: children.sleep', () => {
                                 for (let i = 0; i < res.body.error.length; i++) {
                                     expect(res.body.error[i].code).to.eql(409)
                                     expect(res.body.error[i].message).to.eql(ApiGatewayException.WEIGHTS.ERROR_409_WEIGHT_IS_ALREADY_REGISTERED.message)
-                                    expect(res.body.error[i].item).to.have.property('timestamp', correctWeights[i].timestamp!.toISOString())
+                                    expect(res.body.error[i].item).to.have.property('timestamp', Activity.formatDate(correctWeights[i].timestamp!))
                                     expect(res.body.error[i].item).to.have.property('value', correctWeights[i].value)
                                     expect(res.body.error[i].item).to.have.property('unit', correctWeights[i].unit)
                                     if (correctWeights[i].body_fat) {
@@ -428,7 +429,7 @@ describe('Routes: children.sleep', () => {
                                 expect(res.body.success.length).to.eql(1)
                                 expect(res.body.success[0].code).to.eql(201)
                                 expect(res.body.success[0].item).to.have.property('id')
-                                expect(res.body.success[0].item).to.have.property('timestamp', mixedWeights[0].timestamp!.toISOString())
+                                expect(res.body.success[0].item).to.have.property('timestamp', Activity.formatDate(mixedWeights[0].timestamp!))
                                 expect(res.body.success[0].item).to.have.property('value', mixedWeights[0].value)
                                 expect(res.body.success[0].item).to.have.property('unit', mixedWeights[0].unit)
                                 if (mixedWeights[0].body_fat) {
@@ -437,9 +438,11 @@ describe('Routes: children.sleep', () => {
                                 expect(res.body.success[0].item).to.have.property('child_id', defaultChild.id)
 
                                 // Error item
-                                expect(res.body.error[0].code).to.eql(400)
-                                expect(res.body.error[0].message).to.eql(`Datetime: , is not in valid ISO 8601 format.`) // timestamp is empty
-                                expect(res.body.error[0].description).to.eql(`Date must be in the format: yyyy-MM-dd'T'HH:mm:ssZ`)
+                                // expect(res.body.error[0].code).to.eql(400)
+                                // expect(res.body.error[0].message).to.eql(`Datetime: , is not in valid ISO 8601 format.`) // timestamp is empty
+                                // expect(res.body.error[0].description).to.eql(`Date must be in the format: yyyy-MM-dd'T'HH:mm:ssZ`)
+                                delete res.body.error[0].item
+                                expect(res.body.error[0]).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_INVALID_DATE_TIME(''))
                             })
                     })
                 })
@@ -468,20 +471,15 @@ describe('Routes: children.sleep', () => {
                             .then(res => {
                                 expect(res.body.error.length).to.eql(3)
 
-                                // incorrectWeight8
-                                expect(res.body.error[0].code).to.eql(400)
-                                expect(res.body.error[0].message).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_NEGATIVE_VALUE.message)
-                                expect(res.body.error[0].description).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_NEGATIVE_VALUE.description)
+                                delete res.body.error[0].item
+                                expect(res.body.error[0]).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_NUMBER_GREATHER_OR_EQUALS_TO_ZERO('value'))
 
-                                // incorrectWeight9
-                                expect(res.body.error[1].code).to.eql(400)
-                                expect(res.body.error[1].message).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_EMPTY_UNIT.message)
-                                expect(res.body.error[1].description).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_EMPTY_UNIT.description)
+                                delete res.body.error[1].item
+                                expect(res.body.error[1]).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_EMPTY_UNIT)
 
-                                // incorrectWeight10
-                                expect(res.body.error[2].code).to.eql(400)
-                                expect(res.body.error[2].message).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_BODY_FAT_VALUE_IS_NEGATIVE.message)
-                                expect(res.body.error[2].description).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_BODY_FAT_VALUE_IS_NEGATIVE.description)
+                                delete res.body.error[2].item
+                                expect(res.body.error[2]).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_NUMBER_GREATHER_OR_EQUALS_TO_ZERO('body_fat'))
+
                             })
                     })
                 })
@@ -539,8 +537,8 @@ describe('Routes: children.sleep', () => {
                     .send(incorrectWeight4)
                     .expect(400)
                     .then(err => {
-                        expect(err.body.message).to.eql(`Datetime: ${invalidDayDate}, is not in valid ISO 8601 format.`)
-                        expect(err.body.description).to.eql('Date must be in the format: yyyy-MM-dd\'T\'HH:mm:ssZ')
+                        expect(err.body.message).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_INVALID_DATE_TIME(invalidDayDate).message)
+                        expect(err.body.code).to.eql(400)
                     })
             })
 
@@ -553,7 +551,7 @@ describe('Routes: children.sleep', () => {
                     .send(incorrectWeight5)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_INVALID_VALUE)
+                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_NUMBER_GREATHER_OR_EQUALS_TO_ZERO('value'))
                     })
             })
 
@@ -566,11 +564,11 @@ describe('Routes: children.sleep', () => {
                     .send(incorrectWeight6)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_INVALID_BODY_FAT_VALUE)
+                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_NUMBER_GREATHER_OR_EQUALS_TO_ZERO('body_fat'))
                     })
             })
 
-            it('weight.post016: should return status code 400 and info message from error, because child not exist', () => {
+            it('weight.post016: should return status code 403 and info message from error, because child not autheticate in system', () => {
 
                 const NON_EXISTENT_ID = '111111111111111111111111'
 
@@ -579,10 +577,9 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(weight.toJSON())
-                    .expect(400)
+                    .expect(403)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${NON_EXISTENT_ID} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
@@ -630,7 +627,7 @@ describe('Routes: children.sleep', () => {
                     .send(weight)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_DATE_IS_NULL)
+                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_INVALID_DATE_TIME('null'))
                     })
             })
 
@@ -646,7 +643,7 @@ describe('Routes: children.sleep', () => {
                     .send(weight)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_INVALID_VALUE)
+                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_NUMBER_GREATHER_OR_EQUALS_TO_ZERO('value'))
                     })
             })
 
@@ -678,7 +675,7 @@ describe('Routes: children.sleep', () => {
                     .send(weight)
                     .expect(400)
                     .then(err => {
-                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_INVALID_BODY_FAT_VALUE)
+                        expect(err.body).to.eql(ApiGatewayException.WEIGHTS.ERROR_400_NUMBER_GREATHER_OR_EQUALS_TO_ZERO('body_fat'))
                     })
             })
             //SOME FIELDS HAVE NULL VALUE
@@ -687,7 +684,7 @@ describe('Routes: children.sleep', () => {
 
         context('when posting a new Weight for another user that not to be a child', () => {
 
-            it('weight.post019: should return 400 and info message from error, when try create a weight for admin', async () => {
+            it('weight.post019: should return 403 and info message from error, because o ADMIN_ID does no match with the children', async () => {
 
                 const ADMIN_ID = await acc.getAdminID()
 
@@ -696,66 +693,63 @@ describe('Routes: children.sleep', () => {
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(weight.toJSON())
-                    .expect(400)
+                    .expect(403)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${ADMIN_ID} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('weight.post020: should return 400 and info message from error, when try create a weight for educator', () => {
+            it('weight.post020: should return 403 and info message from error, when try authenticate Educator.id', () => {
 
                 return request(URI)
                     .post(`/children/${defaultEducator.id}/weights`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(weight.toJSON())
-                    .expect(400)
+                    .expect(403)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultEducator.id} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('weight.post021: should return 400 and info message from error, when try create a weight for health professional', () => {
+            it('weight.post021: should return 403 and info message from error, when try authenticate HealthProfessional.id', () => {
 
                 return request(URI)
                     .post(`/children/${defaultHealthProfessional.id}/weights`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(weight.toJSON())
-                    .expect(400)
+                    .expect(403)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultHealthProfessional.id} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('weight.post022: should return 400 and info message from error, when try create a weight for family', () => {
+            it('weight.post022: should return 403 and info message from error, when try authenticate the Family.id', () => {
 
                 return request(URI)
                     .post(`/children/${defaultFamily.id}/weights`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(weight.toJSON())
-                    .expect(400)
+                    .expect(403)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultFamily.id} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
                     })
             })
 
-            it('weight.post023: should return 400 and info message from error, when try create a weight for application', () => {
+            it('weight.post023: should return 403 and info message from error, when try authenticate the child in the application', () => {
 
                 return request(URI)
                     .post(`/children/${defaultApplication.id}/weights`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', 'Bearer '.concat(accessDefaultChildToken))
                     .send(weight.toJSON())
-                    .expect(400)
+                    .expect(403)
                     .then(err => {
-                        expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultApplication.id} on the platform!`)
-                        expect(err.body.description).to.eql('Please register the Child and try again...')
+                        expect(err.body).to.eql(ApiGatewayException.ERROR_MESSAGE.ERROR_403_FORBIDDEN)
+                        // expect(err.body.message).to.eql(`There is no registered Child with ID: ${defaultApplication.id} on the platform!`)
+                        // expect(err.body.description).to.eql('Please register the Child and try again...')
                     })
             })
 

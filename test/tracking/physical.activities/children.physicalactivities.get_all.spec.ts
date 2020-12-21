@@ -19,6 +19,7 @@ import { Family } from '../../../src/account-service/model/family'
 import { FamilyMock } from '../../mocks/account-service/family.mock'
 import { ChildrenGroup } from '../../../src/account-service/model/children.group'
 import { ChildrenGroupMock } from '../../mocks/account-service/children.group.mock'
+import { Activity } from '../../../src/tracking-service/model/activity'
 
 describe('Routes: children.physicalactivities', () => {
 
@@ -152,11 +153,10 @@ describe('Routes: children.physicalactivities', () => {
                         expect(res.body.length).to.eql(AMOUNT)
 
                         PHYSICAL_ACTIVITIES.forEach(function (activity, index) {
-
                             expect(res.body[index]).to.have.property('id', activity.id)
                             expect(res.body[index]).to.have.property('name', activity.name)
-                            expect(res.body[index]).to.have.property('start_time', activity.start_time!.toISOString())
-                            expect(res.body[index]).to.have.property('end_time', activity.end_time!.toISOString())
+                            expect(res.body[index]).to.have.property('start_time', Activity.formatDate(activity.start_time!))
+                            expect(res.body[index]).to.have.property('end_time', Activity.formatDate(activity.end_time!))
                             expect(res.body[index]).to.have.property('duration', activity.duration)
                             expect(res.body[index]).to.have.property('calories', activity.calories)
                             expect(res.body[index]).to.have.property('distance', activity.distance)
@@ -191,8 +191,8 @@ describe('Routes: children.physicalactivities', () => {
 
                             expect(res.body[index]).to.have.property('id', activity.id)
                             expect(res.body[index]).to.have.property('name', activity.name)
-                            expect(res.body[index]).to.have.property('start_time', activity.start_time!.toISOString())
-                            expect(res.body[index]).to.have.property('end_time', activity.end_time!.toISOString())
+                            expect(res.body[index]).to.have.property('start_time', Activity.formatDate(activity.start_time!))
+                            expect(res.body[index]).to.have.property('end_time', Activity.formatDate(activity.end_time!))
                             expect(res.body[index]).to.have.property('duration', activity.duration)
                             expect(res.body[index]).to.have.property('calories', activity.calories)
                             expect(res.body[index]).to.have.property('distance', activity.distance)
@@ -227,8 +227,8 @@ describe('Routes: children.physicalactivities', () => {
 
                             expect(res.body[index]).to.have.property('id', activity.id)
                             expect(res.body[index]).to.have.property('name', activity.name)
-                            expect(res.body[index]).to.have.property('start_time', activity.start_time!.toISOString())
-                            expect(res.body[index]).to.have.property('end_time', activity.end_time!.toISOString())
+                            expect(res.body[index]).to.have.property('start_time', Activity.formatDate(activity.start_time!))
+                            expect(res.body[index]).to.have.property('end_time', Activity.formatDate(activity.end_time!))
                             expect(res.body[index]).to.have.property('duration', activity.duration)
                             expect(res.body[index]).to.have.property('calories', activity.calories)
                             expect(res.body[index]).to.have.property('distance', activity.distance)
@@ -263,8 +263,8 @@ describe('Routes: children.physicalactivities', () => {
 
                             expect(res.body[index]).to.have.property('id', activity.id)
                             expect(res.body[index]).to.have.property('name', activity.name)
-                            expect(res.body[index]).to.have.property('start_time', activity.start_time!.toISOString())
-                            expect(res.body[index]).to.have.property('end_time', activity.end_time!.toISOString())
+                            expect(res.body[index]).to.have.property('start_time', Activity.formatDate(activity.start_time!))
+                            expect(res.body[index]).to.have.property('end_time', Activity.formatDate(activity.end_time!))
                             expect(res.body[index]).to.have.property('duration', activity.duration)
                             expect(res.body[index]).to.have.property('calories', activity.calories)
                             expect(res.body[index]).to.have.property('distance', activity.distance)
@@ -299,8 +299,8 @@ describe('Routes: children.physicalactivities', () => {
 
                             expect(res.body[index]).to.have.property('id', activity.id)
                             expect(res.body[index]).to.have.property('name', activity.name)
-                            expect(res.body[index]).to.have.property('start_time', activity.start_time!.toISOString())
-                            expect(res.body[index]).to.have.property('end_time', activity.end_time!.toISOString())
+                            expect(res.body[index]).to.have.property('start_time', Activity.formatDate(activity.start_time!))
+                            expect(res.body[index]).to.have.property('end_time', Activity.formatDate(activity.end_time!))
                             expect(res.body[index]).to.have.property('duration', activity.duration)
                             expect(res.body[index]).to.have.property('calories', activity.calories)
                             expect(res.body[index]).to.have.property('distance', activity.distance)
@@ -335,8 +335,8 @@ describe('Routes: children.physicalactivities', () => {
 
                             expect(res.body[index]).to.have.property('id', activity.id)
                             expect(res.body[index]).to.have.property('name', activity.name)
-                            expect(res.body[index]).to.have.property('start_time', activity.start_time!.toISOString())
-                            expect(res.body[index]).to.have.property('end_time', activity.end_time!.toISOString())
+                            expect(res.body[index]).to.have.property('start_time', Activity.formatDate(activity.start_time!))
+                            expect(res.body[index]).to.have.property('end_time', Activity.formatDate(activity.end_time!))
                             expect(res.body[index]).to.have.property('duration', activity.duration)
                             expect(res.body[index]).to.have.property('calories', activity.calories)
                             expect(res.body[index]).to.have.property('distance', activity.distance)
@@ -376,8 +376,8 @@ describe('Routes: children.physicalactivities', () => {
 
                                 expect(activity_res).to.have.property('id', PHYSICAL_ACTIVITIES[index].id)
                                 expect(activity_res).to.have.property('name', PHYSICAL_ACTIVITIES[index].name)
-                                expect(activity_res).to.have.property('start_time', PHYSICAL_ACTIVITIES[index].start_time!.toISOString())
-                                expect(activity_res).to.have.property('end_time', PHYSICAL_ACTIVITIES[index].end_time!.toISOString())
+                                expect(activity_res).to.have.property('start_time', Activity.formatDate(PHYSICAL_ACTIVITIES[index].start_time!))
+                                expect(activity_res).to.have.property('end_time', Activity.formatDate(PHYSICAL_ACTIVITIES[index].end_time!))
                                 expect(activity_res).to.have.property('duration', PHYSICAL_ACTIVITIES[index].duration)
                                 expect(activity_res).to.have.property('calories', PHYSICAL_ACTIVITIES[index].calories)
                                 expect(activity_res).to.have.property('distance', PHYSICAL_ACTIVITIES[index].distance)
@@ -422,8 +422,8 @@ describe('Routes: children.physicalactivities', () => {
                             res.body.forEach(function (activity_res, index) { // when the amount of activities is specified, iterate through the response
                                 expect(activity_res).to.have.property('id', PHYSICAL_ACTIVITIES_COPY[index].id)
                                 expect(activity_res).to.have.property('name', PHYSICAL_ACTIVITIES_COPY[index].name)
-                                expect(activity_res).to.have.property('start_time', PHYSICAL_ACTIVITIES_COPY[index].start_time!.toISOString())
-                                expect(activity_res).to.have.property('end_time', PHYSICAL_ACTIVITIES_COPY[index].end_time!.toISOString())
+                                expect(activity_res).to.have.property('start_time', Activity.formatDate(PHYSICAL_ACTIVITIES_COPY[index].start_time!))
+                                expect(activity_res).to.have.property('end_time', Activity.formatDate(PHYSICAL_ACTIVITIES_COPY[index].end_time!))
                                 expect(activity_res).to.have.property('duration', PHYSICAL_ACTIVITIES_COPY[index].duration)
                                 expect(activity_res).to.have.property('calories', PHYSICAL_ACTIVITIES_COPY[index].calories)
                                 expect(activity_res).to.have.property('distance', PHYSICAL_ACTIVITIES_COPY[index].distance)
@@ -466,8 +466,8 @@ describe('Routes: children.physicalactivities', () => {
                             res.body.forEach(function (activity_res, index) { // when the amount of activities is specified, iterate through the response
                                 expect(activity_res).to.have.property('id', PHYSICAL_ACTIVITIES_COPY[index].id)
                                 expect(activity_res).to.have.property('name', PHYSICAL_ACTIVITIES_COPY[index].name)
-                                expect(activity_res).to.have.property('start_time', PHYSICAL_ACTIVITIES_COPY[index].start_time!.toISOString())
-                                expect(activity_res).to.have.property('end_time', PHYSICAL_ACTIVITIES_COPY[index].end_time!.toISOString())
+                                expect(activity_res).to.have.property('start_time', Activity.formatDate(PHYSICAL_ACTIVITIES_COPY[index].start_time!))
+                                expect(activity_res).to.have.property('end_time', Activity.formatDate(PHYSICAL_ACTIVITIES_COPY[index].end_time!))
                                 expect(activity_res).to.have.property('duration', PHYSICAL_ACTIVITIES_COPY[index].duration)
                                 expect(activity_res).to.have.property('calories', PHYSICAL_ACTIVITIES_COPY[index].calories)
                                 expect(activity_res).to.have.property('distance', PHYSICAL_ACTIVITIES_COPY[index].distance)
