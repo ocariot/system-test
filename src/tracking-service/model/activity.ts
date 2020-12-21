@@ -39,4 +39,10 @@ export class Activity extends Entity {
             child_id: this.child_id
         }
     }
+
+    // converts from data format to non-ISO standard string(lenght of 20 positions)
+    public static formatDate(date:Date): String {
+        return date.toISOString().substring(0,19)
+    }
+
 }
