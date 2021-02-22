@@ -287,6 +287,15 @@ export abstract class ApiGatewayException {
         ERROR_404_USER_NOT_FOUND: new ApiException(404, 'User not found!', 'User not found or already removed. A new operation for the same resource is not required.').toJson()
     }
 
+    public static readonly NOTIFICATION: any = {
+        ERROR_400_INVALID_LANGUAGE: new ApiException(400, 'WRONG PARAMETERS', 'Only English(en), Spanish(es), Portuguese(pt), Greek(el) languages supported').toJson(),
+        ERROR_400_INVALID_USER_TYPE: new ApiException(400, 'WRONG PARAMETERS', 'Type of user can only be one of children, family or educator').toJson(),
+        ERROR_400_LANGUAGE_NOT_PROVIDED: new ApiException(400, 'MISSING PARAMETERS', 'No lang found in the message body').toJson(),
+        ERROR_400_USER_TYPE_NOT_PROVIDED: new ApiException(400, 'MISSING PARAMETERS', 'Type of user not defined').toJson(),
+        ERROR_400_TOKEN_NOT_PROVIDED: new ApiException(400, 'MISSING PARAMETERS', 'No token found in the message body').toJson(),
+        USER_NOT_FOUND: new ApiException(200, 'OK', 'User not found').toJson(),
+    }
+
     public static readonly ERROR_MESSAGE: any = {
         UNEXPECTED: 'An unexpected error has occurred. Please try again later...', // not used yet
         NEGATIVE_PARAMETER: 'The value provided has a negative value!', // not used yet
