@@ -1,0 +1,13 @@
+import { NotificationUser } from '../../../src/notification/model/notification.user'
+import { Child } from '../../../src/account-service/model/child'
+
+export class NotificationUserMock extends NotificationUser {
+    constructor(child: Child){
+        super()
+
+        this.id = child.id
+        this.token = 'eyJhbGciAjJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZmMxMDA1YjBc02E5NTAwMTg1YmQ1OGIiLCJzdWJfdHlwZSI6ImNoaWxkIiwiaXNzIjoib2NhcmlvdCIsImlhdCI6MTYwNjQ4NDA1OSwic2NvcGUiOijJAGlsZHJlbjpyZWFkIGluc3RpdHV0aW9uczpyZWFkIHBoeXNpY2FsYWN0aXZpdGllczpjcmVhdGUgcGh5c2ljYWxhY3Rpdml0aWVzOnJlYWQgc2xlZXA6Y3JlYXRlIHNsZWVwOnJlYWQgbWVhc3VyZW1lbnRzOmNyZWF0ZSBtZWFzdXJlbWVudHM6cmVhZCBlbnZpcm9ubWVudDpyZWFkIGZvb2R0cmFja2luZzpjcmVhdGUgZm9vZHRyYWNraW5nOnJlYWQgZm9vZHRyYWNraW5nOnVwZGF0ZSBmb29kdHJhY2tpbmc6ZGVsZXRlIG1pc3Npb25zOnJlYWQgZ2FtaWZpY2F0aW9ucHJvZmlsZTpyZWFkIGdhbWlmaWNhdGlvbnByb2ZpbGU6dXBkYXRlIGV4dGVybmFsOnN5bmMgbm90aWZpY2F0aW9uczpjcmVhdGUgbm90aWZpY2F0aW9uczpyZWFkIG5vdGlmaWNhdGlvbnM6ZGVsZXRlIiwiZXhwIjoxNjA2NTcwNDU5fQ.imQyL5hgXEfXyA-ElcVJCYHzFg6LNZmKir2pyUKESR0L2SNjh-cIuWLN5mLFp-nMmN1zoLXitdlVvTHC4DiybkSN6Q1ejR1d1waDXa1qKRFdALGmIOQAV3PSm4q9ramu6dbUUAlNkpzAJi9Jq92JaRBl_u3sHFBbMblTv2WRknI_2prlm3k46mYSd4Zbt-GZKL0dQSPfwtxzDScgf2-q5v0lnNcW22dfb2-uKXppw4iJ30W5WgGJbehiF90lStLcCkvyZvSKnSCfMt_srWGDEJVRZefesOCl8hOT1trI5KwDHypAYpy4TWB3mBx_7wgGnUHaS21BCdkvQIfHqTcAisfT_H6lSCefbNH4Xd3h9ikCRboxoGUMnz0zrNcop1eyvKH8Ww3y2N8npF0I1cxcDcGkXfcqMqtbGnGwlFzkVUMmmjFQHimZ8qbSL2IcqHrJ9ELLR-UOY-CIpK6repax6rTCTLZKi0hrqJDEGMMS0upNJk6Iy3B3LOvQz4R8FhT8BCt9BjeBqu_z8OSSZHFsHvgc-BcPT5u7JaUZG757p5mZMXtyfxTOk8ODMqUpu_0ffMnBIyBb1D4yj5lZE0tsfL3rUu2hk7BnYQA2oxByTrLRxf6UUto_cy6WWFC0_A19hHPifMrh_9uasbQ5Mzk91rvDAgi-1AXp0wATm4mANoU'
+        this.lang = 'pt'
+        this.type = 'children'
+    }
+}
